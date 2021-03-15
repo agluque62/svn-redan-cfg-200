@@ -1,0 +1,66 @@
+:host {
+
+    display: flex;
+    width: 100%;
+    height: 100%;
+
+    .logo {
+        
+        height: 55px;
+        width: 140px;
+        background-image: url("/assets/images/corporativo.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center center;
+        margin: auto;
+        margin-left: 0;
+        position:relative; top:-5px;
+
+        @media screen and (min-width:320px) and (max-width:600px){
+            height: 96px;
+            width: 123px;
+        }
+    }
+
+    .header-title {
+        margin: auto;
+
+        .app-name {
+            text-align: center;
+            font-size: larger;
+        }
+
+        .region {
+            
+            font-size: small;
+            text-align: center;
+        }
+    }
+
+    .date {
+
+        margin: auto;
+        margin-right: 10px;
+        display: flex;
+
+        .about {
+
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            margin-right: 15px;
+            font-size: smaller;
+
+            .help {
+                margin: auto;
+            }
+        }
+
+        .section {
+            .date, .hour {
+                font-size: smaller;
+                text-align: center;
+            }    
+        }
+    }
+}  

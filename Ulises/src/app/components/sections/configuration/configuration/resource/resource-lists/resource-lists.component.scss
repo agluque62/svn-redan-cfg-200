@@ -1,0 +1,16 @@
+.main-lists{
+    .uri-group{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        ::ng-deep .no-display {
+            display: none;
+        }
+        .uri-row{
+            width: 80%;
+            mat-form-field{
+                width: 100%;
+            }
+        }
+    }
+}

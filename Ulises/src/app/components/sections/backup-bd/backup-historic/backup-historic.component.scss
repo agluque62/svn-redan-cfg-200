@@ -1,0 +1,26 @@
+:host {
+
+    .backup-historic {
+        margin: 15px;
+
+        .table {
+
+            flex: 1;
+                    
+            .w-250{
+                max-width: 250px;
+            }
+        }
+
+        .btns {
+
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+    
+            button {
+                margin: 0 10px;
+            }
+        }
+    }
+}

@@ -1,0 +1,57 @@
+.main {
+    
+    margin: 15px;
+    height: calc(100vh - 130px);
+
+    .files {
+        margin-top: 20px;
+    }
+
+    .table-row {
+    
+        display: flex;
+        border-width: 0;
+        border-bottom-width: 1px;
+        border-bottom-color: rgba(0,0,0,.12);
+        border-style: solid;
+        align-items: center;
+        box-sizing: border-box;
+        min-height: 48px;
+
+        .table-column {
+
+            flex: 1;
+            display: flex;
+            padding-right: 24px;
+            padding-left: 24px;
+        }
+    }
+
+    .content {
+
+        .version, .node, .mysql, .files {
+
+            padding: 10px 0;
+            display: flex;
+
+            .label {
+
+                width: 120px;
+            }
+        }
+
+        .files {
+
+            .files-text {
+
+                display: flex;
+                padding: 7px 0;
+                
+                .name {
+
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+}

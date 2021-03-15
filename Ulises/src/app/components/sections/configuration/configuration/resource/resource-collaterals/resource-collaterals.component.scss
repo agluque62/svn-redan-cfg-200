@@ -1,0 +1,86 @@
+.main-collaterals {
+
+    display: grid;
+    grid-auto-flow: column;
+    grid-column-gap: 10px;
+    
+    .uris {
+
+        display: flex;
+        flex-direction: column;
+        
+        .uri-row {
+
+            display: grid;
+            grid-auto-flow: column;
+            grid-column-gap: 10px;
+            
+            .supCollSelect {
+                width: fit-content;
+            }
+            
+            button {
+                width: fit-content;
+                margin: auto;
+            }
+
+            mat-form-field {
+                width: 100%;
+            }
+        }
+
+        .checkbox {
+
+            display: flex;
+            padding: 0 0.75em 0 0.75em;
+            line-height: 40px;
+
+            &.add-iti {    
+                margin-bottom: 15px;
+            }
+
+            mat-checkbox {
+            
+                &.mat-checkbox-checked {
+            
+                    ::ng-deep .mat-checkbox-background {
+                        background-color: #48803e!important;
+                    }    
+                }
+
+                &.mat-checkbox-disabled {
+                    ::ng-deep .mat-checkbox-background {
+                        background-color: #b0b0b0 !important;
+                    }
+                }
+            }
+        }
+
+        .hr {
+            border: 0;
+            clear: both;
+            display: block;
+            width: 100%;
+            background-color: grey;
+            height: 1px;
+            margin: 20px 0;
+        }
+    }
+
+    .telephonic-resources {
+
+        display: flex;
+        flex-direction: column;
+        
+        .filter {
+
+            display: inline-grid;
+            margin-bottom: 2px;
+            
+            button {
+                width: max-content;
+                margin: auto;
+            }
+        }
+    }
+}

@@ -1,0 +1,37 @@
+.configuration {
+
+    margin: 15px;
+
+    .btn {
+
+        display: flex;
+        margin: 20px 0;
+        
+        .local-btn {
+
+            margin: auto;
+            margin-right: 0;
+        }
+    }
+
+    .table {
+
+        .w-100 {
+            max-width: 100px;
+        }
+
+        mat-cell, mat-header-cell {
+        
+            display: flex;
+        }
+
+        .config-row:hover {
+            background: whitesmoke;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background-color: gainsboro;
+        }
+    }
+}

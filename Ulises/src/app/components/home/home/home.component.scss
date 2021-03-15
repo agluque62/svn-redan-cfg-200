@@ -1,0 +1,65 @@
+.main {
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+
+    .header {
+    
+        height: 75px;
+
+        @media  screen  and (min-width:320px) and (max-width:850px) {
+            height: 50px;
+        }  
+    }
+
+    .footer {
+        height: 50px;
+
+        @media  screen  and (min-width:320px) and (max-width:850px) {
+            height: 25px;
+        }  
+    }
+
+    .content-page {
+        
+        display: flex;
+        flex: auto;
+
+        .menu {
+
+            width: 210px;
+            border-radius: 0 5px 5px 0;
+            background-color: #00800038;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+
+            @media screen and (min-width:320px) and (max-width:850px){
+                width: 0px;
+            }
+        }
+
+        .context {
+            
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            &.collpase {
+
+                width: calc(100% - 225px);
+            }
+            
+            .toogle-btn {
+
+                background-color: black;
+            
+                i {
+                    color: white;
+                }
+            }
+        }
+    }
+}

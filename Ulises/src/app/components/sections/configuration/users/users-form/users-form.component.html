@@ -1,0 +1,64 @@
+<div class="title" *ngIf="type === 'EDIT'">
+    {{'Editar usuario: '}} {{ user.name }}
+</div>
+<div class="title" *ngIf="type === 'CREATE'">
+    {{'Crear emplazamiento'}}
+</div>
+
+<form class="form" [formGroup]="userForm" *ngIf="ready">
+    <div class="inputs">
+        <mat-form-field appearance="fill" [ngClass]="{'error': userForm.controls['name'].hasError('pattern')}">
+            <mat-label>{{'Id. Operador'}}</mat-label>
+            <input matInput required formControlName="name">
+            <mat-error *ngIf="userForm.controls['name'].hasError('required')">
+                {{ 'Este campo es obligatorio.' }}
+            </mat-error>
+            <mat-error *ngIf="userForm.controls['name'].hasError('pattern')">
+                {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>{{'Clave'}}</mat-label>
+            <input matInput type="password" required formControlName="clave">
+            <mat-error *ngIf="userForm.controls['clave'].hasError('required')">
+                {{ 'Este campo es obligatorio.' }}
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+    <div class="checkboxes" formArrayName="permissions">
+        <div class="col">
+            <div *ngFor="let permission of permissions().controls; let i=index">
+                <div [formGroupName]="i">
+                    <div class="form-item" *ngIf="permission.value.id <= MAX_COLUMN_ITEMS">
+                        <mat-checkbox class="checkbox" formControlName="selected"></mat-checkbox>
+                        <mat-label>
+                            {{permission.value.name}}
+                        </mat-label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div *ngFor="let permission of permissions().controls; let i=index">
+                <div [formGroupName]="i">
+                    <div class="form-item" *ngIf="permission.value.id > MAX_COLUMN_ITEMS">
+                        <mat-checkbox class="checkbox" formControlName="selected"></mat-checkbox>
+                        <mat-label>
+                            {{permission.value.name}}
+                        </mat-label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</form>
+
+<div class="btns">
+    <button mat-raised-button (click)="saveUser()">{{'Guardar'}}</button>
+    <button mat-raised-button (click)="deleteUser()" *ngIf="type === 'EDIT'">{{'Eliminar'}}</button>
+    <button mat-raised-button class="cancel-btns" (click)="dialogRef.close()" cdkFocusInitial>{{'Cancelar'}}</button>
+</div>

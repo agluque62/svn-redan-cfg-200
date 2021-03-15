@@ -1,0 +1,9 @@
+..\data_model\
+..\lib\
+..\public\
+..\routes\
+..\views\
+..\app.js
+..\configUlises.json
+..\*.bat
+..\*.cmd

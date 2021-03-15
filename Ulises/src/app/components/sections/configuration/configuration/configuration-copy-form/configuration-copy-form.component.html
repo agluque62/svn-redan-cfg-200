@@ -1,0 +1,30 @@
+<div class="main">
+    <div class="title">
+        {{'Copiar configuración: '}} {{ configuration.name }}
+    </div>
+
+    <form class="form" [formGroup]="copyForm">
+
+        <mat-form-field appearance="fill" [ngClass]="{'error': copyForm.controls['name'].hasError('pattern')}">
+            <mat-label>{{'Id. Configuración'}}</mat-label>
+            <input matInput required formControlName="name">
+            <mat-error *ngIf="copyForm.controls['name'].hasError('required')">
+                {{ 'Este campo es obligatorio.' }}
+            </mat-error>
+            <mat-error *ngIf="copyForm.controls['name'].hasError('pattern')">
+                {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>{{'Descripción'}}</mat-label>
+            <input matInput formControlName="description">
+        </mat-form-field>
+
+    </form>
+
+    <div class="btns">
+        <button mat-raised-button (click)="confirm()">{{'Confirmar'}}</button>
+        <button mat-raised-button (click)="dialogRef.close()">{{'Cancelar'}}</button>
+    </div>
+</div>

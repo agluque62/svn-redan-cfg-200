@@ -1,0 +1,95 @@
+.main {
+
+    .form {
+
+        display: flex;
+
+        .col {
+
+            display: flex;
+            flex-direction: column;            
+            flex: 1;
+            margin: 5px;
+            min-width: 250px;
+
+            mat-form-field {
+            
+                padding-bottom: 0px;
+    
+                &.error {
+                    padding-bottom: 30px;
+                }
+            }    
+
+            .header-row {
+
+                min-height: 56px;
+                display: flex;
+                border-width: 0;
+                border-bottom-width: 1px;
+                border-style: solid;
+                align-items: center;
+                box-sizing: border-box;
+                border-bottom-color: rgba(0,0,0,.12);
+                
+                .header-column {
+    
+                    display: flex;
+                    justify-content: space-around;
+                    padding-right: 24px;
+                    color: rgba(0,0,0,.54);
+                    font-size: 12px;
+                    font-weight: 500;
+                    flex: 1;
+                }
+            }
+    
+            .table-row {
+    
+                display: flex;
+                border-width: 0;
+                border-bottom-width: 1px;
+                border-bottom-color: rgba(0,0,0,.12);
+                border-style: solid;
+                align-items: center;
+                box-sizing: border-box;
+                min-height: 48px;
+    
+                .table-column {
+    
+                    flex: 1;
+                    display: flex;
+                    justify-content: space-around;
+                    padding-right: 24px;
+    
+                    .select {
+        
+                        max-width: 80px;
+                        padding-top: 10px;
+    
+                        ::ng-deep .mat-form-field-wrapper {
+    
+                            padding-bottom: 1em;
+    
+                            ::ng-deep .mat-form-field-flex {
+        
+                                padding: .25em .75em 0 1em;
+    
+                                ::ng-deep .mat-select-arrow-wrapper {
+                                    transform: translateY(-25%);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .btns {
+
+        display: flex;
+        justify-content: space-around;
+        margin-top: 30px;
+    }
+}

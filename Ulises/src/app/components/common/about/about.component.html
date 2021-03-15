@@ -1,0 +1,22 @@
+<div class="about" *ngIf="ready">
+    <div class="title">
+        {{ 'REDAN. Aplicación de configuración' }}
+    </div>
+    <div class="body">
+        <h2 class="redan-title">
+            {{ 'REDAN CFGR'}}
+        </h2>
+        <p class="version">
+            {{localConfig.Version}}{{localConfig.SubVersion}} {{localConfig.Date}}
+        </p>
+        <div class="copyright"> 
+            {{ 'Nucleo CC Copyright ©2018..2021 Todos los Derechos Reservados.'}}
+        </div>
+        <div class="licence">
+            <p style="text-align: right"><a [href]="licenseEndpoint" target="_blank">Acuerdo de Licencia</a></p>
+        </div>
+    </div>
+    <div class="btn">
+        <button class="custom-raised-btn" mat-raised-button (click)="dialogRef.close()" cdkFocusInitial>{{'Aceptar'}}</button>
+    </div>
+</div>

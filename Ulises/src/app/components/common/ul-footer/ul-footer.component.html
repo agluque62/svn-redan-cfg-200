@@ -1,0 +1,16 @@
+<div class="footer">
+    <div class="copy">
+        Nucleo CC Copyright ©2018..2021 Todos los Derechos Reservados. Powered by Exceltic.
+    </div>
+    <div class="version">
+        <div class="number" *ngIf="version && version.version && version.subversion ">
+            {{ version.version }}{{ version.subversion }}
+        </div>
+        <div class="r16" *ngIf="version && version.R16Mode">
+            {{ ' R16' }}
+        </div>
+    </div>
+    <div class="deploy-info">        
+        10/03/2021 - Correción features de Mantis [2747] [2752] [2774] [2782] [2786] [2788] [2790] [2791] [2792] [2793] [2796] [2797] [2798] [2801] [2802] [2804]
+    </div>
+</div>

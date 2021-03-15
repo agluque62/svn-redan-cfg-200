@@ -1,0 +1,75 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.title {
+
+    color: #1f5761;
+    border-bottom: 1px solid #1f5761;
+    width: 100%;
+    font-size: larger;
+    margin-bottom: 20px;
+} 
+
+.mat-dialog-container {
+    padding: 40px!important;
+    min-width: 400px!important;
+}
+
+.mat-form-field.mat-form-field-disabled {
+    
+    .mat-form-field-label {
+        color: rgba(0,0,0,.7)!important;
+    }
+
+    .mat-input-element {
+        color: rgba(0,0,0,.7)!important;
+    }
+
+    .mat-select-disabled {
+        .mat-select-value {
+            color: rgba(0,0,0,.7)!important;
+        }
+    }
+}
+
+mat-checkbox {
+                    
+    &.mat-checkbox-checked {
+
+        ::ng-deep .mat-checkbox-background {
+            background-color: #48803e!important;
+        }    
+    }
+    
+    &.mat-checkbox-disabled {
+        ::ng-deep .mat-checkbox-background {
+            background-color: #b0b0b0 !important;
+        }
+    }
+}
+
+.create-btn {
+
+    background-color: #4c82427a;
+
+    &:hover {
+        opacity: 0.9;
+    }
+}
+
+.modify-btn {
+
+    background-color: gainsboro;
+
+    &:hover {
+        opacity: 0.9;
+    }
+}
+
+.error-message {
+    color: #f44336;
+    font-size: 75%;
+    padding: 10px;
+}

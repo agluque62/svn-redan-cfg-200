@@ -1,0 +1,108 @@
+.resource-home {
+
+    display: flex;
+    flex-direction: column;
+    margin: 15px;
+    height: calc(100% - 30px);
+
+    .title {
+
+        display: flex;
+        flex-direction: column;
+
+        .subtitle {
+
+            display: flex;
+            margin-top: 10px;
+
+            .slot {
+                margin-right: 30px;
+            }
+        }
+    }
+
+    #formSelector {
+        padding: 10px;
+    }
+
+    .form {
+        flex: 1;
+        display: flex;
+    
+        .main {
+            
+            display: flex;
+            width: 100%;
+
+            .main-resource {
+
+                display: flex;
+                flex-direction: column;
+                background-color: #00800038;
+                border-radius: 10px;
+
+                mat-form-field {
+                    padding: 30px;
+                }
+
+                mat-checkbox {
+                    align-self: center;
+                }
+
+                .actions {
+
+                    display: flex;
+                    flex-direction: column;
+
+                    .common-actions {
+
+                        grid-auto-flow: column;
+                        grid-column-gap: 10px;
+                        align-self: center;
+                    }
+
+                    button {
+                        margin: 15px;
+                        align-self: center;
+                    }
+                }
+            }
+
+            .settings-resource {
+
+                margin-left: 10px;
+                width: 100%;
+
+                .audio-settings {
+
+                    display: flex;
+                    flex-direction: column;
+                    width: 100%;
+
+                    .agc {
+
+                        display: inline-flex;
+                        margin: 10px;
+                        padding: 10px;
+
+                        .agc-checkbox {
+                            margin-right: 20px;
+                        }
+    
+                        mat-checkbox {
+                            align-self: center;
+                        }
+    
+                        mat-form-field {
+                            margin-left: 20px;
+                        }
+                    }
+                }
+
+                ::ng-deep .no-display {
+                    display: none;
+                }
+            }
+        }
+    }
+}

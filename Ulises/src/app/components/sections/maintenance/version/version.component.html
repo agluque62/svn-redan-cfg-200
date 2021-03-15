@@ -1,0 +1,75 @@
+<div class="main">
+    <div class="title">
+        {{ 'Versión' }}
+    </div>
+
+    <div class="mat-elevation-z8" *ngIf="ready">
+
+        <div class="table-row">
+            <div class="table-column">
+                <div class="label">
+                    {{ 'Versión' }}
+                </div>
+            </div>
+            <div class="table-column">
+                <div class="version-text" *ngIf="version && version.version != null && version.subversion != null">
+                    {{ version.version }}.{{ version.subversion}}, {{version.date}}
+                </div>
+            </div>
+        </div>
+
+        <div class="table-row">
+            <div class="table-column">
+                <div class="label">
+                    {{ 'Node JS'}}
+                </div>
+            </div>
+            <div class="table-column">
+                <div class="node-text" *ngIf="version && version.nodejsversion">
+                    {{ version.nodejsversion }}
+                </div>
+            </div>
+        </div>
+
+        <div class="table-row">
+            <div class="table-column">
+                <div class="label">
+                    {{ 'MySQL'}}
+                </div>
+            </div>
+            <div class="table-column">
+                <div class="mysql-text" *ngIf="version && version.mysqlversion">
+                    {{ version.mysqlversion }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="title files">
+        {{ 'Archivos' }}
+    </div>
+    <div class="mat-elevation-z8">
+        <div class="table-row" *ngFor="let file of version.file">
+            <div class="table-column">
+                <div class="label">
+                    {{ file.Name }}
+                </div>
+            </div>
+            <div class="table-column">
+                <div class="label">
+                    {{ file.date }}
+                </div>
+            </div>
+            <div class="table-column">
+                <div class="label">
+                    {{ file.fileSizeInBytes }}
+                </div>
+            </div>
+            <div class="table-column">
+                <div class="label">
+                    {{ file.md5 }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

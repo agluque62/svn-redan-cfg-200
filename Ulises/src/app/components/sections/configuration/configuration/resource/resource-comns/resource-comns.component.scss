@@ -1,0 +1,48 @@
+.comns-tab {
+    display: inline-flex;
+    width: 100%;
+    .main-uri {
+        display: grid;
+        width: inherit;
+        .uri-fields {
+            display: grid;
+            grid-column-gap: 10px;
+            width: inherit;
+            .uri-settings {
+                display: flex;
+                flex-direction: column;
+                margin: 10px;
+                .site {
+                    border-bottom: 1px solid;
+                }
+                .uri-row {
+                    display: grid;
+                    grid-auto-flow: column;
+                    grid-column-gap: 10px;
+                    button {
+                        width: fit-content;
+                        margin: auto;
+                    }
+                    mat-form-field {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+    .uri-selects {
+        margin-top: 40px;
+        width: inherit;
+        .opts-row {
+            display: grid;
+            grid-auto-flow: column;
+            grid-column-gap: 10px;
+        }
+        .filter {
+            display: inherit;
+            button {
+                margin-bottom: 1px;
+            }
+        }
+    }
+}

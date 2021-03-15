@@ -1,0 +1,128 @@
+:host {
+
+    .gateway-select {
+
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+
+        .copy-form-field {
+            
+            max-width: 410px;
+            width: 100%;
+        }
+    }
+
+    .tabs {
+
+        margin: 0 25px;
+
+        .sip-form, .sinc-form, .snpm-form, .web-form, .recording-form {
+
+            display: flex;
+            flex-direction: column;
+            width: 75%;
+            margin: 15px auto 0 auto;
+
+            .fields, .traps {
+
+                display: flex;
+
+                .col {
+
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+
+                    &.traps-list {
+
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                        padding-bottom: 1.34375em;
+                        
+                        .trap-items {
+                            
+                            min-height: 170px;
+                            background-color: rgba(0,0,0,.04);
+                            border: 1px solid #8e8e8e;
+                            cursor: pointer;
+
+                            .items {
+
+                                border-bottom: 1px solid #8e8e8e;
+
+                                &.selected {
+                                    background-color: grey;
+                                    color: white;
+                                }
+                            }
+                        }
+
+                        .btns {
+                            display: flex;
+                            justify-content: space-around;
+                        }
+                    }
+
+                    mat-form-field {
+                        margin: 0 5px;
+                    }
+
+                    .form-item {
+
+                        justify-content: space-between;
+                        height: 60px;
+                        display: flex;
+                        padding: 0 .75em 0 .75em;
+                        line-height: 60px;    
+                        padding-bottom: 1.34375em;
+
+                        mat-checkbox {
+    
+                            &.mat-checkbox-checked {
+    
+                                ::ng-deep .mat-checkbox-background {
+                                    background-color: #48803e!important;
+                                }
+                            }
+
+                            &.mat-checkbox-disabled {
+                                ::ng-deep .mat-checkbox-background {
+                                    background-color: #b0b0b0 !important;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            .proxies, .registrars, .sinc {
+
+                display: flex;
+
+                .selectors {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 2; 
+                }           
+
+                .btns {
+
+                    flex: 1; 
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-around;
+                    
+                    .items {
+
+                        margin: auto;
+                        margin-right: 0;
+                        width: 175px;
+                        text-align: center;
+                    }
+                }
+            }
+        }
+    }
+}

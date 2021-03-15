@@ -1,0 +1,9 @@
+.main-form{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    mat-form-field, mat-checkbox{
+        padding: inherit
+    }
+}

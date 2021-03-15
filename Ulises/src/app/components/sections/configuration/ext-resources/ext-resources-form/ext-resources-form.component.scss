@@ -1,0 +1,24 @@
+.main {
+
+    .form {
+
+        display: flex;
+        flex-direction: column;
+
+        mat-form-field {
+            
+            padding-bottom: 0px;
+
+            &.error {
+                padding-bottom: 30px;
+            }
+        }
+    }
+
+    .btns {
+
+        display: flex;
+        justify-content: space-around;
+        margin-top: 10px;
+    }
+}

@@ -1,0 +1,143 @@
+<div class="main">
+    <div class="title">
+        <div *ngIf="type == 'CREATE' && !visualizationMode">{{'Crear nueva tabla'}}</div>
+        <div *ngIf="type == 'EDIT' && !visualizationMode">{{'Modificar tabla'}}</div>
+        <div *ngIf="visualizationMode">{{'Visualización tabla'}}</div>
+    </div>
+
+    <form class="form" [formGroup]="tableBssForm">
+
+        <div class="col">
+            <mat-form-field appearance="fill" [ngClass]="{'error': tableBssForm.controls['name'].hasError('pattern')}">
+                <mat-label>{{'Id. Tabla'}}</mat-label>
+                <input matInput formControlName="name">
+                <mat-error *ngIf="tableBssForm.controls['name'].hasError('pattern')">
+                    {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+                </mat-error>
+            </mat-form-field>
+    
+            <mat-form-field appearance="fill">
+                <mat-label>{{'Descripción'}}</mat-label>
+                <input matInput formControlName="description">
+            </mat-form-field>
+    
+            <mat-form-field *ngIf="type == 'EDIT'" appearance="fill">
+                <mat-label>{{'Fecha de creación'}}</mat-label>
+                <input matInput formControlName="FechaCreacion">
+            </mat-form-field>
+        </div>
+
+        <div class="col">
+
+            <div class="mat-elevation-z8">
+                <div class="header-row">
+                    <div class="header-column">
+                        {{ 'NUCLEO' }}
+                    </div>
+                    <div class="header-column">
+                        {{ 'RSSI' }}
+                    </div>
+                </div>
+    
+                <div class="table-row">
+                    <div class="table-column">
+                        {{ 0 }}
+                    </div>
+                    <div class="table-column">
+                        <mat-form-field class="select" appearance="fill">
+                            <mat-select formControlName="valor0">
+                                <mat-option [value]="type" *ngFor="let type of rssiValues">
+                                    {{ type }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+    
+                <div class="table-row">
+                    <div class="table-column">
+                        {{ 10 }}
+                    </div>
+                    <div class="table-column">
+                        <mat-form-field class="select" appearance="fill">
+                            <mat-select formControlName="valor1">
+                                <mat-option [value]="type" *ngFor="let type of rssiValues">
+                                    {{ type }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+    
+                <div class="table-row">
+                    <div class="table-column">
+                        {{ 20 }}
+                    </div>
+                    <div class="table-column">
+                        <mat-form-field class="select" appearance="fill">
+                            <mat-select formControlName="valor2">
+                                <mat-option [value]="type" *ngFor="let type of rssiValues">
+                                    {{ type }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+    
+                <div class="table-row">
+                    <div class="table-column">
+                        {{ 30 }}
+                    </div>
+                    <div class="table-column">
+                        <mat-form-field class="select" appearance="fill">
+                            <mat-select formControlName="valor3">
+                                <mat-option [value]="type" *ngFor="let type of rssiValues">
+                                    {{ type }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+    
+                <div class="table-row">
+                    <div class="table-column">
+                        {{ 40 }}
+                    </div>
+                    <div class="table-column">
+                        <mat-form-field class="select" appearance="fill">
+                            <mat-select formControlName="valor4">
+                                <mat-option [value]="type" *ngFor="let type of rssiValues">
+                                    {{ type }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+    
+                <div class="table-row">
+                    <div class="table-column">
+                        {{ 50 }}
+                    </div>
+                    <div class="table-column">
+                        <mat-form-field class="select" appearance="fill">
+                            <mat-select formControlName="valor5">
+                                <mat-option [value]="type" *ngFor="let type of rssiValues">
+                                    {{ type }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </form>
+
+    <div class="btns">
+        <button mat-raised-button *ngIf="type == 'CREATE' && !visualizationMode" (click)="createTableBss()">{{'Guardar'}}</button>
+        <button mat-raised-button *ngIf="type == 'EDIT' && !visualizationMode" (click)="editTableBss()">{{'Guardar'}}</button>
+        <button mat-raised-button *ngIf="type == 'EDIT' && !visualizationMode" (click)="deleteTableBss()">{{'Eliminar'}}</button>
+        <button mat-raised-button (click)="dialogRef.close()" cdkFocusInitial>{{'Cancelar'}}</button>
+    </div>
+</div>

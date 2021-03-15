@@ -1,0 +1,42 @@
+<form class="main-form" [formGroup]="resourceForm" *ngIf="isReady">
+    <mat-checkbox formControlName="iEnableNoED137">Permite Llamadas No ED137</mat-checkbox>
+    <mat-checkbox formControlName="respuesta_automatica">Respuesta automática</mat-checkbox>
+    <mat-form-field appearance="fill">
+        <mat-label>Lado</mat-label>
+        <mat-select formControlName="lado" ([value])="this.resourceForm.value.lado" name="side">
+            <mat-option *ngFor="let side of sides" [value]="side.value">
+                {{side.viewValue}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="isR2" appearance="fill">
+        <mat-label>Time Out respuesta llamada</mat-label>
+        <mat-select [(value)]="timeOpt" name="timeoutSel" (selectionChange)="changeTimeOpt($event)">
+            <mat-option *ngFor="let opt of timeOpts" [value]="opt.value">
+                {{opt.viewValue}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="legacy">
+        <mat-label>Origen llamadas salientes de test</mat-label>
+        <input matInput formControlName="origen_test" [maxLength]="6">
+        <mat-error *ngIf="resourceForm.get('origen_test')?.hasError('pattern')">
+            {{ 'Número no válido. El valor debe estar entre 200000 y 399999. Y debe ser de longitud 6' }}
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="legacy">
+        <mat-label>Destino llamadas salientes de test</mat-label>
+        <input matInput formControlName="destino_test" [maxLength]="6">
+        <mat-error *ngIf="resourceForm.get('destino_test')?.hasError('pattern')">
+            {{ 'Número no válido. El valor debe estar entre 200000 y 399999. Y debe ser de longitud 6' }}
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Duración tono interrupción (sg.)</mat-label>
+        <mat-select [disabled]="visualizationMode" [(value)]="duration" name="duration">
+            <mat-option *ngFor="let duration of durations" [value]="duration.value">
+                {{duration.viewValue}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</form>

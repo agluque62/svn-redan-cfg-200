@@ -1,0 +1,64 @@
+.main {
+    
+    width: 550px;
+
+    .form {
+
+        display: flex;
+        justify-content: center;
+        flex-direction: column;     
+        
+        mat-form-field {
+            max-width: 330px;
+            width: 100%;
+            margin: auto;
+            padding-bottom: 0px;
+
+            &.error {
+                padding-bottom: 30px;
+            }
+        }
+    }
+
+    .btns {
+
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+
+        .gateway-btns {
+
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+
+            button {
+                margin: 0 10px;
+                white-space: pre-wrap;
+            }
+        }
+
+        .site-btns {
+
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+
+            button {
+                
+                margin: 0 10px;
+                white-space: pre-wrap;
+            }
+        }
+
+        .cancel-btns {
+
+            margin: 10px auto;
+            margin-bottom: 0;
+
+            button {
+                white-space: pre-wrap;
+            }
+        }
+    }
+}

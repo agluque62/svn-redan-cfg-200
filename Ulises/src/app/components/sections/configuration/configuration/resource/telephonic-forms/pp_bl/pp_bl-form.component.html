@@ -1,0 +1,32 @@
+<form class="main-form" [formGroup]="resourceForm">
+    <mat-form-field appearance="legacy">
+        <mat-label>AGVN User Name</mat-label>
+        <input matInput formControlName="ats_user" (change)="checkAGVNName($event)" [maxLength]="6">
+        <mat-error *ngIf="resourceForm.get('ats_user')?.hasError('pattern')">
+            {{ 'Número no válido. El valor debe estar entre 200000 y 399999. Y debe ser de longitud 6' }}
+        </mat-error>
+    </mat-form-field>
+    <mat-checkbox formControlName="iEnableNoED137">Permite Llamadas No ED137</mat-checkbox>
+    <mat-checkbox formControlName="deteccion_vox" [disabled]="false" (change)="resetVoxValues($event.checked)">
+        Deteccion VOX</mat-checkbox>
+    <mat-form-field appearance="legacy" *ngIf="detectVoxIsChecked">
+        <mat-label>Umbral Vox (dB)</mat-label>
+        <input matInput formControlName="umbral_vox">
+        <mat-error *ngIf="resourceForm.get('umbral_vox')?.hasError('min') || resourceForm.get('umbral_vox')?.hasError('max')">
+            {{ 'Valor fuera de rango (-35, -15)' }}
+        </mat-error>
+        <mat-error *ngIf="resourceForm.get('umbral_vox')?.hasError('pattern')">
+            {{ 'Formato numérico no válido' }}
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="legacy" *ngIf="detectVoxIsChecked">
+        <mat-label>Cola Vox (sg.)</mat-label>
+        <input matInput formControlName="cola_vox">
+        <mat-error *ngIf="resourceForm.get('cola_vox')?.hasError('min') || resourceForm.get('cola_vox')?.hasError('max')">
+            {{ 'Valor fuera de rango (0, 30)' }}
+        </mat-error>
+        <mat-error *ngIf="resourceForm.get('cola_vox')?.hasError('pattern')">
+            {{ 'Formato numérico no válido' }}
+        </mat-error>
+    </mat-form-field>
+</form>

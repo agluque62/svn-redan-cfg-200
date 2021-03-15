@@ -1,0 +1,48 @@
+<div class="main" *ngIf="ready">
+    <div class="title" *ngIf="type=='EDIT'">
+        {{ title }}
+    </div>
+    <div class="title" *ngIf="type=='CREATE'">
+        {{'Crear nueva pasarela'}}
+    </div>
+
+    <div class="back">
+        <button mat-icon-button (click)="back()" aria-label="Volver a configuración">
+            <mat-icon>keyboard_backspace</mat-icon>
+            {{'Volver'}}
+        </button>
+    </div>
+
+    <form class="form" [formGroup]="gatewayForm">
+
+        <mat-spinner class="spinner" *ngIf="showSpinner"></mat-spinner>
+
+        <mat-tab-group class="tabs" [selectedIndex]="tabIdx">
+            <mat-tab label="General">
+                <ng-template matTabContent>
+                    <gateway-general [gateway]="gateway" [type]="type" [form]="gatewayForm"></gateway-general>
+                </ng-template>
+            </mat-tab>
+            <mat-tab label="Servicios">
+                <ng-template matTabContent>
+                    <gateway-services [gateway]="gateway" [gatewayIps]="gatewayIps" [form]="gatewayForm">
+                    </gateway-services>
+                </ng-template>
+            </mat-tab>
+            <mat-tab label="Hardware" *ngIf="type=='EDIT'">
+                <ng-template matTabContent>
+                    <gateway-hardware [gateway]="gateway"></gateway-hardware>
+                </ng-template>
+            </mat-tab>
+        </mat-tab-group>
+    </form>
+
+    <div class="btns" *ngIf="!visualizationMode">
+        <button mat-raised-button (click)="activateInField()" *ngIf="type == 'EDIT'">{{'Activar en campo'}}</button>
+        <button mat-raised-button (click)="createGateway()" *ngIf="type == 'CREATE'">{{'Guardar'}}</button>
+        <button mat-raised-button (click)="updateGateway()" *ngIf="type == 'EDIT'">{{'Guardar'}}</button>
+        <button mat-raised-button (click)="copyGateway()" *ngIf="type == 'EDIT'">{{'Copiar'}}</button>
+        <button mat-raised-button (click)="deleteGateway()" *ngIf="type == 'EDIT'">{{'Eliminar'}}</button>
+        <button mat-raised-button (click)="exportGateway()">{{'Exportar'}}</button>
+    </div>
+</div>

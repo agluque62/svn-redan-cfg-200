@@ -1,0 +1,99 @@
+<div class="title">
+    <mat-label>Comunicaciones</mat-label>
+</div>
+<div class="comns-tab">
+    <div class="main-uri">
+        <div class="uri-fields">
+            <div class="uri-settings" *ngFor="let site of uriList; index as i">
+                <mat-label class="site">{{site.name}}</mat-label>
+                <mat-label class="uri-title">TX</mat-label>
+                <div class="uri-row" *ngFor="let row of site.fields.tx">
+                    <mat-form-field appearance="legacy">
+                        <mat-label>NombreRecurso@IP:Puerto</mat-label>
+                        <input matInput [disabled]="visualizationMode" [(ngModel)]="row.uri"
+                            (change)="checkUri($event, row.nivel_colateral, row.tipo)">
+                    </mat-form-field>
+                    <button mat-raised-button
+                        [disabled]="visualizationMode || (selectedResourceType !== undefined && selectedResourceType !== CONFIGURATION_RESOURCE_TYPE
+                        && (selectedExtResource !== undefined && selectedExtResource.tipo !== RADIO_TX && selectedExtResource.tipo !== RADIO_TX_RX))"
+                        (click)="makeURI(i, row.nivel_colateral, row.tipo)"> {{arrow}} </button>
+                </div>
+                <mat-label class="uri-title">RX</mat-label>
+                <div class="uri-row" *ngFor="let row of site.fields.rx">
+                    <mat-form-field appearance="legacy">
+                        <mat-label>NombreRecurso@IP:Puerto</mat-label>
+                        <input matInput [disabled]="visualizationMode" [(ngModel)]="row.uri"
+                            (change)="checkUri($event, row.nivel_colateral, row.tipo)">
+                    </mat-form-field>
+                    <button mat-raised-button
+                        [disabled]="visualizationMode || (selectedResourceType !== undefined && selectedResourceType !== CONFIGURATION_RESOURCE_TYPE
+                        && (selectedExtResource !== undefined && selectedExtResource.tipo !== RADIO_RX && selectedExtResource.tipo !== RADIO_TX_RX))"
+                        (click)="makeURI(i, row.nivel_colateral, row.tipo)"> {{arrow}} </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="uri-selects">
+        <mat-form-field appearance="fill">
+            <mat-label>Seleccione tipo de recurso</mat-label>
+            <mat-select [(ngModel)]="selectedResourceType" (selectionChange)="checkResourceTypeSelected()"
+                name="resourceTypes">
+                <mat-option *ngFor="let type of resourceTypes" [value]="type.value">
+                    {{type.viewValue}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div class="opts-row" *ngIf="displayConfResourceOpts">
+            <mat-form-field appearance="fill">
+                <mat-label>Seleccione emplazamiento</mat-label>
+                <mat-select [(ngModel)]="selectedSite" name="sites" (selectionChange)="getGateways()">
+                    <mat-option *ngFor="let site of sites.data" [value]="site.idemplazamiento">
+                        {{site.eName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" *ngIf="displayGateways">
+                <mat-label>Seleccione pasarela</mat-label>
+                <mat-select [(ngModel)]="selectedGateway" name="gateways" (selectionChange)="getResources()">
+                    <mat-option *ngFor="let gateway of gateways.data" [value]="gateway.idpasarela">
+                        {{gateway.gName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" *ngIf="displayResource">
+                <mat-label>Seleccione recurso</mat-label>
+                <mat-select [(ngModel)]="selectedConfResource" name="resourcesConf">
+                    <mat-option *ngFor="let resource of resourcesConf.data; index as i" [value]="i">
+                        {{resource.rName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="opts-row" *ngIf="displayExtResourceOpts">
+            <mat-form-field appearance="fill">
+                <mat-label>Seleccione tipo de recurso</mat-label>
+                <mat-select [(ngModel)]="selectedOptFilter" (selectionChange)="checkExtOptSelected()"
+                    name="filterResources">
+                    <mat-option *ngFor="let opt of optionsFilter" [value]="opt.value">
+                        {{opt.viewValue}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div class="filter" *ngIf="selectedOptFilter == 4 || selectedOptFilter == 5">
+                <mat-form-field appearance="legacy">
+                    <mat-label>Carácteres a buscar</mat-label>
+                    <input matInput [(ngModel)]="stringToFilter">
+                </mat-form-field>
+                <button mat-raised-button (click)="checkExtOptSelected()"> Buscar recursos </button>
+            </div>
+            <mat-form-field appearance="fill" *ngIf="displayExtResource">
+                <mat-label>Seleccione recurso</mat-label>
+                <mat-select [(ngModel)]="selectedExtResource" (selectionChange)="test()" name="extResources">
+                    <mat-option *ngFor="let resource of extResources.lista_recursos; index as i" [value]="resource">
+                        {{resource.alias}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+</div>

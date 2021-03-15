@@ -1,0 +1,64 @@
+export class TelephoneResource {
+    DetInversionPol!: number;
+    additional_itiporespuesta!: number;
+    additional_superv_options!: number;
+    additional_uri_remota!: string;
+    ajuste_ad!: number;
+    ajuste_da!: number;
+    ats_user!: string;
+    clave_registro!: any;
+    codec!: number;
+    cola_vox!: number;
+    destino_test!: string;
+    deteccion_vox!: number;
+    duracion_tono_interrup!: number;
+    iDetLineaAB!: number;
+    iEnableNoED137!: number;
+    idrecurso_telefono!: number;
+    itiporespuesta!: number;
+    lado!: number;
+    nombre!: string;
+    origen_test!: string;
+    periodo_tonos!: number;
+    precision_audio!: number;
+    respuesta_automatica!: number;
+    supervisa_colateral!: number;
+    tiempo_supervision!: number;
+    tipo_interfaz_tel!: number;
+    umbral_vox!: number;
+    uri_telefonica!: string;
+    fila!: string;
+    columna!: string;
+    pasarela_id!: number;
+    ranks!: any;
+    IT_int_Warning!: number;
+    
+    constructor() {
+        this.ajuste_ad = 0;
+        this.ajuste_da = 0;
+        this.codec = 0;
+        this.precision_audio = 0;
+        this.DetInversionPol = 0;
+        this.additional_itiporespuesta = 0;
+        this.additional_superv_options = 0;
+        this.additional_uri_remota= "";
+        this.ats_user = "";
+        this.cola_vox = 0;
+        this.destino_test = "";
+        this.deteccion_vox = 1;
+        this.duracion_tono_interrup = 5;
+        this.iDetLineaAB = 0;
+        this.iEnableNoED137 = 0;
+        this.itiporespuesta = 0;
+        this.lado = 0;
+        this.origen_test = "";
+        this.periodo_tonos = 5;
+        this.ranks = [];
+        this.respuesta_automatica = 0;
+        this.supervisa_colateral = 0;
+        this.tiempo_supervision = 10;
+        this.tipo_interfaz_tel = 0;
+        this.umbral_vox = -35;
+        this.uri_telefonica = "";
+    }
+}

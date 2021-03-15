@@ -1,0 +1,163 @@
+<form class="form" [formGroup]="form" *ngIf="ready">
+
+    <div *ngIf="form.errors?.ipEqualsValidator && (form.touched || form.dirty)" class="error-message">
+        {{ 'La dirección IP Virtual y las IPs de las CPUs deben ser diferentes.'}}
+    </div>
+
+    <div class="row">
+        <div class="col">
+
+            <mat-form-field appearance="fill">
+                <mat-label>{{'Id. Pasarela'}}</mat-label>
+                <input matInput required formControlName="nombre">
+                <mat-error *ngIf="form.controls['nombre'].hasError('required')">
+                    {{ 'Este campo es obligatorio.' }}
+                </mat-error>
+                <mat-error *ngIf="form.controls['nombre'].hasError('pattern')">
+                    {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>{{'Dirección IP Virtual'}}</mat-label>
+                <input matInput required formControlName="ipv">
+                <mat-error *ngIf="form.controls['ipv'].hasError('required')">
+                    {{ 'Este campo es obligatorio.' }}
+                </mat-error>
+                <mat-error *ngIf="form.controls['ipv'].hasError('pattern')">
+                    {{ 'Debe introducir una IP válida.' }}
+                </mat-error>
+            </mat-form-field>
+
+            <div class="form-item dual">
+                <mat-label>{{'CPU dual'}}</mat-label>
+                <mat-checkbox class="checkbox" [disabled]="true" [checked]="true"></mat-checkbox>
+            </div>
+
+            <div class="form-item">
+                <mat-label>{{'Pendiente actualizar'}}</mat-label>                
+                <mat-checkbox class="checkbox" formControlName="pendiente_actualizar"></mat-checkbox>
+            </div>
+
+        </div>
+
+        <div class="col">
+
+            <mat-form-field class="select" appearance="fill" *ngIf="type=='EDIT'">
+                <mat-label>{{'Emplazamiento'}}</mat-label>
+                <mat-select formControlName="EMPLAZAMIENTO_idEMPLAZAMIENTO" (selectionChange)="siteChanges($event.value)">
+                    <mat-option [value]="site.idEMPLAZAMIENTO" *ngFor="let site of siteOptions">
+                        {{ site.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>{{'Supervisión Puerta de Enlace'}}</mat-label>
+                <mat-select formControlName="sppe">
+                    <mat-option [value]="0">{{'No'}}</mat-option>
+                    <mat-option [value]="sppe" *ngFor="let sppe of sppeOptions">
+                        <div *ngIf="sppe === 1">
+                            {{ sppe }} {{ 'Segundo'}}
+                        </div>
+                        <div *ngIf="sppe !== 1">
+                            {{ sppe }} {{ 'Segundos'}}
+                        </div>
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>{{'Retardo activación modo dual'}}</mat-label>
+                <mat-select formControlName="dvrrp">
+                    <mat-option [value]="dvrrp" *ngFor="let dvrrp of dvrrpOptions">
+                        {{ dvrrp/1000 }} {{ 'Segundos'}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>{{'Última actualización'}}</mat-label>
+                <input matInput required formControlName="ultima_actualizacion">
+            </mat-form-field>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <mat-tab-group class="cpu">
+            <mat-tab label="CPU 0">
+                <div class="cpu-form">
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'IP'}}</mat-label>
+                        <input matInput required formControlName="ipb1">
+                        <mat-error *ngIf="form.controls['ipb1'].hasError('required')">
+                            {{ 'Este campo es obligatorio.' }}
+                        </mat-error>
+                        <mat-error *ngIf="form.controls['ipb1'].hasError('pattern')">
+                            {{ 'Debe introducir una IP válida.' }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'IP gateway'}}</mat-label>
+                        <input matInput required formControlName="ipg1">
+                        <mat-error *ngIf="form.controls['ipg1'].hasError('required')">
+                            {{ 'Este campo es obligatorio.' }}
+                        </mat-error>
+                        <mat-error *ngIf="form.controls['ipg1'].hasError('pattern')">
+                            {{ 'Debe introducir una IP válida.' }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'Máscara'}}</mat-label>
+                        <input matInput required formControlName="msb1">
+                        <mat-error *ngIf="form.controls['msb1'].hasError('required')">
+                            {{ 'Este campo es obligatorio.' }}
+                        </mat-error>
+                        <mat-error *ngIf="form.controls['msb1'].hasError('pattern')">
+                            {{ 'Debe introducir una máscara válida.' }}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </mat-tab>
+            <mat-tab label="CPU 1">
+                <div class="cpu-form">
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'IP'}}</mat-label>
+                        <input matInput required formControlName="ipb2">
+                        <mat-error *ngIf="form.controls['ipb2'].hasError('required')">
+                            {{ 'Este campo es obligatorio.' }}
+                        </mat-error>
+                        <mat-error *ngIf="form.controls['ipb2'].hasError('pattern')">
+                            {{ 'Debe introducir una IP válida.' }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'IP gateway'}}</mat-label>
+                        <input matInput required formControlName="ipg2">
+                        <mat-error *ngIf="form.controls['ipg2'].hasError('required')">
+                            {{ 'Este campo es obligatorio.' }}
+                        </mat-error>
+                        <mat-error *ngIf="form.controls['ipg2'].hasError('pattern')">
+                            {{ 'Debe introducir una IP válida.' }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'Máscara'}}</mat-label>
+                        <input matInput required formControlName="msb2">
+                        <mat-error *ngIf="form.controls['msb2'].hasError('required')">
+                            {{ 'Este campo es obligatorio.' }}
+                        </mat-error>
+                        <mat-error *ngIf="form.controls['msb2'].hasError('pattern')">
+                            {{ 'Debe introducir una máscara válida.' }}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</form>

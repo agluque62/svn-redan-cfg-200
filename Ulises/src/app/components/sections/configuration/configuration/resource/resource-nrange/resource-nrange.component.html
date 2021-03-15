@@ -1,0 +1,55 @@
+<div class="main-nrange">
+    <div class="title">
+        <mat-label>Rango número ATS</mat-label>
+    </div>
+    <mat-tab-group mat-align-tabs="start" *ngIf="ready">
+        <mat-tab label="Origen">
+            <div class="custom-table mat-elevation-z8">
+                <div class="header-row">
+                    <div class="header-column">
+                        Inicio
+                    </div>
+                    <div class="header-column">
+                        Final
+                    </div>
+                </div>
+                <div class="table-row" *ngFor="let rank of originRanks; index as i">
+                    <div class="table-column">
+                        <mat-form-field appearance="legacy">
+                            <input matInput [disabled]="visualizationMode" [maxLength]="6" (change)="saveValue($event, i, 0, 'inicial')" [value]="rank.inicial">
+                        </mat-form-field>
+                    </div>
+                    <div class="table-column">
+                        <mat-form-field appearance="legacy">
+                            <input matInput [disabled]="visualizationMode" [maxLength]="6" (change)="saveValue($event, i, 0, 'final')" [value]="rank.final">
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="Destino" *ngIf="displayDestination">
+            <div class="custom-table mat-elevation-z8">
+                <div class="header-row">
+                    <div class="header-column">
+                        Inicio
+                    </div>
+                    <div class="header-column">
+                        Final
+                    </div>
+                </div>
+                <div class="table-row" *ngFor="let rank of destinationRanks; index as i">
+                    <div class="table-column">
+                        <mat-form-field appearance="legacy">
+                            <input matInput [disabled]="visualizationMode" [maxLength]="6" (change)="saveValue($event, i, 1, 'inicial')" [value]="rank.inicial">
+                        </mat-form-field>
+                    </div>
+                    <div class="table-column">
+                        <mat-form-field appearance="legacy">
+                            <input matInput [disabled]="visualizationMode" [maxLength]="6" (change)="saveValue($event, i, 1, 'final')" [value]="rank.final">
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>

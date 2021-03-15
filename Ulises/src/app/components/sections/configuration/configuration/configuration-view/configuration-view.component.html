@@ -1,0 +1,121 @@
+<div class="main" *ngIf="ready">
+    <div class="title">
+        {{'Configuración: '}} {{configuration.name}}
+    </div>
+
+    <div class="back">
+        <button mat-icon-button (click)="back()" aria-label="Volver a configuración">
+            <mat-icon>keyboard_backspace</mat-icon>
+            {{'Volver'}}
+        </button>
+    </div>
+
+    <div class="config">
+        
+        <div class="config-data">
+        
+            <mat-spinner class="spinner" *ngIf="showSpinner"></mat-spinner>
+
+            <form class="form" [formGroup]="configForm">
+    
+                <mat-form-field appearance="fill" [ngClass]="{'error': configForm.controls['name'].hasError('pattern')}">
+                    <mat-label>{{'Id. Configuración'}}</mat-label>
+                    <input matInput required formControlName="name">
+                    <mat-error *ngIf="configForm.controls['name'].hasError('required')">
+                        {{ 'Este campo es obligatorio.' }}
+                    </mat-error>
+                    <mat-error *ngIf="configForm.controls['name'].hasError('pattern')">
+                        {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+                    </mat-error>
+                </mat-form-field>
+        
+                <mat-form-field appearance="fill">
+                    <mat-label>{{'Descripción'}}</mat-label>
+                    <input matInput formControlName="description">
+                </mat-form-field>
+        
+                <div class="form-item" *ngIf="!supervisionMode">                    
+                    <mat-label>{{'Configuración Supervisada'}}</mat-label>
+                    <mat-checkbox class="checkbox" formControlName="activa"></mat-checkbox>
+                </div>
+
+                <div class="form-item" *ngIf="supervisionMode">                    
+                    <mat-label>{{'Configuración Supervisada'}}</mat-label>
+                    <mat-checkbox class="checkbox" [(ngModel)]="supervised" [ngModelOptions]="{standalone: true}"></mat-checkbox>
+                </div>
+        
+                <mat-form-field appearance="fill">
+                    <mat-label>{{'Última actualización'}}</mat-label>
+                    <input matInput formControlName="fecha_activacion">
+                </mat-form-field>
+        
+            </form>
+    
+        </div>
+
+        <div class="btns" *ngIf="supervisionMode">
+            <button class="col" mat-raised-button (click)="saveSupervisedConfig()">{{'Guardar'}}</button>
+        </div>
+        <div class="btns" *ngIf="!visualizationMode">
+            <div class="col first">
+                <button mat-raised-button (click)="applyChanges()">{{'Activar en campo'}}</button>
+            </div>
+            <div class="col last">
+                <button mat-raised-button (click)="saveConfig()">{{'Guardar'}}</button>
+                <button mat-raised-button (click)="deleteConfig()">{{'Eliminar'}}</button>
+                <button mat-raised-button (click)="copyConfig()">{{'Copiar'}}</button>    
+                <button mat-raised-button (click)="downloadPDF()">{{'PDF'}}</button>
+                <button mat-raised-button (click)="downloadExcel()">{{'Excel'}}</button>
+            </div>
+        </div>
+    
+    </div>
+
+    <div class="sites">
+        <div class="title">
+            {{ 'Emplazamientos' }}
+        </div>
+        <div class="btn">
+            <div class="no-sites" *ngIf="getValidSites().length === 0">
+                {{ 'No hay emplazamientos asignados a esta configuración'}}
+            </div>
+            <button mat-raised-button class="create-btn local-btn" *ngIf="!visualizationMode" (click)="createSite()">{{'Nuevo emplazamiento'}}</button>
+        </div>
+
+        <mat-accordion *ngIf="getValidSites().length > 0">
+            <mat-expansion-panel (opened)="openedSite(site)" [disabled]="clickButton" (click)="clickButton=false" *ngFor="let site of configurationSites">
+                <mat-expansion-panel-header>
+                    <div class="site-panel-header">
+                        <div class="name">
+                            {{ site.nameSite }}
+                        </div>
+                        <button mat-raised-button class="modify-btn local-btn" *ngIf="!visualizationMode" (click)="modifySite(site)">{{'Modificar'}}</button>
+                        <button mat-raised-button class="modify-btn local-btn" *ngIf="visualizationMode" (click)="modifySite(site)">{{'Ver'}}</button>                        
+                    </div>
+                </mat-expansion-panel-header>
+                <mat-panel-description class="site-panel-content">
+                    <div class="site-gateway" (click)="goToGateway(gateways)" *ngFor="let gateways of site.gateways">
+                        {{ gateways.name }}
+                    </div>
+                </mat-panel-description>
+            </mat-expansion-panel> 
+        </mat-accordion>
+    </div>
+
+    <div class="gateways">
+        <div class="title">
+            {{ 'Pasarelas' }}
+        </div>
+        <div class="no-gtw">
+            <div class="no-gateways" *ngIf="configurationGateways.length === 0">
+                {{ 'No hay pasarelas asignadas a esta configuración'}}
+            </div>    
+        </div>
+        <div class="gateway-panel mat-elevation-z8" *ngIf="configurationGateways.length > 0">
+            <div class="gateway" (click)="goToGateway(gateway)" *ngFor="let gateway of configurationGateways">
+                {{ gateway.name }} ({{ gateway.nameSite }})
+            </div>
+        </div>
+    </div>
+
+</div>

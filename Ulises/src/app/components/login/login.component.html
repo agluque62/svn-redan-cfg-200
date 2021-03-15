@@ -1,0 +1,30 @@
+<div class="login-container">
+
+    <form class="login-form">
+
+        <div class="logo"></div>
+
+        <div class="error alert-danger" *ngIf="showErrorLogin()" [ngClass]="showErrorLogin()">
+            <em class="fa fa-times-circle"></em>
+            <div class="message">{{ errorMessage }}</div>
+        </div>
+
+        <form class="example-form">
+            <mat-form-field class="example-full-width">
+              <mat-label>{{'Usuario'}}</mat-label>  
+              <input matInput [(ngModel)]="credentials.username" [ngModelOptions]="{standalone: true}">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>{{'Clave'}}</mat-label>  
+                <input matInput type="password" [(ngModel)]="credentials.password" [ngModelOptions]="{standalone: true}">
+              </mat-form-field>
+        </form>
+
+        <div class="submmit-btn">
+            <button mat-raised-button class="btn" (click)="login()">{{'Login'}}</button>
+        </div>
+
+    </form>
+
+</div>

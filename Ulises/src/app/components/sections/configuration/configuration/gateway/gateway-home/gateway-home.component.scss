@@ -1,0 +1,46 @@
+.main {
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 0 15px;
+
+    .back {
+        
+        cursor: pointer;
+    }
+
+    .form {
+
+        flex: 1;        
+        
+        .spinner {
+
+            position: absolute;
+            top: 50%; 
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            ::ng-deep circle {
+                stroke: #48803e;
+            }
+        }
+
+        .tabs {
+
+            margin: 15px 0;
+            flex: 1;
+        }    
+    }
+
+    .btns {
+
+        display: flex;
+        justify-content: center;
+        margin: 15px 0;
+
+        button {
+            margin: 0 10px;
+        }
+    }
+}

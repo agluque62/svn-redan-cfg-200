@@ -1,0 +1,42 @@
+<mat-tree class="tree" [dataSource]="dataSource" [treeControl]="treeControl" *ngIf="ready">
+
+    <div class="node-tree">
+        <mat-tree-node class="node" [ngClass]="{'selected': node == selected}" *matTreeNodeDef="let node" matTreeNodePadding matTreeNodePaddingIndent="20">
+            <button class="btn leaf" (click)="navigateTo(node)" mat-icon-button [ngClass]="{'selected': node == selected}">
+                <div class="name">
+                    {{node.name}}
+                </div>
+            </button>
+        </mat-tree-node>
+    </div>
+
+    <div class="node-tree">
+        <mat-tree-node class="node" *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding matTreeNodePaddingIndent="20">
+            <button class="btn" mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
+                <mat-icon class="mat-icon-rtl-mirror">
+                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                </mat-icon>
+                <div class="name">
+                    {{node.name}}
+                </div>
+            </button>
+        </mat-tree-node>
+    </div>
+</mat-tree>
+
+<div class="user">
+
+    <div class="about" (click)="aboutDialog()">
+        {{ 'Acerca de ...' }}
+    </div>
+
+    <div class="username">
+        {{'Usuario: ' }} {{ user.name }}
+    </div>
+    <div class="profile">
+        {{'Perfil: ' }} {{ userProfile }}
+    </div>
+    <div class="logout">
+        <button mat-raised-button class="custom-raised-btn" (click)="logout()">{{'Logout'}}</button>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+.main {
+    
+    margin: 15px;
+
+    .content {
+        
+        display: flex;
+        flex-direction: column;
+
+        .config-parameters {
+
+            text-align: center;
+            padding: 5px 0;
+        }
+
+        .form {
+
+            display: flex;
+            flex-wrap: wrap;
+
+            .col {
+
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                margin: 15px 20px;
+
+                .form-item {
+                    justify-content: space-between;
+                    height: 60px;
+                    display: flex;
+                    line-height: 60px;
+                }
+            }
+        }
+
+        .btns {
+
+            margin: auto;
+
+            .save {
+
+                background-color: #4c82427a;
+
+                &:hover {
+                    opacity: 0.9;
+                }
+            }
+        }
+    }
+}

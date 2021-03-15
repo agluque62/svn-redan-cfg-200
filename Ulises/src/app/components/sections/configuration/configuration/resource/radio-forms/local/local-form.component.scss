@@ -1,0 +1,15 @@
+.radio-form{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    mat-checkbox{
+        padding: 10px;
+    }
+}
+.climaxElements{
+    margin:auto;
+    display: grid;
+    grid-auto-flow: column;
+    grid-column-gap: 10px;
+}

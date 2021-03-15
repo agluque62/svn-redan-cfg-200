@@ -1,0 +1,171 @@
+<div class="resource-home" *ngIf="ready">
+    <div class="title">
+        <mat-label>{{ gatewayTitle }}</mat-label>
+        <mat-label class="subtitle">
+            <div class="slot">
+                SLOT:{{this.resource.columna}} Interfaz: {{this.resource.fila}}
+            </div>
+            <div class="uri">
+                URI - Sip: {{ title }}
+            </div>
+        </mat-label>
+    </div>
+    <form class="form" [formGroup]="resourceForm">
+        <div class="main">
+            <div class="main-resource">
+                <mat-form-field appearance="legacy">
+                    <mat-label>Nombre</mat-label>
+                    <input matInput required formControlName="nombre" (change)="saveTmpName($event)">
+                    <mat-error *ngIf="resourceForm.controls['nombre'].hasError('required')">
+                        {{ 'Este campo es obligatorio.' }}
+                    </mat-error>
+                    <mat-error *ngIf="resourceForm.controls['nombre'].hasError('pattern')">
+                        {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>Codec</mat-label>
+                    <mat-select formControlName="codec" name="codec">
+                        <mat-option *ngFor="let opt of codecs" [value]="opt.value">
+                            {{opt.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>Tipo de recurso</mat-label>
+                    <mat-select [disabled]="editMode" (selectionChange)="checkResourceType(true)" name="types"
+                        [(value)]="selectedResource">
+                        <mat-option *ngFor="let type of types" [value]="type.value">
+                            {{type.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-checkbox [disabled]="visualizationMode" [checked]="registerKeyExists" (change)="displayRegKey = $event.checked">Habilitar registro</mat-checkbox>
+
+                <mat-form-field appearance="legacy" *ngIf="displayRegKey">
+                    <mat-label>Clave</mat-label>
+                    <input matInput formControlName="clave_registro">
+                </mat-form-field>
+
+                <mat-form-field appearance="legacy" *ngIf="displayRadioTab">
+                    <mat-label>Frecuencia</mat-label>
+                    <input matInput formControlName="frecuencia">
+                    <mat-error *ngIf="resourceForm.controls['frecuencia'].hasError('pattern')">
+                        {{ 'Formato de frecuencia no válido. Rangos permitidos: 118.000 - 137.995 | 200.000 - 399.995' }}
+                    </mat-error>
+                </mat-form-field>
+
+                <div class="actions">
+                    <div class="common-actions">
+                        <button mat-raised-button color="basic" *ngIf="!visualizationMode"
+                            (click)="onSubmit()">Confirmar</button>
+                        <button mat-raised-button color="basic" (click)="back()">Cancelar</button>
+                    </div>
+                    <button mat-raised-button color="basic" *ngIf="displayDeleteBtn && !visualizationMode"
+                        (click)="onDelete()">Eliminar
+                        Recurso</button>
+                </div>
+            </div>
+            <div class="settings-resource">
+                <mat-tab-group mat-align-tabs="start">
+                    <mat-tab label="Audio">
+                        <div [ngStyle]="{'margin': '10px'}">
+                            <div class="title">
+                                <mat-label>Parámetros hardware</mat-label>
+                            </div>
+                            <div class="audio-settings">
+                                <div class="agc">
+                                    <mat-checkbox class="agc-checkbox" [disabled]="visualizationMode" [checked]="displayAGCAD" (change)="displayAGCAD = $event.checked">
+                                        AGC en A/D
+                                    </mat-checkbox>
+    
+                                    <mat-form-field *ngIf="!displayAGCAD" appearance="legacy">
+                                        <mat-label>Ajuste Cero digital en A/D (dB)</mat-label>
+                                        <input matInput formControlName="ajuste_ad">
+                                        <mat-error *ngIf="resourceForm.get('ajuste_ad')?.hasError('min') || resourceForm.get('ajuste_ad')?.hasError('max')">
+                                            {{ 'Valor fuera de rango (-13.5, 1.20)' }}
+                                        </mat-error>
+                                        <mat-error *ngIf="resourceForm.get('ajuste_ad')?.hasError('pattern')">
+                                            {{ 'Formato numérico no válido' }}
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                <div class="agc">
+                                    <mat-checkbox class="agc-checkbox" [disabled]="visualizationMode" [checked]="displayAGCDA" (change)="displayAGCDA = $event.checked">
+                                        AGC en D/A
+                                    </mat-checkbox>
+                                    <mat-form-field *ngIf="!displayAGCDA" appearance="legacy">
+                                        <mat-label>Ajuste Cero digital en D/A (dB)</mat-label>
+                                        <input matInput formControlName="ajuste_da">
+                                        <mat-error *ngIf="resourceForm.get('ajuste_da')?.hasError('min') || resourceForm.get('ajuste_da')?.hasError('max')">                                        
+                                            {{ 'Valor fuera de rango (-24.3, 1.10)' }}
+                                        </mat-error>
+                                        <mat-error *ngIf="resourceForm.get('ajuste_da')?.hasError('pattern')">
+                                            {{ 'Formato numérico no válido' }}
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                            </div>    
+                        </div>
+                    </mat-tab>
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <span [ngClass]="{'no-display': displayRadioTab==false }">Radio</span>
+                            <span [ngClass]="{'no-display': displayTelephonicTab==false }">Telefónico</span>
+                        </ng-template>
+                        <div [ngStyle]="{'margin': '10px'}">
+                            <div class="title">
+                                <mat-label [ngClass]="{'no-display': displayRadioTab==false }">Parámetros radio
+                                </mat-label>
+                                <mat-label [ngClass]="{'no-display': displayTelephonicTab==false }">Parámetros telefonía
+                                </mat-label>
+                            </div>
+                            <mat-form-field *ngIf="displayRadioTab" id="formSelector" appearance="fill">
+                                <mat-label>Tipo de Agente de Radio</mat-label>
+                                <mat-select formControlName="tipo_agente" [(value)]="this.resource.tipo_agente"
+                                    (selectionChange)="checkResourceType()" name="rdAgent">
+                                    <mat-option *ngFor="let rdAgent of radioAgents" [value]="rdAgent.value">
+                                        {{rdAgent.viewValue}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field *ngIf="displayTelephonicTab" id="formSelector" appearance="fill">
+                                <mat-label>Tipo de Interfaz Telefónico</mat-label>
+                                <mat-select formControlName="tipo_interfaz_tel"
+                                    [(value)]="this.resource.tipo_interfaz_tel" (selectionChange)="checkResourceType()"
+                                    name="telInt">
+                                    <mat-option *ngFor="let telInt of telephonicInterfaces" [value]="telInt.value">
+                                        {{telInt.viewValue}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <template #secondTabTemplate></template>
+                        </div>
+                    </mat-tab>
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <span [ngClass]="{'no-display': displayComnsTab==false }">Comunicaciones</span>
+                            <span [ngClass]="{'no-display': displayListsTab==false }">Listas B/N</span>
+                            <span [ngClass]="{'no-display': displayNumberRange==false }">Rango número ATS</span>
+                        </ng-template>
+                        <div [ngStyle]="{'margin': '10px'}">
+                            <template #thirdTabTemplate></template>
+                        </div>
+                    </mat-tab>
+                    <mat-tab [disabled]='!displayCollaterals' label="Colaterales">
+                        <ng-template mat-tab-label>
+                            <span [ngClass]="{'no-display': displayCollaterals==false }">Colaterales</span>
+                        </ng-template>
+                        <div [ngStyle]="{'margin': '10px'}">
+                            <template #collateralsTabTemplate></template>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </div>
+    </form>
+</div>

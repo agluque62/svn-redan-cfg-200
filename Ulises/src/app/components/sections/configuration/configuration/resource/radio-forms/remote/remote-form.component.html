@@ -1,0 +1,60 @@
+<form class="form" [formGroup]="resourceForm">
+    <mat-form-field *ngIf="displayInputAudio" appearance="fill">
+        <mat-label>Indicación entrada audio</mat-label>
+        <mat-select formControlName="indicacion_entrada_audio" (selectionChange)="displayUmbralVAD($event.value)"
+            name="iAudio">
+            <mat-option *ngFor="let type of iAudio" [value]="type.value">
+                {{type.viewValue}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="vadIsSelected" appearance="fill">
+        <mat-label>Umbral VAD (dB)</mat-label>
+        <input matInput formControlName="umbral_vad">
+        <mat-error
+            *ngIf="resourceForm.get('umbral_vad')?.hasError('min') || resourceForm.get('umbral_vad')?.hasError('max')">
+            {{ 'Valor fuera de rango (-35, -15)' }}
+        </mat-error>
+        <mat-error *ngIf="resourceForm.get('umbral_vad')?.hasError('pattern')">
+            {{ 'Formato numérico no válido' }}
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="displayOutputAudio" appearance="fill">
+        <mat-label>Indicación salida audio</mat-label>
+        <mat-select formControlName="indicacion_salida_audio" name="oAudio">
+            <mat-option *ngFor="let type of oAudio" [value]="type.value">
+                {{type.viewValue}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <div class="custom-row" *ngIf="displayPreferredBSSMethod">
+        <mat-form-field appearance="fill">
+            <mat-label>Método BSS preferido</mat-label>
+            <mat-select formControlName="metodo_bss" name="bssMethods">
+                <mat-option *ngFor="let type of bssMethods" [value]="type.value">
+                    {{type.viewValue}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Tabla calificación audio</mat-label>
+            <mat-select formControlName="tabla_bss_id" name="tablesBss">
+                <mat-option *ngFor="let table of tablesBss" [value]="table.idtabla_bss">
+                    {{table.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <mat-form-field *ngIf="displayGRSDelay" appearance="fill">
+        <mat-label>Retraso interno GRS (ms.)</mat-label>
+        <input matInput type="number" formControlName="retraso_interno_grs">
+    </mat-form-field>
+
+    <mat-checkbox formControlName="evento_ptt_squelch">Eventos PTT/Squelch</mat-checkbox>
+    <mat-checkbox formControlName="habilita_grabacion" *ngIf="displayRecordCheckbox">Habilita grabación</mat-checkbox>
+</form>

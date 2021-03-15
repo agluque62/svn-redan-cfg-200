@@ -1,0 +1,88 @@
+<form class="form" [formGroup]="resourceForm">
+  <div class="radio-form" id="this.formID">
+    <mat-form-field appearance="fill">
+      <mat-label>Indicación entrada audio</mat-label>
+      <mat-select formControlName="indicacion_entrada_audio" (selectionChange)="displayUmbralVAD($event.value)"
+        name="iAudio">
+        <mat-option *ngFor="let type of iAudio" [value]="type.value">
+          {{type.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="vadIsSelected" appearance="fill">
+      <mat-label>Umbral VAD (dB)</mat-label>
+      <input matInput formControlName="umbral_vad">
+      <mat-error
+        *ngIf="resourceForm.get('umbral_vad')?.hasError('min') || resourceForm.get('umbral_vad')?.hasError('max')">
+        {{ 'Valor fuera de rango (-35, -15)' }}
+      </mat-error>
+      <mat-error *ngIf="resourceForm.get('umbral_vad')?.hasError('pattern')">
+        {{ 'Formato numérico no válido' }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Métodos BSS disponibles</mat-label>
+      <mat-select formControlName="metodo_bss" name="bssMethods">
+        <mat-option *ngFor="let type of bssMethods" [value]="type.value">
+          {{type.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="climax_bss" [checked]="checkClimaxBSS" *ngIf="displayBSSClimax"
+      (change)="climaxModeActive = $event.checked">
+      BSS/CLIMAX</mat-checkbox>
+
+    <div class="climaxElements" *ngIf="climaxModeActive">
+      <mat-form-field appearance="fill">
+        <mat-label>Ventana BSS (ms)</mat-label>
+        <input matInput formControlName="ventana_bss">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Modo Climax</mat-label>
+        <mat-select formControlName="metodo_climax" (selectionChange)="checkClimaxType()" name="climaxModes">
+          <mat-option *ngFor="let mode of climaxModes" [value]="mode.value">
+            {{mode.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Modo cálculo climax</mat-label>
+        <mat-select formControlName="tipo_climax" name="calClimaxModes">
+          <mat-option *ngFor="let mode of calClimaxModes" [value]="mode.value">
+            {{mode.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" *ngIf="displayClimaxTime">
+        <mat-label>Tiempo (ms)</mat-label>
+        <input matInput formControlName="retardo_fijo_climax">
+      </mat-form-field>
+    </div>
+
+    <mat-checkbox formControlName="evento_ptt_squelch">Eventos PTT/Squelch</mat-checkbox>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Prioridad PTT</mat-label>
+      <mat-select formControlName="prioridad_ptt" name="pttPriority">
+        <mat-option *ngFor="let type of pttPriority" [value]="type.value">
+          {{type.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Prioridad Sesion SIP</mat-label>
+      <mat-select formControlName="prioridad_sesion_sip" name="prioritySessionsSIP">
+        <mat-option *ngFor="let type of prioritySessionsSIP" [value]="type.value">
+          {{type.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</form>

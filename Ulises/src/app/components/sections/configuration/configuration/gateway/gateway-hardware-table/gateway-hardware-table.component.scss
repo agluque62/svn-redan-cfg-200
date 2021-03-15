@@ -1,0 +1,60 @@
+:host {
+    display: block;
+    width: 100%;
+
+    .header-gridster {
+        height: 40px;
+        background-color: lightgrey;
+
+        gridster-item {
+
+            background: lightyellow;
+            text-align: center;
+            line-height: 40px;
+            border-right: 1px solid lightgrey;
+        }
+    }      
+
+    .my-gridster {
+
+        background-color: lightgrey;
+        height: 600px;
+        
+        .my-gridster-item {
+
+            &:hover {
+                background-color: lightyellow;
+            }
+
+            .button-holder {
+                
+                margin: 15px;
+                padding: 15px;
+                display: flex;
+                cursor: pointer;
+                background-color: gainsboro;
+                border-radius: 3px;
+
+                .text {
+
+                    .label {
+                        margin-bottom: 5px;
+                    }
+                }
+                
+                .icon {
+
+                    margin: auto;
+                    margin-right: 0;
+                }
+            }
+
+            .drag-btn {
+
+                margin: auto;
+                display: flex;
+                justify-content: center;
+            }
+        }
+    }
+}

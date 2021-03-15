@@ -1,0 +1,301 @@
+<form class="form" [formGroup]="form" *ngIf="ready">
+    <div class="gateway-select" *ngIf="!visualizationMode">
+        <mat-form-field class="copy-form-field" appearance="fill">
+            <mat-label>{{'Copiar datos de...'}}</mat-label>
+            <mat-select appearance="fill" (selectionChange)="copyFrom($event.value)">
+                <mat-option [value]="serviceItem" *ngFor="let serviceItem of gatewayAvaibleServicesItem">
+                    {{ serviceItem.nombre }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <mat-tab-group class="tabs" selectedIndex="0" (selectedTabChange)="onTabChanged();">
+        <mat-tab label="SIP">
+            <ng-template matTabContent>
+                <div class="sip-form">
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'Puerto'}}</mat-label>
+                        <input matInput formControlName="PuertoLocalSIP">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'Periodo de supervisión (sg.)'}}</mat-label>
+                        <input matInput formControlName="periodo_supervision">
+                        <mat-error *ngIf="form.controls['periodo_supervision'].hasError('pattern')">
+                            {{ 'Este campo solo admite números.' }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <div class="proxies">
+                        <div class="selectors">
+                            <mat-form-field class="select" appearance="fill">
+                                <mat-label>{{'Proxies'}}</mat-label>
+                                <mat-select [(value)]="selectedProxy" [disabled]="visualizationMode" [compareWith]="serverComparision"
+                                    (selectionChange)="proxyChange()">
+                                    <mat-option [value]="proxy" *ngFor="let proxy of proxies">
+                                        {{ proxy.ip }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="fill" *ngIf="!visualizationMode">
+                                <mat-label>{{'Nuevo proxy'}}</mat-label>
+                                <input matInput [formControl]="proxyFormControl">
+                                <mat-error *ngIf="proxyFormControl.hasError('required')">
+                                    {{ 'Este campo es obligatorio.' }}
+                                </mat-error>
+                                <mat-error *ngIf="proxyFormControl.hasError('pattern')">
+                                    {{ 'Debe introducir una IP válida.' }}
+                                </mat-error>
+                            </mat-form-field>
+
+                        </div>
+
+                        <div class="btns" *ngIf="!visualizationMode">
+                            <button class="items" mat-raised-button (click)="deleteProxy()">
+                                {{'Eliminar proxy'}}
+                            </button>
+                            <button class="items" mat-raised-button (click)="addProxy()">
+                                {{'Añadir proxy'}}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="registrars">
+                        <div class="selectors">
+                            <mat-form-field class="select" appearance="fill">
+                                <mat-label>{{'Registrars'}}</mat-label>
+                                <mat-select [(value)]="selectedRegistrar" [disabled]="visualizationMode" [compareWith]="serverComparision"
+                                    (selectionChange)="registrarChange()">
+                                    <mat-option [value]="registrar" *ngFor="let registrar of registrars">
+                                        {{ registrar.ip }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="fill" *ngIf="!visualizationMode">
+                                <mat-label>{{'Nuevo registrars'}}</mat-label>
+                                <input matInput [formControl]="registrarsFormControl">
+                                <mat-error *ngIf="registrarsFormControl.hasError('required')">
+                                    {{ 'Este campo es obligatorio.' }}
+                                </mat-error>
+                                <mat-error *ngIf="registrarsFormControl.hasError('pattern')">
+                                    {{ 'Debe introducir una IP válida.' }}
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="btns" *ngIf="!visualizationMode">
+                            <button class="items" mat-raised-button (click)="deleteRegistrar()">
+                                {{'Eliminar registrar'}}
+                            </button>
+                            <button class="items" mat-raised-button (click)="addRegistrar()">
+                                {{'Añadir registrar'}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </mat-tab>
+
+        <mat-tab label="Sincronización">
+            <ng-template matTabContent>
+                <div class="sinc-form">
+                    <div class="sinc">
+                        <div class="selectors">
+                            <mat-form-field class="select" appearance="fill">
+                                <mat-label>{{'Servidor NTP (Defecto SrvUG5K)'}}</mat-label>
+                                <mat-select [(value)]="selectedServer" [disabled]="visualizationMode" [compareWith]="serverComparision"
+                                    (selectionChange)="serverChange()">
+                                    <mat-option [value]="serverNTP" *ngFor="let serverNTP of servers">
+                                        {{ serverNTP.ip }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="fill" *ngIf="!visualizationMode">
+                                <mat-label>{{'Nuevo servidor NTP'}}</mat-label>
+                                <input matInput [formControl]="serversFormControl">
+                                <mat-error *ngIf="serversFormControl.hasError('required')">
+                                    {{ 'Este campo es obligatorio.' }}
+                                </mat-error>
+                                <mat-error *ngIf="serversFormControl.hasError('pattern')">
+                                    {{ 'Debe introducir una IP válida.' }}
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="btns" *ngIf="!visualizationMode">
+                            <button class="items" mat-raised-button (click)="deleteNTP()">
+                                {{'Eliminar servidor NTP'}}
+                            </button>
+                            <button class="items" mat-raised-button (click)="addNTP()">
+                                {{'Añadir servidor NTP'}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </mat-tab>
+
+        <mat-tab label="SNMP">
+            <ng-template matTabContent>
+                <div class="snpm-form">
+                    <div class="snpm">
+
+                        <div class="fields">
+                            <div class="col">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>{{'Puerto del servicio'}}</mat-label>
+                                    <input matInput formControlName="puerto_servicio_snmp">
+                                </mat-form-field>
+
+                                <div class="form-item">
+                                    <mat-label>{{'SNMP V2'}}</mat-label>
+                                    <mat-checkbox class="checkbox" formControlName="snmpv2"></mat-checkbox>
+                                </div>
+
+                                <mat-form-field appearance="fill">
+                                    <mat-label>{{'Comunidad SNMP-V2'}}</mat-label>
+                                    <input matInput formControlName="comunidad_snmp">
+                                </mat-form-field>
+                            </div>
+                            <div class="col">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>{{'Puerto SNMP'}}</mat-label>
+                                    <input matInput formControlName="puerto_snmp">
+                                    <mat-error *ngIf="form.controls['puerto_snmp'].hasError('pattern')">
+                                        {{ 'Este campo solo admite números en el rango de 1-65535' }}
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="fill">
+                                    <mat-label>{{'Nombre SNMP'}}</mat-label>
+                                    <input matInput formControlName="nombre_snmp">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="fill">
+                                    <mat-label>{{'Ubicación SNMP'}}</mat-label>
+                                    <input matInput formControlName="localizacion_snmp">
+                                </mat-form-field>
+
+                                <mat-form-field appearance="fill">
+                                    <mat-label>{{'Contacto SNMP'}}</mat-label>
+                                    <input matInput formControlName="contacto_snmp">
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div class="traps">
+                            <div class="col" *ngIf="!visualizationMode">
+                                <mat-form-field class="select" appearance="fill">
+                                    <mat-label>{{'Versión'}}</mat-label>
+                                    <mat-select [formControl]="trapServerFormControl">
+                                        <mat-option [value]="serverNTP" *ngFor="let serverNTP of ['1', '2']">
+                                            {{ serverNTP }}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="trapServerFormControl.hasError('required')">
+                                        {{ 'Este campo es obligatorio.' }}
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="fill">
+                                    <mat-label>{{'Dirección IP'}}</mat-label>
+                                    <input matInput [formControl]="trapFormControl">
+                                    <mat-error *ngIf="trapFormControl.hasError('required')">
+                                        {{ 'Este campo es obligatorio.' }}
+                                    </mat-error>
+                                    <mat-error *ngIf="trapFormControl.hasError('pattern')">
+                                        {{ 'Debe introducir una IP válida.' }}
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="fill">
+                                    <mat-label>{{'Puerto'}}</mat-label>
+                                    <input matInput [formControl]="trapPortFormControl">
+                                    <mat-error *ngIf="trapPortFormControl.hasError('required')">
+                                        {{ 'Este campo es obligatorio.' }}
+                                    </mat-error>
+                                    <mat-error *ngIf="trapPortFormControl.hasError('pattern')">
+                                        {{ 'Este campo solo admite números en el rango de 1-65535' }}
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col traps-list">
+
+                                <div class="trap-items">
+                                    <div class="items" [ngClass]="{'selected': trap == selectedTrap}"
+                                        *ngFor="let trap of traps" (click)="selectTrap(trap)">
+                                        {{ trap }}
+                                    </div>
+                                </div>
+
+                                <div class="btns" *ngIf="!visualizationMode">
+                                    <button class="items" mat-raised-button (click)="deleteTrap()">
+                                        {{'Eliminar trap'}}
+                                    </button>
+                                    <button class="items" mat-raised-button (click)="addTrap()">
+                                        {{'Añadir trap'}}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </mat-tab>
+
+        <mat-tab label="Web">
+            <ng-template matTabContent>
+                <div class="web-form">
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'Puerto servicio'}}</mat-label>
+                        <input matInput formControlName="puerto_servicio_web">
+                        <mat-error *ngIf="form.controls['puerto_servicio_web'].hasError('pattern')">
+                            {{ 'Este campo solo admite números en el rango de 1-65535' }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'Tiempo de sesión (seg.)'}}</mat-label>
+                        <input matInput formControlName="tiempo_sesion">
+                        <mat-error *ngIf="form.controls['tiempo_sesion'].hasError('pattern')">
+                            {{ 'Este campo solo admite números.' }}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </ng-template>
+        </mat-tab>
+
+        <mat-tab label="Grabación">
+            <ng-template matTabContent>
+                <div class="recording-form">
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'Puerto servidor RTSP'}}</mat-label>
+                        <input matInput formControlName="puerto_rtsp">
+                        <mat-error *ngIf="form.controls['puerto_rtsp'].hasError('pattern')">
+                            {{ 'Este campo solo admite números en el rango de 1-65535' }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'IP Servidor RTSP (A)'}}</mat-label>
+                        <input matInput formControlName="servidor_rtsp">
+                        <mat-error *ngIf="form.controls['servidor_rtsp'].hasError('pattern')">
+                            {{ 'Debe introducir una IP válida.' }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>{{'IP Servidor RTSP (B)'}}</mat-label>
+                        <input matInput formControlName="servidor_rtspb">
+                        <mat-error *ngIf="form.controls['servidor_rtspb'].hasError('pattern')">
+                            {{ 'Debe introducir una IP válida.' }}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </ng-template>
+        </mat-tab>
+    </mat-tab-group>
+</form>

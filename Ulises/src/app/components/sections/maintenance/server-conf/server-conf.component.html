@@ -1,0 +1,88 @@
+<div class="main">
+    <div class="title">
+        {{ 'REDAN - Configuración Servidor' }}
+    </div>
+
+    <div class="content" *ngIf="ready">
+        <div class="config-parameters">
+            {{ 'Parámetros configurables' }}
+        </div>
+
+        <form class="form" [formGroup]="serverConfigForm">
+
+            <div class="col">
+
+                <mat-form-field appearance="fill">
+                    <mat-label>{{'Región / Zona'}}</mat-label>
+                    <input matInput formControlName="Region">
+                </mat-form-field>
+
+                <mat-form-field class="select" appearance="fill">
+                    <mat-label>{{'Días de histórico'}}</mat-label>
+                    <mat-select formControlName="HistoricsDeep">
+                        <mat-option [value]="historicsDeepValue" *ngFor="let historicsDeepValue of historicsDeepOptions">
+                            {{ historicsDeepValue }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+    
+                <mat-form-field appearance="fill">
+                    <mat-label>{{'Tiempo de Refresco en ms'}}</mat-label>
+                    <input matInput formControlName="refreshTime">
+                </mat-form-field>
+
+                <mat-form-field class="select" appearance="fill">
+                    <mat-label>{{'Tracear a consola'}}</mat-label>
+                    <mat-select formControlName="log2con">
+                        <mat-option [value]="log2con" *ngFor="let log2con of logOptions">
+                            {{ log2con }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <div class="form-item">                    
+                    <mat-label>{{'Tracear el Control de Acceso'}}</mat-label>
+                    <mat-checkbox class="checkbox" formControlName="LoginSystemTrace"></mat-checkbox>
+                </div>
+    
+            </div>
+
+            <div class="col">
+
+                <mat-form-field appearance="fill">
+                    <mat-label>{{'Localización Servicio de Backup'}}</mat-label>
+                    <input matInput formControlName="BackupServiceDomain">
+                </mat-form-field>
+    
+                <mat-form-field class="select" appearance="fill">
+                    <mat-label>{{'Duración de sesión en minutos'}}</mat-label>
+                    <mat-select formControlName="LoginTimeOut">
+                        <mat-option [value]="loginTimeOutValue" *ngFor="let loginTimeOutValue of loginTimeOutOptions">
+                            {{ loginTimeOutValue }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>{{'Tiempo Ciclo en ms'}}</mat-label>
+                    <input matInput formControlName="maxCycleTime">
+                </mat-form-field>
+    
+                <mat-form-field class="select" appearance="fill">
+                    <mat-label>{{'Tracear a fichero'}}</mat-label>
+                    <mat-select formControlName="log2file">
+                        <mat-option [value]="log2file" *ngFor="let log2file of logOptions">
+                            {{ log2file }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            
+            </div>
+
+        </form>
+
+        <div class="btns">
+            <button mat-raised-button class="save" (click)="saveServerConfig()">{{'Guardar'}}</button>
+        </div>
+    </div>
+</div>

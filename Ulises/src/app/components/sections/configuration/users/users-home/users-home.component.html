@@ -1,0 +1,41 @@
+<div class="users">
+
+    <div class="title">
+        {{'Usuarios'}}
+    </div>
+
+    <div class="btn">
+        <button mat-raised-button class="create-btn local-btn" (click)="createUser()">
+            {{'Nuevo usuario'}}
+        </button>
+    </div>
+
+    <div class="mat-elevation-z8" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
+        <mat-table [dataSource]="dataSource" class="table">
+            <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef>Id. Usuario</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="profile">
+                <mat-header-cell *matHeaderCellDef>Perfil</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ getProfile(row.perfil) }} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <button mat-raised-button class="modify-btn"
+                        (click)="modifyUser(row)">{{'Modificar'}}</button>
+                </mat-cell>
+            </ng-container>
+
+            <!-- Header and Row Declarations -->
+            <mat-header-row *matHeaderRowDef="['name', 'profile', 'actions']"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: ['name', 'profile', 'actions']"></mat-row>
+        </mat-table>
+
+        <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
+    </div>
+
+</div>

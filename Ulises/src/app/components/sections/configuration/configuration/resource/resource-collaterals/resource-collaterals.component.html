@@ -1,0 +1,122 @@
+<form class="form" [formGroup]="resourceForm">
+    <div class="title">
+        <mat-label>Colaterales</mat-label>
+    </div>
+    <div class="main-collaterals">
+        <div class="uris">
+
+            <div class="uri-row">
+                <mat-form-field appearance="legacy">
+                    <mat-label>NombreRecurso@IP:Puerto</mat-label>
+                    <input matInput formControlName="uri_telefonica">
+                </mat-form-field>
+                <button mat-raised-button [disabled]="visualizationMode" (click)="makeURI()"> {{arrows}} </button>
+            </div>
+
+            <div class="supCollSelect">
+                <mat-form-field appearance="fill">
+                    <mat-label>Supervisa Colateral</mat-label>
+                    <mat-select name="supCollateral" formControlName="supervisa_colateral" (selectionChange)="displaySupSelect()">
+                        <mat-option *ngFor="let opt of supCollateral" [value]="opt.value">
+                            {{opt.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <mat-checkbox *ngIf="displayOptResponse1" class="checkbox" formControlName="itiporespuesta">Options Response</mat-checkbox>
+
+            <hr class="hr">
+
+            <div class="uri-row">
+                <mat-form-field appearance="legacy">
+                    <mat-label>NombreRecurso@IP:Puerto</mat-label>
+                    <input matInput formControlName="additional_uri_remota">
+                </mat-form-field>
+                <button mat-raised-button [disabled]="visualizationMode" (click)="makeURI(true)"> {{arrows}} </button>
+            </div>
+
+            <div class="supCollSelect">
+                <mat-form-field appearance="fill">
+                    <mat-label>
+                        Supervisa Colateral</mat-label>
+                    <mat-select name="supCollateral" formControlName="additional_superv_options" (selectionChange)="displaySupSelect()">
+                        <mat-option *ngFor="let opt of supCollateral" [value]="opt.value">
+                            {{opt.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <mat-checkbox *ngIf="displayOptResponse2" class="checkbox add-iti" formControlName="additional_itiporespuesta">Options Response</mat-checkbox>
+
+            <mat-form-field appearance="fill" *ngIf="displayTimeSelect">
+                <mat-label>Tiempo supervisión (sg.)</mat-label>
+                <mat-select name="timeSup" [disabled]="visualizationMode" formControlName="tiempo_supervision">
+                    <mat-option *ngFor="let sec of time" [value]="sec.value">
+                        {{sec.viewValue}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div class="telephonic-resources">
+            <mat-form-field appearance="fill">
+                <mat-label>Seleccione tipo de recurso</mat-label>
+                <mat-select (selectionChange)="checkResourceTypeSelected()" [(value)]="selectedTypeResource" name="resourceTypes">
+                    <mat-option *ngFor="let resource of resourceTypes" [value]="resource.value">
+                        {{resource.viewValue}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field *ngIf="displaySelectFilter" appearance="fill">
+                <mat-label>Filtrar recursos...</mat-label>
+                <mat-select name="optionsFilter" [(value)]="selectedOptFilter" (selectionChange)="checkExtOptSelected()">
+                    <mat-option *ngFor="let filter of optionsFilter" [value]="filter.value">
+                        {{filter.viewValue}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div class="filter"
+                *ngIf="selectedOptFilter == 4 || selectedOptFilter == 5 && displaySelectFilter">
+                <mat-form-field appearance="legacy">
+                    <mat-label>Carácteres a buscar</mat-label>
+                    <input matInput (change)="getFilterValue($event)">
+                </mat-form-field>
+                <button mat-raised-button (click)="checkExtOptSelected()"> Buscar recursos </button>
+            </div>
+            <mat-form-field appearance="fill" *ngIf="displaySites">
+                <mat-label>Seleccione emplazamiento</mat-label>
+                <mat-select name="sites" [(value)]="selectedSite" (selectionChange)="getGateways()">
+                    <mat-option *ngFor="let site of sites.data" [value]="site.idemplazamiento">
+                        {{site.eName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" *ngIf="displayGateways">
+                <mat-label>Seleccione pasarela</mat-label>
+                <mat-select name="gateways" [(value)]="selectedGateway" (selectionChange)="getConfResources()">
+                    <mat-option *ngFor="let gateway of gateways" [value]="gateway.idpasarela">
+                        {{gateway.gName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" *ngIf="displayConfResource">
+                <mat-label>Seleccione recurso</mat-label>
+                <mat-select name="resources" [(value)]="selectedResource" (selectionChange)="checkIfAGVNNameExist(this.resources[this.selectedResource].rName)">
+                    <mat-option *ngFor="let resource of resources; index as i" [value]="i">
+                        {{resource.rName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" *ngIf="displayExtResource">
+                <mat-label>Seleccione recurso</mat-label>
+                <mat-select name="resources" [(value)]="selectedResource" (selectionChange)="checkIfAGVNNameExist(this.resources[this.selectedResource].rName)">
+                    <mat-option *ngFor="let resource of resources; index as i" [value]="i">
+                        {{resource.rName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+</form>

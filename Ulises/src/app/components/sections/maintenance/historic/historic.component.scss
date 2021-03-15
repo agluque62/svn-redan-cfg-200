@@ -1,0 +1,75 @@
+:host {
+    
+    .historic {
+        
+        margin: 15px;        
+        display: flex;
+        flex-direction: column;     
+        height: calc(100% - 30px);
+
+        .filter {
+            display: flex;
+
+            .sub-filter {
+
+                margin-left: 5px;
+
+                mat-form-field {
+                    margin: 0 5px;
+                }
+
+                .type-selector {
+                    width: 350px;
+                }
+            }
+        }
+
+        .spinner {
+            
+            display: flex;
+            justify-content: center;
+            margin: auto;
+            margin-top: 150px;
+
+            ::ng-deep circle {
+                stroke: #48803e;
+            }
+        }
+
+        .table {
+
+            flex: 1;
+        
+            .w-75{
+                max-width: 75px;
+            }
+            
+            .w-100{
+                max-width: 100px;
+            }
+
+            .w-125{
+                max-width: 125px;
+            }
+
+            .w-150{
+                max-width: 150px;
+            }
+
+            .w-175{
+                max-width: 175px;
+            }
+        }
+
+        .download-btns {
+
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+    
+            button {
+                margin: 0 10px;
+            }
+        }
+    }
+}

@@ -1,0 +1,13 @@
+:host {
+
+    .restore {
+
+        margin: 15px;        
+        display: flex;
+        flex-direction: column;     
+
+        .body {
+            font-size: medium;
+        }
+    }
+}

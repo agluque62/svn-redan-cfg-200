@@ -1,0 +1,14 @@
+.footer {
+
+    font-size: small;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+
+    .version {
+
+        display: flex;
+        justify-content: center;
+    }
+}
