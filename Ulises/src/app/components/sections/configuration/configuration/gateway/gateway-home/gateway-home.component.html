@@ -14,8 +14,8 @@
     </div>
 
     <form class="form" [formGroup]="gatewayForm">
-
-        <mat-spinner class="spinner" *ngIf="showSpinner"></mat-spinner>
+        
+        <spinner *ngIf="showSpinner"></spinner>
 
         <mat-tab-group class="tabs" [selectedIndex]="tabIdx">
             <mat-tab label="General">
@@ -32,11 +32,15 @@
             <mat-tab label="Hardware" *ngIf="type=='EDIT'">
                 <ng-template matTabContent>
                     <gateway-hardware [gateway]="gateway"></gateway-hardware>
+                    <div class="indexControlContainer">
+                        <span *ngIf="LoadIndexControlEnabled" [ngClass]="selectedClass">Indice de carga: {{loadIndex}}</span>
+                    </div>
                 </ng-template>
+                
             </mat-tab>
         </mat-tab-group>
     </form>
-
+    
     <div class="btns" *ngIf="!visualizationMode">
         <button mat-raised-button (click)="activateInField()" *ngIf="type == 'EDIT'">{{'Activar en campo'}}</button>
         <button mat-raised-button (click)="createGateway()" *ngIf="type == 'CREATE'">{{'Guardar'}}</button>

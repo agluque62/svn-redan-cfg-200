@@ -11,6 +11,7 @@ import { UlHeaderComponent } from './ul-header/ul-header.component';
 import { UlSideMenuComponent } from './ul-side-menu/ul-side-menu.component';
 import { UlFooterComponent } from './ul-footer/ul-footer.component';
 import { AboutComponent } from './about/about.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { AboutComponent } from './about/about.component';
     CommonModule,
     FormsModule,
     MatTreeModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     UlHeaderComponent,

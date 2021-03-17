@@ -85,7 +85,7 @@ export class ResourceListsComponent implements OnInit {
         if (event.target.value.match(AppSettings.URI_PATTERN) != undefined || event.target.value === '') {
             this.uriListToDisplay[tipo][pos].uri = event.target.value;
         } else if (event.target.value.match(AppSettings.URI_PATTERN) == undefined && event.target.value != '') {
-            await this.alertService.errorMessage(``, `URI no válido`);
+            await this.alertService.errorMessage(``, AppSettings.INVALID_URI);
             event.target.value = '';
         }
     }

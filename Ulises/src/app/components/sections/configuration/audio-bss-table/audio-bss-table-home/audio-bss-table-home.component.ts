@@ -24,6 +24,8 @@ export class AudioBssTableHomeComponent implements OnInit {
 
   visualizationMode: boolean = false;
 
+  showSpinner: boolean = false;
+
   dataSource!: MatTableDataSource<TableBss>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -115,12 +117,15 @@ export class AudioBssTableHomeComponent implements OnInit {
 
   async retrieveTableBssResponse() {
 
+    this.showSpinner = true;
     this.tableBssResponse = await this.tableBssService.getTableAudioBss().toPromise();
 
     if (this.tableBssResponse.error != null) {
       await this.alertService.errorMessage(`Error`, this.tableBssResponse.error);
       return;
     }
+
+    this.showSpinner = false;
     this.assignDataSource(this.tableBssResponse.tables);
   }
 }

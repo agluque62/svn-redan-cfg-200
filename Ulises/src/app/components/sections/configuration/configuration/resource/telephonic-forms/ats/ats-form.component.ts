@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { AppSettings } from 'src/app/core/app.settings';
 import { UserService } from 'src/app/_services/user.service';
 
 interface customValues {
@@ -47,11 +48,12 @@ export class ATSFormComponent implements OnInit {
   isReady: boolean = false;
 
   visualizationMode: boolean = false;
-
+  appset: any;
+  
   constructor(private readonly userService: UserService) { }
 
   ngOnInit(): void {
-    
+    this.appset = AppSettings;
     this.visualizationMode = (this.visualizationPermission()) ? true : false;
 
     if (this.resourceForm.value.tipo_interfaz_tel === 3) {

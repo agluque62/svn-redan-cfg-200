@@ -28,4 +28,5 @@ export class LocalConfig {
     maxCycleTime!: number;
     morgan!: boolean;
     refreshTime!: number;
+    timeout!: number;
 }

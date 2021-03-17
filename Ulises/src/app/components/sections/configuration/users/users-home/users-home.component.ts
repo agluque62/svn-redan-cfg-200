@@ -19,6 +19,8 @@ export class UsersHomeComponent implements OnInit {
 
   users!: User[];
 
+  showSpinner: boolean = false;
+
   dataSource!: MatTableDataSource<User>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -49,10 +51,11 @@ export class UsersHomeComponent implements OnInit {
 
   async retrieveUsers() {
     try {
+      this.showSpinner = true;
       const result = await this.userService.getUsers().toPromise();
       this.users = [...result.users];
-
       this.assignDataSource(this.users);
+      this.showSpinner = false;
     } catch(error) {
       this.app.catchError(error);
     }

@@ -7,5 +7,5 @@ export class Version {
     date!: string;
     nodejsversion!: string;
     mysqlversion!: string;
-    R16Mode!: string;
+    R16Mode!: boolean;
 }

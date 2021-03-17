@@ -3,6 +3,8 @@
         {{ 'Históricos' }}
     </div>
 
+    <spinner *ngIf="!ready"></spinner>
+
     <div class="filter">
         <mat-form-field class="type-selector" appearance="fill">
             <mat-label>{{'Filtrar recursos'}}</mat-label>
@@ -123,7 +125,6 @@
         </div>
     </div>
 
-    <mat-spinner class="spinner" *ngIf="!ready"></mat-spinner>
 
     <div *ngIf="ready && dataSource && dataSource.data && dataSource.data.length === 0">
         {{ 'No hay resultados'}}

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppComponent } from 'src/app/app.component';
+import { AppSettings } from 'src/app/core/app.settings';
 import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ConfigService } from 'src/app/_services/config.service';
@@ -21,6 +22,8 @@ export class ServerConfComponent implements OnInit {
   historicsDeepOptions: number[] = [30, 90, 180, 365];
   loginTimeOutOptions: number[] = [5, 10, 30, 60, 120];
   logOptions: string[] = ['none', 'silly', 'info', 'warn'];
+  
+  showSpinner: boolean = false;
 
   constructor(private readonly configService: ConfigService, private readonly app: AppComponent, private readonly alertService: AlertService,
     private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router) { }
@@ -75,7 +78,8 @@ export class ServerConfComponent implements OnInit {
       logfile_maxfiles: new FormControl(this.localConfig.logfile_maxfiles),
       logfile_path: new FormControl(this.localConfig.logfile_path),
       logfile_sizefile: new FormControl(this.localConfig.logfile_sizefile),
-      morgan: new FormControl(this.localConfig.morgan)
+      morgan: new FormControl(this.localConfig.morgan),
+      timeout: new FormControl(this.localConfig.timeout)
     });
   }
 
@@ -85,7 +89,17 @@ export class ServerConfComponent implements OnInit {
       const confirmed = await this.alertService.confirmationMessage(``, `¿Desea guardar los cambios?`);
 
       if (confirmed.value) {
+        this.showSpinner = true;
+        
+        // this.serverConfigForm.value.timeout = Number(this.serverConfigForm.value.timeout);
+        // this.serverConfigForm.value.maxCycleTime = Number(this.serverConfigForm.value.maxCycleTime);
+        // this.serverConfigForm.value.logfile_sizefile = Number(this.serverConfigForm.value.logfile_sizefile);
+        // this.serverConfigForm.value.LoginTimeOut = Number(this.serverConfigForm.value.LoginTimeOut);
+        // this.serverConfigForm.value.HistoricsDeep = Number(this.serverConfigForm.value.HistoricsDeep);
+        // this.serverConfigForm.value.refreshTime = Number(this.serverConfigForm.value.refreshTime);
+
         const res = await this.configService.updateLocalConfig(this.serverConfigForm.value).toPromise();
+        this.showSpinner = false;
         if (res.res) {
           await this.alertService.successMessage(`Configuración actualizada`, `Los cambios se activarán en el siguiente reinicio del servicio`);
         } else {
@@ -94,7 +108,7 @@ export class ServerConfComponent implements OnInit {
       }
 
     } else {
-      await this.alertService.errorMessage(`Formulario inválido`, `Compruebe el formulario`);
+      await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
     }
   }
 }

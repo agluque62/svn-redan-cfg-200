@@ -18,11 +18,15 @@ export class ExtResourcesFormComponent implements OnInit {
   typesMap!: any;
   type: string = 'CREATE';
 
-  constructor(public dialogRef: MatDialogRef<ExtResourcesFormComponent>, @Inject(MAT_DIALOG_DATA) public data: ExternalResource, 
+  showSpinner: boolean = false;
+  appset: any;
+
+  constructor(public dialogRef: MatDialogRef<ExtResourcesFormComponent>, @Inject(MAT_DIALOG_DATA) public data: ExternalResource,
     private readonly alertService: AlertService, private readonly externalResourceService: ExternalResourceService) { }
 
   ngOnInit(): void {
 
+    this.appset = AppSettings;
     this.typesMap = this.initTypesMap();
 
     if (this.data.uri != '') {
@@ -52,25 +56,30 @@ export class ExtResourcesFormComponent implements OnInit {
       const confirmed = await this.alertService.confirmationMessage(``, `¿Desea eliminar el recurso ${this.data.alias}?`);
 
       if (confirmed.value) {
+        this.showSpinner = true;
         const deleteResult = await this.externalResourceService.deleteExternalResourcesById(this.data.idrecursos_externos).toPromise();
+        this.showSpinner = false;
 
         if (deleteResult && deleteResult.error) {
           await this.alertService.errorMessage(`Error`, deleteResult.error);
         } else {
           await this.alertService.successMessage(`Éxito`, `Recurso ${this.data.alias} externo eliminado correctamente correctamente`);
-          this.dialogRef.close();  
+          this.dialogRef.close();
         }
 
       }
     } else {
-      await this.alertService.errorMessage(`Formulario inválido`, `Compruebe el formulario`);
+      await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
     }
   }
 
   async createOrEditExternalResource() {
 
     if (this.extResourceFrom.valid) {
+      this.showSpinner = true;
       const createResult = await this.externalResourceService.createOrEditExternalResource(this.extResourceFrom.value).toPromise();
+      this.showSpinner = false;
+
       if (createResult && createResult.error) {
         await this.alertService.errorMessage(`Error`, createResult.error);
       } else {
@@ -80,7 +89,7 @@ export class ExtResourcesFormComponent implements OnInit {
         this.dialogRef.close();
       }
     } else {
-      await this.alertService.errorMessage(`Formulario inválido`, `Compruebe el formulario`);
+      await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
     }
   }
 }

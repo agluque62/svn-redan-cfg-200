@@ -226,6 +226,14 @@ app.use(express.static(process.cwd() + homepath));
 app.options('*', cors());
 app.use(cors());
 
+app.use(function (req, res, next) {
+    res.setTimeout(config.Ulises.timeout, function () {       
+        logging.Info('Request has timed out.');
+        res.json({code: 'ETIMEDOUT'});
+    });
+    next();
+});
+
 /** 20170525. AGL. Para el control de Sesiones. */
 /** Para el control de Sesiones. */
 var login_timeout = config.Ulises.LoginTimeOut == 0 ? 60000 : config.Ulises.LoginTimeOut * 60000;
@@ -501,7 +509,8 @@ var validateLocalConfig = ajv.compile(
             "morgan": { "type": "boolean" },
             "refreshTime": { "type": "integer" },
             "R16Mode": { "type": "boolean" },
-            "LoadIndexControlEnabled": { "type": "boolean" }
+            "LoadIndexControlEnabled": { "type": "boolean" },
+            "timeout": { "type": "integer" }
         },
         "required": [
             "LoginTimeOut", "morgan", "logfile_sizefile", "SubVersion", "dbhost",

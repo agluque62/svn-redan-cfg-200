@@ -8,6 +8,8 @@
         <button mat-raised-button class="create-btn local-btn" (click)="createTableAudioBSS()">{{'Nueva tabla'}}</button>
     </div>
 
+    <spinner *ngIf="showSpinner"></spinner>
+
     <div class="mat-elevation-z8" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
         <mat-table [dataSource]="dataSource" class="table">
             <ng-container matColumnDef="id">

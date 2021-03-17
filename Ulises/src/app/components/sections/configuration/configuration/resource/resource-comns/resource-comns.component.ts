@@ -157,7 +157,7 @@ export class ResourceComnsComponent implements OnInit {
 
   async checkUri(event: any, collateralLevel: string, type: string) {
     if (event.target.value.match(AppSettings.URI_PATTERN) == undefined && event.target.value != '') {
-      await this.alertService.errorMessage(``, `URI no válido`);
+      await this.alertService.errorMessage(``, AppSettings.INVALID_URI);
       event.target.value = '';
     } else {
       if (event.target.value === '') {
@@ -195,10 +195,6 @@ export class ResourceComnsComponent implements OnInit {
 
     this.uriList[site].fields[keyType][pos].uri = uri;
     this.resourceForm.value.listaUris.push({ 'uri': uri, 'tipo': type, 'nivel_colateral': level });
-  }
-
-  test() {
-    console.log(this.selectedExtResource);
   }
 
   async getSites() {

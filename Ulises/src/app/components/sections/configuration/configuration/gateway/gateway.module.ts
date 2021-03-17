@@ -12,6 +12,7 @@ import { GatewayServicesComponent } from './gateway-services/gateway-services.co
 import { GatewayHardwareComponent } from './gateway-hardware/gateway-hardware.component';
 import { GatewayHardwareTableComponent } from './gateway-hardware-table/gateway-hardware-table.component';
 import { GatewayCopyFormComponent } from './gateway-copy-form/gateway-copy-form.component';
+import { SpinnerModule } from 'src/app/components/common/spinner/spinner.module';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { GatewayCopyFormComponent } from './gateway-copy-form/gateway-copy-form.
     FormsModule,
     ReactiveFormsModule,
     CustomMaterialModule,
-    GridsterModule
+    GridsterModule,
+    SpinnerModule
   ],
   exports: [
     GatewayHomeComponent

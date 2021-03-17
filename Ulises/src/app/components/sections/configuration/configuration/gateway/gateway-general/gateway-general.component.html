@@ -11,10 +11,10 @@
                 <mat-label>{{'Id. Pasarela'}}</mat-label>
                 <input matInput required formControlName="nombre">
                 <mat-error *ngIf="form.controls['nombre'].hasError('required')">
-                    {{ 'Este campo es obligatorio.' }}
+                    {{ appset.FIELD_REQUIRED }}
                 </mat-error>
                 <mat-error *ngIf="form.controls['nombre'].hasError('pattern')">
-                    {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+                    {{ appset.INVALID_NAME }}
                 </mat-error>
             </mat-form-field>
 
@@ -22,10 +22,10 @@
                 <mat-label>{{'Dirección IP Virtual'}}</mat-label>
                 <input matInput required formControlName="ipv">
                 <mat-error *ngIf="form.controls['ipv'].hasError('required')">
-                    {{ 'Este campo es obligatorio.' }}
+                    {{ appset.FIELD_REQUIRED }}
                 </mat-error>
                 <mat-error *ngIf="form.controls['ipv'].hasError('pattern')">
-                    {{ 'Debe introducir una IP válida.' }}
+                    {{ appset.INVALID_IP }}
                 </mat-error>
             </mat-form-field>
 
@@ -92,10 +92,10 @@
                         <mat-label>{{'IP'}}</mat-label>
                         <input matInput required formControlName="ipb1">
                         <mat-error *ngIf="form.controls['ipb1'].hasError('required')">
-                            {{ 'Este campo es obligatorio.' }}
+                            {{ appset.FIELD_REQUIRED }}
                         </mat-error>
                         <mat-error *ngIf="form.controls['ipb1'].hasError('pattern')">
-                            {{ 'Debe introducir una IP válida.' }}
+                            {{ appset.INVALID_IP }}
                         </mat-error>
                     </mat-form-field>
 
@@ -103,10 +103,10 @@
                         <mat-label>{{'IP gateway'}}</mat-label>
                         <input matInput required formControlName="ipg1">
                         <mat-error *ngIf="form.controls['ipg1'].hasError('required')">
-                            {{ 'Este campo es obligatorio.' }}
+                            {{ appset.FIELD_REQUIRED }}
                         </mat-error>
                         <mat-error *ngIf="form.controls['ipg1'].hasError('pattern')">
-                            {{ 'Debe introducir una IP válida.' }}
+                            {{ appset.INVALID_IP }}
                         </mat-error>
                     </mat-form-field>
 
@@ -114,10 +114,10 @@
                         <mat-label>{{'Máscara'}}</mat-label>
                         <input matInput required formControlName="msb1">
                         <mat-error *ngIf="form.controls['msb1'].hasError('required')">
-                            {{ 'Este campo es obligatorio.' }}
+                            {{ appset.FIELD_REQUIRED }}
                         </mat-error>
                         <mat-error *ngIf="form.controls['msb1'].hasError('pattern')">
-                            {{ 'Debe introducir una máscara válida.' }}
+                            {{ appset.INVALID_MASK }}
                         </mat-error>
                     </mat-form-field>
                 </div>
@@ -128,10 +128,10 @@
                         <mat-label>{{'IP'}}</mat-label>
                         <input matInput required formControlName="ipb2">
                         <mat-error *ngIf="form.controls['ipb2'].hasError('required')">
-                            {{ 'Este campo es obligatorio.' }}
+                            {{ appset.FIELD_REQUIRED }}
                         </mat-error>
                         <mat-error *ngIf="form.controls['ipb2'].hasError('pattern')">
-                            {{ 'Debe introducir una IP válida.' }}
+                            {{ appset.INVALID_IP }}
                         </mat-error>
                     </mat-form-field>
 
@@ -139,10 +139,10 @@
                         <mat-label>{{'IP gateway'}}</mat-label>
                         <input matInput required formControlName="ipg2">
                         <mat-error *ngIf="form.controls['ipg2'].hasError('required')">
-                            {{ 'Este campo es obligatorio.' }}
+                            {{ appset.FIELD_REQUIRED }}
                         </mat-error>
                         <mat-error *ngIf="form.controls['ipg2'].hasError('pattern')">
-                            {{ 'Debe introducir una IP válida.' }}
+                            {{ appset.INVALID_IP }}
                         </mat-error>
                     </mat-form-field>
 
@@ -150,10 +150,10 @@
                         <mat-label>{{'Máscara'}}</mat-label>
                         <input matInput required formControlName="msb2">
                         <mat-error *ngIf="form.controls['msb2'].hasError('required')">
-                            {{ 'Este campo es obligatorio.' }}
+                            {{ appset.FIELD_REQUIRED }}
                         </mat-error>
                         <mat-error *ngIf="form.controls['msb2'].hasError('pattern')">
-                            {{ 'Debe introducir una máscara válida.' }}
+                            {{ appset.INVALID_MASK }}
                         </mat-error>
                     </mat-form-field>
                 </div>

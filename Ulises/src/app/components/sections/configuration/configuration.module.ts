@@ -31,6 +31,7 @@ import { ResourceNRangeComponent } from './configuration/resource/resource-nrang
 import { ResourceCollateralsComponent } from './configuration/resource/resource-collaterals/resource-collaterals.component';
 import { registerLocaleData } from '@angular/common';
 import localeES from '@angular/common/locales/es';
+import { SpinnerModule } from '../../common/spinner/spinner.module';
 
 registerLocaleData(localeES, 'es');
 
@@ -66,6 +67,7 @@ registerLocaleData(localeES, 'es');
     ReactiveFormsModule,
     CustomMaterialModule,
     GatewayModule,
+    SpinnerModule
   ],
   exports: [
     ConfigurationHomeComponent,

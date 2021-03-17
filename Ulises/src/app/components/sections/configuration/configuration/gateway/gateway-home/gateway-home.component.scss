@@ -1,23 +1,19 @@
 .main {
-
     display: flex;
     flex-direction: column;
     height: 100%;
     margin: 0 15px;
 
     .back {
-        
         cursor: pointer;
     }
 
     .form {
+        flex: 1;
 
-        flex: 1;        
-        
         .spinner {
-
             position: absolute;
-            top: 50%; 
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
 
@@ -27,14 +23,12 @@
         }
 
         .tabs {
-
             margin: 15px 0;
             flex: 1;
-        }    
+        }
     }
 
     .btns {
-
         display: flex;
         justify-content: center;
         margin: 15px 0;
@@ -42,5 +36,16 @@
         button {
             margin: 0 10px;
         }
+    }
+}
+.indexControlContainer {
+    width: 100%;
+    text-align: center;
+    .indexLoad {
+        width: fit-content;
+    }
+    .indexOverload {
+        width: fit-content;
+        color: red;
     }
 }

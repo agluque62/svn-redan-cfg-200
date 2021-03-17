@@ -6,15 +6,18 @@
 </div>
 
 <form class="form" [formGroup]="userForm" *ngIf="ready">
+    
+    <spinner *ngIf="showSpinner"></spinner>
+    
     <div class="inputs">
         <mat-form-field appearance="fill" [ngClass]="{'error': userForm.controls['name'].hasError('pattern')}">
             <mat-label>{{'Id. Operador'}}</mat-label>
             <input matInput required formControlName="name">
             <mat-error *ngIf="userForm.controls['name'].hasError('required')">
-                {{ 'Este campo es obligatorio.' }}
+                {{ appset.FIELD_REQUIRED }}
             </mat-error>
             <mat-error *ngIf="userForm.controls['name'].hasError('pattern')">
-                {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+                {{ appset.INVALID_NAME }}
             </mat-error>
         </mat-form-field>
 
@@ -22,7 +25,7 @@
             <mat-label>{{'Clave'}}</mat-label>
             <input matInput type="password" required formControlName="clave">
             <mat-error *ngIf="userForm.controls['clave'].hasError('required')">
-                {{ 'Este campo es obligatorio.' }}
+                {{ appset.FIELD_REQUIRED }}
             </mat-error>
         </mat-form-field>
     </div>

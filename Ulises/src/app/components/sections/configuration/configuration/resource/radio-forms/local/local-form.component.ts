@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { AppSettings } from 'src/app/core/app.settings';
 
 interface customValues {
   value: number;
@@ -54,10 +55,12 @@ export class LocalFormComponent implements OnInit {
     { value: 0, viewValue: 'Normal' },
     { value: 1, viewValue: 'Emergencia' }
   ];
-
+  appset:any;
+  
   constructor() { }
 
   ngOnInit(): void {
+    this.appset = AppSettings;
     this.checkIfClimaxBSSIsSelected();
     this.displayUmbralVAD(this.resourceForm.value.indicacion_entrada_audio);
   }
@@ -75,11 +78,11 @@ export class LocalFormComponent implements OnInit {
   }
 
   checkClimaxType() {
-    this.displayClimaxTime = (this.resourceForm.value.metodo_climax === 1 || this.resourceForm.value.metodo_climax === true);
+    this.displayClimaxTime = (this.resourceForm.value.metodo_climax === 1 || this.resourceForm.value.metodo_climax);
   }
 
   checkIfClimaxBSSIsSelected() {
-    if (this.resourceForm.value.climax_bss === 1 || this.resourceForm.value.climax_bss === true) {
+    if (this.resourceForm.value.climax_bss === 1 || this.resourceForm.value.climax_bss) {
       this.checkClimaxBSS = true;
       this.climaxModeActive = true;
       this.checkClimaxType();

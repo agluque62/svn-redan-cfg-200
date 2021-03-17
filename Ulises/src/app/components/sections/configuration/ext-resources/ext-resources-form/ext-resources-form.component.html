@@ -6,11 +6,13 @@
 
     <form class="form" [formGroup]="extResourceFrom">
 
+        <spinner *ngIf="showSpinner"></spinner>
+        
         <mat-form-field appearance="fill">
             <mat-label>{{'URI'}}</mat-label>
             <input matInput formControlName="uri">
             <mat-error *ngIf="extResourceFrom.controls['uri'].hasError('pattern')">
-                {{ 'El formato URI introducido no es correcto' }}
+                {{ appset.INVALID_URI }}
             </mat-error>
         </mat-form-field>
 
@@ -18,7 +20,7 @@
             <mat-label>{{'Alias'}}</mat-label>
             <input matInput formControlName="alias">
             <mat-error *ngIf="extResourceFrom.controls['alias'].hasError('pattern')">
-                {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+                {{ appset.INVALID_NAME }}
             </mat-error>
         </mat-form-field>
 

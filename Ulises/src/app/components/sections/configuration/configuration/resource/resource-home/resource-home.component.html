@@ -11,16 +11,19 @@
         </mat-label>
     </div>
     <form class="form" [formGroup]="resourceForm">
+
+        <spinner *ngIf="showSpinner"></spinner>
+
         <div class="main">
             <div class="main-resource">
                 <mat-form-field appearance="legacy">
                     <mat-label>Nombre</mat-label>
                     <input matInput required formControlName="nombre" (change)="saveTmpName($event)">
                     <mat-error *ngIf="resourceForm.controls['nombre'].hasError('required')">
-                        {{ 'Este campo es obligatorio.' }}
+                        {{ appset.FIELD_REQUIRED }}
                     </mat-error>
                     <mat-error *ngIf="resourceForm.controls['nombre'].hasError('pattern')">
-                        {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+                        {{ appset.INVALID_NAME }}
                     </mat-error>
                 </mat-form-field>
 
@@ -43,7 +46,8 @@
                     </mat-select>
                 </mat-form-field>
 
-                <mat-checkbox [disabled]="visualizationMode" [checked]="registerKeyExists" (change)="displayRegKey = $event.checked">Habilitar registro</mat-checkbox>
+                <mat-checkbox [disabled]="visualizationMode" [checked]="registerKeyExists"
+                    (change)="displayRegKey = $event.checked">Habilitar registro</mat-checkbox>
 
                 <mat-form-field appearance="legacy" *ngIf="displayRegKey">
                     <mat-label>Clave</mat-label>
@@ -54,7 +58,7 @@
                     <mat-label>Frecuencia</mat-label>
                     <input matInput formControlName="frecuencia">
                     <mat-error *ngIf="resourceForm.controls['frecuencia'].hasError('pattern')">
-                        {{ 'Formato de frecuencia no válido. Rangos permitidos: 118.000 - 137.995 | 200.000 - 399.995' }}
+                        {{ appset.INVALID_RANGE_FREC }}
                     </mat-error>
                 </mat-form-field>
 
@@ -78,37 +82,48 @@
                             </div>
                             <div class="audio-settings">
                                 <div class="agc">
-                                    <mat-checkbox class="agc-checkbox" [disabled]="visualizationMode" [checked]="displayAGCAD" (change)="displayAGCAD = $event.checked">
+                                    <mat-checkbox class="agc-checkbox" [disabled]="visualizationMode"
+                                        [checked]="displayAGCAD" (change)="displayAGCAD = $event.checked">
                                         AGC en A/D
                                     </mat-checkbox>
-    
                                     <mat-form-field *ngIf="!displayAGCAD" appearance="legacy">
                                         <mat-label>Ajuste Cero digital en A/D (dB)</mat-label>
                                         <input matInput formControlName="ajuste_ad">
-                                        <mat-error *ngIf="resourceForm.get('ajuste_ad')?.hasError('min') || resourceForm.get('ajuste_ad')?.hasError('max')">
-                                            {{ 'Valor fuera de rango (-13.5, 1.20)' }}
+                                        <mat-error
+                                            *ngIf="resourceForm.get('ajuste_ad')?.hasError('min') || resourceForm.get('ajuste_ad')?.hasError('max')">
+                                            {{ appset.INVALID_RANGE_AD }}
                                         </mat-error>
                                         <mat-error *ngIf="resourceForm.get('ajuste_ad')?.hasError('pattern')">
-                                            {{ 'Formato numérico no válido' }}
+                                            {{ appset.NUMBERS_FORMAT_INVALID }}
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
                                 <div class="agc">
-                                    <mat-checkbox class="agc-checkbox" [disabled]="visualizationMode" [checked]="displayAGCDA" (change)="displayAGCDA = $event.checked">
+                                    <mat-checkbox class="agc-checkbox" [disabled]="visualizationMode"
+                                        [checked]="displayAGCDA" (change)="displayAGCDA = $event.checked">
                                         AGC en D/A
                                     </mat-checkbox>
                                     <mat-form-field *ngIf="!displayAGCDA" appearance="legacy">
                                         <mat-label>Ajuste Cero digital en D/A (dB)</mat-label>
                                         <input matInput formControlName="ajuste_da">
-                                        <mat-error *ngIf="resourceForm.get('ajuste_da')?.hasError('min') || resourceForm.get('ajuste_da')?.hasError('max')">                                        
-                                            {{ 'Valor fuera de rango (-24.3, 1.10)' }}
+                                        <mat-error
+                                            *ngIf="resourceForm.get('ajuste_da')?.hasError('min') || resourceForm.get('ajuste_da')?.hasError('max')">
+                                            {{ appset.INVALID_RANGE_DA }}
                                         </mat-error>
                                         <mat-error *ngIf="resourceForm.get('ajuste_da')?.hasError('pattern')">
-                                            {{ 'Formato numérico no válido' }}
+                                            {{ appset.NUMBERS_FORMAT_INVALID }}
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
-                            </div>    
+                                <mat-form-field appearance="fill" *ngIf="displayAudioPrecision">
+                                    <mat-label>Precisión audio</mat-label>
+                                    <mat-select formControlName="precision_audio" name="precision">
+                                        <mat-option *ngFor="let opt of audio_prec" [value]="opt.value">
+                                            {{opt.viewValue}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
                         </div>
                     </mat-tab>
                     <mat-tab>

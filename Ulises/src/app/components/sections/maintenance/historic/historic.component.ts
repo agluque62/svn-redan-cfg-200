@@ -231,6 +231,7 @@ export class HistoricComponent implements OnInit {
             }
 
             this.assignDataSource(result.historics);
+            
             this.ready = true;
         } catch (error) {
             this.ready = true;
@@ -241,7 +242,7 @@ export class HistoricComponent implements OnInit {
     async retrieveHistoricsByDate() {
         try {
             this.ready = false;
-
+            
             const result = await this.historicService.getHistoricsByDate(this.getISODate(this.dateStart),
                 this.getISODate(this.dateEnd)).toPromise();
 
@@ -253,6 +254,7 @@ export class HistoricComponent implements OnInit {
             this.assignDataSource(result.historics);
             this.ready = true;
         } catch (error) {
+            this.ready = false;
             this.app.catchError(error);
         }
     }
@@ -260,6 +262,7 @@ export class HistoricComponent implements OnInit {
     async retrieveHistoricsByEvents() {
         try {
             this.ready = false;
+            
             const result = await this.historicService.getHistoricsByEvents().toPromise();
 
             if (result.error) {
@@ -348,6 +351,7 @@ export class HistoricComponent implements OnInit {
     async retrieveHistorics() {
         try {
             this.ready = false;
+            
             const result = await this.historicService.getHistorics().toPromise();
 
             if (result.error) {

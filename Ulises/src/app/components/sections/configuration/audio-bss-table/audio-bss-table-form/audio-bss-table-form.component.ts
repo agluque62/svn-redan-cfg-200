@@ -19,13 +19,17 @@ export class AudioBssTableFormComponent implements OnInit {
   type: string = 'CREATE';
   visualizationMode: boolean = false;
   rssiValues: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+  
+  showSpinner: boolean = false;
+
+  appset: any;
 
   constructor(public dialogRef: MatDialogRef<AudioBssTableFormComponent>, @Inject(MAT_DIALOG_DATA) public data: TableBss,
     private readonly alertService: AlertService, private readonly tableBssService: TableBSSService,
     private readonly gatewayService: GatewayService, private readonly userService: UserService) { }
 
   ngOnInit(): void {
-
+    this.appset = AppSettings;
     if (this.data.name && this.data.name != '') {
       this.type = 'EDIT';
     }
@@ -60,9 +64,11 @@ export class AudioBssTableFormComponent implements OnInit {
 
     if (this.tableBssForm.valid) {
 
+      this.showSpinner = true;
       const createResult = await this.tableBssService.createTableAudioBss(this.tableBssForm.value).toPromise();
-      if (createResult && createResult.error) {
+      this.showSpinner = false;
 
+      if (createResult && createResult.error) {
         (createResult.error.includes('ER_DUP_ENTRY')) ?
           await this.alertService.errorMessage(`Error`, `Identificador de tabla duplicado`)
           : await this.alertService.errorMessage(`Error`, createResult.error);
@@ -71,13 +77,17 @@ export class AudioBssTableFormComponent implements OnInit {
         this.dialogRef.close();
       }
     } else {
-      await this.alertService.errorMessage(`Formulario inválido`, `Compruebe el formulario`);
+      await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
     }
   }
 
   async editTableBss() {
     if (this.tableBssForm.valid) {
+
+      this.showSpinner = true;
       const editResult = await this.tableBssService.editTableAudioBss(this.tableBssForm.value).toPromise();
+      this.showSpinner = false;
+          
       if (editResult && editResult.error) {
         await this.alertService.errorMessage(`Error`, editResult.error);
       } else {
@@ -92,7 +102,7 @@ export class AudioBssTableFormComponent implements OnInit {
         this.dialogRef.close();
       }
     } else {
-      await this.alertService.errorMessage(`Formulario inválido`, `Compruebe el formulario`);
+      await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
     }
   }
 
@@ -113,7 +123,7 @@ export class AudioBssTableFormComponent implements OnInit {
 
       }
     } else {
-      await this.alertService.errorMessage(`Formulario inválido`, `Compruebe el formulario`);
+      await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
     }
   }
 }

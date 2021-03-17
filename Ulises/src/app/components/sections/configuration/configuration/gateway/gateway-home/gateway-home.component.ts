@@ -46,6 +46,10 @@ export class GatewayHomeComponent implements OnInit {
   tabIdx: number = 0;
   visualizationMode: boolean = false;
 
+  selectedClass: string = "indexLoad";
+  loadIndex!: string;
+  LoadIndexControlEnabled: boolean = false;
+
   constructor(private readonly route: ActivatedRoute, private readonly router: Router, private readonly app: AppComponent, public dialog: MatDialog,
     private readonly gatewayService: GatewayService, private readonly alertService: AlertService, private historicService: HistoricService,
     private readonly dataService: DataService, private readonly userService: UserService, private readonly loginService: LoginService,
@@ -65,7 +69,16 @@ export class GatewayHomeComponent implements OnInit {
       }
 
       const gatewayId = Number(this.route.snapshot.paramMap.get('id'));
+
       if (gatewayId) {
+        const hardwareResume = (await this.gatewayService.getGatewayHardware(gatewayId).toPromise());
+        let result = (await this.configService.getLocalConfig().toPromise());
+        const force_rdaudio_normal = (await this.configService.getLocalConfig().toPromise()).R16Mode;
+        this.LoadIndexControlEnabled = result.LoadIndexControlEnabled;
+        if (this.LoadIndexControlEnabled) {
+          this.calculateLoadIndex(hardwareResume, force_rdaudio_normal);
+        }
+
         this.type = 'EDIT';
         await this.initEdit(gatewayId);
         this.title = await this.getGatewayTitle();
@@ -173,6 +186,13 @@ export class GatewayHomeComponent implements OnInit {
         return;
       }
 
+      if (gtwFieldCpu0.code === 'EHOSTUNREACH' || gtwFieldCpu1.code === 'EHOSTUNREACH') {
+        await this.historicService.errorGatewayFieldActivation(`${this.gateway.name} Error de conexión al host`).toPromise();
+        await this.alertService.errorMessage(``, `Error no es posible conectar con la pasarela`);
+        this.showSpinner = false;
+        return;
+      }
+
       if (!this.validateGtwFieldJson(gtwFieldCpu0) && !this.validateGtwFieldJson(gtwFieldCpu1)) {
         await this.historicService.errorGatewayFieldActivation(`${this.gateway.name} Error de formato`).toPromise();
         await this.alertService.errorMessage(``, `Error el formato del JSON recibido no es correcto`);
@@ -204,34 +224,52 @@ export class GatewayHomeComponent implements OnInit {
 
     if (await this.isInvalidGateway()) return;
 
+    this.showSpinner = true;
+
     const ipv = await this.checkIpError(this.gatewayForm.value.ipv);
-    if (ipv) return;
+    if (ipv) {
+      this.showSpinner = false;
+      return;
+    }
 
     const ipb1 = await this.checkIpError(this.gatewayForm.value.ipb1);
-    if (ipb1) return;
+    if (ipb1) {
+      this.showSpinner = false;
+      return;
+    }
 
     const ipb2 = await this.checkIpError(this.gatewayForm.value.ipb2);
-    if (ipb2) return;
+    if (ipb2) {
+      this.showSpinner = false;
+      return;
+    }
 
     const name = await this.checkGatewayNameError(this.gatewayForm.value.nombre);
-    if (name) return;
+    if (name) {
+      this.showSpinner = false;
+      return;
+    }
 
-    let gateway = Object.assign({}, this.gatewayForm.value);
+    let gateway = Object.assign({}, this.gatewayForm.getRawValue());
     delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
+    gateway.snmpv2 = gateway.snmpv2 === 1;
+    gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
 
     const siteId = (this.siteId) ? this.siteId : 0;
 
     const newGtw = await this.gatewayService.createGtw(siteId, gateway).toPromise();
     if (newGtw.error) {
+      this.showSpinner = false;
       await this.alertService.errorMessage(`Error`, newGtw.error);
       return;
     }
 
     await this.historicService.createGateway(this.gatewayForm.value.nombre).toPromise();
+
+    this.showSpinner = false;
     await this.alertService.successMessage(``, `Pasarela ${newGtw.name} creada correctamente`);
 
     this.dataService.updateDataConfigId(this.configId);
-
     this.dataService.updateDataGatewayPreviousUrl('NEW');
     this.router.navigate(['/home/gateway/' + newGtw.insertId]);
   }
@@ -356,7 +394,7 @@ export class GatewayHomeComponent implements OnInit {
       if (this.gatewayForm.controls['puerto_snmp'].hasError('pattern')) {
         message = `Puerto SNMP inválido`;
       }
-            
+
       await this.alertService.errorMessage(`Formulario inválido`, message);
       return true;
     }
@@ -368,23 +406,39 @@ export class GatewayHomeComponent implements OnInit {
 
     if (await this.isInvalidGateway()) return;
 
+    this.showSpinner = true;
     const ipv = await this.checkIpError(this.gatewayForm.value.ipv);
-    if (ipv) return;
+    if (ipv) {
+      this.showSpinner = false;
+      return;
+    }
 
     const ipb1 = await this.checkIpError(this.gatewayForm.value.ipb1);
-    if (ipb1) return;
+    if (ipb1) {
+      this.showSpinner = false;
+      return;
+    }
 
     const ipb2 = await this.checkIpError(this.gatewayForm.value.ipb2);
-    if (ipb2) return;
+    if (ipb2) {
+      this.showSpinner = false;
+      return;
+    }
 
     const name = await this.checkGatewayNameError(this.gatewayForm.value.nombre);
-    if (name) return;
+    if (name) {
+      this.showSpinner = false;
+      return;
+    }
 
-    let gateway = Object.assign({}, this.gatewayForm.value);
+    let gateway = Object.assign({}, this.gatewayForm.getRawValue());
     delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
+    gateway.snmpv2 = gateway.snmpv2 === 1;
+    gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
 
     const updatedGtw = await this.gatewayService.updateGtw(this.gateway.idCGW, gateway).toPromise();
     if (updatedGtw.error) {
+      this.showSpinner = false;
       await this.alertService.errorMessage(`Error`, updatedGtw.error);
       return;
     }
@@ -394,6 +448,8 @@ export class GatewayHomeComponent implements OnInit {
       pendiente_actualizar: true
     });
     this.initStatusGateway = { ...this.gatewayForm.value };
+ 
+    this.showSpinner = false;
     await this.alertService.successMessage(``, `Pasarela ${updatedGtw.name} actualizada correctamente`);
   }
 
@@ -414,8 +470,12 @@ export class GatewayHomeComponent implements OnInit {
 
     const confirm = await this.alertService.confirmationMessage(``, `¿Desea eliminar la gateway ${this.gateway.name}?`);
     if (confirm.value) {
+       
+      this.showSpinner = true;
       await this.gatewayService.deleteGtw(this.gateway.idCGW).toPromise();
       await this.historicService.deleteGateway(this.gateway.name).toPromise();
+      this.showSpinner = false;
+      
       await this.alertService.successMessage(``, `Pasarela ${this.gateway.name} eliminada correctamente`);
       this.router.navigate(['/home/config/' + this.configId]);
     }
@@ -423,7 +483,9 @@ export class GatewayHomeComponent implements OnInit {
 
   async exportGateway() {
     try {
+      this.showSpinner = true;
       const result = await this.gatewayService.exportGtw(this.gateway.idCGW).toPromise();
+      this.showSpinner = false;
       const fileName = `${result.general.emplazamiento}_${result.general.name}_${result.fechaHora}.json`;
       this.saveText(JSON.stringify(result, undefined, 2), fileName);
     } catch (error) {
@@ -454,12 +516,12 @@ export class GatewayHomeComponent implements OnInit {
       ipg2: new FormControl({ value: this.gatewayPost.ipg2, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
       msb1: new FormControl({ value: this.gatewayPost.msb1, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
       msb2: new FormControl({ value: this.gatewayPost.msb2, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
-      PuertoLocalSIP: new FormControl({ value: this.gatewayPost.PuertoLocalSIP, disabled: true }),
+      PuertoLocalSIP: new FormControl({value: this.gatewayPost.PuertoLocalSIP, disabled: true}),
       periodo_supervision: new FormControl({ value: this.gatewayPost.periodo_supervision, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.ONLY_NUMBERS)]),
       proxys: new FormControl(this.gatewayPost.proxys),
       registrars: new FormControl(this.gatewayPost.registrars),
       listServers: new FormControl(this.gatewayPost.listServers),
-      puerto_servicio_snmp: new FormControl({ value: this.gatewayPost.puerto_servicio_snmp, disabled: true }),
+      puerto_servicio_snmp: new FormControl({value: this.gatewayPost.puerto_servicio_snmp, disabled: true}),
       snmpv2: new FormControl({ value: this.gatewayPost.snmpv2 === 1, disabled: this.visualizationMode }),
       comunidad_snmp: new FormControl({ value: this.gatewayPost.comunidad_snmp, disabled: this.visualizationMode }),
       puerto_snmp: new FormControl({ value: this.gatewayPost.puerto_snmp, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.PORT)]),
@@ -479,6 +541,38 @@ export class GatewayHomeComponent implements OnInit {
     return (data.hasOwnProperty('fechaHora') && data.hasOwnProperty('general') && data.hasOwnProperty('idConf') && data.hasOwnProperty('hardware')
       && data.hasOwnProperty('recursos') && data.hasOwnProperty('servicios') && data.hasOwnProperty('tipo') && data.hasOwnProperty('users')
       && data.tipo === 0);
+  }
+
+  calculateLoadIndex(hardwareResume: any, force_rdaudio_normal: boolean) {
+    let radioResources = hardwareResume.radio;
+    let telResources = hardwareResume.tfno;
+    let loadIndex = 0;
+    radioResources.forEach((resource: any) => {
+      if (resource.tipo_agente == 2 || resource.tipo_agente == 3)
+        loadIndex += 8;
+      else if (resource.tipo_agente == 4 || resource.tipo_agente == 6)
+        loadIndex += (force_rdaudio_normal == true ? 1 : 4);
+      else
+        loadIndex += (force_rdaudio_normal == true ? 1 : 2);
+    });
+
+    telResources.forEach((resource: any) => {
+      if (resource.tipo_interfaz_tel == 5 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 3) {
+        loadIndex += 2;
+      }
+      else {
+        loadIndex++;
+      }
+    });
+
+    if (loadIndex > 16) {
+      this.selectedClass = "indexOverload"
+      this.loadIndex = `${loadIndex} - Indice máximo sobrepasado.`
+    } else {
+      this.selectedClass = "indexLoad";
+      this.loadIndex = loadIndex.toString();
+    }
+
   }
 }
 

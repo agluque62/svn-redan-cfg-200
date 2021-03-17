@@ -5,14 +5,16 @@
 
     <form class="form" [formGroup]="copyForm">
 
+        <spinner *ngIf="showSpinner"></spinner>
+
         <mat-form-field appearance="fill" [ngClass]="{'error': copyForm.controls['name'].hasError('pattern')}">
             <mat-label>{{'Id. Pasarela'}}</mat-label>
             <input matInput required formControlName="name">
             <mat-error *ngIf="copyForm.controls['name'].hasError('required')">
-                {{ 'Este campo es obligatorio.' }}
+                {{ appset.FIELD_REQUIRED }}
             </mat-error>
             <mat-error *ngIf="copyForm.controls['name'].hasError('pattern')">
-                {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+                {{ appset.INVALID_NAME }}
             </mat-error>
         </mat-form-field>
 
@@ -20,10 +22,10 @@
             <mat-label>{{'Dirección IP Virtual'}}</mat-label>
             <input matInput required formControlName="ipv">
             <mat-error *ngIf="copyForm.controls['ipv'].hasError('required')">
-                {{ 'Este campo es obligatorio.' }}
+                {{ appset.FIELD_REQUIRED }}
             </mat-error>
             <mat-error *ngIf="copyForm.controls['ipv'].hasError('pattern')">
-                {{ 'Debe introducir una IP válida.' }}
+                {{ appset.INVALID_IP }}
             </mat-error>
         </mat-form-field>
 
@@ -31,10 +33,10 @@
             <mat-label>{{'Ip Cpu0'}}</mat-label>
             <input matInput required formControlName="ipCpu0">
             <mat-error *ngIf="copyForm.controls['ipCpu0'].hasError('required')">
-                {{ 'Este campo es obligatorio.' }}
+                {{ appset.FIELD_REQUIRED }}
             </mat-error>
             <mat-error *ngIf="copyForm.controls['ipCpu0'].hasError('pattern')">
-                {{ 'Debe introducir una IP válida.' }}
+                {{ appset.INVALID_IP }}
             </mat-error>
         </mat-form-field>
 
@@ -43,10 +45,10 @@
             <mat-label>{{'Ip Cpu1'}}</mat-label>
             <input matInput required formControlName="ipCpu1">
             <mat-error *ngIf="copyForm.controls['ipCpu1'].hasError('required')">
-                {{ 'Este campo es obligatorio.' }}
+                {{ appset.FIELD_REQUIRED }}
             </mat-error>
             <mat-error *ngIf="copyForm.controls['ipCpu1'].hasError('pattern')">
-                {{ 'Debe introducir una IP válida.' }}
+                {{ appset.INVALID_IP }}
             </mat-error>
         </mat-form-field>
 

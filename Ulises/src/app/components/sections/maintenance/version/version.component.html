@@ -2,9 +2,11 @@
     <div class="title">
         {{ 'Versión' }}
     </div>
+    
+    <spinner *ngIf="!ready"></spinner>
 
     <div class="mat-elevation-z8" *ngIf="ready">
-
+    
         <div class="table-row">
             <div class="table-column">
                 <div class="label">
@@ -45,10 +47,10 @@
         </div>
     </div>
 
-    <div class="title files">
+    <div class="title files" *ngIf="ready">
         {{ 'Archivos' }}
     </div>
-    <div class="mat-elevation-z8">
+    <div class="mat-elevation-z8" *ngIf="ready">
         <div class="table-row" *ngFor="let file of version.file">
             <div class="table-column">
                 <div class="label">

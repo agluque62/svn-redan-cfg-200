@@ -15,10 +15,10 @@
       <input matInput formControlName="umbral_vad">
       <mat-error
         *ngIf="resourceForm.get('umbral_vad')?.hasError('min') || resourceForm.get('umbral_vad')?.hasError('max')">
-        {{ 'Valor fuera de rango (-35, -15)' }}
+        {{ appset.INVALID_RANGE_VAD }}
       </mat-error>
       <mat-error *ngIf="resourceForm.get('umbral_vad')?.hasError('pattern')">
-        {{ 'Formato numérico no válido' }}
+        {{ appset.NUMBERS_FORMAT_INVALID }}
       </mat-error>
     </mat-form-field>
 

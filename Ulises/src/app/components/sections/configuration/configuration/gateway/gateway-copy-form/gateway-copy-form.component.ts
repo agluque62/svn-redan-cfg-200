@@ -29,11 +29,15 @@ export class GatewayCopyFormComponent implements OnInit {
 
   configurationIps: string[] = [];
 
+  showSpinner: boolean = false;
+  appset:any;
+  
   constructor(public dialogRef: MatDialogRef<GatewayCopyFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Gateway,
     private readonly alertService: AlertService, @Inject(AppComponent) private readonly app: AppComponent,
     private readonly gatewayService: GatewayService, private readonly dataService: DataService, private readonly configService: ConfigService) { }
 
   ngOnInit() {
+    this.appset = AppSettings;
     this.gateway = this.data;
     this.ipv = this.gateway.ipv;
     this.configId = this.dataService.getDataConfigId();
@@ -98,19 +102,22 @@ export class GatewayCopyFormComponent implements OnInit {
     try {
       if (this.copyForm.valid) {
 
+        this.showSpinner = true;
         if (await this.checkIpError(this.copyForm.value.ipv)) return;
         if (await this.checkIpError(this.copyForm.value.ipCpu0)) return;
         if (await this.checkIpError(this.copyForm.value.ipCpu1)) return;
         if (await this.checkGatewayNameError(this.copyForm.value.name)) return;
 
-        if (this.copyForm.value.ipv === this.copyForm.value.ipCpu0 || this.copyForm.value.ipv === this.copyForm.value.ipCpu1 
+        if (this.copyForm.value.ipv === this.copyForm.value.ipCpu0 || this.copyForm.value.ipv === this.copyForm.value.ipCpu1
           || this.copyForm.value.ipCpu0 === this.copyForm.value.ipCpu1) {
+          this.showSpinner = false;
           await this.alertService.errorMessage(`Error`, `Los valores de las ips deben ser diferentes`);
           return;
         }
 
         const result = await this.gatewayService.copyGtw(this.gateway.idCGW, this.copyForm.value.name, this.copyForm.value.ipv, this.copyForm.value.ipCpu0,
           this.copyForm.value.ipCpu1).toPromise();
+        this.showSpinner = false;
 
         if (result && result.data === 'OK') {
           await this.alertService.successMessage(``, `La pasarela ${this.gateway.name} ha sido copiada`);
@@ -127,7 +134,7 @@ export class GatewayCopyFormComponent implements OnInit {
           }
         }
       } else {
-        this.alertService.errorMessage(``, `Formulario inválido, compruebe los datos`);
+        this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
     } catch (error) {
       this.app.catchError(error);

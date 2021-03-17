@@ -65,11 +65,16 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   displayAGCAD: boolean = false;
   displayAGCDA: boolean = false;
   displayDeleteBtn: boolean = false;
+  displayAudioPrecision: boolean = false;
 
   // Common
   types: customValues[] = [
     { value: 1, viewValue: 'Radio' },
     { value: 2, viewValue: 'Telefónico' }
+  ];
+
+  audio_prec: customValues[] = [
+    { value: 0, viewValue: 'Estricto' }
   ];
 
   codecs: customValues[] = [
@@ -103,15 +108,18 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
   visualizationMode: boolean = false;
 
+  showSpinner: boolean = false;
+  appset: any;
+
   constructor(private readonly cfr: ComponentFactoryResolver, private readonly resourceService: ResourceService,
     private readonly alertService: AlertService, private readonly route: ActivatedRoute, private readonly app: AppComponent,
     private readonly router: Router, private readonly dataService: DataService, private readonly userService: UserService,
     private readonly loginService: LoginService, private gatewayService: GatewayService) { }
 
   async ngOnInit() {
-
+    this.displayAudioPrecision = (await this.loginService.version().toPromise()).R16Mode;
     this.checkPermissions();
-
+    this.appset = AppSettings;
     this.resourceId = Number(this.route.snapshot.paramMap.get('id'));
     const slot = await this.dataService.getDataSlot();
 
@@ -261,7 +269,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       clave_registro: new FormControl({ value: this.resource.clave_registro, disabled: this.visualizationMode }),
       ajuste_ad: new FormControl({ value: this.resource.ajuste_ad, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.REAL_NUMBER), Validators.min(-13.5), Validators.max(1.20)]),
       ajuste_da: new FormControl({ value: this.resource.ajuste_da, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.REAL_NUMBER), Validators.min(-24.3), Validators.max(1.10)]),
-      precision_audio: new FormControl({ value: this.resource.precision_audio, disabled: this.visualizationMode }),
+      precision_audio: new FormControl({ value: this.resource.precision_audio, disabled: true }),
       fila: new FormControl({ value: this.resource.fila, disabled: this.visualizationMode }),
       columna: new FormControl({ value: this.resource.columna, disabled: this.visualizationMode }),
       listaUris: new FormControl({ value: this.resource.listaUris, disabled: this.visualizationMode }),
@@ -295,7 +303,6 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       // Common
       nombre: new FormControl({ value: this.resource.nombre, disabled: this.visualizationMode }, [Validators.required, Validators.pattern(AppSettings.NAME_PATTERN)]),
       codec: new FormControl({ value: this.resource.codec, disabled: this.visualizationMode }),
-      // clave_registro: new FormControl(this.resource.clave_registro),
       ajuste_ad: new FormControl({ value: this.resource.ajuste_ad, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.REAL_NUMBER), Validators.min(-13.5), Validators.max(1.20)]),
       ajuste_da: new FormControl({ value: this.resource.ajuste_da, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.REAL_NUMBER), Validators.min(-24.3), Validators.max(1.10)]),
       precision_audio: new FormControl(this.resource.precision_audio),
@@ -357,17 +364,20 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     }
 
     if (this.resourceForm.valid) {
+
       this.resourceForm.get('frecuencia')?.setValidators([]); // Issue 2747
+
       if (this.selectedResource === 1 && this.resourceForm.value.frecuencia === undefined || this.resourceForm.value.frecuencia === '') {
         this.resourceForm.patchValue({ frecuencia: 0 });
       } else if (this.selectedResource === 2 && this.resourceForm.value.duracion_tono_interrup !== undefined && this.secondTabRef.instance.timeOpt !== undefined) {// issue 2792
         this.resourceForm.patchValue({ duracion_tono_interrup: this.secondTabRef.instance.duration + this.secondTabRef.instance.timeOpt });
+        this.resourceForm.value.additional_uri_remota = this.resourceForm.value.additional_uri_remota === null ? '' : this.resourceForm.value.additional_uri_remota;
       }
-      if (this.displayAGCAD === true) {
+      if (this.displayAGCAD) {
         this.resourceForm.patchValue({ ajuste_ad: undefined });
       }
 
-      if (this.displayAGCDA === true) {
+      if (this.displayAGCDA) {
         this.resourceForm.patchValue({ ajuste_da: undefined });
       }
 
@@ -376,15 +386,17 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       this.resourceForm.value.ajuste_da = this.resourceForm.value.ajuste_da === null || this.resourceForm.value.ajuste_da === '' ?
         0 : this.resourceForm.value.ajuste_da;
 
-      this.resourceForm.value.deteccion_vox = this.resourceForm.value.deteccion_vox === true ? 1 : 0;
-      this.resourceForm.value.iEnableNoED137 = this.resourceForm.value.iEnableNoED137 === true ? 1 : 0;
+      this.resourceForm.value.deteccion_vox = this.resourceForm.value.deteccion_vox ? 1 : 0;
+      this.resourceForm.value.iEnableNoED137 = this.resourceForm.value.iEnableNoED137 ? 1 : 0;
+      this.resourceForm.value.precision_audio = 0;
 
-      this.resourceForm.value.itiporespuesta = typeof(this.resourceForm.value.itiporespuesta) === 'boolean' ?
-        (this.resourceForm.value.itiporespuesta === true ? 1 : 0) : this.resourceForm.value.itiporespuesta;
+      this.resourceForm.value.itiporespuesta = typeof (this.resourceForm.value.itiporespuesta) === 'boolean' ?
+        (this.resourceForm.value.itiporespuesta ? 1 : 0) : this.resourceForm.value.itiporespuesta;
 
-      this.resourceForm.value.additional_itiporespuesta = typeof(this.resourceForm.value.additional_itiporespuesta) === 'boolean' ?
-        (this.resourceForm.value.additional_itiporespuesta === true ? 1 : 0) : this.resourceForm.value.additional_itiporespuesta;
+      this.resourceForm.value.additional_itiporespuesta = typeof (this.resourceForm.value.additional_itiporespuesta) === 'boolean' ?
+        (this.resourceForm.value.additional_itiporespuesta ? 1 : 0) : this.resourceForm.value.additional_itiporespuesta;
 
+      this.showSpinner = true;
       if (this.editMode) {
         res = await this.resourceService.updateResource(this.selectedResource, this.resourceForm.value).toPromise();
         message = `El recurso ${this.resourceForm.value.nombre} ha sido editado correctamente`;
@@ -392,6 +404,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         res = await this.resourceService.createResource(this.selectedResource, this.resourceForm.value).toPromise();
         message = `El recurso ${this.resourceForm.value.nombre} ha sido creado correctamente`;
       }
+      this.showSpinner = false;
 
       if (res && res.result == 'OK') {
         await this.alertService.successMessage(``, message);
@@ -409,13 +422,13 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     switch (errorType) {
       case "create":
         if (this.editMode) {
-          await this.alertService.errorMessage(``, `Error al modificar el recurso`);
+          await this.alertService.errorMessage(``, AppSettings.RES_EDIT_ERROR);
         } else {
-          await this.alertService.errorMessage(``, `Error al crear el recurso`);
+          await this.alertService.errorMessage(``, AppSettings.RES_CREATE_ERROR);
         }
         break;
       case "form":
-        await this.alertService.errorMessage(``, `Datos invalidos`);
+        await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
         break;
     }
 

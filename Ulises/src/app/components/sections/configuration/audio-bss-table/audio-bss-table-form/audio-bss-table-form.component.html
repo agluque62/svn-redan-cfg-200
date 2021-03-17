@@ -7,20 +7,22 @@
 
     <form class="form" [formGroup]="tableBssForm">
 
+        <spinner *ngIf="showSpinner"></spinner>
+
         <div class="col">
             <mat-form-field appearance="fill" [ngClass]="{'error': tableBssForm.controls['name'].hasError('pattern')}">
                 <mat-label>{{'Id. Tabla'}}</mat-label>
                 <input matInput formControlName="name">
                 <mat-error *ngIf="tableBssForm.controls['name'].hasError('pattern')">
-                    {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+                    {{ appset.INVALID_NAME }}
                 </mat-error>
             </mat-form-field>
-    
+
             <mat-form-field appearance="fill">
                 <mat-label>{{'Descripción'}}</mat-label>
                 <input matInput formControlName="description">
             </mat-form-field>
-    
+
             <mat-form-field *ngIf="type == 'EDIT'" appearance="fill">
                 <mat-label>{{'Fecha de creación'}}</mat-label>
                 <input matInput formControlName="FechaCreacion">
@@ -38,7 +40,7 @@
                         {{ 'RSSI' }}
                     </div>
                 </div>
-    
+
                 <div class="table-row">
                     <div class="table-column">
                         {{ 0 }}
@@ -53,7 +55,7 @@
                         </mat-form-field>
                     </div>
                 </div>
-    
+
                 <div class="table-row">
                     <div class="table-column">
                         {{ 10 }}
@@ -68,7 +70,7 @@
                         </mat-form-field>
                     </div>
                 </div>
-    
+
                 <div class="table-row">
                     <div class="table-column">
                         {{ 20 }}
@@ -83,7 +85,7 @@
                         </mat-form-field>
                     </div>
                 </div>
-    
+
                 <div class="table-row">
                     <div class="table-column">
                         {{ 30 }}
@@ -98,7 +100,7 @@
                         </mat-form-field>
                     </div>
                 </div>
-    
+
                 <div class="table-row">
                     <div class="table-column">
                         {{ 40 }}
@@ -113,7 +115,7 @@
                         </mat-form-field>
                     </div>
                 </div>
-    
+
                 <div class="table-row">
                     <div class="table-column">
                         {{ 50 }}
@@ -135,9 +137,12 @@
     </form>
 
     <div class="btns">
-        <button mat-raised-button *ngIf="type == 'CREATE' && !visualizationMode" (click)="createTableBss()">{{'Guardar'}}</button>
-        <button mat-raised-button *ngIf="type == 'EDIT' && !visualizationMode" (click)="editTableBss()">{{'Guardar'}}</button>
-        <button mat-raised-button *ngIf="type == 'EDIT' && !visualizationMode" (click)="deleteTableBss()">{{'Eliminar'}}</button>
+        <button mat-raised-button *ngIf="type == 'CREATE' && !visualizationMode"
+            (click)="createTableBss()">{{'Guardar'}}</button>
+        <button mat-raised-button *ngIf="type == 'EDIT' && !visualizationMode"
+            (click)="editTableBss()">{{'Guardar'}}</button>
+        <button mat-raised-button *ngIf="type == 'EDIT' && !visualizationMode"
+            (click)="deleteTableBss()">{{'Eliminar'}}</button>
         <button mat-raised-button (click)="dialogRef.close()" cdkFocusInitial>{{'Cancelar'}}</button>
     </div>
 </div>

@@ -5,14 +5,16 @@
 
     <form class="form" [formGroup]="copyForm">
 
+        <spinner *ngIf="showSpinner"></spinner>
+
         <mat-form-field appearance="fill" [ngClass]="{'error': copyForm.controls['name'].hasError('pattern')}">
             <mat-label>{{'Id. Configuración'}}</mat-label>
             <input matInput required formControlName="name">
             <mat-error *ngIf="copyForm.controls['name'].hasError('required')">
-                {{ 'Este campo es obligatorio.' }}
+                {{ appset.FIELD_REQUIRED }}
             </mat-error>
             <mat-error *ngIf="copyForm.controls['name'].hasError('pattern')">
-                {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+                {{ appset.INVALID_NAME }}
             </mat-error>
         </mat-form-field>
 

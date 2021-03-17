@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AppComponent } from 'src/app/app.component';
+import { AppSettings } from 'src/app/core/app.settings';
 import { Gateway } from 'src/app/_models/configs/gateway/Gateway';
 import { SiteGW } from 'src/app/_models/configs/site/SiteGW';
 import { AlertService } from 'src/app/_services/alert.service';
@@ -27,11 +28,14 @@ export class GatewayGeneralComponent implements OnInit {
   sppeOptions: number[] = [1, 2, 4, 8];
   dvrrpOptions: number[] = [2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000];
 
+  appset: any;
+
   constructor(private readonly route: ActivatedRoute, private readonly siteService: SiteService, private readonly app: AppComponent, 
     private readonly alertService: AlertService, private readonly dataService: DataService) { }
 
   async ngOnInit() {
 
+    this.appset = AppSettings;
     this.configId = this.dataService.getDataConfigId();
 
     if (this.type == 'EDIT') {

@@ -17,21 +17,32 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     min-width: 400px!important;
 }
 
+.mat-form-field {
+
+    .mat-form-field-label {
+        font-size: large!important;
+    }
+}
+
 .mat-form-field.mat-form-field-disabled {
     
     .mat-form-field-label {
-        color: rgba(0,0,0,.7)!important;
+        color: rgba(0,0,0,.8)!important;
     }
 
     .mat-input-element {
-        color: rgba(0,0,0,.7)!important;
+        color: rgba(0,0,0,.8)!important;
     }
 
     .mat-select-disabled {
         .mat-select-value {
-            color: rgba(0,0,0,.7)!important;
+            color: rgba(0,0,0,.8)!important;
         }
     }
+}
+
+.mat-header-cell {
+    font-size: unset;
 }
 
 mat-checkbox {

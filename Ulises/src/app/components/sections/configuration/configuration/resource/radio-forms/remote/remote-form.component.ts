@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { AppSettings } from 'src/app/core/app.settings';
 import { TableBSSService } from 'src/app/_services/tableBss.service';
 
 interface customValues {
@@ -41,10 +42,12 @@ export class RemoteFormComponent implements OnInit {
   displayRecordCheckbox: boolean = false;
 
   vadIsSelected:boolean = false;
-
+  appset: any;
+  
   constructor(private readonly tableBssService: TableBSSService) { }
 
   async ngOnInit() {
+    this.appset = AppSettings;
     this.tablesBss = (await this.tableBssService.getTableAudioBss().toPromise()).tables;
     this.displayUmbralVAD(this.resourceForm.value.indicacion_entrada_audio);
   }

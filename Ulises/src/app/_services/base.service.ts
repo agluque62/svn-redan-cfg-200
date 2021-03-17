@@ -30,6 +30,8 @@ export class BaseService {
     handleError(error: { error: { message: string; }; status: any; message: any; }) {
  
         const UNAUTH_STATUS_CODE: number = 401;
+        const TIMED_OUT_STATUS_CODE: number = 408;
+
         let errorMessage = '';
         let errorCode;
 
@@ -40,7 +42,7 @@ export class BaseService {
           errorCode = error.status;
         }
 
-        if (errorCode != UNAUTH_STATUS_CODE) {
+        if (errorCode != UNAUTH_STATUS_CODE && errorCode != TIMED_OUT_STATUS_CODE) {
             window.alert(errorMessage);
         }
         return throwError(error);

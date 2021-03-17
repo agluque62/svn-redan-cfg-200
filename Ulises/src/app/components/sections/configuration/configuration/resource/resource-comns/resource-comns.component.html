@@ -88,7 +88,7 @@
             </div>
             <mat-form-field appearance="fill" *ngIf="displayExtResource">
                 <mat-label>Seleccione recurso</mat-label>
-                <mat-select [(ngModel)]="selectedExtResource" (selectionChange)="test()" name="extResources">
+                <mat-select [(ngModel)]="selectedExtResource" name="extResources">
                     <mat-option *ngFor="let resource of extResources.lista_recursos; index as i" [value]="resource">
                         {{resource.alias}}
                     </mat-option>

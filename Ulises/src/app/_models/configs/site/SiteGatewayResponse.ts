@@ -7,4 +7,6 @@ export class SiteGatewayResponse {
 interface SiteGatewayResponseItem {
     idCGW: string;
     name: string;
+    pendiente_actualizar: number;
+    ultima_actualizacion: string;
 }

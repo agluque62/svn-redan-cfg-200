@@ -5,4 +5,6 @@ export class ConfigurationGateway {
     nameSite!: string;
     Viva!: number;
     Activa!: number;
+    ultima_actualizacion!: string;
+    pendiente_actualizar!: number;
 }

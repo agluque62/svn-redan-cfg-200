@@ -22,7 +22,6 @@ import { UserService } from 'src/app/_services/user.service';
 import { GatewayService } from 'src/app/_services/gateway.service';
 import { GatewayFieldService } from 'src/app/_services/gateway-field.service';
 import { HistoricService } from 'src/app/_services/historic.service';
-import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'configuration-view',
@@ -49,6 +48,7 @@ export class ConfigurationViewComponent implements OnInit {
   supervised: boolean = false;
 
   showSpinner: boolean = false;
+  appset: any;
 
   constructor(private readonly route: ActivatedRoute, private readonly configService: ConfigService, private readonly router: Router,
     private readonly app: AppComponent, private readonly siteService: SiteService, public dialog: MatDialog,
@@ -57,6 +57,7 @@ export class ConfigurationViewComponent implements OnInit {
     private readonly historicService: HistoricService) { }
 
   async ngOnInit() {
+    this.appset = AppSettings;
     this.checkPermissions();
     this.init();
   }
@@ -243,6 +244,9 @@ export class ConfigurationViewComponent implements OnInit {
           if (this.validateGtwFieldJson(gtwFieldCpu0)) {
             const gtwActual = await this.gatewayService.getGatewayAll(gateway.result[0].idCGW).toPromise();
             const result = await this.gatewayFieldService.updateGatewayField(gateway.result[0].idCGW, gateway.result[0].ip_cpu0, gtwActual).toPromise();
+
+            console.log(result.status);
+
             if (result.res && result.res === 'Configuracion Activada...') {
               await this.historicService.succesGatewayFieldActivation(`${gateway.result[0].name} CPU 0`).toPromise();
               message.push(`${gateway.result[0].name}: ${result.res}`);
@@ -264,18 +268,21 @@ export class ConfigurationViewComponent implements OnInit {
               }
             }
           }
-
+          
           if (!success && gtwFieldCpu0.code === 'ECONNREFUSED' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'ECONNREFUSED')) {
-            await this.historicService.errorGatewayFieldActivation(`${gateway.result[0].name}} Error conexión a la pasarela`).toPromise();
-            message.push(`Error de conexión a la pasarela`);
+            await this.historicService.errorGatewayFieldActivation(`${gateway.result[0].name}}: Error conexión a la pasarela`).toPromise();
+            message.push(`${gateway.result[0].name}: Error de conexión a la pasarela`);
             error = true;
           } else if (!success && gtwFieldCpu0.code === 'ETIMEDOUT' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'ETIMEDOUT')) {
             await this.historicService.errorGatewayFieldActivation(`${gateway.result[0].name}} Error timeout`).toPromise();
-            message.push(`Error de timeout en la conexión a la pasarela`);
+            message.push(`${gateway.result[0].name}: Error de timeout en la conexión a la pasarela`);
+            error = true;
+          } else if (!success && gtwFieldCpu0.code === 'EHOSTUNREACH' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'EHOSTUNREACH')) {
+            message.push(`${gateway.result[0].name}: Error no es posible conectar con la pasarela`);
             error = true;
           } else if (!success && gtwFieldCpu0 && !this.validateGtwFieldJson(gtwFieldCpu0) && gtwFieldCpu1 && !this.validateGtwFieldJson(gtwFieldCpu1)) {
             await this.historicService.errorGatewayFieldActivation(`${gateway.result[0].name}} Error de formato`).toPromise();
-            message.push(`Error el formato del JSON recibido no es correcto`);
+            message.push(`${gateway.result[0].name}: Error el formato del JSON recibido no es correcto`);
             error = true;
           }
         }
@@ -319,7 +326,7 @@ export class ConfigurationViewComponent implements OnInit {
 
         await this.alertService.successMessage(``, `Configuración ${form.value.name} actualizada`);
       } else {
-        this.alertService.errorMessage(``, `Formulario inválido, compruebe los datos`);
+        this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
     } catch (error) {
       this.app.catchError(error);
@@ -329,9 +336,11 @@ export class ConfigurationViewComponent implements OnInit {
   async saveConfig() {
     try {
       if (this.configForm.valid) {
+        this.showSpinner = true;
         const checkName = await this.configService.checkConfigurationName(this.configForm.value.idCFG, this.configForm.value.name).toPromise();
 
         if (checkName.data == 'DUP_NAME') {
+          this.showSpinner = false;
           await this.alertService.errorMessage(``, `El nombre ${this.configForm.value.name} ya existe en el sistema. Utilice otro`);
           return;
         }
@@ -339,14 +348,16 @@ export class ConfigurationViewComponent implements OnInit {
         const result = await this.configService.updateConfiguration(this.configForm.value).toPromise();
 
         if (result.error) {
+          this.showSpinner = false;
           await this.alertService.errorMessage(``, result.error);
           return;
         }
 
+        this.showSpinner = false;
         await this.alertService.successMessage(``, `Configuración ${this.configForm.value.name} actualizada`);
         await this.init();
       } else {
-        this.alertService.errorMessage(``, `Formulario inválido, compruebe los datos`);
+        this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
     } catch (error) {
       this.app.catchError(error);
@@ -372,7 +383,9 @@ export class ConfigurationViewComponent implements OnInit {
         `También se eliminarán todos los emplazamientos y pasarelas asociadas a dicha configuración`);
 
       if (confirmed.value) {
+        this.showSpinner = true;
         const result = await this.configService.deleteConfiguration(this.configuration.idCFG).toPromise();
+        this.showSpinner = false;
 
         if (result.data !== 'OK') {
           this.alertService.errorMessage(``, `Error al eliminar ${this.configuration.name}. ${result.data}`);
@@ -389,7 +402,9 @@ export class ConfigurationViewComponent implements OnInit {
 
   async downloadPDF() {
     try {
+      this.showSpinner = true;
       const pdfBlob = await this.configService.getConfigPDF(this.configuration.idCFG).toPromise();
+      this.showSpinner = false;
       const pdfFilename = pdfBlob.file_name;
       const pdfData = 'data:application/pdf;base64,' + pdfBlob.data;
       this.downloadFile(pdfFilename, pdfData);
@@ -400,10 +415,13 @@ export class ConfigurationViewComponent implements OnInit {
 
   async downloadExcel() {
     try {
+      this.showSpinner = true;
       const excelBlob = await this.configService.getConfigExcel(this.configuration.idCFG).toPromise();
+      this.showSpinner = false;
       const excelFilename = excelBlob.file_name;
       const excelData = "data:application/csv," + escape(excelBlob.data);
       this.downloadFile(excelFilename, excelData);
+      this.showSpinner = false;
     } catch (error) {
       this.app.catchError(error);
     }

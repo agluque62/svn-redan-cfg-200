@@ -9,10 +9,10 @@
             <mat-label>{{'Id. Configuración'}}</mat-label>
             <input matInput required formControlName="name">
             <mat-error *ngIf="configForm.controls['name'].hasError('required')">
-                {{ 'Este campo es obligatorio.' }}
+                {{ appset.FIELD_REQUIRED }}
             </mat-error>
             <mat-error *ngIf="configForm.controls['name'].hasError('pattern')">
-                {{ 'No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.' }}
+                {{ appset.INVALID_NAME }}
             </mat-error>
         </mat-form-field>
 

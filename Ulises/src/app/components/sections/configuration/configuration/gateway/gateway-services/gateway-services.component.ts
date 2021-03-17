@@ -25,9 +25,9 @@ export class GatewayServicesComponent implements OnInit {
   gatewayAvailableServicesResponse!: GatewayAvailableServicesResponse;
   gatewayAvaibleServicesItem!: GatewayAvaibleServicesItem[];
 
-  proxyFormControl: FormControl = new FormControl('', [Validators.required, Validators.pattern(AppSettings.IP_PATTERN)]);
-  registrarsFormControl: FormControl = new FormControl('', [Validators.required, Validators.pattern(AppSettings.IP_PATTERN)]);
-  serversFormControl: FormControl = new FormControl('', [Validators.required, Validators.pattern(AppSettings.IP_PATTERN)]);
+  proxyFormControl: FormControl = new FormControl('', [Validators.pattern(AppSettings.IP_PATTERN)]);
+  registrarsFormControl: FormControl = new FormControl('', [Validators.pattern(AppSettings.IP_PATTERN)]);
+  serversFormControl: FormControl = new FormControl('', [Validators.pattern(AppSettings.IP_PATTERN)]);
 
   trapFormControl: FormControl = new FormControl('', [Validators.required, Validators.pattern(AppSettings.IP_PATTERN)]);
   trapPortFormControl: FormControl = new FormControl('', [Validators.required, Validators.pattern(AppSettings.PORT)]);
@@ -51,11 +51,15 @@ export class GatewayServicesComponent implements OnInit {
   MAX_TRAPS: number = 4;
 
   visualizationMode: boolean = false;
+  showSpinner: boolean = false;
 
+  appset: any;
+  
   constructor(private readonly gatewayService: GatewayService, private readonly app: AppComponent, private readonly alertService: AlertService,
     private readonly userService: UserService) { }
 
   async ngOnInit() {
+    this.appset = AppSettings;
     try {
       this.visualizationMode = (this.visualizationPermission()) ? true : false;
       this.traps = [...this.form.value.traps];
@@ -140,8 +144,11 @@ export class GatewayServicesComponent implements OnInit {
   async copyFrom(gateway: GatewayAvaibleServicesItem) {
 
     try {
+      
+      this.showSpinner = true;
       const res = await this.gatewayService.getGatewayCopy(gateway.idpasarela).toPromise();
       const ips = [...await this.gatewayService.getGatewayIpList(gateway.idpasarela).toPromise()];
+      this.showSpinner = false;
 
       if (res && res.result && res.result.length > 0) {
         const gtwData = res.result[0];
@@ -473,10 +480,39 @@ export class GatewayServicesComponent implements OnInit {
       return;
     }
 
-    if (this.selectedTrap === trap) {
-      this.selectedTrap = null;
-    } else {
-      this.selectedTrap = trap;
+    this.selectedTrap = (this.selectedTrap === trap) ? null : trap;
+  }
+
+  selectProxy(proxy: Server) {
+    if (this.visualizationMode) {
+      return;
+    }
+
+    if (this.selectedProxy !== null && !this.serverComparision(this.selectedProxy, proxy)) {
+      this.selectedProxy = proxy;
+      this.proxyChange();
+    }
+  }
+
+  selectRegistrar(registrar: Server) {
+    if (this.visualizationMode) {
+      return;
+    }
+
+    if (this.selectedRegistrar !== null && !this.serverComparision(this.selectedRegistrar, registrar)) {
+      this.selectedRegistrar = registrar;
+      this.registrarChange();
+    }
+  }
+
+  selectNTP(server: Server) {
+    if (this.visualizationMode) {
+      return;
+    }
+
+    if (this.selectedServer !== null && !this.serverComparision(this.selectedServer, server)) {
+      this.selectedServer = server;
+      this.serverChange();
     }
   }
 
@@ -486,31 +522,19 @@ export class GatewayServicesComponent implements OnInit {
 
   proxyChange() {
     this.form.value.proxys.forEach((proxy: Server) => {
-      if (proxy.ip == this.selectedProxy?.ip) {
-        proxy.selected = true;
-      } else {
-        proxy.selected = false;
-      }
+      proxy.selected = (proxy.ip == this.selectedProxy?.ip);
     });
   }
 
   registrarChange() {
     this.form.value.registrars.forEach((registrar: Server) => {
-      if (registrar.ip == this.selectedRegistrar?.ip) {
-        registrar.selected = true;
-      } else {
-        registrar.selected = false;
-      }
+      registrar.selected = (registrar.ip == this.selectedRegistrar?.ip);
     });
   }
 
   serverChange() {
     this.form.value.listServers.forEach((server: Server) => {
-      if (server.ip == this.selectedServer?.ip) {
-        server.selected = true;
-      } else {
-        server.selected = false;
-      }
+      server.selected = (server.ip == this.selectedServer?.ip);
     });
   }
 

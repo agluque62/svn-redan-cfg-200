@@ -9,6 +9,8 @@
             {{'Nuevo usuario'}}
         </button>
     </div>
+    
+    <spinner *ngIf="showSpinner"></spinner>
 
     <div class="mat-elevation-z8" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
         <mat-table [dataSource]="dataSource" class="table">

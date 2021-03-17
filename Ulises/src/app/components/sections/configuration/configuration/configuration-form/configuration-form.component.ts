@@ -15,12 +15,13 @@ import { UserService } from 'src/app/_services/user.service';
 export class ConfigurationFormComponent implements OnInit {
 
   configForm!: FormGroup;
+  appset: any;
 
-  constructor(public dialogRef: MatDialogRef<ConfigurationFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Configuration, 
+  constructor(public dialogRef: MatDialogRef<ConfigurationFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Configuration,
     private readonly alertService: AlertService, private readonly configService: ConfigService, private readonly userService: UserService) { }
 
   ngOnInit() {
-
+    this.appset = AppSettings;
     this.initForm();
   }
 
@@ -44,7 +45,7 @@ export class ConfigurationFormComponent implements OnInit {
   async createConfiguration() {
 
     if (this.configForm.valid) {
-      const result = await this.configService.createConfiguration(this.configForm.value.name, this.configForm.value.description, 
+      const result = await this.configService.createConfiguration(this.configForm.value.name, this.configForm.value.description,
         this.configForm.value.activa).toPromise();
 
       if (result && result.error) {

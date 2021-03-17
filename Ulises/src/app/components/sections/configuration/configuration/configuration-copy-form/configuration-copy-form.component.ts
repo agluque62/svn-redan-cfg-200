@@ -19,11 +19,15 @@ export class ConfigurationCopyFormComponent implements OnInit {
 
   name!: string;
   description!: string;
-
+  
+  showSpinner: boolean = false;
+  appset:any;
+  
   constructor(public dialogRef: MatDialogRef<ConfigurationCopyFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Configuration,
     private readonly alertService: AlertService, private readonly configurationService: ConfigService, @Inject(AppComponent) private readonly app: AppComponent) { }
 
   ngOnInit(): void {
+    this.appset = AppSettings;
     this.configuration = this.data;
     this.initForm();
   }
@@ -61,7 +65,9 @@ export class ConfigurationCopyFormComponent implements OnInit {
       }
 
       if (this.copyForm.valid) {
+        this.showSpinner = true;
         const result = await this.configurationService.copyConfiguration(this.configuration.idCFG, this.copyForm.value.name, this.copyForm.value.description).toPromise();
+        this.showSpinner = false;
 
         if (result.data !== 'OK') {
           await this.alertService.errorMessage(``, result.data);
@@ -71,7 +77,7 @@ export class ConfigurationCopyFormComponent implements OnInit {
         await this.alertService.successMessage(``, `La configuración ha sido copiada`);
         this.dialogRef.close(true);
       } else {
-        this.alertService.errorMessage(``, `Formulario inválido, compruebe los datos`);
+        this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
     } catch (error) {
       this.app.catchError(error);

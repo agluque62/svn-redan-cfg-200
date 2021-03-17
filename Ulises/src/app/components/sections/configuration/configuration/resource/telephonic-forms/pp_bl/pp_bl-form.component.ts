@@ -18,10 +18,12 @@ export class PPBLFormComponent implements OnInit {
   resourceForm!: FormGroup;
 
   detectVoxIsChecked: boolean = false;
-
+  appset: any;
+  
   constructor(private readonly alertService: AlertService) { }
 
   ngOnInit(): void {
+    this.appset = AppSettings;
     this.displayDetectVox();
   }
 

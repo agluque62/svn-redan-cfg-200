@@ -21,14 +21,14 @@
         <mat-label>Origen llamadas salientes de test</mat-label>
         <input matInput formControlName="origen_test" [maxLength]="6">
         <mat-error *ngIf="resourceForm.get('origen_test')?.hasError('pattern')">
-            {{ 'Número no válido. El valor debe estar entre 200000 y 399999. Y debe ser de longitud 6' }}
+            {{ appset.INVALID_AGV_NUMBER }}
         </mat-error>
     </mat-form-field>
     <mat-form-field appearance="legacy">
         <mat-label>Destino llamadas salientes de test</mat-label>
         <input matInput formControlName="destino_test" [maxLength]="6">
         <mat-error *ngIf="resourceForm.get('destino_test')?.hasError('pattern')">
-            {{ 'Número no válido. El valor debe estar entre 200000 y 399999. Y debe ser de longitud 6' }}
+            {{ appset.INVALID_AGV_NUMBER }}
         </mat-error>
     </mat-form-field>
     <mat-form-field appearance="fill">

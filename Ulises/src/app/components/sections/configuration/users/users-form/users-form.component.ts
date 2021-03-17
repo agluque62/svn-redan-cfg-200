@@ -29,6 +29,8 @@ export class UsersFormComponent implements OnInit {
   ready: boolean = false;
   MAX_COLUMN_ITEMS: number = 7;
 
+  showSpinner: boolean = false;
+
   profiles: ProfileItem[] = [
     {
       label: 'Visualización (C.Central+RCS)',
@@ -107,16 +109,21 @@ export class UsersFormComponent implements OnInit {
     }
   ];
 
-  constructor(public dialogRef: MatDialogRef<UsersFormComponent>, @Inject(MAT_DIALOG_DATA) public user: User, private fb: FormBuilder, 
-    private readonly app: AppComponent, private readonly userService: UserService, private readonly alertService: AlertService, 
+  appset: any;
+
+  constructor(public dialogRef: MatDialogRef<UsersFormComponent>, @Inject(MAT_DIALOG_DATA) public user: User, private fb: FormBuilder,
+    private readonly app: AppComponent, private readonly userService: UserService, private readonly alertService: AlertService,
     private readonly historicService: HistoricService, private readonly utilsService: UtilsService) { }
 
   ngOnInit(): void {
+
+    this.appset = AppSettings;
+
     if (this.user.name != '') {
       this.type = 'EDIT';
     }
-    
-    this.profileToArray();    
+
+    this.profileToArray();
     this.initForm();
 
     this.ready = true;
@@ -132,14 +139,14 @@ export class UsersFormComponent implements OnInit {
     this.initFormArray();
   }
 
-  permissions() : FormArray {
+  permissions(): FormArray {
     return this.userForm.get("permissions") as FormArray
   }
 
   initFormArray() {
     const itemsPermissions = <FormArray>this.userForm.controls['permissions'];
 
-    this.profiles.forEach( (profile, idx) => {
+    this.profiles.forEach((profile, idx) => {
       itemsPermissions.push(this.fb.group({
         id: idx,
         name: profile.label,
@@ -154,7 +161,7 @@ export class UsersFormComponent implements OnInit {
     this.profileBinary = Number().toString(BINARY);
 
     this.profiles.forEach(profile => {
-      profile.selected = ((this.user.perfil & profile.pow)? true: false);
+      profile.selected = ((this.user.perfil & profile.pow) ? true : false);
     });
   }
 
@@ -162,7 +169,7 @@ export class UsersFormComponent implements OnInit {
 
     let profile = 0;
 
-    this.userForm.value.permissions.forEach( (item: any, idx: number) => {
+    this.userForm.value.permissions.forEach((item: any, idx: number) => {
       if (item.selected) {
         profile += item.pow;
       }
@@ -175,15 +182,19 @@ export class UsersFormComponent implements OnInit {
     try {
       const confirm = await this.alertService.confirmationMessage(``, `¿Seguro que quiere eliminar el usuario ${this.user.name}?`)
       if (confirm.value) {
-        const result = await this.userService.deleteUser(this.user.idOPERADORES).toPromise();
+
+        this.showSpinner = true;
+        const result = await this.userService.deleteUser(this.user.idOPERADORES).toPromise();      
+        this.showSpinner = false;
+
         if (result.error != 1) {
           await this.alertService.errorMessage(`Error`, result.error);
         } else {
-          await this.alertService.successMessage(`Éxito`, `Usuario borrado correctamente`);                  
+          await this.alertService.successMessage(`Éxito`, `Usuario borrado correctamente`);
           this.dialogRef.close();
         }
       }
-    } catch(error) {
+    } catch (error) {
       this.app.catchError(error);
     }
   }
@@ -196,7 +207,8 @@ export class UsersFormComponent implements OnInit {
         const password = window.btoa(this.userForm.value.clave);
         let error;
         let message: string;
-  
+
+        this.showSpinner = true;
         if (this.type == 'CREATE') {
           const result = await this.userService.createUser(this.userForm.value.name, password, profile).toPromise();
           (result.error) ? error = result.error : null;
@@ -208,17 +220,18 @@ export class UsersFormComponent implements OnInit {
           message = `Usuario ${this.user.name} modificado correctamente`;
           await this.historicService.editUser(this.user.name).toPromise();
         }
-  
+        this.showSpinner = false;
+
         if (error) {
           await this.alertService.errorMessage(`Error`, error);
         } else {
-          await this.alertService.successMessage(`Éxito`, message);                  
+          await this.alertService.successMessage(`Éxito`, message);
           this.dialogRef.close();
         }
       } else {
-        await this.alertService.errorMessage(`Formulario inválido`, `Compruebe el formulario`);
+        await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
-    } catch(error) {
+    } catch (error) {
       this.dialogRef.close();
       this.app.catchError(error);
     }

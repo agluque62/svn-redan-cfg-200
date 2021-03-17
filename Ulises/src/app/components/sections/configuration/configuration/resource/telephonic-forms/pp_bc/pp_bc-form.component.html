@@ -3,7 +3,7 @@
         <mat-label>AGVN User Name</mat-label>
         <input matInput formControlName="ats_user" (change)="checkAGVNName($event)" [maxLength]="6">
         <mat-error *ngIf="resourceForm.get('ats_user')?.hasError('pattern')">
-            {{ 'Número no válido. El valor debe estar entre 200000 y 399999. Y debe ser de longitud 6' }}
+            {{ appset.INVALID_AGV_NUMBER }}
         </mat-error>
     </mat-form-field>
     <mat-checkbox formControlName="iEnableNoED137">Permite Llamadas No ED137</mat-checkbox>

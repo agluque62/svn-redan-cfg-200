@@ -18,6 +18,8 @@
       <button mat-raised-button class="create-btn local-btn" (click)="createExternalResource()">{{'Nuevo recurso'}}</button>
     </div>
   </div>
+  
+  <spinner *ngIf="showSpinner"></spinner>
 
   <div class="mat-elevation-z8" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
     <mat-table [dataSource]="dataSource" class="table">

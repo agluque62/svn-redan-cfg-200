@@ -10,6 +10,8 @@
 
         <form class="form" [formGroup]="serverConfigForm">
 
+            <spinner *ngIf="showSpinner"></spinner>
+
             <div class="col">
 
                 <mat-form-field appearance="fill">
@@ -28,7 +30,7 @@
     
                 <mat-form-field appearance="fill">
                     <mat-label>{{'Tiempo de Refresco en ms'}}</mat-label>
-                    <input matInput formControlName="refreshTime">
+                    <input matInput type="number" formControlName="refreshTime">
                 </mat-form-field>
 
                 <mat-form-field class="select" appearance="fill">
@@ -65,7 +67,7 @@
 
                 <mat-form-field appearance="fill">
                     <mat-label>{{'Tiempo Ciclo en ms'}}</mat-label>
-                    <input matInput formControlName="maxCycleTime">
+                    <input matInput type="number" formControlName="maxCycleTime">
                 </mat-form-field>
     
                 <mat-form-field class="select" appearance="fill">
@@ -75,6 +77,11 @@
                             {{ log2file }}
                         </mat-option>
                     </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>{{'Timeout en ms'}}</mat-label>
+                    <input matInput type="number" formControlName="timeout">
                 </mat-form-field>
             
             </div>

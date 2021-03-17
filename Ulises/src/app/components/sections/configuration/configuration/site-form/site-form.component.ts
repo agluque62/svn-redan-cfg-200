@@ -30,13 +30,15 @@ export class SiteFormComponent implements OnInit {
   @ViewChild('importGW') importGW!: ElementRef;
 
   visualizationMode: boolean = false;
-
+  appset:any;
+  
   constructor(private readonly router: Router, public dialogRef: MatDialogRef<SiteFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Site,
     private readonly alertService: AlertService, private readonly siteService: SiteService, private readonly app: AppComponent,
     private readonly gatewayService: GatewayService, private readonly dataService: DataService, private readonly userService: UserService) { }
 
   ngOnInit(): void {
 
+    this.appset = AppSettings;
     this.visualizationMode = (this.visualizationPermission()) ? true : false;
 
     this.site = this.data;
@@ -86,7 +88,7 @@ export class SiteFormComponent implements OnInit {
 
         this.dialogRef.close(true);
       } else {
-        this.alertService.errorMessage(``, `Formulario inválido, compruebe los datos`);
+        this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
     } catch (error) {
       this.app.catchError(error);
@@ -106,7 +108,7 @@ export class SiteFormComponent implements OnInit {
         await this.alertService.successMessage(``, `Emplazamiento ${this.siteForm.value.name} modificado`);
         this.dialogRef.close(true);
       } else {
-        this.alertService.errorMessage(``, `Formulario inválido, compruebe los datos`);
+        this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
     } catch (error) {
       this.app.catchError(error);
@@ -196,7 +198,7 @@ export class SiteFormComponent implements OnInit {
           await this.alertService.errorMessage(``, `${result.err}`);
         }
       } else {
-        this.alertService.errorMessage(``, `Formulario inválido, compruebe los datos`);
+        this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
     } catch (error) {
       this.app.catchError(error);

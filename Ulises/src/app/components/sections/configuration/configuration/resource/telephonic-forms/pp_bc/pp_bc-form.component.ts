@@ -16,10 +16,12 @@ interface customValues {
 export class PPBCFormComponent implements OnInit {
 
   resourceForm!: FormGroup;
-
+  appset: any;
+  
   constructor(private readonly alertService: AlertService) { }
 
   ngOnInit(): void {
+    this.appset = AppSettings;
   }
   
   async checkAGVNName(event: any) {

@@ -27,6 +27,8 @@ export class ExtResourcesHomeComponent implements OnInit {
 
   externalResources!: ExternalResourceResponse;
 
+  showSpinner: boolean = false;
+
   dataSource!: MatTableDataSource<ExternalResource>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -67,7 +69,9 @@ export class ExtResourcesHomeComponent implements OnInit {
 
   async retrieveExternalResources() {
     try {
+      this.showSpinner = true;
       this.externalResources = await this.externalResourceService.getExternalResourcesByType(this.selectedType.value).toPromise();
+      this.showSpinner = false;
       this.assignDataSource(this.externalResources.lista_recursos);  
     } catch(error) {
       this.app.catchError(error);
