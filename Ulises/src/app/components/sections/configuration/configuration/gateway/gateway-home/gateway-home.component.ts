@@ -252,7 +252,7 @@ export class GatewayHomeComponent implements OnInit {
 
     let gateway = Object.assign({}, this.gatewayForm.getRawValue());
     delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
-    gateway.snmpv2 = gateway.snmpv2 === 1;
+    gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
     gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
 
     const siteId = (this.siteId) ? this.siteId : 0;
@@ -433,7 +433,7 @@ export class GatewayHomeComponent implements OnInit {
 
     let gateway = Object.assign({}, this.gatewayForm.getRawValue());
     delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
-    gateway.snmpv2 = gateway.snmpv2 === 1;
+    gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
     gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
 
     const updatedGtw = await this.gatewayService.updateGtw(this.gateway.idCGW, gateway).toPromise();
@@ -523,7 +523,7 @@ export class GatewayHomeComponent implements OnInit {
       listServers: new FormControl(this.gatewayPost.listServers),
       puerto_servicio_snmp: new FormControl({value: this.gatewayPost.puerto_servicio_snmp, disabled: true}),
       snmpv2: new FormControl({ value: this.gatewayPost.snmpv2 === 1, disabled: this.visualizationMode }),
-      comunidad_snmp: new FormControl({ value: this.gatewayPost.comunidad_snmp, disabled: this.visualizationMode }),
+      comunidad_snmp: new FormControl({ value: this.gatewayPost.comunidad_snmp, disabled: this.visualizationMode || this.gatewayPost.snmpv2 === 0}),
       puerto_snmp: new FormControl({ value: this.gatewayPost.puerto_snmp, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.PORT)]),
       nombre_snmp: new FormControl({ value: this.gateway.nombre_snmp, disabled: true }),
       localizacion_snmp: new FormControl({ value: this.gateway.localizacion_snmp, disabled: true }),
@@ -572,7 +572,7 @@ export class GatewayHomeComponent implements OnInit {
       this.selectedClass = "indexLoad";
       this.loadIndex = loadIndex.toString();
     }
-
+    
   }
 }
 

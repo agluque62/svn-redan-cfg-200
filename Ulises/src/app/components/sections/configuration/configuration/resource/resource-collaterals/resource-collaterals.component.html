@@ -103,7 +103,7 @@
             </mat-form-field>
             <mat-form-field appearance="fill" *ngIf="displayConfResource">
                 <mat-label>Seleccione recurso</mat-label>
-                <mat-select name="resources" [(value)]="selectedResource" (selectionChange)="checkIfAGVNNameExist(this.resources[this.selectedResource].rName)">
+                <mat-select name="resources" [(value)]="selectedResource" (selectionChange)="checkIfAGVNNameExist()">
                     <mat-option *ngFor="let resource of resources; index as i" [value]="i">
                         {{resource.rName}}
                     </mat-option>
@@ -111,7 +111,7 @@
             </mat-form-field>
             <mat-form-field appearance="fill" *ngIf="displayExtResource">
                 <mat-label>Seleccione recurso</mat-label>
-                <mat-select name="resources" [(value)]="selectedResource" (selectionChange)="checkIfAGVNNameExist(this.resources[this.selectedResource].rName)">
+                <mat-select name="resources" [(value)]="selectedResource" (selectionChange)="checkIfAGVNNameExist()">
                     <mat-option *ngFor="let resource of resources; index as i" [value]="i">
                         {{resource.rName}}
                     </mat-option>

@@ -115,7 +115,7 @@
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
-                                <mat-form-field appearance="fill" *ngIf="displayAudioPrecision">
+                                <mat-form-field appearance="fill" *ngIf="!displayAudioPrecision && selectedResource === 1">
                                     <mat-label>Precisión audio</mat-label>
                                     <mat-select formControlName="precision_audio" name="precision">
                                         <mat-option *ngFor="let opt of audio_prec" [value]="opt.value">

@@ -13,6 +13,7 @@ import { AppSettings } from 'src/app/core/app.settings';
 import { GatewayResponse } from 'src/app/_models/configs/gateway/GatewayResponse';
 import { Gateway } from 'src/app/_models/configs/gateway/Gateway';
 import { GatewayService } from 'src/app/_services/gateway.service';
+import { ConfigService } from 'src/app/_services/config.service';
 
 interface customValues {
   value: number;
@@ -114,7 +115,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   constructor(private readonly cfr: ComponentFactoryResolver, private readonly resourceService: ResourceService,
     private readonly alertService: AlertService, private readonly route: ActivatedRoute, private readonly app: AppComponent,
     private readonly router: Router, private readonly dataService: DataService, private readonly userService: UserService,
-    private readonly loginService: LoginService, private gatewayService: GatewayService) { }
+    private readonly loginService: LoginService, private gatewayService: GatewayService, private readonly configService: ConfigService) { }
 
   async ngOnInit() {
     this.displayAudioPrecision = (await this.loginService.version().toPromise()).R16Mode;
@@ -149,6 +150,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       } else {
         this.resource.ranks = (await this.resourceService.getRanges(this.resource.idrecurso_telefono).toPromise()).ranks;
         this.resource.uri_telefonica = this.resource.uri_telefonica.replace('sip:', '');
+        this.resource.additional_uri_remota = this.resource.additional_uri_remota === null || this.resource.additional_uri_remota === undefined ? '' : this.resource.additional_uri_remota;
         this.resource.additional_uri_remota = this.resource.additional_uri_remota.replace('sip:', '');
       }
       if (this.resource.listaUris === null) {
@@ -305,7 +307,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       codec: new FormControl({ value: this.resource.codec, disabled: this.visualizationMode }),
       ajuste_ad: new FormControl({ value: this.resource.ajuste_ad, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.REAL_NUMBER), Validators.min(-13.5), Validators.max(1.20)]),
       ajuste_da: new FormControl({ value: this.resource.ajuste_da, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.REAL_NUMBER), Validators.min(-24.3), Validators.max(1.10)]),
-      precision_audio: new FormControl(this.resource.precision_audio),
+      precision_audio: new FormControl({ value: this.resource.precision_audio, disabled: true }),
       fila: new FormControl(this.resource.fila),
       columna: new FormControl(this.resource.columna),
       pasarela_id: new FormControl(this.resource.pasarela_id),
@@ -363,7 +365,22 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       this.resourceForm.patchValue({ ranks: [] });
     }
 
-    if (this.resourceForm.valid) {
+    const hardwareResume = (await this.gatewayService.getGatewayHardware(Number(this.GATEWAY_ID)).toPromise());
+    let result = (await this.configService.getLocalConfig().toPromise());
+    const force_rdaudio_normal = this.displayAudioPrecision;
+    let LoadIndexControlEnabled = result.LoadIndexControlEnabled;
+    let loadIndex = 0;
+    let confirm;
+    let pass = false;
+    if (LoadIndexControlEnabled) {
+      loadIndex = this.calculateLoadIndex(hardwareResume, force_rdaudio_normal);
+
+      if (loadIndex > 16) {
+        confirm = await this.alertService.confirmationMessage("", `El índice de carga al añadir este tipo de recurso es de: ${loadIndex}. ¿Desea continuar?`);
+      }
+    }
+
+    if (this.resourceForm.valid && ((confirm?.isConfirmed == true && loadIndex > 16) || (confirm === undefined))) {
 
       this.resourceForm.get('frecuencia')?.setValidators([]); // Issue 2747
 
@@ -413,7 +430,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       } else {
         await this.displayErrorMessage("create");
       }
-    } else {
+    } else if (!this.resourceForm.valid) {
       await this.displayErrorMessage("form");
     }
   }
@@ -645,4 +662,46 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     this.thirdTabRef.instance.resourceForm = this.resourceForm;
   }
 
+  calculateLoadIndex(hardwareResume: any, force_rdaudio_normal: boolean) {
+    let radioResources = hardwareResume.radio;
+    let telResources = hardwareResume.tfno;
+    let loadIndex = 0;
+    let confirm;
+    radioResources.forEach((resource: any) => {
+      if (resource.tipo_agente == 2 || resource.tipo_agente == 3)
+        loadIndex += 8;
+      else if (resource.tipo_agente == 4 || resource.tipo_agente == 6)
+        loadIndex += (force_rdaudio_normal == true ? 1 : 4);
+      else
+        loadIndex += (force_rdaudio_normal == true ? 1 : 2);
+    });
+
+    telResources.forEach((resource: any) => {
+      if (resource.tipo_interfaz_tel == 5 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 3) {
+        loadIndex += 2;
+      }
+      else {
+        loadIndex++;
+      }
+    });
+
+    if (this.selectedResource === 1) {
+      if (this.resourceForm.value.tipo_agente == 2 || this.resourceForm.value.tipo_agente == 3) {
+        loadIndex += 8;
+      } else if (this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) {
+        loadIndex += (force_rdaudio_normal == true ? 1 : 4);
+      } else {
+        loadIndex += (force_rdaudio_normal == true ? 1 : 2);
+      }
+    } else if (this.selectedResource === 2) {
+      if (this.resourceForm.value.tipo_interfaz_tel == 5 || this.resourceForm.value.tipo_interfaz_tel == 4 || this.resourceForm.value.tipo_interfaz_tel == 3) {
+        loadIndex += 2;
+      }
+      else {
+        loadIndex++;
+      }
+    }
+
+    return loadIndex;
+  }
 }

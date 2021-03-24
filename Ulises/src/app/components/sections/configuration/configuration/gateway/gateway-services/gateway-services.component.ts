@@ -54,7 +54,7 @@ export class GatewayServicesComponent implements OnInit {
   showSpinner: boolean = false;
 
   appset: any;
-  
+
   constructor(private readonly gatewayService: GatewayService, private readonly app: AppComponent, private readonly alertService: AlertService,
     private readonly userService: UserService) { }
 
@@ -71,6 +71,8 @@ export class GatewayServicesComponent implements OnInit {
         this.gatewayAvaibleServicesItem = [...this.gatewayAvailableServicesResponse.result];
         this.ready = true;
       }
+
+      this.initSNMPV2();
     } catch (error) {
       this.app.catchError(error);
     }
@@ -132,6 +134,16 @@ export class GatewayServicesComponent implements OnInit {
     });
   }
 
+  initSNMPV2() {
+    (this.form.getRawValue().snmpv2 && !this.visualizationMode) ? this.form.controls['comunidad_snmp'].enable()
+      : this.form.controls['comunidad_snmp'].disable();    
+  }
+
+  changeSNMPV2() {
+    (!this.form.getRawValue().snmpv2 && !this.visualizationMode) ? this.form.controls['comunidad_snmp'].enable()
+      : this.form.controls['comunidad_snmp'].disable();
+  }
+
   resetErrors() {
     this.proxyFormControl.setErrors(null);
     this.registrarsFormControl.setErrors(null);
@@ -144,7 +156,7 @@ export class GatewayServicesComponent implements OnInit {
   async copyFrom(gateway: GatewayAvaibleServicesItem) {
 
     try {
-      
+
       this.showSpinner = true;
       const res = await this.gatewayService.getGatewayCopy(gateway.idpasarela).toPromise();
       const ips = [...await this.gatewayService.getGatewayIpList(gateway.idpasarela).toPromise()];

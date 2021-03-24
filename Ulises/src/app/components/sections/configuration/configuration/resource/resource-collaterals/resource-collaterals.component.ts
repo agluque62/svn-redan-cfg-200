@@ -100,8 +100,8 @@ export class ResourceCollateralsComponent implements OnInit {
     if (this.selectedTypeResource == 0) {
       await this.getGateways();
       await this.getConfResources();
-      if(this.selectedResource != undefined){
-        await this.checkIfAGVNNameExist(this.resources[this.selectedResource].rName);
+      if (this.selectedResource != undefined) {
+        await this.checkIfAGVNNameExist();
       }
       this.displaySites = true;
       this.displaySelectFilter = false;
@@ -140,6 +140,10 @@ export class ResourceCollateralsComponent implements OnInit {
     if (this.selectedSite != undefined) {
       let tmpGateways = await this.resourceService.getCollateralGateways(confName, this.selectedSite).toPromise();
       let temp: any = [];
+      this.gateways = [];
+      this.resources = [];
+      this.selectedResource = -1;
+      this.telAGVNNameSelected = '';
       await tmpGateways.data.forEach((gateway: any) => {
         if (!temp.includes(gateway.gName)) {
           temp.push(gateway.gName);
@@ -153,6 +157,9 @@ export class ResourceCollateralsComponent implements OnInit {
 
   async getConfResources() {
     let confName = await this.getConfigName();
+    this.resources = [];
+    this.telAGVNNameSelected = '';
+    this.selectedResource = -1;
     if (this.selectedSite != undefined && this.selectedGateway != undefined) {
       this.resources = (await this.resourceService.getTelResources(confName, this.selectedSite, this.selectedGateway, 2).toPromise()).data;
       this.displayConfResource = true;
@@ -214,20 +221,22 @@ export class ResourceCollateralsComponent implements OnInit {
     this.displayExtResource = true;
   }
 
-  async checkIfAGVNNameExist(resourceName: string) {
-    this.telhardwareResume = (await this.gatewayService.getGatewayHardware(this.gatewayId).toPromise()).tfno;
+  async checkIfAGVNNameExist() {
+    this.telhardwareResume = (await this.gatewayService.getGatewayHardware(this.selectedGateway).toPromise()).tfno;
     let obtainedResourceId;
-    this.telhardwareResume.forEach((resource: any) => {
-      if (resourceName === resource.nombre) {
-        obtainedResourceId = resource.idrecurso_telefono;
-      }
-    });
-    if (obtainedResourceId !== undefined) {
-      let res = (await this.resourceService.getTelResource(obtainedResourceId, 2).toPromise());
-      if (res !== undefined) {
-        this.telAGVNNameSelected = res.ats_user;
+    if (this.selectedResource !== -1) {
+      this.telhardwareResume.forEach((resource: any) => {
+        if (this.resources[this.selectedResource].rName === resource.nombre) {
+          obtainedResourceId = resource.idrecurso_telefono;
+          
+        }
+      });
+      if (obtainedResourceId !== undefined) {
+        let res = (await this.resourceService.getTelResource(obtainedResourceId, 2).toPromise());
+        if (res !== undefined) {
+          this.telAGVNNameSelected = res.ats_user;
+        }
       }
     }
-
   }
 }

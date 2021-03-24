@@ -48,5 +48,6 @@ export class Gateway {
         this.servidor_rtsp = '';
         this.servidor_rtspb = '';
         this.sppe = 0;
+        this.snmpv2 = 0;
     }
 }
