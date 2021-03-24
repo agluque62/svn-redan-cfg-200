@@ -45,4 +45,11 @@ export class LoginService extends BaseService {
         return this.http.get(url, this.buildOptions())
             .pipe(catchError(this.handleError));
     }
+
+    isAuthenticated(): Observable<any> {
+        const url = '/auth';
+
+        return this.http.get(url, this.buildOptions())
+            .pipe(catchError(this.handleError));
+    }
 }

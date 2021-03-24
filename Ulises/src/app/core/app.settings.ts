@@ -33,4 +33,5 @@ export class AppSettings {
     public static INVALID_FORM = "Compruebe el formulario";
     public static RES_CREATE_ERROR = "Error al crear el recurso";
     public static RES_EDIT_ERROR = "Error al modificar el recurso";
+    public static RES_NAME_DUP = "El nombre del recurso ya existe"
 }

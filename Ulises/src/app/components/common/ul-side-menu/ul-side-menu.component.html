@@ -2,7 +2,7 @@
 
     <div class="node-tree">
         <mat-tree-node class="node" [ngClass]="{'selected': node == selected}" *matTreeNodeDef="let node" matTreeNodePadding matTreeNodePaddingIndent="20">
-            <button class="btn leaf" (click)="navigateTo(node)" mat-icon-button [ngClass]="{'selected': node == selected}">
+            <button class="btn leaf" (click)="navigateTo(node)" mat-icon-button [ngClass]="{'selected': node == selected}" [disabled]="disableMenu">
                 <div class="name">
                     {{node.name}}
                 </div>

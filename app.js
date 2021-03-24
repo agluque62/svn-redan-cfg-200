@@ -289,6 +289,10 @@ var isAuthenticated = function (req, res, next) {
     res.status(401).json('Not authenticated');
 }
 
+app.get('/auth', (req, res) => {
+    return res.json(req.isAuthenticated());
+})
+
 app.get('/', (req, res) => {
     res.sendFile(process.cwd() + homepath + "/index.html");
 });

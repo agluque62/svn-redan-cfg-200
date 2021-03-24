@@ -46,7 +46,7 @@ export class ResourceNRangeComponent implements OnInit {
 
     // Tipo 0 = Origin
     // tipo 1 = Destination
-    if (ranks != undefined && ranks.length > 0) {
+    if (ranks !== undefined && ranks.length > 0) {
       let result = ranks.filter((x: any) => x.tipo == 0);
       this.originRanks = result;
       result = ranks.filter((x: any) => x.tipo == 1);
@@ -98,7 +98,6 @@ export class ResourceNRangeComponent implements OnInit {
           }
         }
       }
-      this.ranks = this.originRanks.concat(this.destinationRanks);
     } else if (event.target.value === "") {
       if (type == 0) {
         this.originRanks[pos][key] = event.target.value;
@@ -107,8 +106,8 @@ export class ResourceNRangeComponent implements OnInit {
       }
     } else if (event.target.value.match(AppSettings.AGVN_PATTERN) == undefined && event.target.value != '') {
       await this.alertService.errorMessage(``, `Número no válido. El valor debe estar entre 200000 y 399999. Y debe ser de longitud 6`);
-      event.target.value = '';
+      event.target.value = "";
     }
-
+    this.ranks = this.originRanks.concat(this.destinationRanks);
   }
 }

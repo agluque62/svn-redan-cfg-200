@@ -10,7 +10,7 @@
             </div>
         </mat-label>
     </div>
-    <form class="form" [formGroup]="resourceForm">
+    <form class="form" [formGroup]="resourceForm" (keydown.enter)="$event.preventDefault()">
 
         <spinner *ngIf="showSpinner"></spinner>
 

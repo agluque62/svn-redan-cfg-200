@@ -78,7 +78,7 @@
                 </mat-select>
             </mat-form-field>
             <div class="filter"
-                *ngIf="selectedOptFilter == 4 || selectedOptFilter == 5 && displaySelectFilter">
+                *ngIf="(selectedOptFilter == 4 || selectedOptFilter == 5) && displaySelectFilter">
                 <mat-form-field appearance="legacy">
                     <mat-label>Carácteres a buscar</mat-label>
                     <input matInput (change)="getFilterValue($event)">

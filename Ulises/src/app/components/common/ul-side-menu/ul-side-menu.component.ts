@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
 import { LoginService } from "src/app/_services/login.service";
 import { LoginUser } from "src/app/_models/login/LoginUser";
 import { AppComponent } from "src/app/app.component";
@@ -48,6 +48,8 @@ export class UlSideMenuComponent implements OnInit {
     treeFlattener = new MatTreeFlattener(this._transformer, node => node.level, node => node.expandable, node => node.children);
 
     dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+
+    disableMenu: boolean = false;
 
     constructor(private readonly router: Router, private readonly route: ActivatedRoute, private readonly loginService: LoginService,
         private readonly app: AppComponent, private readonly utilsService: UtilsService, private readonly userService: UserService,
@@ -133,7 +135,7 @@ export class UlSideMenuComponent implements OnInit {
             );
         }
 
-        if (!this.userService.isRole('ADMIN') && !this.userService.isRole('CONFIGURATION') && !this.userService.isRole('USER_MANAGEMENT') 
+        if (!this.userService.isRole('ADMIN') && !this.userService.isRole('CONFIGURATION') && !this.userService.isRole('USER_MANAGEMENT')
             && !this.userService.isRole('VISUALIZATION') && this.userService.isRole('SUPERVISED_CONFIGURATION')) {
             this.TREE_DATA.push(
                 {
@@ -200,7 +202,7 @@ export class UlSideMenuComponent implements OnInit {
 
     ngAfterViewInit() {
         setTimeout(() => {
-            
+
             this.initTreeData();
 
             const sectionGroup = this.getSectionGroupByUrl(this.router.url);
@@ -220,6 +222,15 @@ export class UlSideMenuComponent implements OnInit {
             }
             this.ready = true;
         }, 0);
+
+        this.router.events.subscribe(event => {
+            if (event instanceof NavigationEnd) {
+                let url: string[] = event.url.split("/");
+                this.disableMenu = (url.length == 4 && (url[2] === 'config' || url[2] === 'gateway' || url[2] === 'resource') &&
+                 parseInt(url[3]).toString() !== 'NaN' || url[3] === 'new');
+            }
+        });
+
     }
 
     getSectionGroupByUrl(url: string): string {
@@ -243,7 +254,7 @@ export class UlSideMenuComponent implements OnInit {
 
     getSectionByUrl(url: string) {
 
-        if (url === '/home/config' || /^\/home\/config\/.*?\d+$/.test(url)  || url === '/home/gateway/new'
+        if (url === '/home/config' || /^\/home\/config\/.*?\d+$/.test(url) || url === '/home/gateway/new'
             || /^\/home\/gateway\/.*?\d+$/.test(url) || url === '/home/resource/new' || /^\/home\/resource\/.*?\d+$/.test(url)) {
             return 'Configuraciones';
         }

@@ -171,8 +171,8 @@ export class ResourceCollateralsComponent implements OnInit {
     let firstPartUri = '';
     let secondPartUri = '';
     let uri = '';
-
-    if (this.selectedResource != undefined) {
+    
+    if (this.resources[this.selectedResource] !== undefined) {
 
       if (this.telAGVNNameSelected != '' && this.telAGVNNameSelected != undefined) {
         firstPartUri = this.telAGVNNameSelected;

@@ -188,4 +188,11 @@ export class ResourceService extends BaseService {
         return this.http.get<GenericResponse>(url, this.buildOptions())
             .pipe(catchError(this.handleError));
     }
+
+    checkIfNameIsValid(name:string, gatewayId: number, opt: number){
+        // /hardware/checkresname/test1/20/0 => NO_ERROR || NAME_DUP
+        const url = `/hardware/checkresname/${name}/${gatewayId}/${opt}`;
+        return this.http.get<GenericResponse>(url, this.buildOptions())
+            .pipe(catchError(this.handleError));
+    }
 }

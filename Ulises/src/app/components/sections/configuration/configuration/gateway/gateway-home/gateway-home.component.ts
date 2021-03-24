@@ -49,6 +49,7 @@ export class GatewayHomeComponent implements OnInit {
   selectedClass: string = "indexLoad";
   loadIndex!: string;
   LoadIndexControlEnabled: boolean = false;
+  changes: boolean = false;
 
   constructor(private readonly route: ActivatedRoute, private readonly router: Router, private readonly app: AppComponent, public dialog: MatDialog,
     private readonly gatewayService: GatewayService, private readonly alertService: AlertService, private historicService: HistoricService,
@@ -89,6 +90,7 @@ export class GatewayHomeComponent implements OnInit {
 
       this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
       this.gatewayForm = this.initForm();
+      this.checkFormChanges();
       this.initStatusGateway = { ...this.gatewayForm.value };
       this.ready = true;
     } catch (error) {
@@ -128,6 +130,17 @@ export class GatewayHomeComponent implements OnInit {
     this.gatewayIps = [];
   }
 
+  checkFormChanges() {
+    this.gatewayForm.valueChanges
+      .subscribe(value => {
+        if (this.gatewayForm.dirty) {
+          this.changes = true;
+        } else {
+          this.changes = false;
+        }
+      });
+  }
+
   async activateInField() {
 
     if (JSON.stringify(this.gatewayForm.value) !== JSON.stringify(this.initStatusGateway)) {
@@ -149,6 +162,7 @@ export class GatewayHomeComponent implements OnInit {
           await this.initEdit(this.gateway.idCGW);
           this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
           this.gatewayForm = this.initForm();
+          this.checkFormChanges();
           await this.historicService.succesGatewayFieldActivation(`${this.gateway.name} CPU 0`).toPromise();
           await this.alertService.successMessage(``, result.res);
           this.showSpinner = false;
@@ -165,6 +179,7 @@ export class GatewayHomeComponent implements OnInit {
           await this.initEdit(this.gateway.idCGW);
           this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
           this.gatewayForm = this.initForm();
+          this.checkFormChanges();
           await this.historicService.succesGatewayFieldActivation(`${this.gateway.name} CPU 1`).toPromise();
           await this.alertService.successMessage(``, result.res);
           this.showSpinner = false;
@@ -216,8 +231,15 @@ export class GatewayHomeComponent implements OnInit {
     }
   }
 
-  back() {
-    this.router.navigate(['/home/config/' + this.configId]);
+  async back() {
+    let confirm;
+    if (this.type === 'EDIT' && this.changes) {
+      confirm = await this.alertService.confirmationMessage("", `Existen cambios en el recurso sin guardar. ¿Desea continuar?`);
+    }
+    if (confirm?.isConfirmed == true || confirm === undefined) {
+      await this.router.navigate(['/home/config/' + this.configId]);
+    }
+
   }
 
   async createGateway() {
@@ -448,9 +470,10 @@ export class GatewayHomeComponent implements OnInit {
       pendiente_actualizar: true
     });
     this.initStatusGateway = { ...this.gatewayForm.value };
- 
+
     this.showSpinner = false;
     await this.alertService.successMessage(``, `Pasarela ${updatedGtw.name} actualizada correctamente`);
+    this.changes = false;
   }
 
   copyGateway() {
@@ -470,12 +493,12 @@ export class GatewayHomeComponent implements OnInit {
 
     const confirm = await this.alertService.confirmationMessage(``, `¿Desea eliminar la gateway ${this.gateway.name}?`);
     if (confirm.value) {
-       
+
       this.showSpinner = true;
       await this.gatewayService.deleteGtw(this.gateway.idCGW).toPromise();
       await this.historicService.deleteGateway(this.gateway.name).toPromise();
       this.showSpinner = false;
-      
+
       await this.alertService.successMessage(``, `Pasarela ${this.gateway.name} eliminada correctamente`);
       this.router.navigate(['/home/config/' + this.configId]);
     }
@@ -516,14 +539,14 @@ export class GatewayHomeComponent implements OnInit {
       ipg2: new FormControl({ value: this.gatewayPost.ipg2, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
       msb1: new FormControl({ value: this.gatewayPost.msb1, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
       msb2: new FormControl({ value: this.gatewayPost.msb2, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
-      PuertoLocalSIP: new FormControl({value: this.gatewayPost.PuertoLocalSIP, disabled: true}),
+      PuertoLocalSIP: new FormControl({ value: this.gatewayPost.PuertoLocalSIP, disabled: true }),
       periodo_supervision: new FormControl({ value: this.gatewayPost.periodo_supervision, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.ONLY_NUMBERS)]),
       proxys: new FormControl(this.gatewayPost.proxys),
       registrars: new FormControl(this.gatewayPost.registrars),
       listServers: new FormControl(this.gatewayPost.listServers),
-      puerto_servicio_snmp: new FormControl({value: this.gatewayPost.puerto_servicio_snmp, disabled: true}),
+      puerto_servicio_snmp: new FormControl({ value: this.gatewayPost.puerto_servicio_snmp, disabled: true }),
       snmpv2: new FormControl({ value: this.gatewayPost.snmpv2 === 1, disabled: this.visualizationMode }),
-      comunidad_snmp: new FormControl({ value: this.gatewayPost.comunidad_snmp, disabled: this.visualizationMode || this.gatewayPost.snmpv2 === 0}),
+      comunidad_snmp: new FormControl({ value: this.gatewayPost.comunidad_snmp, disabled: this.visualizationMode || this.gatewayPost.snmpv2 === 0 }),
       puerto_snmp: new FormControl({ value: this.gatewayPost.puerto_snmp, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.PORT)]),
       nombre_snmp: new FormControl({ value: this.gateway.nombre_snmp, disabled: true }),
       localizacion_snmp: new FormControl({ value: this.gateway.localizacion_snmp, disabled: true }),
@@ -572,7 +595,7 @@ export class GatewayHomeComponent implements OnInit {
       this.selectedClass = "indexLoad";
       this.loadIndex = loadIndex.toString();
     }
-    
+
   }
 }
 

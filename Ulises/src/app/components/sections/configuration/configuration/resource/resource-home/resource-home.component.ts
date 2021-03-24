@@ -37,7 +37,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   gatewayTitle!: string;
   title!: string;
 
-  GATEWAY_ID!: string;
+  GATEWAY_ID!: number;
   COLUMN!: string;
   ROW!: string;
 
@@ -111,6 +111,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
   showSpinner: boolean = false;
   appset: any;
+  changes: boolean = false;
 
   constructor(private readonly cfr: ComponentFactoryResolver, private readonly resourceService: ResourceService,
     private readonly alertService: AlertService, private readonly route: ActivatedRoute, private readonly app: AppComponent,
@@ -125,6 +126,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     const slot = await this.dataService.getDataSlot();
 
     this.GATEWAY_ID = slot.gatewayId;
+
     this.COLUMN = slot.columna;
     this.ROW = slot.fila;
     this.selectedResource = slot.tipo != undefined ? slot.tipo : 1;
@@ -258,9 +260,16 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
   }
 
-  back() {
-    this.dataService.updateDataGatewayPreviousUrl('RESOURCE');
-    this.router.navigate(['/home/gateway/' + this.resource.pasarela_id]);
+  async back() {
+    let confirm;
+    if (this.editMode && this.changes) {
+      confirm = await this.alertService.confirmationMessage("", `Existen cambios en el recurso sin guardar. ¿Desea continuar?`);
+
+    }
+    if (confirm?.isConfirmed == true || confirm === undefined) {
+      this.dataService.updateDataGatewayPreviousUrl('RESOURCE');
+      await this.router.navigate(['/home/gateway/' + this.resource.pasarela_id]);
+    }
   }
 
   initRadioForm() {
@@ -298,6 +307,15 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       umbral_vad: new FormControl({ value: this.resource.umbral_vad, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.UMBRAL_VOX), Validators.min(-35), Validators.max(-15)]),
       ventana_bss: new FormControl({ value: this.resource.ventana_bss, disabled: this.visualizationMode }),
     });
+
+    this.resourceForm.valueChanges
+      .subscribe(value => {
+        if (this.resourceForm.dirty) {
+          this.changes = true;
+        } else {
+          this.changes = false;
+        }
+      });
   }
 
   initTelephoneForm() {
@@ -336,6 +354,14 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       uri_telefonica: new FormControl({ value: this.resource.uri_telefonica, disabled: this.visualizationMode }),
       idrecurso_telefono: new FormControl({ value: this.resource.idrecurso_telefono, disabled: this.visualizationMode })
     });
+    this.resourceForm.valueChanges
+      .subscribe(value => {
+        if (this.resourceForm.dirty) {
+          this.changes = true;
+        } else {
+          this.changes = false;
+        }
+      });
   }
 
   async onSubmit() {
@@ -359,19 +385,13 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       this.resourceForm.patchValue({ ranks: [] });
     }
 
-    if (this.thirdTabRef.instance.ranks != undefined) {
-      this.resourceForm.patchValue({ ranks: this.thirdTabRef.instance.ranks });
-    } else {
-      this.resourceForm.patchValue({ ranks: [] });
-    }
-
-    const hardwareResume = (await this.gatewayService.getGatewayHardware(Number(this.GATEWAY_ID)).toPromise());
+    const hardwareResume = (await this.gatewayService.getGatewayHardware(this.GATEWAY_ID).toPromise());
     let result = (await this.configService.getLocalConfig().toPromise());
     const force_rdaudio_normal = this.displayAudioPrecision;
     let LoadIndexControlEnabled = result.LoadIndexControlEnabled;
     let loadIndex = 0;
     let confirm;
-    let pass = false;
+
     if (LoadIndexControlEnabled) {
       loadIndex = this.calculateLoadIndex(hardwareResume, force_rdaudio_normal);
 
@@ -379,8 +399,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         confirm = await this.alertService.confirmationMessage("", `El índice de carga al añadir este tipo de recurso es de: ${loadIndex}. ¿Desea continuar?`);
       }
     }
+    let nameIsValid = this.editMode === false ? (await this.resourceService.checkIfNameIsValid(this.resourceForm.value.nombre, this.GATEWAY_ID, 0).toPromise()) : undefined;
 
-    if (this.resourceForm.valid && ((confirm?.isConfirmed == true && loadIndex > 16) || (confirm === undefined))) {
+    if (this.resourceForm.valid && (nameIsValid?.toString() === 'NO_ERROR' || nameIsValid === undefined) && ((confirm?.isConfirmed == true && loadIndex > 16) || (confirm === undefined))) {
 
       this.resourceForm.get('frecuencia')?.setValidators([]); // Issue 2747
 
@@ -432,6 +453,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       }
     } else if (!this.resourceForm.valid) {
       await this.displayErrorMessage("form");
+    } else if (nameIsValid?.toString() === 'NAME_DUP') {
+      await this.displayErrorMessage("resourceName");
     }
   }
 
@@ -446,6 +469,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         break;
       case "form":
         await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+        break;
+      case "resourceName":
+        await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.RES_NAME_DUP);
         break;
     }
 
