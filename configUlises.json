@@ -146,7 +146,8 @@
     "logfile_path": "./logs/ug5kserv.log",
     "logfile_sizefile": 1000000,
     "morgan": false,
-	"homepath": "/frontend"
+	"homepath": "/frontend",
+	"timeout": 10000
 	},
   "MemorySupervisor": {
     "Tick": 5000,
