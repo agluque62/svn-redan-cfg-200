@@ -49,6 +49,7 @@ export class ConfigurationViewComponent implements OnInit {
 
   showSpinner: boolean = false;
   appset: any;
+  changes: boolean = false;
 
   constructor(private readonly route: ActivatedRoute, private readonly configService: ConfigService, private readonly router: Router,
     private readonly app: AppComponent, private readonly siteService: SiteService, public dialog: MatDialog,
@@ -160,6 +161,14 @@ export class ConfigurationViewComponent implements OnInit {
       activa: new FormControl({ value: this.configuration.activa === 1, disabled: !this.supervisionCheckboxMode }),
       fecha_activacion: new FormControl({ value: this.configuration.fecha_activacion, disabled: true })
     });
+    this.configForm.valueChanges
+      .subscribe(value => {
+        if (this.configForm.dirty) {
+          this.changes = true;
+        } else {
+          this.changes = false;
+        }
+      });
   }
 
   goToGateway(gateway: ConfigurationGateway) {
@@ -187,8 +196,15 @@ export class ConfigurationViewComponent implements OnInit {
     }
   }
 
-  back() {
-    this.router.navigate(['/home/config/']);
+  async back() {
+    let confirm;
+    if (this.changes) {
+      confirm = await this.alertService.confirmationMessage("", `Existen cambios en la configuración sin guardar. ¿Desea continuar?`);
+    }
+    if (confirm?.isConfirmed == true || confirm === undefined) {
+      await this.router.navigate(['/home/config/']);
+    }
+
   }
 
   createSite() {
@@ -268,7 +284,7 @@ export class ConfigurationViewComponent implements OnInit {
               }
             }
           }
-          
+
           if (!success && gtwFieldCpu0.code === 'ECONNREFUSED' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'ECONNREFUSED')) {
             await this.historicService.errorGatewayFieldActivation(`${gateway.result[0].name}}: Error conexión a la pasarela`).toPromise();
             message.push(`${gateway.result[0].name}: Error de conexión a la pasarela`);
@@ -289,7 +305,7 @@ export class ConfigurationViewComponent implements OnInit {
       }));
 
       (error) ?
-        await this.historicService.errorConfigFieldActivation(this.configuration.name).toPromise() 
+        await this.historicService.errorConfigFieldActivation(this.configuration.name).toPromise()
         : await this.historicService.successConfigFieldActivation(this.configuration.name).toPromise();
 
       this.showSpinner = false;

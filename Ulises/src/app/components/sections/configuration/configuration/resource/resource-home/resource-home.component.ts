@@ -385,24 +385,15 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       this.resourceForm.patchValue({ ranks: [] });
     }
 
-    const hardwareResume = (await this.gatewayService.getGatewayHardware(this.GATEWAY_ID).toPromise());
-    let result = (await this.configService.getLocalConfig().toPromise());
-    const force_rdaudio_normal = this.displayAudioPrecision;
-    let LoadIndexControlEnabled = result.LoadIndexControlEnabled;
-    let loadIndex = 0;
-    let confirm;
+    let confirmLoadIndex = await this.checkLoadIndex();
 
-    if (LoadIndexControlEnabled) {
-      loadIndex = this.calculateLoadIndex(hardwareResume, force_rdaudio_normal);
+    let nameIsValid = this.resourceForm.value.nombre !== undefined && this.resourceForm.value.nombre !== '' ?
+      (await this.resourceService.checkIfNameIsValid(this.resourceForm.value.nombre, this.GATEWAY_ID, this.resourceId).toPromise()) : undefined;
 
-      if (loadIndex > 16) {
-        confirm = await this.alertService.confirmationMessage("", `El índice de carga al añadir este tipo de recurso es de: ${loadIndex}. ¿Desea continuar?`);
-      }
-    }
-    let nameIsValid = this.editMode === false ? (await this.resourceService.checkIfNameIsValid(this.resourceForm.value.nombre, this.GATEWAY_ID, 0).toPromise()) : undefined;
+    let ranksKO = this.checkCompleteRanks();
 
-    if (this.resourceForm.valid && (nameIsValid?.toString() === 'NO_ERROR' || nameIsValid === undefined) && ((confirm?.isConfirmed == true && loadIndex > 16) || (confirm === undefined))) {
-
+    if (this.resourceForm.valid && (nameIsValid?.toString() === 'NO_ERROR' || nameIsValid === undefined) &&
+      ((confirmLoadIndex.response?.isConfirmed == true && confirmLoadIndex.loadIndex > 16) || (confirmLoadIndex.response === undefined)) && !ranksKO) {
       this.resourceForm.get('frecuencia')?.setValidators([]); // Issue 2747
 
       if (this.selectedResource === 1 && this.resourceForm.value.frecuencia === undefined || this.resourceForm.value.frecuencia === '') {
@@ -455,7 +446,43 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       await this.displayErrorMessage("form");
     } else if (nameIsValid?.toString() === 'NAME_DUP') {
       await this.displayErrorMessage("resourceName");
+    } else if (ranksKO) {
+      await this.displayErrorMessage("ranks");
     }
+  }
+
+  checkCompleteRanks() {
+    let wrongRanks = false;
+    if (this.selectedResource == 2) {
+      this.resourceForm.value.ranks.forEach((rank: any) => {
+        if (rank.inicial !== '' && rank.final === '') {
+          wrongRanks = true;
+        } else if (rank.inicial === '' && rank.final !== '') {
+          wrongRanks = true;
+        }
+      });
+    }
+    return wrongRanks;
+  }
+
+  async checkLoadIndex() {
+
+    const hardwareResume = (await this.gatewayService.getGatewayHardware(this.GATEWAY_ID).toPromise());
+    let result = (await this.configService.getLocalConfig().toPromise());
+    const force_rdaudio_normal = this.displayAudioPrecision;
+
+    let LoadIndexControlEnabled = result.LoadIndexControlEnabled;
+    let loadIndex = 0;
+    let confirm;
+
+    if (LoadIndexControlEnabled) {
+      loadIndex = this.calculateLoadIndex(hardwareResume, force_rdaudio_normal);
+
+      if (loadIndex > 16) {
+        confirm = await this.alertService.confirmationMessage("", `El índice de carga al añadir este tipo de recurso es de: ${loadIndex}. ¿Desea continuar?`);
+      }
+    }
+    return { 'response': confirm, 'loadIndex': loadIndex };
   }
 
   async displayErrorMessage(errorType: string) {
@@ -472,6 +499,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         break;
       case "resourceName":
         await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.RES_NAME_DUP);
+        break;
+      case "ranks":
+        await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.WRONG_RANKS);
         break;
     }
 

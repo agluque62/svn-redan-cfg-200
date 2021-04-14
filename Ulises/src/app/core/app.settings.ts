@@ -14,7 +14,7 @@ export class AppSettings {
     public static COLA_VOX = /^[0-9]{1,2}$/;
     public static PORT = /^()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5])$/;
     public static ONLY_NUMBERS = /^[0-9]+$/;
-    
+
     // Informative Messages
     public static NUMBERS_FORMAT_INVALID = "Este campo solo admite números.";
     public static FIELD_REQUIRED = "Este campo es obligatorio.";
@@ -34,4 +34,5 @@ export class AppSettings {
     public static RES_CREATE_ERROR = "Error al crear el recurso";
     public static RES_EDIT_ERROR = "Error al modificar el recurso";
     public static RES_NAME_DUP = "El nombre del recurso ya existe"
+    public static WRONG_RANKS = "Existen rangos ATS incompletos";
 }

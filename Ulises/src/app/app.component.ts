@@ -24,7 +24,7 @@ export class AppComponent {
 
   public async startAlive() {
 
-    this.interval = interval(10000);
+    this.interval = interval(1000);
     this.subscription = this.interval.subscribe(async () => {
       try {
         await this.loginService.alive().toPromise();

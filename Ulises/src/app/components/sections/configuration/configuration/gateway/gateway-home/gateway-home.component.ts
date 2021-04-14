@@ -234,7 +234,7 @@ export class GatewayHomeComponent implements OnInit {
   async back() {
     let confirm;
     if (this.type === 'EDIT' && this.changes) {
-      confirm = await this.alertService.confirmationMessage("", `Existen cambios en el recurso sin guardar. ¿Desea continuar?`);
+      confirm = await this.alertService.confirmationMessage("", `Existen cambios en la pasarela sin guardar. ¿Desea continuar?`);
     }
     if (confirm?.isConfirmed == true || confirm === undefined) {
       await this.router.navigate(['/home/config/' + this.configId]);
