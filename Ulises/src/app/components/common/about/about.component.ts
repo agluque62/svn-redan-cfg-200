@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { AppSettings } from 'src/app/core/app.settings';
 import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
 import { ConfigService } from 'src/app/_services/config.service';
 

@@ -62,7 +62,9 @@ export class GatewayPost {
     }
 
     getServerItems(gatewayIps: GatewayIp[], type: string) {
-        if (gatewayIps.length === 0) return [];
+        if (gatewayIps.length === 0) {
+            return [];
+        }
 
         return gatewayIps.filter(ips => ips.tipo === type).map((gatewayIp: GatewayIp) => {
             return {'ip': gatewayIp.ip, 'selected': gatewayIp.selected === 1}
@@ -70,7 +72,9 @@ export class GatewayPost {
     }
 
     getTraps(gatewayIps: GatewayIp[]) {
-        if (gatewayIps.length === 0) return [];
+        if (gatewayIps.length === 0) {
+            return [];
+        }
 
         return gatewayIps.filter(ips => ips.tipo === "TRPV1" || ips.tipo === "TRPV2").map((gatewayIp: GatewayIp) => {
             return gatewayIp.ip;

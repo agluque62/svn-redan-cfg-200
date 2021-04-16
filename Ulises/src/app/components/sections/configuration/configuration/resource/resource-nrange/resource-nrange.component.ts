@@ -59,6 +59,7 @@ export class ResourceNRangeComponent implements OnInit {
       }
 
     }
+    this.ranks = this.originRanks.concat(this.destinationRanks);
     this.ready = true;
   }
 

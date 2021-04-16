@@ -323,6 +323,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       // Common
       nombre: new FormControl({ value: this.resource.nombre, disabled: this.visualizationMode }, [Validators.required, Validators.pattern(AppSettings.NAME_PATTERN)]),
       codec: new FormControl({ value: this.resource.codec, disabled: this.visualizationMode }),
+      clave_registro: new FormControl({ value: this.resource.clave_registro, disabled: this.visualizationMode }),
       ajuste_ad: new FormControl({ value: this.resource.ajuste_ad, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.REAL_NUMBER), Validators.min(-13.5), Validators.max(1.20)]),
       ajuste_da: new FormControl({ value: this.resource.ajuste_da, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.REAL_NUMBER), Validators.min(-24.3), Validators.max(1.10)]),
       precision_audio: new FormControl({ value: this.resource.precision_audio, disabled: true }),
@@ -378,70 +379,68 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
       this.resourceForm.patchValue({ listaUris: blListFiltered.concat(wListFiltered) });
     }
-
     if (this.thirdTabRef.instance.ranks != undefined) {
       this.resourceForm.patchValue({ ranks: this.thirdTabRef.instance.ranks });
-    } else {
-      this.resourceForm.patchValue({ ranks: [] });
     }
-
-    let confirmLoadIndex = await this.checkLoadIndex();
 
     let nameIsValid = this.resourceForm.value.nombre !== undefined && this.resourceForm.value.nombre !== '' ?
       (await this.resourceService.checkIfNameIsValid(this.resourceForm.value.nombre, this.GATEWAY_ID, this.resourceId).toPromise()) : undefined;
 
     let ranksKO = this.checkCompleteRanks();
 
-    if (this.resourceForm.valid && (nameIsValid?.toString() === 'NO_ERROR' || nameIsValid === undefined) &&
-      ((confirmLoadIndex.response?.isConfirmed == true && confirmLoadIndex.loadIndex > 16) || (confirmLoadIndex.response === undefined)) && !ranksKO) {
-      this.resourceForm.get('frecuencia')?.setValidators([]); // Issue 2747
+    if (this.resourceForm.valid && (nameIsValid?.toString() === 'NO_ERROR' || nameIsValid === undefined) && !ranksKO) {
+      let confirmLoadIndex = await this.checkLoadIndex();
+      if ((confirmLoadIndex.response?.isConfirmed == true && confirmLoadIndex.loadIndex > 16) || (confirmLoadIndex.response === undefined)) {
+        this.resourceForm.get('frecuencia')?.setValidators([]); // Issue 2747
 
-      if (this.selectedResource === 1 && this.resourceForm.value.frecuencia === undefined || this.resourceForm.value.frecuencia === '') {
-        this.resourceForm.patchValue({ frecuencia: 0 });
-      } else if (this.selectedResource === 2 && this.resourceForm.value.duracion_tono_interrup !== undefined && this.secondTabRef.instance.timeOpt !== undefined) {// issue 2792
-        this.resourceForm.patchValue({ duracion_tono_interrup: this.secondTabRef.instance.duration + this.secondTabRef.instance.timeOpt });
-        this.resourceForm.value.additional_uri_remota = this.resourceForm.value.additional_uri_remota === null ? '' : this.resourceForm.value.additional_uri_remota;
+        if (this.selectedResource === 1 && this.resourceForm.value.frecuencia === undefined || this.resourceForm.value.frecuencia === '') {
+          this.resourceForm.patchValue({ frecuencia: 0 });
+        } else if (this.selectedResource === 2 && this.resourceForm.value.duracion_tono_interrup !== undefined && this.secondTabRef.instance.timeOpt !== undefined) {// issue 2792
+          this.resourceForm.patchValue({ duracion_tono_interrup: this.secondTabRef.instance.duration + this.secondTabRef.instance.timeOpt });
+          this.resourceForm.value.additional_uri_remota = this.resourceForm.value.additional_uri_remota === null ? '' : this.resourceForm.value.additional_uri_remota;
+        }
+        if (this.displayAGCAD) {
+          this.resourceForm.patchValue({ ajuste_ad: undefined });
+        }
+
+        if (this.displayAGCDA) {
+          this.resourceForm.patchValue({ ajuste_da: undefined });
+        }
+
+        this.resourceForm.value.ajuste_ad = this.resourceForm.value.ajuste_ad === null || this.resourceForm.value.ajuste_ad === '' ?
+          0 : this.resourceForm.value.ajuste_ad;
+        this.resourceForm.value.ajuste_da = this.resourceForm.value.ajuste_da === null || this.resourceForm.value.ajuste_da === '' ?
+          0 : this.resourceForm.value.ajuste_da;
+
+        this.resourceForm.value.deteccion_vox = this.resourceForm.value.deteccion_vox ? 1 : 0;
+        this.resourceForm.value.iEnableNoED137 = this.resourceForm.value.iEnableNoED137 ? 1 : 0;
+        this.resourceForm.value.precision_audio = 0;
+
+        this.resourceForm.value.itiporespuesta = typeof (this.resourceForm.value.itiporespuesta) === 'boolean' ?
+          (this.resourceForm.value.itiporespuesta ? 1 : 0) : this.resourceForm.value.itiporespuesta;
+
+        this.resourceForm.value.additional_itiporespuesta = typeof (this.resourceForm.value.additional_itiporespuesta) === 'boolean' ?
+          (this.resourceForm.value.additional_itiporespuesta ? 1 : 0) : this.resourceForm.value.additional_itiporespuesta;
+
+        this.showSpinner = true;
+        if (this.editMode) {
+          res = await this.resourceService.updateResource(this.selectedResource, this.resourceForm.value).toPromise();
+          message = `El recurso ${this.resourceForm.value.nombre} ha sido editado correctamente`;
+        } else {
+          res = await this.resourceService.createResource(this.selectedResource, this.resourceForm.value).toPromise();
+          message = `El recurso ${this.resourceForm.value.nombre} ha sido creado correctamente`;
+        }
+        this.showSpinner = false;
+
+        if (res && res.result == 'OK') {
+          await this.alertService.successMessage(``, message);
+          this.dataService.updateDataGatewayPreviousUrl('RESOURCE');
+          this.router.navigate(['/home/gateway/' + this.resource.pasarela_id]);
+        } else {
+          await this.displayErrorMessage("create");
+        }
       }
-      if (this.displayAGCAD) {
-        this.resourceForm.patchValue({ ajuste_ad: undefined });
-      }
 
-      if (this.displayAGCDA) {
-        this.resourceForm.patchValue({ ajuste_da: undefined });
-      }
-
-      this.resourceForm.value.ajuste_ad = this.resourceForm.value.ajuste_ad === null || this.resourceForm.value.ajuste_ad === '' ?
-        0 : this.resourceForm.value.ajuste_ad;
-      this.resourceForm.value.ajuste_da = this.resourceForm.value.ajuste_da === null || this.resourceForm.value.ajuste_da === '' ?
-        0 : this.resourceForm.value.ajuste_da;
-
-      this.resourceForm.value.deteccion_vox = this.resourceForm.value.deteccion_vox ? 1 : 0;
-      this.resourceForm.value.iEnableNoED137 = this.resourceForm.value.iEnableNoED137 ? 1 : 0;
-      this.resourceForm.value.precision_audio = 0;
-
-      this.resourceForm.value.itiporespuesta = typeof (this.resourceForm.value.itiporespuesta) === 'boolean' ?
-        (this.resourceForm.value.itiporespuesta ? 1 : 0) : this.resourceForm.value.itiporespuesta;
-
-      this.resourceForm.value.additional_itiporespuesta = typeof (this.resourceForm.value.additional_itiporespuesta) === 'boolean' ?
-        (this.resourceForm.value.additional_itiporespuesta ? 1 : 0) : this.resourceForm.value.additional_itiporespuesta;
-
-      this.showSpinner = true;
-      if (this.editMode) {
-        res = await this.resourceService.updateResource(this.selectedResource, this.resourceForm.value).toPromise();
-        message = `El recurso ${this.resourceForm.value.nombre} ha sido editado correctamente`;
-      } else {
-        res = await this.resourceService.createResource(this.selectedResource, this.resourceForm.value).toPromise();
-        message = `El recurso ${this.resourceForm.value.nombre} ha sido creado correctamente`;
-      }
-      this.showSpinner = false;
-
-      if (res && res.result == 'OK') {
-        await this.alertService.successMessage(``, message);
-        this.dataService.updateDataGatewayPreviousUrl('RESOURCE');
-        this.router.navigate(['/home/gateway/' + this.resource.pasarela_id]);
-      } else {
-        await this.displayErrorMessage("create");
-      }
     } else if (!this.resourceForm.valid) {
       await this.displayErrorMessage("form");
     } else if (nameIsValid?.toString() === 'NAME_DUP') {
@@ -468,21 +467,30 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   async checkLoadIndex() {
 
     const hardwareResume = (await this.gatewayService.getGatewayHardware(this.GATEWAY_ID).toPromise());
-    let result = (await this.configService.getLocalConfig().toPromise());
     const force_rdaudio_normal = this.displayAudioPrecision;
+    let result = (await this.configService.getLocalConfig().toPromise());
 
     let LoadIndexControlEnabled = result.LoadIndexControlEnabled;
     let loadIndex = 0;
     let confirm;
+    let recIndex = 0;
+    let total = 0;
+    let showMessage = false;
 
     if (LoadIndexControlEnabled) {
       loadIndex = this.calculateLoadIndex(hardwareResume, force_rdaudio_normal);
+      recIndex = this.calculateCurrentLoadIndex(force_rdaudio_normal);
+      total = this.editMode ? loadIndex - recIndex : loadIndex;
 
-      if (loadIndex > 16) {
-        confirm = await this.alertService.confirmationMessage("", `El índice de carga al añadir este tipo de recurso es de: ${loadIndex}. ¿Desea continuar?`);
+      if (((this.editMode && this.selectedResource == 1 && this.resource.tipo_agente !== this.resourceForm.value.tipo_agente) ||
+        (this.editMode && this.selectedResource == 2 && this.resource.tipo_interfaz_tel !== this.resourceForm.value.tipo_interfaz_tel)) && total > 16) {
+        showMessage = true;
+      } else if (!this.editMode && total > 16) {
+        showMessage = true;
       }
+      if (showMessage) confirm = await this.alertService.confirmationMessage("", `El índice de carga al añadir este tipo de recurso es de: ${total}. ¿Desea continuar?`);
     }
-    return { 'response': confirm, 'loadIndex': loadIndex };
+    return { 'response': confirm, 'loadIndex': total };
   }
 
   async displayErrorMessage(errorType: string) {
@@ -520,7 +528,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       this.resourceForm.patchValue({ indicacion_entrada_audio: 0 });
       this.resourceForm.patchValue({ umbral_vad: -35 });
     }
-    switch (this.resource.tipo_agente) {
+    switch (this.resourceForm.value.tipo_agente) {
       case 0:
       case 1:
       case 2:
@@ -546,7 +554,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     }
 
     this.secondTabRef.instance.resourceForm = this.resourceForm;
-    this.secondTabRef.instance.formType = this.resource.tipo_agente;
+    this.secondTabRef.instance.formType = this.resourceForm.value.tipo_agente;
     this.secondTabRef.instance.checkFormType();
   }
 
@@ -629,7 +637,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       this.displayNumberRange = false;
       this.displayCollaterals = false;
       this.selectRadioForm();
-      if (this.resource.tipo_agente >= 0 && this.resource.tipo_agente <= 3) {
+      if (this.resourceForm.value.tipo_agente >= 0 && this.resourceForm.value.tipo_agente <= 3) {
         this.displayComnsTab = true;
         this.displayListsTab = false;
         this.loadComnsTab();
@@ -718,18 +726,39 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     this.thirdTabRef.instance.resourceForm = this.resourceForm;
   }
 
+  calculateCurrentLoadIndex(force_rdaudio_normal: boolean) {
+    let loadIndex = 0;
+    if (this.selectedResource === 1) {
+      if (this.resource.tipo_agente == 2 || this.resource.tipo_agente == 3) {
+        loadIndex += 8;
+      } else if (this.resource.tipo_agente == 4 || this.resource.tipo_agente == 6) {
+        loadIndex += (force_rdaudio_normal == true ? 2 : 4);
+      } else {
+        loadIndex += 2;
+      }
+    } else if (this.selectedResource === 2) {
+      if (this.resource.tipo_interfaz_tel == 5 || this.resource.tipo_interfaz_tel == 4 || this.resource.tipo_interfaz_tel == 3) {
+        loadIndex += 2;
+      }
+      else {
+        loadIndex++;
+      }
+    }
+    return loadIndex;
+  }
+
   calculateLoadIndex(hardwareResume: any, force_rdaudio_normal: boolean) {
     let radioResources = hardwareResume.radio;
     let telResources = hardwareResume.tfno;
     let loadIndex = 0;
-    let confirm;
+
     radioResources.forEach((resource: any) => {
       if (resource.tipo_agente == 2 || resource.tipo_agente == 3)
         loadIndex += 8;
       else if (resource.tipo_agente == 4 || resource.tipo_agente == 6)
-        loadIndex += (force_rdaudio_normal == true ? 1 : 4);
+        loadIndex += (force_rdaudio_normal == true ? 2 : 4);
       else
-        loadIndex += (force_rdaudio_normal == true ? 1 : 2);
+        loadIndex += 2
     });
 
     telResources.forEach((resource: any) => {
@@ -745,9 +774,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       if (this.resourceForm.value.tipo_agente == 2 || this.resourceForm.value.tipo_agente == 3) {
         loadIndex += 8;
       } else if (this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) {
-        loadIndex += (force_rdaudio_normal == true ? 1 : 4);
+        loadIndex += (force_rdaudio_normal == true ? 2 : 4);
       } else {
-        loadIndex += (force_rdaudio_normal == true ? 1 : 2);
+        loadIndex += 2;
       }
     } else if (this.selectedResource === 2) {
       if (this.resourceForm.value.tipo_interfaz_tel == 5 || this.resourceForm.value.tipo_interfaz_tel == 4 || this.resourceForm.value.tipo_interfaz_tel == 3) {
@@ -757,6 +786,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         loadIndex++;
       }
     }
+
 
     return loadIndex;
   }

@@ -115,7 +115,8 @@
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
-                                <mat-form-field appearance="fill" *ngIf="!displayAudioPrecision && selectedResource === 1">
+                                <mat-form-field appearance="fill"
+                                    *ngIf="!displayAudioPrecision && selectedResource === 1">
                                     <mat-label>Precisión audio</mat-label>
                                     <mat-select formControlName="precision_audio" name="precision">
                                         <mat-option *ngFor="let opt of audio_prec" [value]="opt.value">
@@ -140,8 +141,8 @@
                             </div>
                             <mat-form-field *ngIf="displayRadioTab" id="formSelector" appearance="fill">
                                 <mat-label>Tipo de Agente de Radio</mat-label>
-                                <mat-select formControlName="tipo_agente" [(value)]="this.resource.tipo_agente"
-                                    (selectionChange)="checkResourceType()" name="rdAgent">
+                                <mat-select formControlName="tipo_agente" (selectionChange)="checkResourceType()"
+                                    name="rdAgent">
                                     <mat-option *ngFor="let rdAgent of radioAgents" [value]="rdAgent.value">
                                         {{rdAgent.viewValue}}
                                     </mat-option>
@@ -149,8 +150,7 @@
                             </mat-form-field>
                             <mat-form-field *ngIf="displayTelephonicTab" id="formSelector" appearance="fill">
                                 <mat-label>Tipo de Interfaz Telefónico</mat-label>
-                                <mat-select formControlName="tipo_interfaz_tel"
-                                    [(value)]="this.resource.tipo_interfaz_tel" (selectionChange)="checkResourceType()"
+                                <mat-select formControlName="tipo_interfaz_tel" (selectionChange)="checkResourceType()"
                                     name="telInt">
                                     <mat-option *ngFor="let telInt of telephonicInterfaces" [value]="telInt.value">
                                         {{telInt.viewValue}}

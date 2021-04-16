@@ -211,12 +211,12 @@ export class UsersFormComponent implements OnInit {
         this.showSpinner = true;
         if (this.type == 'CREATE') {
           const result = await this.userService.createUser(this.userForm.value.name, password, profile).toPromise();
-          (result.error) ? error = result.error : null;
+          error = (result.error) ? result.error : null;
           message = `Usuario ${this.userForm.value.name} creado correctamente`;
           await this.historicService.createUser(this.userForm.value.name).toPromise();
         } else {
           const result = await this.userService.editUser(this.user.name, password, profile, this.user.idOPERADORES).toPromise();
-          (result.err) ? error = result.err : null;
+          error = (result.err) ? result.err : null;
           message = `Usuario ${this.user.name} modificado correctamente`;
           await this.historicService.editUser(this.user.name).toPromise();
         }

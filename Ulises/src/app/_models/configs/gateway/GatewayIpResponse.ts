@@ -7,6 +7,8 @@ export class GatewayIp {
     tipo!: string;
 
     constructor(type?: string) {
-        if (type) this.tipo = type;
+        if (type) {
+            this.tipo = type;
+        }
     } 
 }

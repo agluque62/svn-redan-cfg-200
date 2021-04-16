@@ -22,6 +22,7 @@ export class LocalFormComponent implements OnInit {
   climaxModeActive: boolean = false;
   displayClimaxTime: boolean = false;
   checkClimaxBSS: boolean = false;
+  displayClimaxMethod: boolean = false;
 
   iAudio: customValues[] = [
     { value: 0, viewValue: 'Hardware' },
@@ -42,8 +43,9 @@ export class LocalFormComponent implements OnInit {
   ];
 
   climaxModes: customValues[] = [
-    { value: 0, viewValue: 'ASAP' },
-    { value: 1, viewValue: 'Tiempo' }
+    { value: 0, viewValue: 'No' },
+    { value: 1, viewValue: 'ASAP' },
+    { value: 2, viewValue: 'Tiempo' }
   ];
 
   calClimaxModes: customValues[] = [
@@ -55,8 +57,8 @@ export class LocalFormComponent implements OnInit {
     { value: 0, viewValue: 'Normal' },
     { value: 1, viewValue: 'Emergencia' }
   ];
-  appset:any;
-  
+  appset: any;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -78,7 +80,8 @@ export class LocalFormComponent implements OnInit {
   }
 
   checkClimaxType() {
-    this.displayClimaxTime = (this.resourceForm.value.metodo_climax === 1 || this.resourceForm.value.metodo_climax);
+    this.displayClimaxTime = (this.resourceForm.value.tipo_climax === 2);
+    this.checkClimaxMethod();
   }
 
   checkIfClimaxBSSIsSelected() {
@@ -87,5 +90,8 @@ export class LocalFormComponent implements OnInit {
       this.climaxModeActive = true;
       this.checkClimaxType();
     }
+  }
+  checkClimaxMethod() {
+    this.displayClimaxMethod = (this.resourceForm.value.tipo_climax !== 0 || this.resourceForm.value.tipo_climax);
   }
 }

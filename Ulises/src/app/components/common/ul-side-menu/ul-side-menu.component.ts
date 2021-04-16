@@ -1,14 +1,14 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit } from '@angular/core';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
-import { LoginService } from "src/app/_services/login.service";
-import { LoginUser } from "src/app/_models/login/LoginUser";
-import { AppComponent } from "src/app/app.component";
-import { UtilsService } from "src/app/_services/utils.service";
-import { UserService } from "src/app/_services/user.service";
-import { MatDialog } from "@angular/material/dialog";
-import { AboutComponent } from "../about/about.component";
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { LoginService } from 'src/app/_services/login.service';
+import { LoginUser } from 'src/app/_models/login/LoginUser';
+import { AppComponent } from 'src/app/app.component';
+import { UtilsService } from 'src/app/_services/utils.service';
+import { UserService } from 'src/app/_services/user.service';
+import { MatDialog } from '@angular/material/dialog';
+import { AboutComponent } from '../about/about.component';
 
 interface Node {
     name: string;
@@ -71,11 +71,14 @@ export class UlSideMenuComponent implements OnInit {
         if (!this.userService.isRole('ADMIN') && !this.userService.isRole('USER_MANAGEMENT')) {
             this.TREE_DATA.forEach(item => {
                 if (item.name === 'Configuraciones') {
-                    item.children?.forEach((child, idx) => {
-                        if (child.name === 'Usuarios') {
-                            item.children?.splice(idx, 1);
-                        }
-                    });
+
+                    if (item.children) {
+                        item.children.forEach((child, idx) => {
+                            if (child.name === 'Usuarios' && item.children) {
+                                item.children.splice(idx, 1);
+                            }
+                        });    
+                    }
                 }
             });
         }
@@ -225,7 +228,7 @@ export class UlSideMenuComponent implements OnInit {
 
         this.router.events.subscribe(event => {
             if (event instanceof NavigationEnd) {
-                let url: string[] = event.url.split("/");
+                const url: string[] = event.url.split("/");
                 this.disableMenu = (url.length == 4 && (url[2] === 'config' || url[2] === 'gateway' || url[2] === 'resource') &&
                  parseInt(url[3]).toString() !== 'NaN' || url[3] === 'new');
             }
@@ -310,11 +313,14 @@ export class UlSideMenuComponent implements OnInit {
         let path: string = '';
 
         this.TREE_DATA.forEach(root => {
-            root.children?.forEach(leaf => {
-                if (leaf.name == node.name) {
-                    route = leaf.route || '';
-                }
-            })
+
+            if (root.children) {
+                root.children.forEach(leaf => {
+                    if (leaf.name == node.name) {
+                        route = leaf.route || '';
+                    }
+                })
+            }
         });
 
         path = 'home/' + route;

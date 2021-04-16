@@ -44,7 +44,11 @@ export class Gateway {
         this.tiempo_sesion = 0;
         this.puerto_rtsp = 554;
         this.pendiente_actualizar = 0;
-        if (siteId) this.EMPLAZAMIENTO_idEMPLAZAMIENTO = siteId;
+        
+        if (siteId) {
+            this.EMPLAZAMIENTO_idEMPLAZAMIENTO = siteId;
+        }
+
         this.servidor_rtsp = '';
         this.servidor_rtspb = '';
         this.sppe = 0;

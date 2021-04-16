@@ -4,8 +4,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-
 // Components
 import { UlHeaderComponent } from './ul-header/ul-header.component';
 import { UlSideMenuComponent } from './ul-side-menu/ul-side-menu.component';

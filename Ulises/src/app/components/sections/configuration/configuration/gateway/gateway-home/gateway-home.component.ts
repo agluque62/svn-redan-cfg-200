@@ -233,7 +233,7 @@ export class GatewayHomeComponent implements OnInit {
 
   async back() {
     let confirm;
-    if (this.type === 'EDIT' && this.changes) {
+    if (this.type === 'EDIT' && (this.changes || this.gatewayForm.dirty)) {
       confirm = await this.alertService.confirmationMessage("", `Existen cambios en la pasarela sin guardar. ¿Desea continuar?`);
     }
     if (confirm?.isConfirmed == true || confirm === undefined) {
@@ -242,17 +242,13 @@ export class GatewayHomeComponent implements OnInit {
 
   }
 
-  async createGateway() {
-
-    if (await this.isInvalidGateway()) return;
-
-    this.showSpinner = true;
+  async validateGateway() {
 
     const ipv = await this.checkIpError(this.gatewayForm.value.ipv);
     if (ipv) {
       this.showSpinner = false;
       return;
-    }
+    } 
 
     const ipb1 = await this.checkIpError(this.gatewayForm.value.ipb1);
     if (ipb1) {
@@ -271,6 +267,15 @@ export class GatewayHomeComponent implements OnInit {
       this.showSpinner = false;
       return;
     }
+  }
+
+  async createGateway() {
+
+    if (await this.isInvalidGateway()) return;
+
+    this.showSpinner = true;
+
+    this.validateGateway();
 
     let gateway = Object.assign({}, this.gatewayForm.getRawValue());
     delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
@@ -429,30 +434,9 @@ export class GatewayHomeComponent implements OnInit {
     if (await this.isInvalidGateway()) return;
 
     this.showSpinner = true;
-    const ipv = await this.checkIpError(this.gatewayForm.value.ipv);
-    if (ipv) {
-      this.showSpinner = false;
-      return;
-    }
-
-    const ipb1 = await this.checkIpError(this.gatewayForm.value.ipb1);
-    if (ipb1) {
-      this.showSpinner = false;
-      return;
-    }
-
-    const ipb2 = await this.checkIpError(this.gatewayForm.value.ipb2);
-    if (ipb2) {
-      this.showSpinner = false;
-      return;
-    }
-
-    const name = await this.checkGatewayNameError(this.gatewayForm.value.nombre);
-    if (name) {
-      this.showSpinner = false;
-      return;
-    }
-
+    
+    this.validateGateway();
+    
     let gateway = Object.assign({}, this.gatewayForm.getRawValue());
     delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
     gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
@@ -473,6 +457,7 @@ export class GatewayHomeComponent implements OnInit {
 
     this.showSpinner = false;
     await this.alertService.successMessage(``, `Pasarela ${updatedGtw.name} actualizada correctamente`);
+    this.gatewayForm.markAsPristine();
     this.changes = false;
   }
 
@@ -574,9 +559,9 @@ export class GatewayHomeComponent implements OnInit {
       if (resource.tipo_agente == 2 || resource.tipo_agente == 3)
         loadIndex += 8;
       else if (resource.tipo_agente == 4 || resource.tipo_agente == 6)
-        loadIndex += (force_rdaudio_normal == true ? 1 : 4);
+        loadIndex += (force_rdaudio_normal == true ? 2 : 4);
       else
-        loadIndex += (force_rdaudio_normal == true ? 1 : 2);
+        loadIndex += 2
     });
 
     telResources.forEach((resource: any) => {

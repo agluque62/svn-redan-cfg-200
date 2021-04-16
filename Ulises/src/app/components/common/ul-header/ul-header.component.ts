@@ -1,8 +1,6 @@
-import { Component, OnInit } from "@angular/core";
-import { ConfigService } from "src/app/_services/config.service";
-import { LocalConfig } from "src/app/_models/local-config/LocalConfig";
-import { MatDialog } from "@angular/material/dialog";
-import { AboutComponent } from "../about/about.component";
+import { Component, OnInit } from '@angular/core';
+import { ConfigService } from 'src/app/_services/config.service';
+import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
 
 @Component({
     selector: 'ul-header',
