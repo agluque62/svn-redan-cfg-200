@@ -35,4 +35,5 @@ export class AppSettings {
     public static RES_EDIT_ERROR = "Error al modificar el recurso";
     public static RES_NAME_DUP = "El nombre del recurso ya existe"
     public static WRONG_RANKS = "Existen rangos ATS incompletos";
+    public static WRONG_RANGE = "Este campo solo admite números en el rango de 0-10";
 }

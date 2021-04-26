@@ -4,9 +4,9 @@ import { AppSettings } from 'src/app/core/app.settings';
 import { TableBSSService } from 'src/app/_services/tableBss.service';
 
 interface customValues {
-    value: number;
-    viewValue: string;
-  }
+  value: number;
+  viewValue: string;
+}
 
 @Component({
   selector: 'remote-form',
@@ -17,39 +17,43 @@ export class RemoteFormComponent implements OnInit {
 
   formType!: number;
   resourceForm!: FormGroup;
-  
+
   iAudio: customValues[] = [
-    {value: 0, viewValue: 'Hardware'},
-    {value: 1, viewValue: 'VAD'},
-    {value: 2, viewValue: 'Forzado'},
+    { value: 0, viewValue: 'Hardware' },
+    { value: 1, viewValue: 'VAD' },
+    { value: 2, viewValue: 'Forzado' },
   ];
 
   oAudio: customValues[] = [
-    {value: 0, viewValue: 'Hardware'}
+    { value: 0, viewValue: 'Hardware' }
   ];
 
   bssMethods: customValues[] = [
-    {value: 0, viewValue: 'RSSI'},
-    {value: 1, viewValue: 'NUCLEO'},
+    { value: 0, viewValue: 'RSSI' },
+    { value: 1, viewValue: 'NUCLEO' },
+    { value: 2, viewValue: 'Ninguno' }
   ];
 
   tablesBss: any;
-  
+
   displayInputAudio: boolean = false;
   displayOutputAudio: boolean = false;
   displayPreferredBSSMethod: boolean = false;
   displayGRSDelay: boolean = false;
   displayRecordCheckbox: boolean = false;
 
-  vadIsSelected:boolean = false;
+  vadIsSelected: boolean = false;
   appset: any;
-  
+
+  disableTableSelector: boolean = false;
+
   constructor(private readonly tableBssService: TableBSSService) { }
 
   async ngOnInit() {
     this.appset = AppSettings;
     this.tablesBss = (await this.tableBssService.getTableAudioBss().toPromise()).tables;
     this.displayUmbralVAD(this.resourceForm.value.indicacion_entrada_audio);
+    this.checkSelectedMethod();
   }
 
   /**
@@ -63,9 +67,9 @@ export class RemoteFormComponent implements OnInit {
   /**
    * 
    */
-  checkFormType(){
-    
-    switch(this.formType){
+  checkFormType() {
+
+    switch (this.formType) {
       case 4:
         this.displayInputAudio = true;
         this.displayOutputAudio = true;
@@ -89,4 +93,14 @@ export class RemoteFormComponent implements OnInit {
         break;
     }
   }
+
+  checkSelectedMethod() {
+    if (this.resourceForm.value.metodo_bss === 0) {
+      this.disableTableSelector = false;
+    } else if (this.resourceForm.value.metodo_bss === 1 || this.resourceForm.value.metodo_bss === 2) {
+      this.resourceForm.patchValue({ tabla_bss_id: null });
+      this.disableTableSelector = true;
+    }
+  }
+
 }

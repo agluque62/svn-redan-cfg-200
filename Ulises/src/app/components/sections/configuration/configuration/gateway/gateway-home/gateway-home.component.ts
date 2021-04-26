@@ -559,7 +559,7 @@ export class GatewayHomeComponent implements OnInit {
       if (resource.tipo_agente == 2 || resource.tipo_agente == 3)
         loadIndex += 8;
       else if (resource.tipo_agente == 4 || resource.tipo_agente == 6)
-        loadIndex += (force_rdaudio_normal == true ? 2 : 4);
+        loadIndex += (force_rdaudio_normal == true ? 4 : 2);
       else
         loadIndex += 2
     });

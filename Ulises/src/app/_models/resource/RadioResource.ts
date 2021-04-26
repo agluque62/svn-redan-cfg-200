@@ -1,7 +1,7 @@
 export class RadioResource {
     ajuste_ad!: number | undefined;
     ajuste_da!: number | undefined;
-    clave_registro!: string;
+    clave_registro!: string | null;
     climax_bss!: number;
     codec!: number;
     cola_bss_sqh!: number;
@@ -54,5 +54,6 @@ export class RadioResource {
         this.umbral_vad = -35;
         this.ventana_bss = 0;
         this.listaUris = [];
+        this.clave_registro = null;
     }
 }

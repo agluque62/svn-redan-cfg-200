@@ -47,7 +47,7 @@
                 </mat-form-field>
 
                 <mat-checkbox [disabled]="visualizationMode" [checked]="registerKeyExists"
-                    (change)="displayRegKey = $event.checked">Habilitar registro</mat-checkbox>
+                    (change)="enableRegistryKey($event.checked)">Habilitar registro</mat-checkbox>
 
                 <mat-form-field appearance="legacy" *ngIf="displayRegKey">
                     <mat-label>Clave</mat-label>

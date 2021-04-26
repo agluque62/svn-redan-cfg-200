@@ -6,7 +6,7 @@ export class TelephoneResource {
     ajuste_ad!: number;
     ajuste_da!: number;
     ats_user!: string;
-    clave_registro!: any;
+    clave_registro!: string | null;
     codec!: number;
     cola_vox!: number;
     destino_test!: string;

@@ -46,10 +46,11 @@ export class ATSFormComponent implements OnInit {
 
   isR2: boolean = false;
   isReady: boolean = false;
+  automaticResponse: boolean = false;
 
   visualizationMode: boolean = false;
   appset: any;
-  
+
   constructor(private readonly userService: UserService) { }
 
   ngOnInit(): void {
@@ -62,6 +63,13 @@ export class ATSFormComponent implements OnInit {
     } else {
       this.isR2 = false;
     }
+    
+    if(this.resourceForm.value.respuesta_automatica === 1){
+      this.automaticResponse = true;
+    }else{
+      this.automaticResponse = false;
+    }
+
     this.isReady = true;
   }
 
@@ -81,5 +89,15 @@ export class ATSFormComponent implements OnInit {
 
   changeTimeOpt(event: any) {
     this.timeOpt = event.value;
+  }
+
+  automaticResponseIsChecked(opt: boolean) {
+    this.automaticResponse = opt;
+    if (this.automaticResponse) {
+      this.resourceForm.patchValue({ respuesta_automatica: 1 });
+    }else{
+      this.resourceForm.patchValue({ respuesta_automatica: 0 });
+      this.resourceForm.patchValue({ periodo_tonos: 5 });
+    }
   }
 }
