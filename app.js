@@ -280,11 +280,17 @@ function msg4Login(req, msg) {
 
 var isAuthenticated = function (req, res, next) {
 
-    logging.Info(ctrlSesiones.localSession)
-    logging.Info(req.isAuthenticated())
+	logging.Info(req.method, req.originalUrl, req.isAuthenticated(), ctrlSesiones.localSession);
+    // logging.Info(ctrlSesiones.localSession)
+    // logging.Info(req.isAuthenticated())
 
     if (ctrlSesiones.localSession != null && req.isAuthenticated()) {
-        return next();
+		// 20210604. AGL. Cada acceso 'autorizado' renueva la session...
+		req.session.lastAccess = new Date().getTime();
+		ctrlSesiones.localSession = req.session;
+        ctrlSesiones.localSession.lastTick = moment();
+		
+		return next();
     }
     res.status(401).json('Not authenticated');
 }
@@ -550,8 +556,8 @@ app.post('/localconfig',
     });
 
 app.use('/users', isAuthenticated, users);
-app.use('/gateways', gateways);
-app.use('/configurations', configurations);
+app.use('/gateways', isAuthenticated, gateways);					// 20210604. En la version 2 ya no hay polling de pasarelas.
+app.use('/configurations', isAuthenticated, configurations);		// 20210604. En la version 2 ya no hay polling de pasarelas.
 app.use('/services', isAuthenticated, services);
 app.use('/hardware', isAuthenticated, hardware);
 app.use('/resources', isAuthenticated, resources);

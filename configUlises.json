@@ -3,7 +3,7 @@
     "Region": "Región Centro",
     "BackupServiceDomain": "192.168.0.212:8082",
     "HistoricsDeep": 90,
-    "LoginTimeOut": 60,
+    "LoginTimeOut": 15,
     "refreshTime": 1000,
     "maxCycleTime": 30000,
     "log2con": "info",
