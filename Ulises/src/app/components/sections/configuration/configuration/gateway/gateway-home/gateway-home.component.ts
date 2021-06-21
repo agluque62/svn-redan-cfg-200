@@ -243,30 +243,31 @@ export class GatewayHomeComponent implements OnInit {
   }
 
   async validateGateway() {
-
     const ipv = await this.checkIpError(this.gatewayForm.value.ipv);
     if (ipv) {
       this.showSpinner = false;
-      return;
-    } 
+      return false;
+    }
 
     const ipb1 = await this.checkIpError(this.gatewayForm.value.ipb1);
     if (ipb1) {
       this.showSpinner = false;
-      return;
+      return false;
     }
 
     const ipb2 = await this.checkIpError(this.gatewayForm.value.ipb2);
     if (ipb2) {
       this.showSpinner = false;
-      return;
+      return false;
     }
 
     const name = await this.checkGatewayNameError(this.gatewayForm.value.nombre);
     if (name) {
       this.showSpinner = false;
-      return;
+      return false;
     }
+
+    return true;
   }
 
   async createGateway() {
@@ -275,30 +276,33 @@ export class GatewayHomeComponent implements OnInit {
 
     this.showSpinner = true;
 
-    this.validateGateway();
+    let result = await this.validateGateway();
+    if (result) {
 
-    let gateway = Object.assign({}, this.gatewayForm.getRawValue());
-    delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
-    gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
-    gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
 
-    const siteId = (this.siteId) ? this.siteId : 0;
+      let gateway = Object.assign({}, this.gatewayForm.getRawValue());
+      delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
+      gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
+      gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
 
-    const newGtw = await this.gatewayService.createGtw(siteId, gateway).toPromise();
-    if (newGtw.error) {
+      const siteId = (this.siteId) ? this.siteId : 0;
+
+      const newGtw = await this.gatewayService.createGtw(siteId, gateway).toPromise();
+      if (newGtw.error) {
+        this.showSpinner = false;
+        await this.alertService.errorMessage(`Error`, newGtw.error);
+        return;
+      }
+
+      await this.historicService.createGateway(this.gatewayForm.value.nombre).toPromise();
+
       this.showSpinner = false;
-      await this.alertService.errorMessage(`Error`, newGtw.error);
-      return;
+      await this.alertService.successMessage(``, `Pasarela ${newGtw.name} creada correctamente`);
+
+      this.dataService.updateDataConfigId(this.configId);
+      this.dataService.updateDataGatewayPreviousUrl('NEW');
+      this.router.navigate(['/home/gateway/' + newGtw.insertId]);
     }
-
-    await this.historicService.createGateway(this.gatewayForm.value.nombre).toPromise();
-
-    this.showSpinner = false;
-    await this.alertService.successMessage(``, `Pasarela ${newGtw.name} creada correctamente`);
-
-    this.dataService.updateDataConfigId(this.configId);
-    this.dataService.updateDataGatewayPreviousUrl('NEW');
-    this.router.navigate(['/home/gateway/' + newGtw.insertId]);
   }
 
   async checkGatewayNameError(name: string): Promise<boolean> {
@@ -434,31 +438,32 @@ export class GatewayHomeComponent implements OnInit {
     if (await this.isInvalidGateway()) return;
 
     this.showSpinner = true;
-    
-    this.validateGateway();
-    
-    let gateway = Object.assign({}, this.gatewayForm.getRawValue());
-    delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
-    gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
-    gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
 
-    const updatedGtw = await this.gatewayService.updateGtw(this.gateway.idCGW, gateway).toPromise();
-    if (updatedGtw.error) {
+    let result = await this.validateGateway();
+    if (result) {
+      let gateway = Object.assign({}, this.gatewayForm.getRawValue());
+      delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
+      gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
+      gateway.pendiente_actualizar = 1;
+
+      const updatedGtw = await this.gatewayService.updateGtw(this.gateway.idCGW, gateway).toPromise();
+      if (updatedGtw.error) {
+        this.showSpinner = false;
+        await this.alertService.errorMessage(`Error`, updatedGtw.error);
+        return;
+      }
+
+      await this.historicService.updateGateway(this.gatewayForm.value.nombre).toPromise();
+      this.gatewayForm.patchValue({
+        pendiente_actualizar: true
+      });
+      this.initStatusGateway = { ...this.gatewayForm.value };
+
       this.showSpinner = false;
-      await this.alertService.errorMessage(`Error`, updatedGtw.error);
-      return;
+      await this.alertService.successMessage(``, `Pasarela ${updatedGtw.name} actualizada correctamente`);
+      this.gatewayForm.markAsPristine();
+      this.changes = false;
     }
-
-    await this.historicService.updateGateway(this.gatewayForm.value.nombre).toPromise();
-    this.gatewayForm.patchValue({
-      pendiente_actualizar: true
-    });
-    this.initStatusGateway = { ...this.gatewayForm.value };
-
-    this.showSpinner = false;
-    await this.alertService.successMessage(``, `Pasarela ${updatedGtw.name} actualizada correctamente`);
-    this.gatewayForm.markAsPristine();
-    this.changes = false;
   }
 
   copyGateway() {

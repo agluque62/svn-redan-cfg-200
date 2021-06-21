@@ -58,6 +58,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   displayRadioTab: boolean = false;
   displayComnsTab: boolean = false;
   displayListsTab: boolean = false;
+  displayTbMessage: boolean = false;
 
   // Telephonic
   displayTelephonicTab: boolean = false;
@@ -234,7 +235,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     this.registerKeyExists = false;
     this.displayRegKey = false;
 
-    if (this.resource.clave_registro !== null) {
+    if (this.resource.clave_registro !== null && this.resource.clave_registro !== '' ) {
       this.registerKeyExists = true;
       this.displayRegKey = true;
     }
@@ -349,7 +350,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       itiporespuesta: new FormControl({ value: this.resource.itiporespuesta, disabled: this.visualizationMode }),
       lado: new FormControl({ value: this.resource.lado, disabled: this.visualizationMode }),
       origen_test: new FormControl({ value: this.resource.origen_test, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.AGVN_PATTERN)]),
-      periodo_tonos: new FormControl({ value: this.resource.periodo_tonos, disabled: this.visualizationMode },[Validators.required, Validators.pattern(AppSettings.ONLY_NUMBERS), Validators.min(0), Validators.max(10)]),
+      periodo_tonos: new FormControl({ value: this.resource.periodo_tonos, disabled: this.visualizationMode }, [Validators.required, Validators.pattern(AppSettings.ONLY_NUMBERS), Validators.min(0), Validators.max(10)]),
       ranks: new FormControl({ value: this.resource.ranks, disabled: this.visualizationMode }),
       respuesta_automatica: new FormControl({ value: this.resource.respuesta_automatica, disabled: this.visualizationMode }),
       supervisa_colateral: new FormControl({ value: this.resource.supervisa_colateral, disabled: this.visualizationMode }),
@@ -392,14 +393,23 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
     let ranksKO = this.checkCompleteRanks();
 
-    if (this.resourceForm.valid && (nameIsValid?.toString() === 'NO_ERROR' || nameIsValid === undefined) && !ranksKO) {
+    let confirm;
+    
+    if (this.selectedResource == 1 && this.resourceForm.value.tipo_agente == 4 && this.resourceForm.value.tabla_bss_id == 0) {
+      this.displayTbMessage = true;
+    } else {
+      this.displayTbMessage = false;
+    }
+    if (this.displayTbMessage) confirm= await this.alertService.confirmationMessage("", `No se ha escogido tabla de calificación de audio. ¿Desea continuar?`);
+
+    if (this.resourceForm.valid && (nameIsValid?.toString() === 'NO_ERROR' || nameIsValid === undefined) && !ranksKO && ((confirm?.isConfirmed == true && this.displayTbMessage) || !this.displayTbMessage)) {
       let confirmLoadIndex = await this.checkLoadIndex();
       if ((confirmLoadIndex.response?.isConfirmed == true && confirmLoadIndex.loadIndex > 16) || (confirmLoadIndex.response === undefined)) {
         this.resourceForm.get('frecuencia')?.setValidators([]); // Issue 2747
 
         if (this.displayRegKey && this.resourceForm.value.clave_registro === null) {
           this.resourceForm.patchValue({ clave_registro: "" });
-        } else if(!this.displayRegKey){
+        } else if (!this.displayRegKey) {
           this.resourceForm.patchValue({ clave_registro: null });
         }
 

@@ -53,7 +53,6 @@ export class RemoteFormComponent implements OnInit {
     this.appset = AppSettings;
     this.tablesBss = (await this.tableBssService.getTableAudioBss().toPromise()).tables;
     this.displayUmbralVAD(this.resourceForm.value.indicacion_entrada_audio);
-    this.checkSelectedMethod();
   }
 
   /**
@@ -94,11 +93,14 @@ export class RemoteFormComponent implements OnInit {
     }
   }
 
+  /**
+   * Deprecated 7-6-2021
+   */
   checkSelectedMethod() {
     if (this.resourceForm.value.metodo_bss === 0) {
       this.disableTableSelector = false;
     } else if (this.resourceForm.value.metodo_bss === 1 || this.resourceForm.value.metodo_bss === 2) {
-      this.resourceForm.patchValue({ tabla_bss_id: null });
+      this.resourceForm.patchValue({ tabla_bss_id: 0 });
       this.disableTableSelector = true;
     }
   }

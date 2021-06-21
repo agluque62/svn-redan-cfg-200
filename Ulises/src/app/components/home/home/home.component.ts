@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { RouterOutlet, Router, ActivationStart } from '@angular/router';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
     selector: 'home',
@@ -11,8 +12,9 @@ export class HomeComponent implements OnInit {
 
     @ViewChild(RouterOutlet, { static: false })
     outlet!: RouterOutlet;
+    hasChanges: boolean = false;
 
-    constructor(private readonly router: Router) { }
+    constructor(private readonly router: Router, private readonly app: AppComponent) { }
 
     ngOnInit(): void {
         this.router.events.subscribe(e => {
@@ -20,5 +22,7 @@ export class HomeComponent implements OnInit {
                 this.outlet.deactivate();
             }
         });
+        this.app.startAlive();
     }
+
 }

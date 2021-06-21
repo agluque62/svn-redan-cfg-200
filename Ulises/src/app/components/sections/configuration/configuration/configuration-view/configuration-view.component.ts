@@ -372,6 +372,7 @@ export class ConfigurationViewComponent implements OnInit {
         this.showSpinner = false;
         await this.alertService.successMessage(``, `Configuración ${this.configForm.value.name} actualizada`);
         await this.init();
+        this.changes = false;
       } else {
         this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }

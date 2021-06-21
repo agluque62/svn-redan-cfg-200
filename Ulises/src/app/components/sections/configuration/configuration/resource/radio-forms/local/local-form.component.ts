@@ -85,10 +85,13 @@ export class LocalFormComponent implements OnInit {
   }
 
   checkIfClimaxBSSIsSelected() {
-    if (this.resourceForm.value.climax_bss === 1 || this.resourceForm.value.climax_bss) {
+    if ((this.resourceForm.value.climax_bss === 1 || this.resourceForm.value.climax_bss) && this.resourceForm.value.tipo_agente != 0 &&  this.resourceForm.value.tipo_agente != 1) {
       this.checkClimaxBSS = true;
       this.climaxModeActive = true;
       this.checkClimaxType();
+    }else{
+      this.checkClimaxBSS = false;
+      this.climaxModeActive = false;
     }
   }
   checkClimaxMethod() {

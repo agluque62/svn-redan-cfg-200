@@ -35,9 +35,13 @@ export class GatewayHardwareTableComponent implements OnInit {
     dragging: boolean = false;
     gridsterSelected: boolean = false;
 
+    enabledSwap: boolean = true;
+
     isDragging: boolean = false;
     coordX!: number;
     coordY!: number;
+
+    freeCells: any[] = [];
 
     visualizationMode: boolean = false;
 
@@ -64,6 +68,7 @@ export class GatewayHardwareTableComponent implements OnInit {
         this.initHeaderDashboard();
 
         this.initObservable();
+        this.enabledSwap = true;
         this.ready = true;
     }
 
@@ -100,6 +105,7 @@ export class GatewayHardwareTableComponent implements OnInit {
                     if (changed) {
                         const idResource = (item.idrecurso_radio) ? item.idrecurso_radio : item.idrecurso_telefono;
                         const type = (item.idrecurso_radio) ? 1 : 2;
+
                         await this.hardwareService.updatePositions(this.gateway.idCGW, idResource, type, targetItem, sourceItem).toPromise();
                     }
                 });
@@ -134,6 +140,10 @@ export class GatewayHardwareTableComponent implements OnInit {
                 if (item.tipo_interfaz_tel !== undefined && item.tipo_interfaz_tel !== null) {
                     this.dashboard.push(this.getItem(item.fila, item.columna, item.nombre, this.AGENT_TYPE_TELEPHONE, item));
                 }
+            } else {
+                let row = Math.floor((index)/4);
+                let col = index % 4;
+                this.freeCells.push({ columna: col, fila: row});
             }
             cont++;
         });
@@ -200,8 +210,13 @@ export class GatewayHardwareTableComponent implements OnInit {
     }
 
     itemChange(item: GridsterItem, itemComponent: GridsterItemComponentInterface) {
+
         this.items.forEach(async element => {
+
             if (element && element.nombre === item.label) {
+
+                const previousItem = Object.assign({}, { columna: element.columna, fila: element.fila });
+                const nextItem = Object.assign({}, { columna: item.x, fila: item.y });
 
                 const sourceItem = Object.assign({}, element);
                 element.columna = item.x;
@@ -211,9 +226,34 @@ export class GatewayHardwareTableComponent implements OnInit {
                 const idResource = (targetItem.idrecurso_radio) ? targetItem.idrecurso_radio : targetItem.idrecurso_telefono;
                 const type = (targetItem.idrecurso_radio) ? 1 : 2;
 
-                await this.hardwareService.updatePositions(this.gateway.idCGW, idResource, type, targetItem, sourceItem).toPromise();
+                if (this.isEmptyCell(targetItem)) {
+                    await this.hardwareService.updatePositions(this.gateway.idCGW, idResource, type, targetItem, sourceItem).toPromise();
+                    const idx = this.freeCells.findIndex(object => object.columna === nextItem.columna && object.fila === nextItem.fila);
+                    this.freeCells.splice(idx,1);
+                    this.freeCells.push(previousItem);
+                } else {
+                    if (this.enabledSwap) {
+                        this.enabledSwap = false;
+                        await this.hardwareService.updatePositions(this.gateway.idCGW, idResource, type, targetItem, sourceItem).toPromise();
+                    } else {
+                        this.enabledSwap = true;
+                    }    
+                }
             }
         });
+    }
+
+    isEmptyCell(target: any) {
+
+        let isEmpty: boolean = false;
+
+        this.freeCells.forEach( obj => {
+            if (obj.columna === target.columna && obj.fila === target.fila) {        
+                isEmpty = true;
+            }
+        });
+
+        return isEmpty;
     }
 
     itemHeaderChange(item: GridsterItem, itemComponent: GridsterItemComponentInterface): void {

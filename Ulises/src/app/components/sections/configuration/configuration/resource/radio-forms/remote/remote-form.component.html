@@ -33,7 +33,7 @@
     <div class="custom-row" *ngIf="displayPreferredBSSMethod">
         <mat-form-field appearance="fill">
             <mat-label>Método BSS preferido</mat-label>
-            <mat-select formControlName="metodo_bss" name="bssMethods" (selectionChange)="checkSelectedMethod()">
+            <mat-select formControlName="metodo_bss" name="bssMethods">
                 <mat-option *ngFor="let type of bssMethods" [value]="type.value">
                     {{type.viewValue}}
                 </mat-option>

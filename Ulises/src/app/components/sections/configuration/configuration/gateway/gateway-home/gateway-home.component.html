@@ -47,6 +47,6 @@
         <button mat-raised-button (click)="updateGateway()" *ngIf="type == 'EDIT'">{{'Guardar'}}</button>
         <button mat-raised-button (click)="copyGateway()" *ngIf="type == 'EDIT'">{{'Copiar'}}</button>
         <button mat-raised-button (click)="deleteGateway()" *ngIf="type == 'EDIT'">{{'Eliminar'}}</button>
-        <button mat-raised-button (click)="exportGateway()">{{'Exportar'}}</button>
+        <button mat-raised-button (click)="exportGateway()" *ngIf="type == 'EDIT'">{{'Exportar'}}</button>
     </div>
 </div>

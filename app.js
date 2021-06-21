@@ -665,7 +665,7 @@ app.locals.AuthenticatedUser = 'none';
 
 app.listen(app.get('port'), function () {
     logging.Info('Listening UG5k-Serv on port ', app.get('port'));
-    logging.Info('Express started in ', app.get('env'));
+    logging.Info('Express started in ', app.get('env'), ', on ' + homepath);
 });
 
 module.exports = app;

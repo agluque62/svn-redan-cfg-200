@@ -38,7 +38,6 @@ export class LoginComponent implements OnInit {
         try {
             const loginUser = await this.loginService.login(this.credentials.username, this.credentials.password).toPromise();
             localStorage.setItem('user', JSON.stringify(loginUser));
-            this.app.startAlive();
             this.navigate();
         } catch (error) {
             if (error.error) {

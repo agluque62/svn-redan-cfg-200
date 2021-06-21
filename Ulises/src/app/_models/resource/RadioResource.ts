@@ -37,7 +37,7 @@ export class RadioResource {
         this.codec = 0;
         this.cola_bss_sqh = 500;
         this.evento_ptt_squelch = 0;
-        this.habilita_grabacion = 1;
+        this.habilita_grabacion = 0;
         this.indicacion_entrada_audio = 0;
         this.indicacion_salida_audio = 0;
         this.metodo_bss = 0;

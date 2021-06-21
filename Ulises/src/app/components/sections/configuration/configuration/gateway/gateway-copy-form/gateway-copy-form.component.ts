@@ -30,8 +30,8 @@ export class GatewayCopyFormComponent implements OnInit {
   configurationIps: string[] = [];
 
   showSpinner: boolean = false;
-  appset:any;
-  
+  appset: any;
+
   constructor(public dialogRef: MatDialogRef<GatewayCopyFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Gateway,
     private readonly alertService: AlertService, @Inject(AppComponent) private readonly app: AppComponent,
     private readonly gatewayService: GatewayService, private readonly dataService: DataService, private readonly configService: ConfigService) { }
@@ -103,10 +103,8 @@ export class GatewayCopyFormComponent implements OnInit {
       if (this.copyForm.valid) {
 
         this.showSpinner = true;
-        if (await this.checkIpError(this.copyForm.value.ipv)) return;
-        if (await this.checkIpError(this.copyForm.value.ipCpu0)) return;
-        if (await this.checkIpError(this.copyForm.value.ipCpu1)) return;
-        if (await this.checkGatewayNameError(this.copyForm.value.name)) return;
+        let isValidate = await this.validateGateway(this.copyForm.value.ipv, this.copyForm.value.ipCpu0, this.copyForm.value.ipCpu1, this.copyForm.value.name)
+        if (!isValidate) return;
 
         if (this.copyForm.value.ipv === this.copyForm.value.ipCpu0 || this.copyForm.value.ipv === this.copyForm.value.ipCpu1
           || this.copyForm.value.ipCpu0 === this.copyForm.value.ipCpu1) {
@@ -139,5 +137,33 @@ export class GatewayCopyFormComponent implements OnInit {
     } catch (error) {
       this.app.catchError(error);
     }
+  }
+
+  async validateGateway(ipvStr: string, ipb1Str: string, ipb2Str: string, nombreStr: string) {
+    const ipv = await this.checkIpError(ipvStr);
+    if (ipv) {
+      this.showSpinner = false;
+      return false;
+    }
+
+    const ipb1 = await this.checkIpError(ipb1Str);
+    if (ipb1) {
+      this.showSpinner = false;
+      return false;
+    }
+
+    const ipb2 = await this.checkIpError(ipb2Str);
+    if (ipb2) {
+      this.showSpinner = false;
+      return false;
+    }
+
+    const name = await this.checkGatewayNameError(nombreStr);
+    if (name) {
+      this.showSpinner = false;
+      return false;
+    }
+
+    return true;
   }
 }
