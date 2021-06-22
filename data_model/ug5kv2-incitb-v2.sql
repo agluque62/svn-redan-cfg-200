@@ -69,7 +69,6 @@ values
 (158,'Baja Recurso Radio','Recurso Radio Eliminado: {0}. {1}. {2}',0,'CONF-L',0,0),
 (159,'Alta Recurso Telefonía','Recurso Telefónico Añadido: {0}. {1}. {2}',0,'CONF-L',0,0),
 (160,'Baja Recurso Telefonía','Recurso Telefónico  Eliminado: {0} . {1} . {2}',0,'CONF-L',0,0),
-(161,'Conflicto de configuraciones','Conflicto de Configuración en GW: {0}. {1}. {2}',0,'CONF-L',0,0),
 (180,'Carga versión Software Pasarela','Carga de Versión Software Pasarela: {0} {1}',0,'MAN-L',0,0),
 (181,'Selección Activación Recurso', 'Selección Activación Recurso {0}:  {1} ', 0, 'MAN-L', 0, 0),
 (182,'Reset Remoto','Reset Remoto: {0}',0,'MAN-L',0,0),
