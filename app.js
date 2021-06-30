@@ -152,6 +152,8 @@ app.set('view engine', 'jade');
 
 app.set('aliveGtws', aliveGtws);
 
+// app.disable('etag');
+
 // // uncomment after placing your favicon in /public
 // app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
@@ -460,6 +462,7 @@ app.get('/logout',
     });
 
 /** 20170808 AGL. TICK de Sesion Activa */
+var nticks=0;
 app.get('/alive',
     //  isAuthenticated,
     function (req, res, next) {
@@ -469,9 +472,11 @@ app.get('/alive',
         }
 
         if (req.isAuthenticated()) {
-            bdtgw.getGatewaysPendings(function (npas) {
-                res.json({ alive: "ok", gwpendientes: npas });
-            });
+            /** 20210622. El alive no necesita devolver las GW pendientes... */
+            // bdtgw.getGatewaysPendings(function (npas) {
+            //     res.json({ alive: "ok", gwpendientes: npas });
+            // });
+            res.json({ alive: "ok", nticks: /*nticks++*/0 });
         }
         else {
             // msg4Login(req, 'La sesion ha expirado. Identifiquese de nuevo');
