@@ -98,7 +98,7 @@ export class UsersFormComponent implements OnInit {
       selected: false
     },
     {
-      label: 'RCS. Actualización SQ de GWs',
+      label: 'RCS. Actualización SW de GWs',
       pow: 8192,
       selected: false
     },
