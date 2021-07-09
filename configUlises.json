@@ -9,7 +9,7 @@
     "log2con": "info",
     "log2file": "silly",
     "LoginSystemTrace": false,
-    "Date": "15/05/2021",
+    "Date": "12/07/2021",
     "Files": [
       {
         "Name": "app.js",
@@ -132,10 +132,10 @@
       }
     ],
     "LoadIndexControlEnabled": true,
-    "MySQL": "5.7.17",
+    "MySQL": "5.6.26",
     "NodeJS": "8.*.*",
     "R16Mode": false,
-    "SubVersion": "Beta08",
+    "SubVersion": "0",
     "Version": "2.0",
     "dbdatabase": "ug5kv2",
     "dbhost": "localhost",
