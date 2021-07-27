@@ -48,7 +48,7 @@ var flash = require('connect-flash');
 var moment = require('moment');
 var ctrlSesiones = { user: null, localSession: null };
 var aliveGtws = [];
-var homepath = config.Ulises.homepath;
+var homepath = debug ? "/Ulises/dist/Ulises" : "/frontend";
 
 /** 20180829. Variables de Entorno en Base de Datos */
 process.env.DB_HOST = process.env.DB_HOST || config.Ulises.dbhost;
@@ -543,11 +543,12 @@ app.post('/localconfig',
 
         // Chequear coherencia.
         if (validateLocalConfig(req.body)) {
+			var filename = debug ? "./configUlises-dev.json" : "./configUlises.json";
             // Lo salvo en los datos...
             config.Ulises = req.body;
             // Lo salvo en el fichero...
             var Ulises = { Ulises: req.body, MemorySupervisor: config.MemorySupervisor };
-            fs.writeFile("./configUlises.json", JSON.stringify(Ulises, null, 2), function (err) {
+            fs.writeFile(filename, JSON.stringify(Ulises, null, 2), function (err) {
                 if (err) res.json({ res: false, txt: 'Error fs.writeFile' });
                 else {
                     res.json({ res: true, txt: 'File saved.' });
@@ -654,12 +655,12 @@ var synch = setInterval(function () {
     }
 }, config.Ulises.refreshTime);
 /*************************/
-
-fs.watchFile(require.resolve('./configUlises.json'), function () {
+var filesupervised = debug ? "./configUlises-dev.json" : "./configUlises.json";
+fs.watchFile(require.resolve(filesupervised), function () {
     /** Para cargar dinamicamente los cambios de configuracion */
-    delete require.cache[require.resolve('./configUlises.json')];
-    config = require('./configUlises.json');
-    console.log('Configuracion cambiada...');
+    delete require.cache[require.resolve(filesupervised)];
+    config = require(filesupervised);
+    console.log('Configuracion en ' + filesupervised + ' cambiada...');
 });
 
 app.set('port', process.env.PORT || 5050);
