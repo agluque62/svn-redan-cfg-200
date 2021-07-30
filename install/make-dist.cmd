@@ -17,6 +17,7 @@ xcopy /S /I /E ..\lib .\dist\lib
 xcopy /S /I /E ..\node_modules .\dist\node_modules
 xcopy /S /I /E ..\nss .\dist\nss
 xcopy /S /I /E ..\routes .\dist\routes
+xcopy /S /I /E ..\fonts .\dist\fonts
 copy ..\*.* .\dist
 
 pause
