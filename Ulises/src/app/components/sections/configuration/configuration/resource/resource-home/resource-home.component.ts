@@ -305,7 +305,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       prioridad_sesion_sip: new FormControl({ value: this.resource.prioridad_sesion_sip, disabled: this.visualizationMode }),
       restriccion_entrantes: new FormControl({ value: this.resource.restriccion_entrantes, disabled: this.visualizationMode }),
       retardo_fijo_climax: new FormControl({ value: this.resource.retardo_fijo_climax, disabled: this.visualizationMode }),
-      retraso_interno_grs: new FormControl({ value: this.resource.retraso_interno_grs, disabled: this.visualizationMode }),
+      retraso_interno_grs: new FormControl({ value: this.resource.retraso_interno_grs, disabled: this.visualizationMode }, [Validators.required, Validators.min(0), Validators.max(250)]),
       tabla_bss_id: new FormControl({ value: this.resource.tabla_bss_id, disabled: this.visualizationMode }),
       tipo_agente: new FormControl({ value: this.resource.tipo_agente, disabled: this.visualizationMode }),
       tipo_climax: new FormControl({ value: this.resource.tipo_climax, disabled: this.visualizationMode }),
