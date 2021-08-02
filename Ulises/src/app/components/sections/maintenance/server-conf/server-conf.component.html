@@ -28,10 +28,10 @@
                     </mat-select>
                 </mat-form-field>
     
-                <mat-form-field appearance="fill">
+                <!-- <mat-form-field appearance="fill">
                     <mat-label>{{'Tiempo de Refresco en ms'}}</mat-label>
                     <input matInput type="number" formControlName="refreshTime">
-                </mat-form-field>
+                </mat-form-field> -->
 
                 <mat-form-field class="select" appearance="fill">
                     <mat-label>{{'Tracear a consola'}}</mat-label>
@@ -43,10 +43,14 @@
                 </mat-form-field>
 
                 <div class="form-item">                    
-                    <mat-label>{{'Tracear el Control de Acceso'}}</mat-label>
-                    <mat-checkbox class="checkbox" formControlName="LoginSystemTrace"></mat-checkbox>
+                    <mat-label>{{'Gestionar Indice de Carga'}}</mat-label>
+                    <mat-checkbox class="checkbox" formControlName="LoadIndexControlEnabled"></mat-checkbox>
                 </div>
-    
+
+                <mat-form-field appearance="fill">
+                    <mat-label>{{'Request Web Timeout (ms)'}}</mat-label>
+                    <input matInput type="number" formControlName="timeout">
+                </mat-form-field>
             </div>
 
             <div class="col">
@@ -65,10 +69,11 @@
                     </mat-select>
                 </mat-form-field>
 
-                <mat-form-field appearance="fill">
+
+                <!-- <mat-form-field appearance="fill">
                     <mat-label>{{'Tiempo Ciclo en ms'}}</mat-label>
                     <input matInput type="number" formControlName="maxCycleTime">
-                </mat-form-field>
+                </mat-form-field> -->
     
                 <mat-form-field class="select" appearance="fill">
                     <mat-label>{{'Tracear a fichero'}}</mat-label>
@@ -78,12 +83,17 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-
-                <mat-form-field appearance="fill">
-                    <mat-label>{{'Timeout en ms'}}</mat-label>
-                    <input matInput type="number" formControlName="timeout">
-                </mat-form-field>
             
+                <!-- <div class="form-item">                    
+                    <mat-label>{{'Tracear el Control de Acceso'}}</mat-label>
+                    <mat-checkbox class="checkbox" formControlName="LoginSystemTrace"></mat-checkbox>
+                </div> -->
+
+                <div class="form-item">                    
+                    <mat-label>{{'Modo 16 Recursos Radio'}}</mat-label>
+                    <mat-checkbox class="checkbox" formControlName="R16Mode"></mat-checkbox>
+                </div>
+
             </div>
 
         </form>
