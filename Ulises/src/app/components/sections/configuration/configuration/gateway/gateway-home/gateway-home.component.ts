@@ -530,7 +530,11 @@ export class GatewayHomeComponent implements OnInit {
       msb1: new FormControl({ value: this.gatewayPost.msb1, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
       msb2: new FormControl({ value: this.gatewayPost.msb2, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
       PuertoLocalSIP: new FormControl({ value: this.gatewayPost.PuertoLocalSIP, disabled: true }),
-      periodo_supervision: new FormControl({ value: this.gatewayPost.periodo_supervision, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.ONLY_NUMBERS)]),
+//      periodo_supervision: new FormControl({ value: this.gatewayPost.periodo_supervision, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.ONLY_NUMBERS)]),
+      periodo_supervision: new FormControl({ 
+        value: this.gatewayPost.periodo_supervision, 
+        disabled: this.visualizationMode }, 
+        [Validators.pattern(AppSettings.ONLY_NUMBERS), Validators.min(90), Validators.max(1800)]),
       proxys: new FormControl(this.gatewayPost.proxys),
       registrars: new FormControl(this.gatewayPost.registrars),
       listServers: new FormControl(this.gatewayPost.listServers),

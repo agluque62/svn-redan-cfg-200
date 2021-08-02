@@ -24,11 +24,17 @@
 
                     <mat-form-field appearance="fill">
                         <mat-label>{{'Periodo de supervisión (sg.)'}}</mat-label>
-                        <input matInput formControlName="periodo_supervision">
+                        <input matInput required formControlName="periodo_supervision">
+                        <mat-error *ngIf="form.controls['periodo_supervision'].hasError('required')">
+                            {{ appset.FIELD_REQUIRED }}
+                        </mat-error>
+                        <mat-error *ngIf="form.controls['periodo_supervision'].hasError('min') || form.controls['periodo_supervision'].hasError('max')">
+                            {{ 'El campo debe estar en el rango 90 ... 1800' }}
+                        </mat-error>
                         <mat-error *ngIf="form.controls['periodo_supervision'].hasError('pattern')">
                             {{ appset.NUMBERS_FORMAT_INVALID }}
                         </mat-error>
-                    </mat-form-field>
+            </mat-form-field>
 
                     <div class="proxies">
                         <div class="selectors">
