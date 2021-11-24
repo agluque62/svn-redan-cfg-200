@@ -1,0 +1,5 @@
+Se deben añadir 3 entradas nuevas a la base de datos para los nuevos casos de uso en el historico de la aplicacion:
+
+INSERT INTO `ug5kv2`.`incidencias` (`IdIncidencia`, `Incidencia`, `Descripcion`, `LineaEventos`, `Grupo`, `Error`, `Nivel`) VALUES ('101', 'Alta de Configuración', 'Alta de Configuración', '0', 'CONF-R', '0', '0');
+INSERT INTO `ug5kv2`.`incidencias` (`IdIncidencia`, `Incidencia`, `Descripcion`, `LineaEventos`, `Grupo`, `Error`, `Nivel`) VALUES ('102', 'Baja de Configuración', 'Baja de Configuración', '0', 'CONF-R', '0', '0');
+INSERT INTO `ug5kv2`.`incidencias` (`IdIncidencia`, `Incidencia`, `Descripcion`, `LineaEventos`, `Grupo`, `Error`, `Nivel`) VALUES ('103', 'Modificación de Parámetros de Configuración', 'Modificación de Parámetros de Configuración', '0', 'CONF-R', '0', '0');

@@ -88,11 +88,14 @@ export class HistoricComponent implements OnInit {
         private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router, private changeDetectorRefs: ChangeDetectorRef) { }
 
     ngOnInit() {
+        this.Log("hist-comp ");
+
         this.checkPermissions();
         this.getGroups();
         this.getCodes();
         this.getComponents();
         this.initDefaultDates();
+        
     }
 
     async checkPermissions() {
@@ -108,6 +111,9 @@ export class HistoricComponent implements OnInit {
     }
 
     async updateData() {
+
+        this.Log("hist-comp updateDate IN");
+
         this.ready = false;
         this.dataUsed = [];
 
@@ -141,9 +147,13 @@ export class HistoricComponent implements OnInit {
 
         this.assignDataSource(await this.dataUsed);
         this.ready = true;
+
+        this.Log("hist-comp updateDate OUT");
     }
 
     initDefaultDates() {
+        this.Log("hist-comp initDefaultDates");
+
         this.dateEnd = new Date();
         this.dateStart = new Date(this.dateEnd.getFullYear(), this.dateEnd.getMonth(), this.dateEnd.getDate(), 0, 0, 0);
     }
@@ -203,6 +213,9 @@ export class HistoricComponent implements OnInit {
     }
 
     async retrieveHistoricsByRegister() {
+
+        this.Log("hist-comp retrieveHistoricsByRegister");
+
         let arrayTemp = this.selectedRegister.map(function (x) {
             return x.IdIncidencia;
         });
@@ -217,6 +230,8 @@ export class HistoricComponent implements OnInit {
     }
 
     async retrieveHistoricsByComponent() {
+        this.Log("hist-comp retriveHistoricsByComponent");
+
         let arrayTemp = this.selectedComponent.map(function (x) {
             return x.IdHw;
         });
@@ -233,6 +248,8 @@ export class HistoricComponent implements OnInit {
     }
 
     async retrieveHistoricsByGroup() {
+        this.Log("hist-comp retriveHistoricsByGroup");
+
         let arrayTemp = this.selectedGroup.map(function (x) {
             return x.TipoHw;
         });
@@ -249,6 +266,7 @@ export class HistoricComponent implements OnInit {
     }
 
     async retrieveHistoricsByDate() {
+        this.Log("hist-comp retriveHistoricsByDate");
         try {
             this.dataRaw = await this.historicService.getHistoricsByDate(this.getISODate(this.dateStart),
                 this.getISODate(this.dateEnd), 0, this.selectedLimit).toPromise();
@@ -266,6 +284,8 @@ export class HistoricComponent implements OnInit {
     }
 
     async retrieveHistoricsByEvents() {
+        this.Log("hist-comp retriveHistoricsByEvent");
+
         let result = this.dataRaw.historics.filter((row: any) => {
             return row.Alarma === 0;
         })
@@ -277,6 +297,8 @@ export class HistoricComponent implements OnInit {
     }
 
     async retrieveHistoricsByAlarms() {
+        this.Log("hist-comp retriveHistoricsByAlarms");
+
         let result = this.dataRaw.historics.filter((row: any) => {
             return row.Alarma === 1;
         })
@@ -288,11 +310,16 @@ export class HistoricComponent implements OnInit {
     }
 
     async retrieveHistoricsByDescription() {
+
+        this.Log("hist-comp retriveHistoricsByDescription");
+
         if (this.selectedFilter.length == 1)
             this.dataUsed = await this.dataRaw.historics;
     }
 
     async getGroups() {
+        this.Log("hist-comp getGroups");
+
         try {
             const result = await this.historicService.getGroups().toPromise();
             if (result.error) {
@@ -310,6 +337,8 @@ export class HistoricComponent implements OnInit {
     }
 
     async getComponents() {
+        this.Log("hist-comp getComponents");
+
         try {
             const result = await this.historicService.getComponents().toPromise();
             if (result.error) {
@@ -328,6 +357,8 @@ export class HistoricComponent implements OnInit {
     }
 
     async getCodes() {
+        this.Log("hist-comp getCodes");
+
         try {
             const result = await this.historicService.getCodes().toPromise();
             if (result.error) {
@@ -345,6 +376,8 @@ export class HistoricComponent implements OnInit {
     }
 
     async retrieveHistorics() {
+        this.Log("hist-comp retriveHistorics");
+
         try {
             this.ready = false;
 
@@ -363,6 +396,8 @@ export class HistoricComponent implements OnInit {
     }
 
     assignDataSource(historics: Historic[]) {
+        this.Log("hist-comp assingDataSource");
+
         if (this.dataSource && this.dataSource.filteredData.length > 0) {
             this.dataSource = new MatTableDataSource(historics);
             this.changeDetectorRefs.detectChanges();
@@ -375,6 +410,8 @@ export class HistoricComponent implements OnInit {
     }
 
     getISODate(date: Date) {
+        this.Log("hist-comp getISODate");
+
         return `${date.getFullYear()}-${this._to2digit(date.getMonth() + 1)}-${this._to2digit(date.getDate())}T${this._to2digit(date.getHours())}:${this._to2digit(date.getMinutes())}:${this._to2digit(date.getSeconds())}.${this._to3digit(date.getMilliseconds())}`;
     }
 
@@ -387,11 +424,15 @@ export class HistoricComponent implements OnInit {
     }
 
     applyFilter(event: Event) {
+        this.Log("hist-comp applyFilter");
+
         const filterValue = (event.target as HTMLInputElement).value;
         this.dataSource.filter = filterValue ? filterValue.trim().toLowerCase() : '';
     }
 
     getFilterPredicate() {
+        this.Log("hist-comp getFilterPredicate");
+
         return (row: any, filters: string) => {
 
             const description = filters;
@@ -419,5 +460,9 @@ export class HistoricComponent implements OnInit {
         if (this.selectedType.includes(2)) {
             this.retrieveHistoricsByAlarms();
         }
+    }
+
+    Log(msg: any){
+        console.log((new Date()).toUTCString(), msg);
     }
 }

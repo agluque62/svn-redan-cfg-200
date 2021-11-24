@@ -9,12 +9,12 @@
 
     .header {
     
-        height: 75px;
+        height: /*75px*/10%;
         border-bottom: 1px solid grey;
-        margin-bottom: 10px;
+        margin/*-bottom*/: 10px;
 
-        @media  screen  and (min-width:320px) and (max-width:850px) {
-            height: 50px;
+        @media  screen  /*and (min-width:320px) and (max-width:850px)*/ {
+            height: /*50px*/9%;
         }  
     }
 
@@ -22,7 +22,8 @@
 
         height: 30px;
         border-top: 1px solid grey;
-        margin-top: 10px;
+        margin/*-top*/: 10px;
+        padding-top: 10px;
 
         @media  screen  and (min-width:320px) and (max-width:850px) {
             height: 25px;
@@ -33,13 +34,15 @@
         
         display: flex;
         flex: auto;
+        margin: 10px;
 
         .menu {
 
-            width: 210px;
+            width: /*210px*/20%;
             border-radius: 0 5px 5px 0;
             background-color: #00800038;
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+            margin: 10px;
 
             @media screen and (min-width:320px) and (max-width:850px){
                 width: 0px;
@@ -48,11 +51,12 @@
 
         .context {
             
-            width: 100%;
+            width: 80%;
             overflow-y: auto;
             overflow-x: hidden;
+            margin:10px;
 
-            &.collpase {
+            &.collapse {
 
                 width: calc(100% - 225px);
             }
