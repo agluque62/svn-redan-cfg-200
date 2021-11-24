@@ -33,6 +33,8 @@ export class ResourceComnsComponent implements OnInit {
     { value: 2, viewValue: 'Radio Rx' }
   ];
 
+  subURILabels: string[] = [ "A","B" ]
+  
   resourceForm!: FormGroup;
 
   sites: any;
@@ -100,9 +102,9 @@ export class ResourceComnsComponent implements OnInit {
   }
 
   initUriArray(type: string, level: number, subURI: boolean = false) {
-    let arr = [{ tipo: `${type}A`, uri: "", nivel_colateral: level }];
+    let arr = [{ tipo: `${type}`, uri: "", nivel_colateral: level }];
     if (subURI) {
-      arr.push({ tipo: `${type}B`, uri: "", nivel_colateral: (level + 1) })
+      arr.push({ tipo: `${type}`, uri: "", nivel_colateral: (level + 1) })
     }
     return arr;
   }

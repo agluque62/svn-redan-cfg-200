@@ -5,9 +5,10 @@
     <div class="main-uri">
         <div class="uri-fields">
             <div class="uri-settings" *ngFor="let site of uriList; index as i">
-                <mat-label class="site">{{site.name}}</mat-label>
-                <mat-label class="uri-title">TX</mat-label>
-                <div class="uri-row" *ngFor="let row of site.fields.tx">
+                <mat-label class="site" >{{site.name}}</mat-label>
+                <mat-label class="uri-title" >TX</mat-label>
+                <div class="uri-row" *ngFor="let row of site.fields.tx; index as j">
+                    <mat-label class="uri-label" *ngIf="site.fields.tx.length === 2" >{{ subURILabels[j] }}:&nbsp;</mat-label>
                     <mat-form-field appearance="legacy">
                         <mat-label>NombreRecurso@IP:Puerto</mat-label>
                         <input matInput [disabled]="visualizationMode" [(ngModel)]="row.uri"
@@ -18,8 +19,9 @@
                         && (selectedExtResource !== undefined && selectedExtResource.tipo !== RADIO_TX && selectedExtResource.tipo !== RADIO_TX_RX))"
                         (click)="makeURI(i, row.nivel_colateral, row.tipo)"> {{arrow}} </button>
                 </div>
-                <mat-label class="uri-title">RX</mat-label>
-                <div class="uri-row" *ngFor="let row of site.fields.rx">
+                <mat-label class="uri-title" >RX</mat-label>
+                <div class="uri-row" *ngFor="let row of site.fields.rx; index as j">
+                    <mat-label class="uri-label" *ngIf="site.fields.rx.length === 2" >{{ subURILabels[j] }}:&nbsp;</mat-label>
                     <mat-form-field appearance="legacy">
                         <mat-label>NombreRecurso@IP:Puerto</mat-label>
                         <input matInput [disabled]="visualizationMode" [(ngModel)]="row.uri"

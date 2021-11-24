@@ -14,6 +14,11 @@
       </mat-select>
     </mat-form-field>
 
+    <mat-form-field appearance="fill">
+      <mat-label>{{'Filtro'}}</mat-label>
+      <input matInput formControlName="Filtro" (keyup)="filtrar($event)">
+    </mat-form-field>
+
     <div class="btn">
       <button mat-raised-button class="create-btn local-btn" (click)="createExternalResource()">{{'Nuevo recurso'}}</button>
     </div>

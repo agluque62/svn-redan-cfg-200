@@ -5,20 +5,23 @@ import { AppSettings } from 'src/app/core/app.settings';
 import { Configuration } from 'src/app/_models/configs/configuration/Configuration';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ConfigService } from 'src/app/_services/config.service';
+import { HistoricService } from 'src/app/_services/historic.service';
 import { UserService } from 'src/app/_services/user.service';
+
 
 @Component({
   selector: 'app-configuration-form',
   templateUrl: './configuration-form.component.html',
   styleUrls: ['./configuration-form.component.scss']
 })
+
 export class ConfigurationFormComponent implements OnInit {
 
   configForm!: FormGroup;
   appset: any;
 
   constructor(public dialogRef: MatDialogRef<ConfigurationFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Configuration,
-    private readonly alertService: AlertService, private readonly configService: ConfigService, private readonly userService: UserService) { }
+    private readonly alertService: AlertService, private readonly configService: ConfigService, private readonly userService: UserService, private readonly historicService: HistoricService) { }
 
   ngOnInit() {
     this.appset = AppSettings;
@@ -51,6 +54,7 @@ export class ConfigurationFormComponent implements OnInit {
       if (result && result.error) {
         await this.alertService.errorMessage(`Error `, result.error);
       } else {
+        await this.historicService.updateCfg(101, this.configForm.value.name).toPromise();
         const msg = `Configuración creada correctamente`;
         await this.alertService.successMessage(`Éxito`, msg);
         this.dialogRef.close();

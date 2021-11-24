@@ -3,13 +3,17 @@
     <div class="title">
         {{'Usuarios'}}
     </div>
-
     <div class="btn">
-        <button mat-raised-button class="create-btn local-btn" (click)="createUser()">
-            {{'Nuevo usuario'}}
-        </button>
+        <div class="local-btn">
+            <button mat-raised-button class="create-btn" (click)="loadProfileLegend()">
+                {{'Leyenda de perfiles'}}
+            </button>
+            <button mat-raised-button class="create-btn" (click)="createUser()">
+                {{'Nuevo usuario'}}
+            </button>
+        </div>
     </div>
-    
+
     <spinner *ngIf="showSpinner"></spinner>
 
     <div class="mat-elevation-z8" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
@@ -27,8 +31,7 @@
             <ng-container matColumnDef="actions">
                 <mat-header-cell *matHeaderCellDef></mat-header-cell>
                 <mat-cell *matCellDef="let row">
-                    <button mat-raised-button class="modify-btn"
-                        (click)="modifyUser(row)">{{'Modificar'}}</button>
+                    <button mat-raised-button class="modify-btn" (click)="modifyUser(row)">{{'Modificar'}}</button>
                 </mat-cell>
             </ng-container>
 

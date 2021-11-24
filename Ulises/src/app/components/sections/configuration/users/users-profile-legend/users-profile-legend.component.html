@@ -1,0 +1,38 @@
+<div class="title">
+    {{'Leyenda de perfiles'}}
+</div>
+
+<div class="mat-elevation-z8" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
+    <mat-table [dataSource]="dataSource" class="table">
+        <ng-container matColumnDef="rol">
+            <mat-header-cell *matHeaderCellDef>Roles</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.rol}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="CFG">
+            <mat-header-cell *matHeaderCellDef>CFG</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.CFG}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="RCS">
+            <mat-header-cell *matHeaderCellDef>RCS</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.RCS}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="GW">
+            <mat-header-cell *matHeaderCellDef>GW</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.GW}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="Funciones_asociadas">
+            <mat-header-cell *matHeaderCellDef>Funciones Asociadas</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.Funciones_asociadas}}</mat-cell>
+        </ng-container>
+
+        <!-- Header and Row Declarations -->
+        <mat-header-row *matHeaderRowDef="['rol','CFG','RCS','GW','Funciones_asociadas']"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: ['rol','CFG','RCS','GW','Funciones_asociadas']"></mat-row>
+    </mat-table>
+
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
+</div>

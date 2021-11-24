@@ -184,17 +184,18 @@ export class UsersFormComponent implements OnInit {
       if (confirm.value) {
 
         this.showSpinner = true;
-        const result = await this.userService.deleteUser(this.user.idOPERADORES).toPromise();      
+        const result = await this.userService.deleteUser(this.user.idOPERADORES).toPromise();
         this.showSpinner = false;
 
         if (result.error != 1) {
           await this.alertService.errorMessage(`Error`, result.error);
         } else {
           await this.alertService.successMessage(`Éxito`, `Usuario borrado correctamente`);
+          await this.historicService.updateCfg(53, this.user.name).toPromise();
           this.dialogRef.close();
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
@@ -213,12 +214,12 @@ export class UsersFormComponent implements OnInit {
           const result = await this.userService.createUser(this.userForm.value.name, password, profile).toPromise();
           error = (result.error) ? result.error : null;
           message = `Usuario ${this.userForm.value.name} creado correctamente`;
-          await this.historicService.createUser(this.userForm.value.name).toPromise();
+          await this.historicService.updateCfg(52, this.userForm.value.name).toPromise();
         } else {
           const result = await this.userService.editUser(this.user.name, password, profile, this.user.idOPERADORES).toPromise();
           error = (result.err) ? result.err : null;
           message = `Usuario ${this.user.name} modificado correctamente`;
-          await this.historicService.editUser(this.user.name).toPromise();
+          await this.historicService.updateCfg(54, this.user.name).toPromise();
         }
         this.showSpinner = false;
 
@@ -231,7 +232,7 @@ export class UsersFormComponent implements OnInit {
       } else {
         await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
-    } catch (error) {
+    } catch (error: any) {
       this.dialogRef.close();
       this.app.catchError(error);
     }

@@ -57,7 +57,7 @@ export class GatewayGeneralComponent implements OnInit {
   
         this.siteOptions = (result.data != 'NO_DATA') ? [...result.data] : [];  
       }
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }

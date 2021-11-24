@@ -16,12 +16,16 @@
                     border-bottom: 1px solid;
                 }
                 .uri-row {
-                    display: grid;
-                    grid-auto-flow: column;
-                    grid-column-gap: 10px;
+                    display: flex;
+                    .uri-label {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-right: 1em;
+                    }
                     button {
                         width: fit-content;
-                        margin: auto;
+                        margin: auto auto auto 1em;
                     }
                     mat-form-field {
                         width: 100%;

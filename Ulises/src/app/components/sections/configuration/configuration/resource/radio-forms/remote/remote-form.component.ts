@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { AppSettings } from 'src/app/core/app.settings';
+import { TableBss } from 'src/app/_models/table-bss/TableBss';
 import { TableBSSService } from 'src/app/_services/tableBss.service';
 
 interface customValues {
@@ -34,13 +35,14 @@ export class RemoteFormComponent implements OnInit {
     { value: 2, viewValue: 'Ninguno' }
   ];
 
-  tablesBss: any;
+  tablesBss: TableBss[] = [];
 
   displayInputAudio: boolean = false;
   displayOutputAudio: boolean = false;
   displayPreferredBSSMethod: boolean = false;
   displayGRSDelay: boolean = false;
   displayRecordCheckbox: boolean = false;
+  displayTableBss: boolean = false;
 
   vadIsSelected: boolean = false;
   appset: any;
@@ -52,6 +54,18 @@ export class RemoteFormComponent implements OnInit {
   async ngOnInit() {
     this.appset = AppSettings;
     this.tablesBss = (await this.tableBssService.getTableAudioBss().toPromise()).tables;
+    this.tablesBss.unshift({
+      FechaCreacion: "", 
+      description: "Ninguna", 
+      idtabla_bss: 0, 
+      name: 'Ninguna', 
+      valor0: 0,
+      valor1: 0,
+      valor2: 0,
+      valor3: 0,
+      valor4: 0,
+      valor5: 0
+    })
     this.displayUmbralVAD(this.resourceForm.value.indicacion_entrada_audio);
   }
 
@@ -75,6 +89,7 @@ export class RemoteFormComponent implements OnInit {
         this.displayPreferredBSSMethod = true;
         this.displayGRSDelay = true;
         this.displayRecordCheckbox = true;
+        this.displayTableBss = true;
         break;
       case 5:
         this.displayInputAudio = false;
@@ -82,6 +97,7 @@ export class RemoteFormComponent implements OnInit {
         this.displayPreferredBSSMethod = false;
         this.displayGRSDelay = true;
         this.displayRecordCheckbox = false;
+        this.displayTableBss = false;
         break;
       case 6:
         this.displayInputAudio = true;
@@ -89,6 +105,7 @@ export class RemoteFormComponent implements OnInit {
         this.displayPreferredBSSMethod = true;
         this.displayGRSDelay = false;
         this.displayRecordCheckbox = true;
+        this.displayTableBss = true;
         break;
     }
   }

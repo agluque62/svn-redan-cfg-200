@@ -115,15 +115,18 @@
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
-                                <mat-form-field appearance="fill"
-                                    *ngIf="!displayAudioPrecision && selectedResource === 1">
-                                    <mat-label>Precisión audio</mat-label>
-                                    <mat-select formControlName="precision_audio" name="precision">
-                                        <mat-option *ngFor="let opt of audio_prec" [value]="opt.value">
-                                            {{opt.viewValue}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
+
+                                <div class="agc" *ngIf="selectedResource === 1">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Precisión Audio</mat-label>
+                                        <mat-select [disabled]="precAudioIsDisable"
+                                            formControlName="precision_audio" name="indexAudio">
+                                            <mat-option *ngFor="let type of indexAudio" [value]="type.value">
+                                                {{type.viewValue}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
                             </div>
                         </div>
                     </mat-tab>
@@ -141,8 +144,7 @@
                             </div>
                             <mat-form-field *ngIf="displayRadioTab" id="formSelector" appearance="fill">
                                 <mat-label>Tipo de Agente de Radio</mat-label>
-                                <mat-select formControlName="tipo_agente" (selectionChange)="checkResourceType()"
-                                    name="rdAgent">
+                                <mat-select formControlName="tipo_agente" (selectionChange)="checkResourceType()" name="rdAgent">
                                     <mat-option *ngFor="let rdAgent of radioAgents" [value]="rdAgent.value">
                                         {{rdAgent.viewValue}}
                                     </mat-option>

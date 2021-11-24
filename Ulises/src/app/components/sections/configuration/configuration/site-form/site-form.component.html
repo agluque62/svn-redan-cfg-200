@@ -44,6 +44,16 @@
             </mat-error>
         </mat-form-field>
         <mat-form-field appearance="fill">
+            <mat-label>{{'IP GATEWAY'}}</mat-label>
+            <input matInput required formControlName="gatewayf">
+            <mat-error *ngIf="importForm.controls['gatewayf'].hasError('required')">
+                {{ appset.FIELD_REQUIRED }}
+            </mat-error>
+            <mat-error *ngIf="importForm.controls['gatewayf'].hasError('pattern')">
+                {{ appset.INVALID_IP }}
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
             <mat-label>{{'IP Cpu 0'}}</mat-label>
             <input matInput required formControlName="cpu0">
             <mat-error *ngIf="importForm.controls['cpu0'].hasError('required')">

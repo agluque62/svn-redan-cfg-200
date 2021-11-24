@@ -8,8 +8,14 @@ import { Site } from 'src/app/_models/configs/site/Site';
 import { AlertService } from 'src/app/_services/alert.service';
 import { DataService } from 'src/app/_services/data.service';
 import { GatewayService } from 'src/app/_services/gateway.service';
+import { HistoricService } from 'src/app/_services/historic.service';
 import { SiteService } from 'src/app/_services/site.service';
 import { UserService } from 'src/app/_services/user.service';
+import { UtilsService } from 'src/app/_services/utils.service';
+import { ConfigService } from 'src/app/_services/config.service';
+import { ConfigurationIpResponse } from 'src/app/_models/configs/configuration/response/ConfigurationIpResponse';
+import { ConfigurationIp } from 'src/app/_models/configs/configuration/ConfigurationIp';
+
 
 @Component({
   selector: 'app-site-form',
@@ -27,16 +33,21 @@ export class SiteFormComponent implements OnInit {
   importJson!: any;
   importJsonName!: string;
 
+  configurationIp!: ConfigurationIp[];
+  configurationIpResponse!: ConfigurationIpResponse;
+
+
   @ViewChild('importGW') importGW!: ElementRef;
 
   visualizationMode: boolean = false;
-  appset:any;
-  
-  constructor(private readonly router: Router, public dialogRef: MatDialogRef<SiteFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Site,
+  appset: any;
+
+  constructor(private readonly router: Router, public dialogRef: MatDialogRef<SiteFormComponent>, private readonly configService: ConfigService, private readonly utilService: UtilsService, @Inject(MAT_DIALOG_DATA) public data: Site,
     private readonly alertService: AlertService, private readonly siteService: SiteService, private readonly app: AppComponent,
-    private readonly gatewayService: GatewayService, private readonly dataService: DataService, private readonly userService: UserService) { }
+    private readonly gatewayService: GatewayService, private readonly dataService: DataService, private readonly userService: UserService, private historicService: HistoricService) { }
 
   ngOnInit(): void {
+
 
     this.appset = AppSettings;
     this.visualizationMode = (this.visualizationPermission()) ? true : false;
@@ -70,6 +81,7 @@ export class SiteFormComponent implements OnInit {
     this.importForm = new FormGroup({
       name: new FormControl(this.importJson.general.name, [Validators.required, Validators.pattern(AppSettings.NAME_PATTERN)]),
       ipv: new FormControl(this.importJson.general.ipv, [Validators.required, Validators.pattern(AppSettings.IP_PATTERN)]),
+      gatewayf: new FormControl(this.importJson.general.cpus[0].ipg || this.importJson.general.cpus[1].ipg, [Validators.required, Validators.pattern(AppSettings.IP_PATTERN)]),
       cpu0: new FormControl(this.importJson.general.cpus[0].ipb, [Validators.required, Validators.pattern(AppSettings.IP_PATTERN)]),
       cpu1: new FormControl(this.importJson.general.cpus[1].ipb, [Validators.required, Validators.pattern(AppSettings.IP_PATTERN)]),
     });
@@ -90,7 +102,7 @@ export class SiteFormComponent implements OnInit {
       } else {
         this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
@@ -104,13 +116,12 @@ export class SiteFormComponent implements OnInit {
           await this.alertService.errorMessage(``, result.error);
           return;
         }
-
         await this.alertService.successMessage(``, `Emplazamiento ${this.siteForm.value.name} modificado`);
         this.dialogRef.close(true);
       } else {
         this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
@@ -131,7 +142,7 @@ export class SiteFormComponent implements OnInit {
         await this.alertService.successMessage(``, `Emplazamiento ${this.site.nameSite} ha sido eliminado`);
         this.dialogRef.close(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
@@ -146,33 +157,50 @@ export class SiteFormComponent implements OnInit {
 
   async importGateway($event: any) {
     try {
+      let result;
       const fileToUpload = $event.target.files[0];
       this.importJsonName = $event.target.files[0].name;
-
+      const fileReader = new FileReader();
+      fileReader.readAsText(fileToUpload, "UTF-8");
+      const context = this;
+      fileReader.onload = function (fileLoadedEvent) {
+        context.importJson = JSON.parse(fileLoadedEvent.target?.result! as string);
+        context.initImportForm();
+      }
       const confirm = await this.alertService.confirmationMessage(``, `¿Confirma que quiere importa pasarela?`);
       if (confirm.value && fileToUpload !== null) {
-        const result = await this.gatewayService.importGtw(fileToUpload, this.configurationId, this.site.idEMPLAZAMIENTO).toPromise();
-        if (result && result.msg) {
-          await this.alertService.successMessage(``, `Pasarela importada correctamente`);
-          this.importGW.nativeElement.value = '';
-          this.dialogRef.close(true);
-          return;
-        } else {
-
-          this.importGW.nativeElement.value = '';
-          await this.alertService.errorMessage(``, `${result.err}`);
-
-          const fileReader = new FileReader();
-          const context = this;
-          fileReader.readAsText(fileToUpload, "UTF-8");
-          fileReader.onload = function (fileLoadedEvent) {
-            context.importJson = JSON.parse(fileLoadedEvent.target?.result! as string);
-            context.initImportForm();
+        if ((await this.utilService.checkIps(this.importJson.general.ipv, null)).length == 0 &&
+          (await this.utilService.checkIps(this.importJson.general.cpus[0].ipb, null)).length == 0 &&
+          (await this.utilService.checkIps(this.importJson.general.cpus[1].ipb, null)).length == 0) {
+          result = await this.gatewayService.importGtw(fileToUpload, this.configurationId, this.site.idEMPLAZAMIENTO).toPromise();
+          if (result && result.msg) {
+            let title = this.dataService.getDataGatewayTitle();
+            title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+            let beginIndexName = this.importJsonName.indexOf("_") > 0 ? this.importJsonName.indexOf("_") : 0;
+            let finalIndexName = this.importJsonName.indexOf("_", beginIndexName + 1) > 0 ? this.importJsonName.indexOf("_", beginIndexName + 1) : this.importJsonName.length;
+            let name = this.importJsonName.substring(beginIndexName + 1, finalIndexName - 2)
+            await this.historicService.updateCfg(107, name, title).toPromise();
+            await this.alertService.successMessage(``, `Pasarela importada correctamente.`);
+            this.importGW.nativeElement.value = '';
+            this.dialogRef.close(true);
+            return;
+          } else {
+            await this.alertService.errorMessage(`Error`, `${result.err}.`);
             context.type = 'IMPORT';
+            this.importGW.nativeElement.value = '';
+            return;
           }
+
+        } else {
+          await this.alertService.errorMessage(`Error`, `Configuracion no importada. La pasarela ${this.importJson.general.name} ya existe. Cambie los datos antes de importar.`);
+          context.type = 'IMPORT';
+          this.importGW.nativeElement.value = '';
+          return;
         }
+      } else {
+        this.cancelModifyImportGtw;
       }
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
@@ -180,32 +208,49 @@ export class SiteFormComponent implements OnInit {
   async importGtwModified() {
     try {
       if (this.importForm.valid) {
+        let result;
         this.importJson.general.name = this.importForm.value.name;
         this.importJson.general.ipv = this.importForm.value.ipv;
+        this.importJson.general.cpus[0].ipg = this.importForm.value.gatewayf; //gateway
+        this.importJson.general.cpus[1].ipg = this.importForm.value.gatewayf; //gateway
         this.importJson.general.cpus[0].ipb = this.importForm.value.cpu0;
         this.importJson.general.cpus[1].ipb = this.importForm.value.cpu1;
-
         const fileTxt = JSON.stringify(this.importJson);
         const bytes = new TextEncoder().encode(fileTxt);
         const file: File = new File([bytes], this.importJsonName);
-        const result = await this.gatewayService.importGtw(file, this.configurationId, this.site.idEMPLAZAMIENTO).toPromise();
-
-        if (result && result.msg) {
-          await this.alertService.successMessage(``, `Pasarela importada correctamente`);
-          this.dialogRef.close(true);
-          return;
+        if (this.importJson.general.ipv !== this.importJson.general.cpus[0].ipb &&
+          this.importJson.general.cpus[0].ipb !== this.importJson.general.cpus[1].ipb &&
+          this.importJson.general.cpus[1].ipb !== this.importJson.general.ipv) {
+          if ((await this.utilService.checkIps(this.importJson.general.ipv, null)).length == 0 &&
+            (await this.utilService.checkIps(this.importJson.general.cpus[0].ipb, null)).length == 0 &&
+            (await this.utilService.checkIps(this.importJson.general.cpus[1].ipb, null)).length == 0) {
+            result = await this.gatewayService.importGtw(file, this.configurationId, this.site.idEMPLAZAMIENTO).toPromise();
+            if (result && result.msg) {
+              let title = this.dataService.getDataGatewayTitle();
+              title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+              await this.historicService.updateCfg(107, this.importForm.value.name, title).toPromise();
+              await this.alertService.successMessage(``, `Pasarela importada correctamente.`);
+              this.dialogRef.close(true);
+              return;
+            } else {
+              await this.alertService.errorMessage(``, `${result.err}.`);
+            }
+          } else {
+            await this.alertService.errorMessage(`Error`, `El nombre o Ips ya existe. Cambie los datos antes de importar.`);
+          }
         } else {
-          await this.alertService.errorMessage(``, `${result.err}`);
+          await this.alertService.errorMessage(`Error`, `Las Ips deben ser diferentes entre sí.`);
         }
       } else {
         this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
 
   cancelModifyImportGtw() {
     this.type = 'EDIT';
+
   }
 }

@@ -3,125 +3,87 @@
         {{ 'Históricos' }}
     </div>
 
-    <spinner *ngIf="!ready"></spinner>
+    <spinner *ngIf="!ready && !firstRequest"></spinner>
+    <div class="globalFilters">
+        <mat-form-field appearance="fill">
+            <mat-label>{{'Fecha de inicio'}}</mat-label>
+            <input matInput [ngxMatDatetimePicker]="pickerStartDate" [(ngModel)]="dateStart" [max]="dateEnd"
+                (dateChange)="cleanGlobalControls($event)">
+            <mat-datepicker-toggle matSuffix [for]="$any(pickerStartDate)"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #pickerStartDate [showSeconds]="false"></ngx-mat-datetime-picker>
+        </mat-form-field>
 
+        <mat-form-field appearance="fill">
+            <mat-label>{{'Fecha de fin'}}</mat-label>
+            <input matInput [ngxMatDatetimePicker]="pickerEndDate" [(ngModel)]="dateEnd" [min]="dateStart"
+                (dateChange)="cleanGlobalControls($event)">
+            <mat-datepicker-toggle matSuffix [for]="$any(pickerEndDate)"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #pickerEndDate [showSeconds]="false">
+            </ngx-mat-datetime-picker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label> Límite </mat-label>
+            <mat-select [(value)]="selectedLimit" (selectionChange)="cleanGlobalControls($event)">
+                <mat-option [value]="limit" *ngFor="let limit of limitOptions">
+                    {{ limit }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
     <div class="filter">
         <mat-form-field class="type-selector" appearance="fill">
             <mat-label>{{'Filtrar recursos'}}</mat-label>
-            <mat-select [(value)]="selectedFilter" (selectionChange)="changeFilter()">
-                <mat-option [value]="null">{{'No'}}</mat-option>
+            <mat-select [(value)]="selectedFilter" multiple (selectionChange)="updateData()">
                 <mat-option [value]="filter" *ngFor="let filter of filters">
                     {{ filter }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
 
-        <div class="sub-filter" *ngIf="selectedFilter === 'Fecha'">
-            <mat-form-field appearance="fill">
-                <mat-label>{{'Fecha de inicio'}}</mat-label>
-                <input matInput [ngxMatDatetimePicker]="pickerStartDate" [(ngModel)]="dateStart" [max]="dateEnd"
-                    (dateChange)="updateData()">
-                <mat-datepicker-toggle matSuffix [for]="$any(pickerStartDate)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker #pickerStartDate [showSeconds]="false"></ngx-mat-datetime-picker>
-            </mat-form-field>
-            
-            <mat-form-field appearance="fill">
-                <mat-label>{{'Fecha de fin'}}</mat-label>
-                <input matInput [ngxMatDatetimePicker]="pickerEndDate" [(ngModel)]="dateEnd" [min]="dateStart"
-                    (dateChange)="updateData()">
-                <mat-datepicker-toggle matSuffix [for]="$any(pickerEndDate)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker #pickerEndDate [showSeconds]="false">
-                </ngx-mat-datetime-picker>
-            </mat-form-field>
-        </div>
+        <div class="sub-filter">
 
-        <div class="sub-filter" *ngIf="selectedFilter === 'Grupo'">
-            <mat-form-field appearance="fill">
-                <mat-label>{{'Fecha de inicio'}}</mat-label>
-                <input matInput [ngxMatDatetimePicker]="pickerStart" [(ngModel)]="dateStart" [max]="dateEnd"
-                    (dateChange)="updateData()">
-                <mat-datepicker-toggle matSuffix [for]="$any(pickerStart)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker #pickerStart [showSeconds]="false">
-                </ngx-mat-datetime-picker>
+            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Tipo')">
+                <mat-label>{{'Tipo'}}</mat-label>
+                <mat-select [(value)]="selectedType" multiple (selectionChange)="updateData()">
+                    <mat-option [value]="type.value" *ngFor="let type of typeOptions">
+                        {{ type.viewValue }}
+                    </mat-option>
+                </mat-select>
             </mat-form-field>
 
-            <mat-form-field appearance="fill">
-                <mat-label>{{'Fecha de fin'}}</mat-label>
-                <input matInput [ngxMatDatetimePicker]="pickerEnd" [(ngModel)]="dateEnd" [min]="dateStart"
-                    (dateChange)="updateData()">
-                <mat-datepicker-toggle matSuffix [for]="$any(pickerEnd)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker #pickerEnd [showSeconds]="false">
-                </ngx-mat-datetime-picker>
+            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Descripción')">
+                <mat-label>Descripción</mat-label>
+                <input matInput (keyup)="applyFilter($event)" #input>
             </mat-form-field>
 
-            <mat-form-field class="type-selector" appearance="fill">
+            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Grupo')">
                 <mat-label>{{'Grupo'}}</mat-label>
-                <mat-select [(value)]="selectedGroup" (selectionChange)="updateData()">
+                <mat-select [(value)]="selectedGroup" multiple (selectionChange)="updateData()">
                     <mat-option [value]="group" *ngFor="let group of groupOptions">
                         {{ group.TipoHw }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-        </div>
 
-        <div class="sub-filter" *ngIf="selectedFilter === 'Componente'">
-
-            <mat-form-field appearance="fill">
-                <mat-label>{{'Fecha de inicio'}}</mat-label>
-                <input matInput [ngxMatDatetimePicker]="pickerStart" [(ngModel)]="dateStart" [max]="dateEnd"
-                    (dateChange)="updateData()">
-                <mat-datepicker-toggle matSuffix [for]="$any(pickerStart)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker #pickerStart [showSeconds]="false">
-                </ngx-mat-datetime-picker>
-            </mat-form-field>
-
-            <mat-form-field appearance="fill">
-                <mat-label>{{'Fecha de fin'}}</mat-label>
-                <input matInput [ngxMatDatetimePicker]="pickerEnd" [(ngModel)]="dateEnd" [min]="dateStart"
-                    (dateChange)="updateData()">
-                <mat-datepicker-toggle matSuffix [for]="$any(pickerEnd)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker #pickerEnd [showSeconds]="false">
-                </ngx-mat-datetime-picker>
-            </mat-form-field>
-
-            <mat-form-field class="type-selector" appearance="fill">
+            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Componente')">
                 <mat-label>{{'Componente'}}</mat-label>
-                <mat-select [(value)]="selectedComponent" (selectionChange)="updateData()">
+                <mat-select [(value)]="selectedComponent" multiple (selectionChange)="updateData()">
                     <mat-option [value]="component" *ngFor="let component of componentOptions">
                         {{ component.IdHw }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-        </div>
 
-        <div class="sub-filter" *ngIf="selectedFilter === 'Tipo de registro'">
-
-            <mat-form-field appearance="fill">
-                <mat-label>{{'Fecha de inicio'}}</mat-label>
-                <input matInput [ngxMatDatetimePicker]="pickerStart" [(ngModel)]="dateStart" [max]="dateEnd"
-                    (dateChange)="updateData()">
-                <mat-datepicker-toggle matSuffix [for]="$any(pickerStart)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker #pickerStart [showSeconds]="false">
-                </ngx-mat-datetime-picker>
-            </mat-form-field>
-
-            <mat-form-field appearance="fill">
-                <mat-label>{{'Fecha de fin'}}</mat-label>
-                <input matInput [ngxMatDatetimePicker]="pickerEnd" [(ngModel)]="dateEnd" [min]="dateStart"
-                    (dateChange)="updateData()">
-                <mat-datepicker-toggle matSuffix [for]="$any(pickerEnd)"></mat-datepicker-toggle>
-                <ngx-mat-datetime-picker #pickerEnd [showSeconds]="false">
-                </ngx-mat-datetime-picker>
-            </mat-form-field>
-
-            <mat-form-field class="type-selector" appearance="fill">
+            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Tipo de registro')">
                 <mat-label>{{'Tipo de registro'}}</mat-label>
-                <mat-select [(value)]="selectedRegister" (selectionChange)="updateData()">
+                <mat-select [(value)]="selectedRegister" multiple (selectionChange)="updateData()">
                     <mat-option [value]="register" *ngFor="let register of codeOptions">
                         {{ register.Incidencia }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
+
         </div>
     </div>
 
@@ -155,7 +117,7 @@
 
                 <ng-container matColumnDef="type">
                     <mat-header-cell *matHeaderCellDef [ngClass]="'w-100'">Tipo</mat-header-cell>
-                    <mat-cell *matCellDef="let row" [ngClass]="'w-100'"> {{row.Alarma && row.Alarma === '1' ? 'Alarma' :
+                    <mat-cell *matCellDef="let row" [ngClass]="'w-100'"> {{row.Alarma && row.Alarma === 1 ? 'Alarma' :
                         'Evento'}} </mat-cell>
                 </ng-container>
 
@@ -187,9 +149,14 @@
             </mat-paginator>
         </div>
     </div>
-
-    <div class="download-btns" *ngIf="ready && dataSource && dataSource.data && dataSource.data.length > 0">
-        <button mat-raised-button (click)="downloadPDF()">{{'PDF'}}</button>
-        <button mat-raised-button (click)="downloadExcel()">{{'Excel'}}</button>
+    <div class="action-btns">
+        <div class="download-btns" *ngIf="ready && dataSource && dataSource.data && dataSource.data.length > 0">
+            <button mat-raised-button (click)="downloadPDF()">{{'PDF'}}</button>
+            <button mat-raised-button (click)="downloadExcel()">{{'Excel'}}</button>
+        </div>
+        <button mat-raised-button id="getBtn" (click)="updateData()">
+            {{'Obtener'}}
+        </button>
     </div>
+
 </div>

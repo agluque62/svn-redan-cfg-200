@@ -32,6 +32,7 @@ import { ResourceCollateralsComponent } from './configuration/resource/resource-
 import { registerLocaleData } from '@angular/common';
 import localeES from '@angular/common/locales/es';
 import { SpinnerModule } from '../../common/spinner/spinner.module';
+import { UsersProfileLegendComponent } from './users/users-profile-legend/users-profile-legend.component';
 
 registerLocaleData(localeES, 'es');
 
@@ -59,7 +60,8 @@ registerLocaleData(localeES, 'es');
     ATSFormComponent,
     LCENFormComponent,
     ResourceNRangeComponent,
-    ResourceCollateralsComponent
+    ResourceCollateralsComponent,
+    UsersProfileLegendComponent
   ],
   imports: [
     CommonModule,

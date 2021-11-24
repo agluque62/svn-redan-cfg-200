@@ -1,4 +1,9 @@
 <div class="main">
+    <div class="download-btns" *ngIf="ready">
+        <button mat-raised-button (click)="downloadPDF()">{{'PDF'}}</button>
+        <button mat-raised-button (click)="downloadExcel()">{{'CSV'}}</button>
+    </div>
+
     <div class="title">
         {{ 'Versión' }}
     </div>
@@ -6,7 +11,7 @@
     <spinner *ngIf="!ready"></spinner>
 
     <div class="mat-elevation-z8" *ngIf="ready">
-    
+        
         <div class="table-row">
             <div class="table-column">
                 <div class="label">

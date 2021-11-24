@@ -74,10 +74,9 @@ export class GatewayHomeComponent implements OnInit {
       if (gatewayId) {
         const hardwareResume = (await this.gatewayService.getGatewayHardware(gatewayId).toPromise());
         let result = (await this.configService.getLocalConfig().toPromise());
-        const force_rdaudio_normal = (await this.configService.getLocalConfig().toPromise()).R16Mode;
         this.LoadIndexControlEnabled = result.LoadIndexControlEnabled;
         if (this.LoadIndexControlEnabled) {
-          this.calculateLoadIndex(hardwareResume, force_rdaudio_normal);
+          this.calculateLoadIndex(hardwareResume);
         }
 
         this.type = 'EDIT';
@@ -93,7 +92,7 @@ export class GatewayHomeComponent implements OnInit {
       this.checkFormChanges();
       this.initStatusGateway = { ...this.gatewayForm.value };
       this.ready = true;
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
@@ -110,7 +109,7 @@ export class GatewayHomeComponent implements OnInit {
 
   async getGatewayTitle() {
     const config = await this.configService.getConfigurationById(this.configId).toPromise();
-    const title = `Configuración: ${config.result[0].NAME} - Emplazamiento: ${this.gateway.emplazamiento} - Pasarela: ${this.gateway.name}`;
+    const title = `Configuración: ${config.result[0].NAME} - Emplazamiento: ${this.gateway.emplazamiento}`;
     this.dataService.updateDataGatewayTitle(title);
     return title;
   }
@@ -143,7 +142,7 @@ export class GatewayHomeComponent implements OnInit {
 
   async activateInField() {
 
-    if (JSON.stringify(this.gatewayForm.value) !== JSON.stringify(this.initStatusGateway)) {
+    if (this.changes || this.gatewayForm.dirty || JSON.stringify(this.gatewayForm.value) !== JSON.stringify(this.initStatusGateway)) {
       await this.alertService.errorMessage(``, `No ha guardado los cambios de la pasarela`);
       return;
     }
@@ -152,18 +151,24 @@ export class GatewayHomeComponent implements OnInit {
     if (confirm.value) {
       this.showSpinner = true;
 
+      let title = this.dataService.getDataGatewayTitle();
+
       // Check CPU 0
       const gtwFieldCpu0 = await this.gatewayFieldService.getGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb1).toPromise();
 
       if (this.validateGtwFieldJson(gtwFieldCpu0)) {
         const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
         const result = await this.gatewayFieldService.updateGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb1, gtwActual).toPromise();
+
+        //await this.historicService.updateCfg(110, this.gatewayForm.value.nombre
+        //  ,title+" - cpu0: "+this.gatewayForm.value.ipb1).toPromise();
+
         if (result.res && result.res === 'Configuracion Activada...') {
           await this.initEdit(this.gateway.idCGW);
           this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
           this.gatewayForm = this.initForm();
           this.checkFormChanges();
-          await this.historicService.succesGatewayFieldActivation(`${this.gateway.name} CPU 0`).toPromise();
+          await this.historicService.updateCfg(121, `${this.gateway.name} CPU 0`).toPromise();
           await this.alertService.successMessage(``, result.res);
           this.showSpinner = false;
           return;
@@ -175,12 +180,16 @@ export class GatewayHomeComponent implements OnInit {
       if (this.validateGtwFieldJson(gtwFieldCpu1)) {
         const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
         const result = await this.gatewayFieldService.updateGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb2, gtwActual).toPromise();
+
+        //await this.historicService.updateCfg(110, this.gatewayForm.value.nombre
+        //  ,title+" - cpu1: "+this.gatewayForm.value.ipb2).toPromise();
+
         if (result.res && result.res === 'Configuracion Activada...') {
           await this.initEdit(this.gateway.idCGW);
           this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
           this.gatewayForm = this.initForm();
           this.checkFormChanges();
-          await this.historicService.succesGatewayFieldActivation(`${this.gateway.name} CPU 1`).toPromise();
+          await this.historicService.updateCfg(121, `${this.gateway.name} CPU 1`).toPromise();
           await this.alertService.successMessage(``, result.res);
           this.showSpinner = false;
           return;
@@ -188,28 +197,28 @@ export class GatewayHomeComponent implements OnInit {
       }
 
       if (gtwFieldCpu0.code === 'ECONNREFUSED' || gtwFieldCpu1.code === 'ECONNREFUSED') {
-        await this.historicService.errorGatewayFieldActivation(`${this.gateway.name} Error conexión a la pasarela`).toPromise();
+        await this.historicService.updateCfg(122, `${this.gateway.name} Error conexión a la pasarela`).toPromise();
         await this.alertService.errorMessage(``, `Error de conexión a la pasarela`);
         this.showSpinner = false;
         return;
       }
 
       if (gtwFieldCpu0.code === 'ETIMEDOUT' && gtwFieldCpu1.code === 'ETIMEDOUT') {
-        await this.historicService.errorGatewayFieldActivation(`${this.gateway.name} Error timeout`).toPromise();
+        await this.historicService.updateCfg(122, `${this.gateway.name} Error timeout`).toPromise();
         await this.alertService.errorMessage(``, `Error de timeout en la conexión a la pasarela`);
         this.showSpinner = false;
         return;
       }
 
       if (gtwFieldCpu0.code === 'EHOSTUNREACH' || gtwFieldCpu1.code === 'EHOSTUNREACH') {
-        await this.historicService.errorGatewayFieldActivation(`${this.gateway.name} Error de conexión al host`).toPromise();
+        await this.historicService.updateCfg(122, `${this.gateway.name} Error de conexión al host`).toPromise();
         await this.alertService.errorMessage(``, `Error no es posible conectar con la pasarela`);
         this.showSpinner = false;
         return;
       }
 
       if (!this.validateGtwFieldJson(gtwFieldCpu0) && !this.validateGtwFieldJson(gtwFieldCpu1)) {
-        await this.historicService.errorGatewayFieldActivation(`${this.gateway.name} Error de formato`).toPromise();
+        await this.historicService.updateCfg(122, `${this.gateway.name} Error de formato`).toPromise();
         await this.alertService.errorMessage(``, `Error el formato del JSON recibido no es correcto`);
         this.showSpinner = false;
         return;
@@ -226,7 +235,7 @@ export class GatewayHomeComponent implements OnInit {
       }
       this.gatewayIps = [];
       this.gatewayIps = [...await this.gatewayService.getGatewayIpList(gatewayId).toPromise()];
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
@@ -294,8 +303,9 @@ export class GatewayHomeComponent implements OnInit {
         return;
       }
 
-      await this.historicService.createGateway(this.gatewayForm.value.nombre).toPromise();
-
+      let title = this.dataService.getDataGatewayTitle();
+      title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+      await this.historicService.updateCfg(107, this.gatewayForm.value.nombre, title).toPromise();
       this.showSpinner = false;
       await this.alertService.successMessage(``, `Pasarela ${newGtw.name} creada correctamente`);
 
@@ -453,7 +463,11 @@ export class GatewayHomeComponent implements OnInit {
         return;
       }
 
-      await this.historicService.updateGateway(this.gatewayForm.value.nombre).toPromise();
+      let title = this.dataService.getDataGatewayTitle();
+      title = title + this.validateFormDirty();
+      await this.historicService.updateCfg(109, this.gatewayPost.nombre, title).toPromise();
+      if (this.gatewayPost.nombre != this.gatewayForm.value.nombre)
+        this.gatewayPost.nombre = this.gatewayForm.value.nombre;
       this.gatewayForm.patchValue({
         pendiente_actualizar: true
       });
@@ -486,7 +500,9 @@ export class GatewayHomeComponent implements OnInit {
 
       this.showSpinner = true;
       await this.gatewayService.deleteGtw(this.gateway.idCGW).toPromise();
-      await this.historicService.deleteGateway(this.gateway.name).toPromise();
+
+      let title = this.dataService.getDataGatewayTitle();
+      title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length); await this.historicService.updateCfg(108, this.gateway.name, title).toPromise();
       this.showSpinner = false;
 
       await this.alertService.successMessage(``, `Pasarela ${this.gateway.name} eliminada correctamente`);
@@ -501,7 +517,7 @@ export class GatewayHomeComponent implements OnInit {
       this.showSpinner = false;
       const fileName = `${result.general.emplazamiento}_${result.general.name}_${result.fechaHora}.json`;
       this.saveText(JSON.stringify(result, undefined, 2), fileName);
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
@@ -560,26 +576,43 @@ export class GatewayHomeComponent implements OnInit {
       && data.tipo === 0);
   }
 
-  calculateLoadIndex(hardwareResume: any, force_rdaudio_normal: boolean) {
+  calculateLoadIndex(hardwareResume: any) {
     let radioResources = hardwareResume.radio;
     let telResources = hardwareResume.tfno;
     let loadIndex = 0;
     radioResources.forEach((resource: any) => {
-      if (resource.tipo_agente == 2 || resource.tipo_agente == 3)
-        loadIndex += 8;
-      else if (resource.tipo_agente == 4 || resource.tipo_agente == 6)
-        loadIndex += (force_rdaudio_normal == true ? 4 : 2);
-      else
-        loadIndex += 2
+      if (resource.precision_audio == 0) {
+        if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
+          loadIndex += 1;
+        } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
+          loadIndex += 1;
+        } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && (resource.metodo_bss == 0 || resource.metodo_bss == 1)) {
+          loadIndex += 4;
+        }
+
+      } else if (resource.precision_audio == 1) {
+        if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
+          loadIndex += 2;
+        } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
+          loadIndex += 2;
+        } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && (resource.metodo_bss == 0 || resource.metodo_bss == 1)) {
+          loadIndex += 4;
+        } else if (resource.tipo_agente == 2 || resource.tipo_agente == 3) {
+          loadIndex += 8;
+        }
+      }
+
     });
 
     telResources.forEach((resource: any) => {
-      if (resource.tipo_interfaz_tel == 5 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 3) {
-        loadIndex += 2;
+      if (resource.precision_audio == 0) {
+        if (resource.tipo_interfaz_tel == 3 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 5) {
+          loadIndex += 2;
+        } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
+          loadIndex++;
+        }
       }
-      else {
-        loadIndex++;
-      }
+
     });
 
     if (loadIndex > 16) {
@@ -590,6 +623,43 @@ export class GatewayHomeComponent implements OnInit {
       this.loadIndex = loadIndex.toString();
     }
 
+  }
+
+  validateFormDirty() {
+    let title = this.gatewayForm.dirty ? " Parametro(s):" : "";
+    title += this.gatewayForm.get("nombre")?.dirty ? ' Nombre: ' + this.gatewayForm.get("nombre")?.value : "";
+    title += this.gatewayForm.get("ipv")?.dirty ? ' Dir. IP Virtual: ' + this.gatewayForm.get("ipv")?.value : "";
+    title += this.gatewayForm.get("dual")?.dirty ? ' CPU Dual: ' + (this.gatewayForm.get("dual")?.value === 0 ? 'No' : 'Si') : "";
+    title += this.gatewayForm.get("EMPLAZAMIENTO_idEMPLAZAMIENTO")?.dirty ? ' Id. Emplazamiento: ' + this.gatewayForm.get("EMPLAZAMIENTO_idEMPLAZAMIENTO")?.value : "";
+    title += this.gatewayForm.get("dvrrp")?.dirty ? ' Retardo activacion modo dual(ms.): ' + this.gatewayForm.get("dvrrp")?.value : "";
+    title += this.gatewayForm.get("sppe")?.dirty ? ' Supervisión Puerta de Enlace: ' + (this.gatewayForm.get("sppe")?.value === 0 ? 'No' : `${this.gatewayForm.get("sppe")?.value} Segundos`) : "";
+    title += this.gatewayForm.get("pendiente_actualizar")?.dirty ? ' Pendiente actualizar: ' + this.gatewayForm.get("pendiente_actualizar")?.value : "";
+    title += this.gatewayForm.get("ultima_actualizacion")?.dirty ? ' Última actualización: ' + this.gatewayForm.get("ultima_actualizacion")?.value : "";
+    title += this.gatewayForm.get("ipb1")?.dirty ? ' Ip cpu0: ' + this.gatewayForm.get("ipb1")?.value : "";
+    title += this.gatewayForm.get("ipb2")?.dirty ? ' Ip cpu1: ' + this.gatewayForm.get("ipb2")?.value : "";
+    title += this.gatewayForm.get("ipg1")?.dirty ? ' Ip gateway0: ' + this.gatewayForm.get("ipg1")?.value : "";
+    title += this.gatewayForm.get("ipg2")?.dirty ? ' Ip gateway1: ' + this.gatewayForm.get("ipg2")?.value : "";
+    title += this.gatewayForm.get("msb1")?.dirty ? ' Máscara cpu0: ' + this.gatewayForm.get("msb1")?.value : "";
+    title += this.gatewayForm.get("msb2")?.dirty ? ' Máscara cpu0: ' + this.gatewayForm.get("msb2")?.value : "";
+    title += this.gatewayForm.get("PuertoLocalSIP")?.dirty ? ' Puerto local SIP: ' + this.gatewayForm.get("PuertoLocalSIP")?.value : "";
+    title += this.gatewayForm.get("periodo_supervision")?.dirty ? ' Periodo de supervisión: ' + this.gatewayForm.get("periodo_supervision")?.value : "";
+    title += this.gatewayForm.get("proxys")?.dirty ? ' Proxys: ' + this.gatewayForm.get("proxys")?.value : "";
+    title += this.gatewayForm.get("registrars")?.dirty ? ' SIP servers: ' + this.gatewayForm.get("registrars")?.value : "";
+    title += this.gatewayForm.get("listServers")?.dirty ? ' List Servers: ' + this.gatewayForm.get("listServers")?.value : "";
+    title += this.gatewayForm.get("puerto_servicio_snmp")?.dirty ? ' Puerto Servicio SNMP: ' + this.gatewayForm.get("puerto_servicio_snmp")?.value : "";
+    title += this.gatewayForm.get("snmpv2")?.dirty ? ' SNMP V2: ' + (this.gatewayForm.get("snmpv2")?.value === 0 ? 'No' : 'Si') : "";
+    title += this.gatewayForm.get("comunidad_snmp")?.dirty ? ' Comunidad SNMP: ' + this.gatewayForm.get("comunidad_snmp")?.value : "";
+    title += this.gatewayForm.get("puerto_snmp")?.dirty ? ' Puerto SNMP: ' + this.gatewayForm.get("puerto_snmp")?.value : "";
+    title += this.gatewayForm.get("nombre_snmp")?.dirty ? ' Nombre SNMP: ' + this.gatewayForm.get("nombre_snmp")?.value : "";
+    title += this.gatewayForm.get("localizacion_snmp")?.dirty ? ' Ubicación SNMP: ' + this.gatewayForm.get("localizacion_snmp")?.value : "";
+    title += this.gatewayForm.get("contacto_snmp")?.dirty ? ' Contacto SNMP: ' + this.gatewayForm.get("contacto_snmp")?.value : "";
+    title += this.gatewayForm.get("traps")?.dirty ? ' Traps: ' + this.gatewayForm.get("traps")?.value : "";
+    title += this.gatewayForm.get("puerto_servicio_web")?.dirty ? ' Puerto Servicio Web: ' + this.gatewayForm.get("puerto_servicio_web")?.value : "";
+    title += this.gatewayForm.get("tiempo_sesion")?.dirty ? ' Tiempo Sesion: ' + this.gatewayForm.get("tiempo_sesion")?.value : "";
+    title += this.gatewayForm.get("puerto_rtsp")?.dirty ? ' Puerto RTSP: ' + this.gatewayForm.get("puerto_rtsp")?.value : "";
+    title += this.gatewayForm.get("servidor_rtsp")?.dirty ? 'IP Servidor RTSP (A): ' + this.gatewayForm.get("servidor_rtsp")?.value : "";
+    title += this.gatewayForm.get("servidor_rtspb")?.dirty ? 'IP Servidor RTSP (B): ' + this.gatewayForm.get("servidor_rtspb")?.value : "";
+    return title;
   }
 }
 

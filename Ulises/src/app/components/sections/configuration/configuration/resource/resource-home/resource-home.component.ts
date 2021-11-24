@@ -14,6 +14,8 @@ import { GatewayResponse } from 'src/app/_models/configs/gateway/GatewayResponse
 import { Gateway } from 'src/app/_models/configs/gateway/Gateway';
 import { GatewayService } from 'src/app/_services/gateway.service';
 import { ConfigService } from 'src/app/_services/config.service';
+import { HistoricService } from 'src/app/_services/historic.service';
+import { TableBSSService } from 'src/app/_services/tableBss.service';
 
 interface customValues {
   value: number;
@@ -47,6 +49,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   thirdTabRef: any;
   collateralsTabRef: any;
 
+  precisionIsSelected: boolean = false;
   registerKeyExists: boolean = false;
   displayRegKey: boolean = false;
   ready: boolean = false;
@@ -75,8 +78,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     { value: 2, viewValue: 'Telefónico' }
   ];
 
-  audio_prec: customValues[] = [
-    { value: 0, viewValue: 'Estricto' }
+  indexAudio: customValues[] = [
+    { value: 0, viewValue: 'Normal' },
+    { value: 1, viewValue: 'Estricto' }
   ];
 
   codecs: customValues[] = [
@@ -105,6 +109,40 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     { value: 6, viewValue: 'ATS-QSIG' }
   ];
 
+  bssMethods: customValues[] = [
+    { value: 0, viewValue: 'Ninguno' },
+    { value: 1, viewValue: 'RSSI' },
+    { value: 2, viewValue: 'RSSI/NUCLEO' },
+  ];
+
+  pttPriority: customValues[] = [
+    { value: 0, viewValue: 'PTT Normal' },
+    { value: 1, viewValue: 'PTT Prioritario' },
+    { value: 2, viewValue: 'PTT Emergencia' },
+  ];
+
+  climaxModes: customValues[] = [
+    { value: 0, viewValue: 'No' },
+    { value: 1, viewValue: 'ASAP' },
+    { value: 2, viewValue: 'Tiempo' }
+  ];
+
+  calClimaxModes: customValues[] = [
+    { value: 0, viewValue: 'Modo relativo' },
+    { value: 1, viewValue: 'Modo absoluto' }
+  ];
+
+  prioritySessionsSIP: customValues[] = [
+    { value: 0, viewValue: 'Normal' },
+    { value: 1, viewValue: 'Emergencia' }
+  ];
+
+  iAudio: customValues[] = [
+    { value: 0, viewValue: 'Hardware' },
+    { value: 1, viewValue: 'VAD' },
+    { value: 2, viewValue: 'Forzado' },
+  ];
+
   selectedResource: number = this.types[0].value;
   resourceId!: number;
 
@@ -112,20 +150,24 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
   showSpinner: boolean = false;
   appset: any;
-  changes: boolean = false;
+  changes = false;
+  tablesBss: any;
+  precAudioIsDisable = false;
 
   constructor(private readonly cfr: ComponentFactoryResolver, private readonly resourceService: ResourceService,
     private readonly alertService: AlertService, private readonly route: ActivatedRoute, private readonly app: AppComponent,
     private readonly router: Router, private readonly dataService: DataService, private readonly userService: UserService,
-    private readonly loginService: LoginService, private gatewayService: GatewayService, private readonly configService: ConfigService) { }
+    private readonly loginService: LoginService, private gatewayService: GatewayService, private readonly configService: ConfigService,
+    private historicService: HistoricService,
+    private readonly tableBssService: TableBSSService) { }
 
   async ngOnInit() {
-    this.displayAudioPrecision = (await this.loginService.version().toPromise()).R16Mode;
+    this.displayAudioPrecision = (await this.loginService.version().toPromise()).R16Mode; // It is no longer used in the html (ngIf)
     this.checkPermissions();
     this.appset = AppSettings;
     this.resourceId = Number(this.route.snapshot.paramMap.get('id'));
     const slot = await this.dataService.getDataSlot();
-
+    this.tablesBss = (await this.tableBssService.getTableAudioBss().toPromise()).tables;
     this.GATEWAY_ID = slot.gatewayId;
 
     this.COLUMN = slot.columna;
@@ -235,7 +277,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     this.registerKeyExists = false;
     this.displayRegKey = false;
 
-    if (this.resource.clave_registro !== null && this.resource.clave_registro !== '' ) {
+    if (this.resource.clave_registro !== null && this.resource.clave_registro !== '') {
       this.registerKeyExists = true;
       this.displayRegKey = true;
     }
@@ -255,6 +297,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         res = await this.resourceService.deleteTelResource(this.resourceId).toPromise();
       }
       if (res) {
+        let title = this.dataService.getDataGatewayTitle();
+        title = title + " - Tipo: " + (this.selectedResource == 1 ? "Radio" : "Teléfono")
+        await this.historicService.updateCfg(114, this.resourceForm.value.nombre, title).toPromise();
         await this.alertService.successMessage(``, `El recurso ${this.resourceForm.value.nombre} ha sido eliminado`);
         this.dataService.updateDataGatewayPreviousUrl('RESOURCE');
         this.router.navigate(['/home/gateway/' + this.resource.pasarela_id]);
@@ -285,7 +330,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       clave_registro: new FormControl({ value: this.resource.clave_registro, disabled: this.visualizationMode }),
       ajuste_ad: new FormControl({ value: this.resource.ajuste_ad, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.REAL_NUMBER), Validators.min(-13.5), Validators.max(1.20)]),
       ajuste_da: new FormControl({ value: this.resource.ajuste_da, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.REAL_NUMBER), Validators.min(-24.3), Validators.max(1.10)]),
-      precision_audio: new FormControl({ value: this.resource.precision_audio, disabled: true }),
+      precision_audio: new FormControl({ value: this.resource.precision_audio == 0 ? 0 : 1, disabled: false }),
       fila: new FormControl({ value: this.resource.fila, disabled: this.visualizationMode }),
       columna: new FormControl({ value: this.resource.columna, disabled: this.visualizationMode }),
       listaUris: new FormControl({ value: this.resource.listaUris, disabled: this.visualizationMode }),
@@ -331,7 +376,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       clave_registro: new FormControl({ value: this.resource.clave_registro, disabled: this.visualizationMode }),
       ajuste_ad: new FormControl({ value: this.resource.ajuste_ad, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.REAL_NUMBER), Validators.min(-13.5), Validators.max(1.20)]),
       ajuste_da: new FormControl({ value: this.resource.ajuste_da, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.REAL_NUMBER), Validators.min(-24.3), Validators.max(1.10)]),
-      precision_audio: new FormControl({ value: this.resource.precision_audio, disabled: true }),
+      precision_audio: new FormControl({ value: this.resource.precision_audio == 0 ? 0 : 1, disabled: false }),
       fila: new FormControl(this.resource.fila),
       columna: new FormControl(this.resource.columna),
       pasarela_id: new FormControl(this.resource.pasarela_id),
@@ -394,13 +439,13 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     let ranksKO = this.checkCompleteRanks();
 
     let confirm;
-    
+
     if (this.selectedResource == 1 && this.resourceForm.value.tipo_agente == 4 && this.resourceForm.value.tabla_bss_id == 0) {
       this.displayTbMessage = true;
     } else {
       this.displayTbMessage = false;
     }
-    if (this.displayTbMessage) confirm= await this.alertService.confirmationMessage("", `No se ha escogido tabla de calificación de audio. ¿Desea continuar?`);
+    if (this.displayTbMessage) confirm = await this.alertService.confirmationMessage("", `No se ha escogido tabla de calificación de audio. ¿Desea continuar?`);
 
     if (this.resourceForm.valid && (nameIsValid?.toString() === 'NO_ERROR' || nameIsValid === undefined) && !ranksKO && ((confirm?.isConfirmed == true && this.displayTbMessage) || !this.displayTbMessage)) {
       let confirmLoadIndex = await this.checkLoadIndex();
@@ -434,7 +479,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
         this.resourceForm.value.deteccion_vox = this.resourceForm.value.deteccion_vox ? 1 : 0;
         this.resourceForm.value.iEnableNoED137 = this.resourceForm.value.iEnableNoED137 ? 1 : 0;
-        this.resourceForm.value.precision_audio = 0;
+        this.resourceForm.value.precision_audio = this.resourceForm.value.precision_audio ? 1 : 0;
 
         this.resourceForm.value.itiporespuesta = typeof (this.resourceForm.value.itiporespuesta) === 'boolean' ?
           (this.resourceForm.value.itiporespuesta ? 1 : 0) : this.resourceForm.value.itiporespuesta;
@@ -452,7 +497,18 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         }
         this.showSpinner = false;
 
+        let title = this.dataService.getDataGatewayTitle();
+        title = title + " - Tipo: " + (this.selectedResource == 1 ? "Radio" : "Teléfono")
+
         if (res && res.result == 'OK') {
+          if (this.editMode) {
+            title += this.validateFormDirty(this.selectedResource == 1);
+            await this.historicService.updateCfg(115, this.resource.nombre, title).toPromise();
+            if (this.resource.nombre != this.resourceForm.value.nombre)
+              this.resource.nombre = this.resourceForm.value.nombre;
+          } else {
+            await this.historicService.updateCfg(113, this.resourceForm.value.nombre, title).toPromise();
+          }
           await this.alertService.successMessage(``, message);
           this.dataService.updateDataGatewayPreviousUrl('RESOURCE');
           this.router.navigate(['/home/gateway/' + this.resource.pasarela_id]);
@@ -487,7 +543,6 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   async checkLoadIndex() {
 
     const hardwareResume = (await this.gatewayService.getGatewayHardware(this.GATEWAY_ID).toPromise());
-    const force_rdaudio_normal = this.displayAudioPrecision;
     let result = (await this.configService.getLocalConfig().toPromise());
 
     let LoadIndexControlEnabled = result.LoadIndexControlEnabled;
@@ -498,8 +553,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     let showMessage = false;
 
     if (LoadIndexControlEnabled) {
-      loadIndex = this.calculateLoadIndex(hardwareResume, force_rdaudio_normal);
-      recIndex = this.calculateCurrentLoadIndex(force_rdaudio_normal);
+      loadIndex = this.calculateLoadIndex(hardwareResume);
+      recIndex = this.calculateCurrentLoadIndex();
       total = this.editMode ? loadIndex - recIndex : loadIndex;
 
       if (((this.editMode && this.selectedResource == 1 && this.resource.tipo_agente !== this.resourceForm.value.tipo_agente) ||
@@ -652,6 +707,14 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         this.initRadioForm();
         this.resourceForm.patchValue({ nombre: this.tmpNameResource });
       }
+
+      if (this.resourceForm.value.tipo_agente === 2 || this.resourceForm.value.tipo_agente === 3) { // issue 2867
+        this.precAudioIsDisable = true;
+        this.resourceForm.patchValue({ 'precision_audio': 1 });
+      } else {
+        this.precAudioIsDisable = false;
+      }
+      
       this.displayRadioTab = true;
       this.displayTelephonicTab = false;
       this.displayNumberRange = false;
@@ -667,6 +730,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         this.loadListsTab();
       }
     } else {
+      this.resourceForm.patchValue({ 'precision_audio': 0 }); // issue 2867
       if (changes) {
         this.initResource();
         this.initTelephoneForm();
@@ -746,68 +810,180 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     this.thirdTabRef.instance.resourceForm = this.resourceForm;
   }
 
-  calculateCurrentLoadIndex(force_rdaudio_normal: boolean) {
+  calculateCurrentLoadIndex() {
     let loadIndex = 0;
     if (this.selectedResource === 1) {
-      if (this.resource.tipo_agente == 2 || this.resource.tipo_agente == 3) {
-        loadIndex += 8;
-      } else if (this.resource.tipo_agente == 4 || this.resource.tipo_agente == 6) {
-        loadIndex += (force_rdaudio_normal == true ? 4 : 2);
-      } else {
-        loadIndex += 2;
+
+      if (this.resourceForm.value.precision_audio == 0) {
+        if (this.resourceForm.value.tipo_agente == 0 || this.resourceForm.value.tipo_agente == 1 || this.resourceForm.value.tipo_agente == 5) {
+          loadIndex += 1;
+        } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) && this.resourceForm.value.metodo_bss == 2) {
+          loadIndex += 1;
+        } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) &&
+          (this.resourceForm.value.metodo_bss == 0 || this.resourceForm.value.metodo_bss == 1)) {
+          loadIndex += 4;
+        }
+
+      } else if (this.resourceForm.value.precision_audio == 1) {
+
+        if (this.resourceForm.value.tipo_agente == 0 || this.resourceForm.value.tipo_agente == 1 || this.resourceForm.value.tipo_agente == 5) {
+          loadIndex += 2;
+        } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) && this.resourceForm.value.metodo_bss == 2) {
+          loadIndex += 2;
+        } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) &&
+          (this.resourceForm.value.metodo_bss == 0 || this.resourceForm.value.metodo_bss == 1)) {
+          loadIndex += 4;
+        } else if (this.resourceForm.value.tipo_agente == 2 || this.resourceForm.value.tipo_agente == 3) {
+          loadIndex += 8;
+        }
       }
+
     } else if (this.selectedResource === 2) {
-      if (this.resource.tipo_interfaz_tel == 5 || this.resource.tipo_interfaz_tel == 4 || this.resource.tipo_interfaz_tel == 3) {
-        loadIndex += 2;
-      }
-      else {
-        loadIndex++;
+      if (this.resourceForm.value.precision_audio == 0) {
+        if (this.resourceForm.value.tipo_interfaz_tel == 3 || this.resourceForm.value.tipo_interfaz_tel == 4 || this.resourceForm.value.tipo_interfaz_tel == 5) {
+          loadIndex += 2;
+        } else if (this.resourceForm.value.tipo_interfaz_tel == 0 || this.resourceForm.value.tipo_interfaz_tel == 1 || this.resourceForm.value.tipo_interfaz_tel == 2) {
+          loadIndex++;
+        }
       }
     }
     return loadIndex;
   }
-
-  calculateLoadIndex(hardwareResume: any, force_rdaudio_normal: boolean) {
+  calculateLoadIndex(hardwareResume: any) {
     let radioResources = hardwareResume.radio;
     let telResources = hardwareResume.tfno;
     let loadIndex = 0;
 
     radioResources.forEach((resource: any) => {
-      if (resource.tipo_agente == 2 || resource.tipo_agente == 3)
-        loadIndex += 8;
-      else if (resource.tipo_agente == 4 || resource.tipo_agente == 6)
-        loadIndex += (force_rdaudio_normal == true ? 4 : 2);
-      else
-        loadIndex += 2
+      if (resource.precision_audio == 0) {
+        if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
+          loadIndex += 1;
+        } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
+          loadIndex += 1;
+        } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && (resource.metodo_bss == 0 || resource.metodo_bss == 1)) {
+          loadIndex += 4;
+        }
+
+      } else if (resource.precision_audio == 1) {
+        if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
+          loadIndex += 2;
+        } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
+          loadIndex += 2;
+        } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 0 || resource.metodo_bss == 1) {
+          loadIndex += 4;
+        } else if (resource.tipo_agente == 2 || resource.tipo_agente == 3) {
+          loadIndex += 8;
+        }
+      }
     });
 
     telResources.forEach((resource: any) => {
-      if (resource.tipo_interfaz_tel == 5 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 3) {
-        loadIndex += 2;
-      }
-      else {
-        loadIndex++;
+      if (resource.precision_audio == 0) {
+        if (resource.tipo_interfaz_tel == 3 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 5) {
+          loadIndex += 2;
+        } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
+          loadIndex++;
+        }
       }
     });
 
     if (this.selectedResource === 1) {
-      if (this.resourceForm.value.tipo_agente == 2 || this.resourceForm.value.tipo_agente == 3) {
-        loadIndex += 8;
-      } else if (this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) {
-        loadIndex += (force_rdaudio_normal == true ? 2 : 4);
-      } else {
-        loadIndex += 2;
+
+      if (this.resourceForm.value.precision_audio == 0) {
+        if (this.resourceForm.value.tipo_agente == 0 || this.resourceForm.value.tipo_agente == 1 || this.resourceForm.value.tipo_agente == 5) {
+          loadIndex += 1;
+        } else if (this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6 && this.resourceForm.value.metodo_bss == 2) {
+          loadIndex += 1;
+        } else if (this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6 &&
+          this.resourceForm.value.metodo_bss == 0 || this.resourceForm.value.metodo_bss == 1) {
+          loadIndex += 4;
+        }
+
+      } else if (this.resourceForm.value.precision_audio == 1) {
+        if (this.resourceForm.value.tipo_agente == 0 || this.resourceForm.value.tipo_agente == 1 || this.resourceForm.value.tipo_agente == 5) {
+          loadIndex += 2;
+        } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) && this.resourceForm.value.metodo_bss == 2) {
+          loadIndex += 2;
+        } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) &&
+          (this.resourceForm.value.metodo_bss == 0 || this.resourceForm.value.metodo_bss == 1)) {
+          loadIndex += 4;
+        } else if (this.resourceForm.value.tipo_agente == 2 || this.resourceForm.value.tipo_agente == 3) {
+          loadIndex += 8;
+        }
+
       }
+
     } else if (this.selectedResource === 2) {
-      if (this.resourceForm.value.tipo_interfaz_tel == 5 || this.resourceForm.value.tipo_interfaz_tel == 4 || this.resourceForm.value.tipo_interfaz_tel == 3) {
-        loadIndex += 2;
-      }
-      else {
-        loadIndex++;
+      if (this.resourceForm.value.precision_audio == 0) {
+        if (this.resourceForm.value.tipo_interfaz_tel == 3 || this.resourceForm.value.tipo_interfaz_tel == 4 || this.resourceForm.value.tipo_interfaz_tel == 5) {
+          loadIndex += 2;
+        } else if (this.resourceForm.value.tipo_interfaz_tel == 0 || this.resourceForm.value.tipo_interfaz_tel == 1 || this.resourceForm.value.tipo_interfaz_tel == 2) {
+          loadIndex++;
+        }
       }
     }
-
-
     return loadIndex;
   }
+
+  validateFormDirty(isRadio: boolean) {
+    let title = this.resourceForm.dirty ? " Parametro(s):" : "";
+    title += this.resourceForm.get("nombre")?.dirty ? ' Nombre: ' + this.resourceForm.get("nombre")?.value : "";
+    title += this.resourceForm.get("codec")?.dirty ? ' codec: ' + this.codecs[this.resourceForm.get("codec")?.value].viewValue : "";
+    title += this.resourceForm.get("clave_registro")?.dirty ? ' Clave Registro: ' + this.resourceForm.get("clave_registro")?.value : "";
+    title += this.resourceForm.get("ajuste_ad")?.dirty ? ' Ajuste Cero digital en A/D (dB): ' + this.resourceForm.get("ajuste_ad")?.value : "";
+    title += this.resourceForm.get("ajuste_da")?.dirty ? ' Ajuste Cero digital en D/A (dB): ' + this.resourceForm.get("ajuste_da")?.value : "";
+    title += this.resourceForm.get("precision_audio")?.dirty ? ' Precisión de audio: ' + (this.resourceForm.get("precision_audio")?.value === 0 ? 'Normal' : 'Estricto') : "";
+    title += this.resourceForm.get("fila")?.dirty ? ' Posición fila: ' + this.resourceForm.get("fila")?.value : "";
+    title += this.resourceForm.get("columna")?.dirty ? ' Posición columna: ' + this.resourceForm.get("columna")?.value : "";
+    title += this.resourceForm.get("pasarela_id")?.dirty ? ' ID Pasarela: ' + this.resourceForm.get("pasarela_id")?.value : "";
+    if (isRadio) {
+      title += this.resourceForm.get("listaUris")?.dirty ? ' Lista de Uris: ' + this.resourceForm.get("listaUris")?.value : "";
+      title += this.resourceForm.get("climax_bss")?.dirty ? ' BSS/CLIMAX: ' + (this.resourceForm.get("climax_bss")?.value === 0 ? 'No' : 'Si') : "";
+      title += this.resourceForm.get("cola_bss_sqh")?.dirty ? ' Cola BSS SQH: ' + this.resourceForm.get("cola_bss_sqh")?.value : "";
+      title += this.resourceForm.get("evento_ptt_squelch")?.dirty ? ' Eventos PTT/Squelch: ' + (this.resourceForm.get("evento_ptt_squelch")?.value === 0 ? 'No' : 'Si') : "";
+      title += this.resourceForm.get("frecuencia")?.dirty ? ' Frecuencia: ' + this.resourceForm.get("frecuencia")?.value : "";
+      title += this.resourceForm.get("habilita_grabacion")?.dirty ? ' Habilita grabación: ' + (this.resourceForm.get("habilita_grabacion")?.value === 0 ? 'No' : 'Si') : "";
+      title += this.resourceForm.get("idrecurso_radio")?.dirty ? ' idrecurso_radio: ' + this.resourceForm.get("idrecurso_radio")?.value : "";
+      title += this.resourceForm.get("indicacion_entrada_audio")?.dirty ? ' Indicación entrada audio: ' + this.iAudio[this.resourceForm.get("indicacion_entrada_audio")?.value] : "";
+      title += this.resourceForm.get("indicacion_salida_audio")?.dirty ? ' Indicación salida audio: ' + this.resourceForm.get("indicacion_salida_audio")?.value : "";
+      title += this.resourceForm.get("metodo_bss")?.dirty ? ' Metodo BSS: ' + this.bssMethods[this.resourceForm.get("metodo_bss")?.value].viewValue : "";
+      title += this.resourceForm.get("metodo_climax")?.dirty ? ' Modo Climax: ' + this.climaxModes[this.resourceForm.get("metodo_climax")?.value].viewValue : "";
+      title += this.resourceForm.get("prioridad_ptt")?.dirty ? ' Prioridad Ptt: ' + this.pttPriority[this.resourceForm.get("prioridad_ptt")?.value].viewValue : "";
+      title += this.resourceForm.get("prioridad_sesion_sip")?.dirty ? ' Prioridad Sesion SIP: ' + this.prioritySessionsSIP[this.resourceForm.get("prioridad_sesion_sip")?.value].viewValue : "";
+      title += this.resourceForm.get("restriccion_entrantes")?.dirty ? ' Restriccion Entrantes: ' + this.resourceForm.get("restriccion_entrantes")?.value : "";
+      title += this.resourceForm.get("retardo_fijo_climax")?.dirty ? ' Retraso fijo climax: ' + this.resourceForm.get("retardo_fijo_climax")?.value : "";
+      title += this.resourceForm.get("retraso_interno_grs")?.dirty ? ' Retraso interno GRS (ms.): ' + this.resourceForm.get("retraso_interno_grs")?.value : "";
+      title += this.resourceForm.get("tabla_bss_id")?.dirty ? ' Tabla bss: ' + this.tablesBss[this.resourceForm.get("tabla_bss_id")?.value].name : "";
+      title += this.resourceForm.get("tipo_agente")?.dirty ? ' Tipo agente: ' + this.radioAgents[this.resourceForm.get("tipo_agente")?.value] : "";
+      title += this.resourceForm.get("tipo_climax")?.dirty ? ' Tipo climax: ' + this.resourceForm.get("tipo_climax")?.value : "";
+      title += this.resourceForm.get("umbral_vad")?.dirty ? ' Umbral VAD (dB): ' + this.resourceForm.get("umbral_vad")?.value : "";
+      title += this.resourceForm.get("ventana_bss")?.dirty ? ' Ventana BSS (ms): ' + this.resourceForm.get("ventana_bss")?.value : "";
+    } else {
+      title += this.resourceForm.get("DetInversionPol")?.dirty ? ' Detecta Inversion Polaridad: ' + (this.resourceForm.get("DetInversionPol")?.value === 0 ? 'No' : 'Si') : "";
+      title += this.resourceForm.get("additional_itiporespuesta")?.dirty ? ' additional_itiporespuesta: ' + this.resourceForm.get("additional_itiporespuesta")?.value : "";
+      title += this.resourceForm.get("additional_superv_options")?.dirty ? ' additional_superv_options: ' + this.resourceForm.get("additional_superv_options")?.value : "";
+      title += this.resourceForm.get("additional_uri_remota")?.dirty ? ' URI Remota Adiccional: ' + this.resourceForm.get("additional_uri_remota")?.value : "";
+      title += this.resourceForm.get("ats_user")?.dirty ? ' ATS User: ' + this.resourceForm.get("ats_user")?.value : "";
+      title += this.resourceForm.get("cola_vox")?.dirty ? ' Cola VOX (sg.): ' + this.resourceForm.get("cola_vox")?.value : "";
+      title += this.resourceForm.get("destino_test")?.dirty ? ' Destino llamadas salientes de test: ' + this.resourceForm.get("destino_test")?.value : "";
+      title += this.resourceForm.get("deteccion_vox")?.dirty ? ' Deteccion VOX: ' + (this.resourceForm.get("deteccion_vox")?.value === 0 ? 'No' : 'Si') : "";
+      title += this.resourceForm.get("duracion_tono_interrup")?.dirty ? ' Duracion tono interrupt (sg.): ' + this.resourceForm.get("duracion_tono_interrup")?.value : "";
+      title += this.resourceForm.get("iDetLineaAB")?.dirty ? ' Detecta Fallo Linea: ' + (this.resourceForm.get("iDetLineaAB")?.value === 0 ? 'No' : 'Si') : "";
+      title += this.resourceForm.get("iEnableNoED137")?.dirty ? ' Permite Llamadas No ED137: ' + (this.resourceForm.get("iEnableNoED137")?.value === 0 ? 'No' : 'Si') : "";
+      title += this.resourceForm.get("itiporespuesta")?.dirty ? ' itiporespuesta: ' + this.resourceForm.get("itiporespuesta")?.value : "";
+      title += this.resourceForm.get("lado")?.dirty ? ' Lado: ' + this.resourceForm.get("lado")?.value : "";
+      title += this.resourceForm.get("origen_test")?.dirty ? ' Origen llamadas salientes de test: ' + this.resourceForm.get("origen_test")?.value : "";
+      title += this.resourceForm.get("periodo_tonos")?.dirty ? ' Duración tono interrupción (sg.): ' + this.resourceForm.get("periodo_tonos")?.value : "";
+      title += this.resourceForm.get("ranks")?.dirty ? ' ranks: ' + this.resourceForm.get("ranks")?.value : "";
+      title += this.resourceForm.get("respuesta_automatica")?.dirty ? ' Respuesta automática: ' + (this.resourceForm.get("respuesta_automatica")?.value === 0 ? 'No' : 'Si') : "";
+      title += this.resourceForm.get("supervisa_colateral")?.dirty ? ' Supervisa colateral: ' + (this.resourceForm.get("supervisa_colateral")?.value === 0 ? 'No' : 'Si') : "";
+      title += this.resourceForm.get("tiempo_supervision")?.dirty ? ' Tiempo supervision: ' + this.resourceForm.get("tiempo_supervision")?.value : "";
+      title += this.resourceForm.get("tipo_interfaz_tel")?.dirty ? ' Tipo de Interfaz telefónico: ' + this.telephonicInterfaces[this.resourceForm.get("tipo_interfaz_tel")?.value].viewValue : "";
+      title += this.resourceForm.get("umbral_vox")?.dirty ? ' Umbral VOX (sg.): ' + this.resourceForm.get("umbral_vox")?.value : "";
+      title += this.resourceForm.get("uri_telefonica")?.dirty ? ' URI Telefónica: ' + this.resourceForm.get("uri_telefonica")?.value : "";
+      title += this.resourceForm.get("idrecurso_telefono")?.dirty ? ' idrecurso_telefono: ' + this.resourceForm.get("idrecurso_telefono")?.value : "";
+    }
+    return title;
+  }
+
 }

@@ -48,7 +48,7 @@ export class ConfigurationHomeComponent implements OnInit {
     }
 
     notPermission() {
-        return !this.userService.isRole('ADMIN') && !this.userService.isRole('CONFIGURATION') && !this.userService.isRole('VISUALIZATION') 
+        return !this.userService.isRole('ADMIN') && !this.userService.isRole('CONFIGURATION') && !this.userService.isRole('VISUALIZATION')
             && !this.userService.isRole('SUPERVISED_CONFIGURATION');
     }
 
@@ -80,7 +80,7 @@ export class ConfigurationHomeComponent implements OnInit {
                 this.configurations = [...this.configurationsResponse.result];
                 this.assignDataSource(this.configurations);
             }
-        } catch (error) {
+        } catch (error: any) {
             this.app.catchError(error);
         }
     }

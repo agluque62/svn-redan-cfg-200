@@ -36,12 +36,12 @@
         
                 <div class="form-item" *ngIf="!supervisionMode">                    
                     <mat-label>{{'Configuración Supervisada'}}</mat-label>
-                    <mat-checkbox class="checkbox" formControlName="activa"></mat-checkbox>
+                    <mat-checkbox class="checkbox" formControlName="activa" (click)="isSupervisedcb()"></mat-checkbox>
                 </div>
 
                 <div class="form-item" *ngIf="supervisionMode">                    
                     <mat-label>{{'Configuración Supervisada'}}</mat-label>
-                    <mat-checkbox class="checkbox" [(ngModel)]="supervised" [ngModelOptions]="{standalone: true}"></mat-checkbox>
+                    <mat-checkbox class="checkbox" [(ngModel)]="supervised" (click)="isSupervisedcb()" [ngModelOptions]="{standalone: true}"></mat-checkbox>
                 </div>
         
                 <mat-form-field appearance="fill">

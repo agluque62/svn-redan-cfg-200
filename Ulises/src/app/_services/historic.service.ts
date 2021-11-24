@@ -78,6 +78,13 @@ export class HistoricService extends BaseService {
             .pipe(catchError(this.handleError));
     }
 
+    getHistoricsByDescription(description: string): Observable<HistoricsResponse> {
+        const url = `/historics/description/${description}`;
+    
+        return this.http.get<HistoricsResponse>(url, this.buildOptions())
+            .pipe(catchError(this.handleError));
+    }
+
     getGroups(): Observable<HistoricsGroupResponse> {
         const url = `/historics/groups`;
 
@@ -99,13 +106,33 @@ export class HistoricService extends BaseService {
             .pipe(catchError(this.handleError));
     }
 
-    createUser(username: string): Observable<any> {
-        const url = `/historics`;
+    // IdIncidencia = 52;  // CREATE USER
+    // IdIncidencia = 53;  // DELETE USER
+    // IdIncidencia = 54;  // EDIT USER
+    // IdIncidencia = 101; // CREATE CONFIG
+    // IdIncidencia = 102; // DELETE CONFIG
+    // IdIncidencia = 103; // UPDATE CONFIG
+    // IdIncidencia = 107; // CREATE GATEWAY
+    // IdIncidencia = 108; // DELETE GATEWAY
+    // IdIncidencia = 109; // UPDATE GATEWAY
+    // IdIncidencia = 110; // UPDATE GATEWAY PARAM
+    // IdIncidencia = 113; // CREATE RESOURCE
+    // IdIncidencia = 114; // DELETE RESOURCE
+    // IdIncidencia = 115; // UPDATE RESOURCE
+    // IdIncidencia = 119; // SUCCESS CONFIG FIELD ACTIVATION
+    // IdIncidencia = 120; // ERROR CONFIG FIELD ACTIVATION
+    // IdIncidencia = 121; // SUCCESS GATEWAY FIELD ACTIVATION
+    // IdIncidencia = 122; // ERROR GATEWAY FIELD ACTIVATION
 
+
+    updateCfg(IdIncidencia : number, username: string, title?: string){
+
+        title = title? ' ('+title+')' : ' '
+        const url = `/historics`;
         const data = {
             IdHw: "CFG",
-            IdIncidencia: 52,
-            Param: username, 
+            IdIncidencia: IdIncidencia,
+            Param: `${username}`+ title, 
             Usuario: `${this.getLoggedUsername()} (${this.getLoggedUserProfile()})`
         };
         
@@ -113,157 +140,4 @@ export class HistoricService extends BaseService {
             .pipe(catchError(this.handleError));
     }
 
-    editUser(username: string): Observable<any> {
-        const url = `/historics`;
-
-        const data = {
-            IdHw: "CFG",
-            IdIncidencia: 54,
-            Param: username, 
-            Usuario: `${this.getLoggedUsername()} (${this.getLoggedUserProfile()})`
-        };
-        
-        return this.http.post(url, data, this.buildOptions())
-            .pipe(catchError(this.handleError));
-    }
-
-    createGateway(gatewayname: string): Observable<any> {
-        const url = `/historics`;
-
-        const data = {
-            IdHw: "CFG",
-            IdIncidencia: 107,
-            Param: gatewayname, 
-            Usuario: `${this.getLoggedUsername()} (${this.getLoggedUserProfile()})`
-        };
-        
-        return this.http.post(url, data, this.buildOptions())
-            .pipe(catchError(this.handleError));
-    }
-
-    updateGateway(gatewayname: string): Observable<any> {
-        const url = `/historics`;
-
-        const data = {
-            IdHw: "CFG",
-            IdIncidencia: 109,
-            Param: gatewayname, 
-            Usuario: `${this.getLoggedUsername()} (${this.getLoggedUserProfile()})`
-        };
-        
-        return this.http.post(url, data, this.buildOptions())
-            .pipe(catchError(this.handleError));
-    }
-
-    deleteGateway(gatewayname: string): Observable<any> {
-        const url = `/historics`;
-        
-        const data = {
-            IdHw: "CFG",
-            IdIncidencia: 108,
-            Param: gatewayname, 
-            Usuario: `${this.getLoggedUsername()} (${this.getLoggedUserProfile()})`
-        };
-        
-        return this.http.post(url, data, this.buildOptions())
-            .pipe(catchError(this.handleError));
-    }
-    
-    createResource(resourcename: string): Observable<any> {
-        const url = `/historics`;
-        
-        const data = {
-            IdHw: "CFG",
-            IdIncidencia: 113,
-            Param: resourcename, 
-            Usuario: `${this.getLoggedUsername()} (${this.getLoggedUserProfile()})`
-        };
-        
-        return this.http.post(url, data, this.buildOptions())
-            .pipe(catchError(this.handleError));
-    }
-    
-    updateResource(resourcename: string): Observable<any> {
-        const url = `/historics`;
-        
-        const data = {
-            IdHw: "CFG",
-            IdIncidencia: 116,
-            Param: resourcename, 
-            Usuario: `${this.getLoggedUsername()} (${this.getLoggedUserProfile()})`
-        };
-        
-        return this.http.post(url, data, this.buildOptions())
-            .pipe(catchError(this.handleError));
-    }
-
-    deleteResource(resourcename: string): Observable<any> {
-        const url = `/historics`;
-        
-        const data = {
-            IdHw: "CFG",
-            IdIncidencia: 114,
-            Param: resourcename, 
-            Usuario: `${this.getLoggedUsername()} (${this.getLoggedUserProfile()})`
-        };
-        
-        return this.http.post(url, data, this.buildOptions())
-            .pipe(catchError(this.handleError));
-    }
-
-    successConfigFieldActivation(resourcename: string): Observable<any> {
-        const url = `/historics`;
-        
-        const data = {
-            IdHw: "CFG",
-            IdIncidencia: 119,
-            Param: resourcename, 
-            Usuario: `${this.getLoggedUsername()}`
-        };
-        
-        return this.http.post(url, data, this.buildOptions())
-            .pipe(catchError(this.handleError));
-    }
-
-    errorConfigFieldActivation(resourcename: string): Observable<any> {
-        const url = `/historics`;
-        
-        const data = {
-            IdHw: "CFG",
-            IdIncidencia: 120,
-            Param: resourcename, 
-            Usuario: `${this.getLoggedUsername()}`
-        };
-        
-        return this.http.post(url, data, this.buildOptions())
-            .pipe(catchError(this.handleError));
-    }
-
-    succesGatewayFieldActivation(resourcename: string): Observable<any> {
-        const url = `/historics`;
-        
-        const data = {
-            IdHw: "CFG",
-            IdIncidencia: 121,
-            Param: resourcename, 
-            Usuario: `${this.getLoggedUsername()}`
-        };
-        
-        return this.http.post(url, data, this.buildOptions())
-            .pipe(catchError(this.handleError));
-    }
-
-    errorGatewayFieldActivation(resourcename: string): Observable<any> {
-        const url = `/historics`;
-        
-        const data = {
-            IdHw: "CFG",
-            IdIncidencia: 122,
-            Param: resourcename, 
-            Usuario: `${this.getLoggedUsername()}`
-        };
-        
-        return this.http.post(url, data, this.buildOptions())
-            .pipe(catchError(this.handleError));
-    }
 }

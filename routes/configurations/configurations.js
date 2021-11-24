@@ -359,6 +359,13 @@ router.route('/checkConfigName/:name/:idCfg')
         });
     });
 
+router.route('/checkConfigIp/:ip/:idCFG')
+    .get(function (req, res) {
+        logging.Info(req.method, req.originalUrl);
+        myLibConfigurations.checkIps(req.params.ip, req.params.idCFG, res);
+
+});
+
 router.route('/active')
     .get(function (req, res) {
         logging.Info(req.method, req.originalUrl);

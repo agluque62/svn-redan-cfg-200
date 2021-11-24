@@ -1,17 +1,20 @@
 :host {
-    
     .historic {
-        
-        margin: 15px;        
+        margin: 15px;
         display: flex;
-        flex-direction: column;     
+        flex-direction: column;
         height: calc(100% - 30px);
 
+        mat-form-field {
+            margin-left: 1em;
+        }
+        .globalFilters {
+            display: inline-flex;
+        }
         .filter {
             display: flex;
 
             .sub-filter {
-
                 margin-left: 5px;
 
                 mat-form-field {
@@ -25,7 +28,6 @@
         }
 
         .spinner {
-            
             display: flex;
             justify-content: center;
             margin: auto;
@@ -37,38 +39,42 @@
         }
 
         .table {
-
             flex: 1;
-        
-            .w-75{
+
+            .w-75 {
                 max-width: 75px;
             }
-            
-            .w-100{
+
+            .w-100 {
                 max-width: 100px;
             }
 
-            .w-125{
+            .w-125 {
                 max-width: 125px;
             }
 
-            .w-150{
+            .w-150 {
                 max-width: 150px;
             }
 
-            .w-175{
+            .w-175 {
                 max-width: 175px;
             }
         }
-
-        .download-btns {
-
+        .action-btns {
             display: flex;
-            justify-content: center;
-            margin: 10px 0;
-    
-            button {
-                margin: 0 10px;
+            margin-top: inherit;
+            .download-btns {
+                display: flex;
+                button {
+                    margin-left: 5px;
+                }
+            }
+
+            #getBtn {
+                display: flex;
+                width: fit-content;
+                margin-left: auto;
             }
         }
     }

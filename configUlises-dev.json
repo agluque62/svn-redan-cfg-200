@@ -134,7 +134,7 @@
     "LoadIndexControlEnabled": true,
     "MySQL": "5.7.17",
     "NodeJS": "8.*.*",
-    "R16Mode": true,
+    "R16Mode": false,
     "SubVersion": "0",
     "Version": "2.0",
     "dbdatabase": "ug5kv2",
@@ -149,7 +149,7 @@
     "timeout": 10000
   },
   "MemorySupervisor": {
-    "Tick": 5000,
+    "Tick": 60000,
     "PercentLimit": 115,
     "ResetIntervalStart": "08:00 pm",
     "ResetIntervalEnd": "06:00 am"

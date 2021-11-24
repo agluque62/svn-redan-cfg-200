@@ -9,6 +9,7 @@ import { LoginService } from 'src/app/_services/login.service';
 import { UserService } from 'src/app/_services/user.service';
 import { UtilsService } from 'src/app/_services/utils.service';
 import { UsersFormComponent } from '../users-form/users-form.component';
+import { UsersProfileLegendComponent } from '../users-profile-legend/users-profile-legend.component';
 
 @Component({
   selector: 'users-home',
@@ -24,7 +25,7 @@ export class UsersHomeComponent implements OnInit {
   dataSource!: MatTableDataSource<User>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private readonly app: AppComponent, public dialog: MatDialog, private readonly userService: UserService, 
+  constructor(private readonly app: AppComponent, public dialog: MatDialog, private readonly userService: UserService,
     private readonly utilsService: UtilsService, private readonly loginService: LoginService, private readonly router: Router) { }
 
   async ngOnInit() {
@@ -56,7 +57,7 @@ export class UsersHomeComponent implements OnInit {
       this.users = [...result.users];
       this.assignDataSource(this.users);
       this.showSpinner = false;
-    } catch(error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
@@ -77,6 +78,13 @@ export class UsersHomeComponent implements OnInit {
     });
 
     this.refreshAfterClosedDialog(dialogRef);
+  }
+
+  loadProfileLegend() {
+    const dialogRef = this.dialog.open(UsersProfileLegendComponent, {
+      data: null,
+      id: 'custom-panel'
+    });
   }
 
   async refreshAfterClosedDialog(dialogRef: any) {

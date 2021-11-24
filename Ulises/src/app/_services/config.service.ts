@@ -12,26 +12,27 @@ import { ConfigurationByIdResponse } from "../_models/configs/configuration/resp
 import { ConfigurationGatewaysResponse } from "../_models/configs/configuration/response/ConfigurationGatewaysResponse";
 import { DataResponse } from "../_models/commons/DataResponse";
 import { Configuration } from "../_models/configs/configuration/Configuration";
-
+import { ConfigurationIp } from "../_models/configs/configuration/ConfigurationIp"
+import { ConfigurationIpResponse } from "../_models/configs/configuration/response/ConfigurationIpResponse";
 @Injectable({
     providedIn: 'root'
 })
 export class ConfigService extends BaseService {
 
-    constructor(private readonly http: HttpClient) { 
+    constructor(private readonly http: HttpClient) {
         super();
     }
 
     getAbout(): Observable<any> {
         const url = `/about`;
-        
+
         return this.http.get<Blob>(url, this.buildOptions())
             .pipe(catchError(this.handleError));
     }
 
     getConfigurations(): Observable<ConfigurationsResponse> {
         const url = `/configurations`;
-        
+
         return this.http.get<ConfigurationsResponse>(url, this.buildOptions())
             .pipe(catchError(this.handleError));
     }
@@ -60,6 +61,13 @@ export class ConfigService extends BaseService {
         const url = `/configurations/checkConfigName/${name}/${id}`;
 
         return this.http.get<DataResponse>(url, this.buildOptions())
+            .pipe(catchError(this.handleError));
+    }
+
+    checkConfigIp(ip: string, idCFG: number): Observable<ConfigurationIpResponse> {
+        const url = `/configurations/checkConfigIp/${ip}/${idCFG}`;
+
+        return this.http.get<ConfigurationIpResponse>(url, this.buildOptions())
             .pipe(catchError(this.handleError));
     }
 

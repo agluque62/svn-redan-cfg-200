@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -42,23 +42,34 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
 })
 export class HistoricComponent implements OnInit {
 
-    filters: string[] = ['Eventos', 'Alarmas', 'Fecha', 'Grupo', 'Componente', 'Tipo de registro'];
-    selectedFilter: string | null = null;
+    filters: string[] = ['Tipo', 'Grupo', 'Componente', 'Tipo de registro', 'Descripción'];
+    selectedFilter: string[] = [];
 
-    selectedGroup!: HistoricsGroup;
-    selectedComponent!: HistoricsComponent;
-    selectedRegister!: HistoricsCode;
+    selectedGroup: HistoricsGroup[] = [];
+    selectedComponent: HistoricsComponent[] = [];
+    selectedRegister: HistoricsCode[] = [];
+    selectedLimit: number = 2000;
 
     groupOptions!: HistoricsGroup[];
     componentOptions!: HistoricsComponent[];
     codeOptions!: HistoricsCode[];
+    limitOptions: number[] = [1000, 2000, 3000, 4000, 5000]
 
     historics!: Historic[];
 
     dateStart!: Date;
     dateEnd!: Date;
-
+    description!: string;
     dataSource!: MatTableDataSource<Historic>;
+    dataUsed: any = [];
+    dataRaw: any = [];
+    typeOptions = [
+        { value: 1, viewValue: 'Eventos' },
+        { value: 2, viewValue: 'Alarmas' }
+    ];
+
+    selectedType: any = [];
+
     @ViewChild(MatPaginator) paginator!: MatPaginator;
 
     @ViewChild('pickerStart') pickerStart: any;
@@ -69,17 +80,19 @@ export class HistoricComponent implements OnInit {
 
     public dateControl = new FormControl(new Date());
 
-    ready: boolean = false;
+    ready = false;
+    newDate = false;
+    firstRequest = true;
 
     constructor(private readonly historicService: HistoricService, private readonly alertService: AlertService, private readonly app: AppComponent,
-        private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router) { }
+        private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router, private changeDetectorRefs: ChangeDetectorRef) { }
 
     ngOnInit() {
         this.checkPermissions();
-        this.retrieveHistorics();
         this.getGroups();
         this.getCodes();
         this.getComponents();
+        this.initDefaultDates();
     }
 
     async checkPermissions() {
@@ -94,35 +107,40 @@ export class HistoricComponent implements OnInit {
         return !this.userService.isRole('ADMIN') && !this.userService.isRole('HISTORICS');
     }
 
-    changeFilter() {
+    async updateData() {
+        this.ready = false;
+        this.dataUsed = [];
 
-        if (this.selectedFilter === 'Eventos') {
-            this.retrieveHistoricsByEvents();
+        if (this.newDate || this.firstRequest) {
+            if (!this.dateEnd)
+                this.initDefaultDates();
+            await this.retrieveHistoricsByDate();
+            this.newDate = false;
         }
 
-        if (this.selectedFilter === 'Alarmas') {
-            this.retrieveHistoricsByAlarms();
+        if (this.selectedFilter.includes('Tipo')) {
+            this.checkRowType();
         }
 
-        if (this.selectedFilter === 'Fecha') {
-            this.initDefaultDates();
-            this.retrieveHistoricsByDate();
+        if (this.selectedFilter.includes('Grupo')) {
+            await this.retrieveHistoricsByGroup();
         }
 
-        if (this.selectedFilter === 'Grupo') {
-            this.initDefaultDates();
-            this.retrieveHistoricsByGroup();
+        if (this.selectedFilter.includes('Componente')) {
+            await this.retrieveHistoricsByComponent();
         }
 
-        if (this.selectedFilter === 'Componente') {
-            this.initDefaultDates();
-            this.retrieveHistoricsByComponent();
+        if (this.selectedFilter.includes('Tipo de registro')) {
+            await this.retrieveHistoricsByRegister();
         }
 
-        if (this.selectedFilter === 'Tipo de registro') {
-            this.initDefaultDates();
-            this.retrieveHistoricsByRegister();
+        if (this.selectedFilter.includes('Descripción')) {
+            await this.retrieveHistoricsByDescription();
         }
+        this.dataUsed = this.selectedFilter.length === 0 ? await this.dataRaw.historics : await this.dataUsed;
+
+        this.assignDataSource(await this.dataUsed);
+        this.ready = true;
     }
 
     initDefaultDates() {
@@ -138,10 +156,12 @@ export class HistoricComponent implements OnInit {
         });
 
         const doc = new jsPDF('l');
-        const histLabel = this.selectedFilter === null ?
-            ': TODOS' : this.selectedFilter === 'Eventos' || this.selectedFilter === 'Alarmas' ?
-                ': TODOS LOS EVENTOS' : this.selectedFilter === 'Fecha' || this.selectedFilter === 'Grupo'
-                    || this.selectedFilter === 'Componente' || this.selectedFilter === 'Tipo de registro' ?
+        const histLabel = this.selectedFilter.length == 0 ?
+            ': TODOS' : this.selectedFilter.includes('Eventos') || this.selectedFilter.includes('Alarmas') ?
+                ': TODOS LOS EVENTOS' + this.selectedFilter.includes('Fecha') || this.selectedFilter.includes('Grupo')
+                    || this.selectedFilter.includes('Componente') || this.selectedFilter.includes('Tipo de registro') ?
+                    ' Fecha de inicio: ' + this.getISODate(this.dateStart) + ' Fecha de fin: ' + this.getISODate(this.dateEnd) : '' : this.selectedFilter.includes('Fecha') || this.selectedFilter.includes('Grupo')
+                        || this.selectedFilter.includes('Componente') || this.selectedFilter.includes('Tipo de registro') ?
                     ' Fecha de inicio: ' + this.getISODate(this.dateStart) + ' Fecha de fin: ' + this.getISODate(this.dateEnd) : '';
         doc.text("HISTÓRICOS" + histLabel, 7, 15);
         doc.setFontSize(11);
@@ -183,117 +203,93 @@ export class HistoricComponent implements OnInit {
     }
 
     async retrieveHistoricsByRegister() {
-        try {
-            this.ready = false;
-            const result = await this.historicService.getHistoricsByRegister(this.selectedRegister.IdIncidencia.toString(), this.getISODate(this.dateStart),
-                this.getISODate(this.dateEnd)).toPromise();
-            if (result.error) {
-                await this.alertService.errorMessage(``, `${result.error}`);
-                return;
+        let arrayTemp = this.selectedRegister.map(function (x) {
+            return x.IdIncidencia;
+        });
+        let result = this.dataRaw.historics.filter((row: any) => {
+            return arrayTemp.includes(row.IdIncidencia);
+        })
+        result.forEach((row: any) => {
+            if (!this.dataUsed.includes(row)) {
+                this.dataUsed.push(row);
             }
-
-            this.assignDataSource(result.historics);
-            this.ready = true;
-        } catch (error) {
-            this.ready = true;
-            this.app.catchError(error);
-        }
+        });
     }
 
     async retrieveHistoricsByComponent() {
-        try {
-            this.ready = false;
-            const result = await this.historicService.getHistoricsByComponent(this.selectedComponent.IdHw, this.getISODate(this.dateStart),
-                this.getISODate(this.dateEnd)).toPromise();
+        let arrayTemp = this.selectedComponent.map(function (x) {
+            return x.IdHw;
+        });
 
-            if (result.error) {
-                await this.alertService.errorMessage(``, `${result.error}`);
-                return;
+        let result = this.dataRaw.historics.filter((row: any) => {
+            return arrayTemp.includes(row.IdHw);
+        })
+
+        result.forEach((row: any) => {
+            if (!this.dataUsed.includes(row)) {
+                this.dataUsed.push(row);
             }
-
-            this.assignDataSource(result.historics);
-            this.ready = true;
-        } catch (error) {
-            this.ready = true;
-            this.app.catchError(error);
-        }
+        });
     }
 
     async retrieveHistoricsByGroup() {
-        try {
-            this.ready = false;
-            const result = await this.historicService.getHistoricsByGroup(this.selectedGroup.TipoHw, this.getISODate(this.dateStart),
-                this.getISODate(this.dateEnd)).toPromise();
+        let arrayTemp = this.selectedGroup.map(function (x) {
+            return x.TipoHw;
+        });
 
-            if (result.error) {
-                await this.alertService.errorMessage(``, `${result.error}`);
-                return;
+        let result = this.dataRaw.historics.filter((row: any) => {
+            return arrayTemp.includes(row.TipoHw);
+        })
+
+        result.forEach((row: any) => {
+            if (!this.dataUsed.includes(row)) {
+                this.dataUsed.push(row);
             }
-
-            this.assignDataSource(result.historics);
-            
-            this.ready = true;
-        } catch (error) {
-            this.ready = true;
-            this.app.catchError(error);
-        }
+        });
     }
 
     async retrieveHistoricsByDate() {
         try {
-            this.ready = false;
-            
-            const result = await this.historicService.getHistoricsByDate(this.getISODate(this.dateStart),
-                this.getISODate(this.dateEnd)).toPromise();
+            this.dataRaw = await this.historicService.getHistoricsByDate(this.getISODate(this.dateStart),
+                this.getISODate(this.dateEnd), 0, this.selectedLimit).toPromise();
 
-            if (result.error) {
-                await this.alertService.errorMessage(``, `${result.error}`);
+            if (this.dataRaw.error) {
+                await this.alertService.errorMessage(``, `${this.dataRaw.error}`);
                 return;
             }
 
-            this.assignDataSource(result.historics);
-            this.ready = true;
-        } catch (error) {
+            this.firstRequest = false;
+        } catch (error: any) {
             this.ready = false;
             this.app.catchError(error);
         }
     }
 
     async retrieveHistoricsByEvents() {
-        try {
-            this.ready = false;
-            
-            const result = await this.historicService.getHistoricsByEvents().toPromise();
-
-            if (result.error) {
-                await this.alertService.errorMessage(``, `${result.error}`);
-                return;
+        let result = this.dataRaw.historics.filter((row: any) => {
+            return row.Alarma === 0;
+        })
+        result.forEach((row: any) => {
+            if (!this.dataUsed.includes(row)) {
+                this.dataUsed.push(row);
             }
-
-            this.assignDataSource(result.historics);
-            this.ready = true;
-        } catch (error) {
-            this.ready = true;
-            this.app.catchError(error);
-        }
+        });
     }
 
     async retrieveHistoricsByAlarms() {
-        try {
-            this.ready = false;
-            const result = await this.historicService.getHistoricsByAlarms().toPromise();
-
-            if (result.error) {
-                await this.alertService.errorMessage(``, `${result.error}`);
-                return;
+        let result = this.dataRaw.historics.filter((row: any) => {
+            return row.Alarma === 1;
+        })
+        result.forEach((row: any) => {
+            if (!this.dataUsed.includes(row)) {
+                this.dataUsed.push(row);
             }
+        });
+    }
 
-            this.assignDataSource(result.historics);
-            this.ready = true;
-        } catch (error) {
-            this.ready = true;
-            this.app.catchError(error);
-        }
+    async retrieveHistoricsByDescription() {
+        if (this.selectedFilter.length == 1)
+            this.dataUsed = await this.dataRaw.historics;
     }
 
     async getGroups() {
@@ -304,10 +300,10 @@ export class HistoricComponent implements OnInit {
             } else {
                 this.groupOptions = result.groups;
                 if (this.groupOptions.length > 0) {
-                    this.selectedGroup = this.groupOptions[0];
+                    this.selectedGroup.push(this.groupOptions[0]);
                 }
             }
-        } catch (error) {
+        } catch (error: any) {
             this.ready = true;
             this.app.catchError(error);
         }
@@ -321,11 +317,11 @@ export class HistoricComponent implements OnInit {
             } else {
                 this.componentOptions = result.components;
                 if (this.componentOptions.length > 0) {
-                    this.selectedComponent = this.componentOptions[0];
+                    this.selectedComponent.push(this.componentOptions[0]);
                 }
             }
 
-        } catch (error) {
+        } catch (error: any) {
             this.ready = true;
             this.app.catchError(error);
         }
@@ -339,10 +335,10 @@ export class HistoricComponent implements OnInit {
             } else {
                 this.codeOptions = result.codes;
                 if (this.codeOptions.length > 0) {
-                    this.selectedRegister = this.codeOptions[0];
+                    this.selectedRegister.push(this.codeOptions[0]);
                 }
             }
-        } catch (error) {
+        } catch (error: any) {
             this.ready = true;
             this.app.catchError(error);
         }
@@ -351,24 +347,30 @@ export class HistoricComponent implements OnInit {
     async retrieveHistorics() {
         try {
             this.ready = false;
-            
-            const result = await this.historicService.getHistorics().toPromise();
 
-            if (result.error) {
-                await this.alertService.errorMessage(``, `${result.error}`);
+            this.dataRaw = await this.historicService.getHistorics().toPromise();
+
+            if (this.dataRaw.error) {
+                await this.alertService.errorMessage(``, `${this.dataRaw.error}`);
                 return;
             }
-
-            this.assignDataSource(result.historics);
+            this.dataUsed = this.dataRaw.historics;
             this.ready = true;
-        } catch (error) {
+        } catch (error: any) {
             this.ready = true;
             this.app.catchError(error);
         }
     }
 
     assignDataSource(historics: Historic[]) {
-        this.dataSource = new MatTableDataSource(historics);
+        if (this.dataSource && this.dataSource.filteredData.length > 0) {
+            this.dataSource = new MatTableDataSource(historics);
+            this.changeDetectorRefs.detectChanges();
+
+        } else {
+            this.dataSource = new MatTableDataSource(historics);
+        }
+        this.dataSource.filterPredicate = this.getFilterPredicate();
         setTimeout(() => this.dataSource.paginator = this.paginator);
     }
 
@@ -384,29 +386,38 @@ export class HistoricComponent implements OnInit {
         return (n < 10 ? '00' : n < 100 ? '0' : '') + n;
     }
 
-    updateData() {
-        if (this.selectedFilter === 'Eventos') {
+    applyFilter(event: Event) {
+        const filterValue = (event.target as HTMLInputElement).value;
+        this.dataSource.filter = filterValue ? filterValue.trim().toLowerCase() : '';
+    }
+
+    getFilterPredicate() {
+        return (row: any, filters: string) => {
+
+            const description = filters;
+
+            // Fetch data from row
+            const columnDescription = row.Descripcion;
+
+            // verify fetching data by our searching values
+            const customFilterDescription = columnDescription.toLowerCase().includes(description);
+
+            return customFilterDescription;
+        };
+    }
+
+    cleanGlobalControls(event: any) {
+        this.newDate = true;
+        this.selectedFilter = [];
+    }
+
+    checkRowType() {
+        if (this.selectedType.includes(1)) {
             this.retrieveHistoricsByEvents();
         }
 
-        if (this.selectedFilter === 'Alarmas') {
+        if (this.selectedType.includes(2)) {
             this.retrieveHistoricsByAlarms();
-        }
-
-        if (this.selectedFilter === 'Fecha') {
-            this.retrieveHistoricsByDate();
-        }
-
-        if (this.selectedFilter === 'Grupo') {
-            this.retrieveHistoricsByGroup();
-        }
-
-        if (this.selectedFilter === 'Componente') {
-            this.retrieveHistoricsByComponent();
-        }
-
-        if (this.selectedFilter === 'Tipo de registro') {
-            this.retrieveHistoricsByRegister();
         }
     }
 }

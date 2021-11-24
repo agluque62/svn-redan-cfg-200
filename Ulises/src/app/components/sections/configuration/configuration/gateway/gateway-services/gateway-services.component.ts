@@ -73,7 +73,7 @@ export class GatewayServicesComponent implements OnInit {
       }
 
       this.initSNMPV2();
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
@@ -194,7 +194,7 @@ export class GatewayServicesComponent implements OnInit {
         this.initSelectedServer();
         this.form.markAsDirty();
       }
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
@@ -254,7 +254,9 @@ export class GatewayServicesComponent implements OnInit {
 
   async addProxy() {
     if (this.proxyFormControl.value === null || this.proxyFormControl.value === '') {
-      this.proxyFormControl.updateValueAndValidity();
+      await this.alertService.errorMessage('', 'No se puede introducir un proxy vacio');
+      this.resetErrors();
+      return;
     }
 
     if (this.form.value.proxys.length === this.MAX_PROXIES) {
@@ -320,7 +322,9 @@ export class GatewayServicesComponent implements OnInit {
 
   async addRegistrar() {
     if (this.registrarsFormControl.value === null || this.registrarsFormControl.value === '') {
-      this.registrarsFormControl.updateValueAndValidity();
+      await this.alertService.errorMessage('', 'No se puede un introducir un registrar vacio');
+      this.resetErrors();
+      return;
     }
 
     if (this.form.value.registrars.length === this.MAX_REGISTRARS) {
@@ -386,7 +390,9 @@ export class GatewayServicesComponent implements OnInit {
 
   async addNTP() {
     if (this.serversFormControl.value === null || this.serversFormControl.value === '') {
-      this.serversFormControl.updateValueAndValidity();
+      await this.alertService.errorMessage('', 'No se puede introducir un servidor NTP vacio');
+      this.resetErrors();
+      return;
     }
     
     if (this.form.value.listServers.length === this.MAX_SERVERS) {

@@ -6,6 +6,7 @@ import { AppSettings } from 'src/app/core/app.settings';
 import { Configuration } from 'src/app/_models/configs/configuration/Configuration';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ConfigService } from 'src/app/_services/config.service';
+import { HistoricService } from 'src/app/_services/historic.service';
 
 @Component({
   selector: 'app-configuration-copy-form',
@@ -24,7 +25,8 @@ export class ConfigurationCopyFormComponent implements OnInit {
   appset:any;
   
   constructor(public dialogRef: MatDialogRef<ConfigurationCopyFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Configuration,
-    private readonly alertService: AlertService, private readonly configurationService: ConfigService, @Inject(AppComponent) private readonly app: AppComponent) { }
+    private readonly alertService: AlertService, private readonly configurationService: ConfigService, @Inject(AppComponent) private readonly app: AppComponent
+    ,private readonly historicService: HistoricService) { }
 
   ngOnInit(): void {
     this.appset = AppSettings;
@@ -73,6 +75,8 @@ export class ConfigurationCopyFormComponent implements OnInit {
           await this.alertService.errorMessage(``, result.data);
           return;
         }
+
+        //await this.historicService.updateCfg(101, this.copyForm.value.name).toPromise();
 
         await this.alertService.successMessage(``, `La configuración ha sido copiada`);
         this.dialogRef.close(true);
