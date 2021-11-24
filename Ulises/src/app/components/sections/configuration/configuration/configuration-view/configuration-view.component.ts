@@ -319,8 +319,6 @@ export class ConfigurationViewComponent implements OnInit {
             const gtwActual = await this.gatewayService.getGatewayAll(gateway.result[0].idCGW).toPromise();
             const result = await this.gatewayFieldService.updateGatewayField(gateway.result[0].idCGW, gateway.result[0].ip_cpu0, gtwActual).toPromise();
 
-            console.log(result.status);
-
             if (result.res && result.res === 'Configuracion Activada...') {
               await this.historicService.updateCfg(121, `${gateway.result[0].name} CPU 0`).toPromise();
               message.push(`${gateway.result[0].name}: ${result.res}`);
@@ -418,7 +416,7 @@ export class ConfigurationViewComponent implements OnInit {
         while (i < this.arrayipv.length) {
           this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipv[i], this.configuration.idCFG).toPromise();
           this.configurationIp = [...this.configurationIpResponse.result];
-          console.log(this.configurationIp);
+
           if (this.configurationIp.length != 0) {
             this.nEmplazamiento = this.configurationIp.map((index) => {
               return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;

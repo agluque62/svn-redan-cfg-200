@@ -714,7 +714,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       } else {
         this.precAudioIsDisable = false;
       }
-      
+
       this.displayRadioTab = true;
       this.displayTelephonicTab = false;
       this.displayNumberRange = false;
@@ -953,7 +953,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       title += this.resourceForm.get("restriccion_entrantes")?.dirty ? ' Restriccion Entrantes: ' + this.resourceForm.get("restriccion_entrantes")?.value : "";
       title += this.resourceForm.get("retardo_fijo_climax")?.dirty ? ' Retraso fijo climax: ' + this.resourceForm.get("retardo_fijo_climax")?.value : "";
       title += this.resourceForm.get("retraso_interno_grs")?.dirty ? ' Retraso interno GRS (ms.): ' + this.resourceForm.get("retraso_interno_grs")?.value : "";
-      title += this.resourceForm.get("tabla_bss_id")?.dirty ? ' Tabla bss: ' + this.tablesBss[this.resourceForm.get("tabla_bss_id")?.value].name : "";
+      title += this.resourceForm.get("tabla_bss_id")?.dirty ? ' Tabla bss: ' + this.tablesBss[this.tablesBss.findIndex((x: any) => x.idtabla_bss === this.resourceForm.value.tabla_bss_id)].name : "";
       title += this.resourceForm.get("tipo_agente")?.dirty ? ' Tipo agente: ' + this.radioAgents[this.resourceForm.get("tipo_agente")?.value] : "";
       title += this.resourceForm.get("tipo_climax")?.dirty ? ' Tipo climax: ' + this.resourceForm.get("tipo_climax")?.value : "";
       title += this.resourceForm.get("umbral_vad")?.dirty ? ' Umbral VAD (dB): ' + this.resourceForm.get("umbral_vad")?.value : "";

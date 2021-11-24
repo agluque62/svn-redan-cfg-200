@@ -17,8 +17,16 @@ import { GatewayService } from 'src/app/_services/gateway.service';
 import { HistoricService } from 'src/app/_services/historic.service';
 import { LoginService } from 'src/app/_services/login.service';
 import { UserService } from 'src/app/_services/user.service';
+import { UtilsService } from 'src/app/_services/utils.service';
 import { GatewayCopyFormComponent } from '../gateway-copy-form/gateway-copy-form.component';
 
+import { Configuration } from "src/app/_models/configs/configuration/Configuration";
+import { ConfigurationsResponse } from "src/app/_models/configs/configuration/response/ConfigurationsResponse";
+
+import { ConfigurationIpResponse } from 'src/app/_models/configs/configuration/response/ConfigurationIpResponse';
+import { ConfigurationIp } from 'src/app/_models/configs/configuration/ConfigurationIp';
+import { ConfigurationById } from 'src/app/_models/configs/configuration/ConfigurationById';
+import { ConfigurationByIdResponse } from 'src/app/_models/configs/configuration/response/ConfigurationByIdRespose';
 @Component({
   selector: 'gateway-home',
   templateUrl: './gateway-home.component.html',
@@ -36,6 +44,16 @@ export class GatewayHomeComponent implements OnInit {
   gatewayForm!: FormGroup;
   gatewayGeneralForm!: FormGroup;
 
+
+  configurationsResponseA!: ConfigurationsResponse;
+  configurationsA!: Configuration[];
+
+  configurationByIdResponse!: ConfigurationByIdResponse;
+  configurationById!: ConfigurationById[];
+
+  configurationIp!: ConfigurationIp[];
+  configurationIpResponse!: ConfigurationIpResponse;
+
   title!: string;
   configId!: number;
   siteId!: number | undefined;
@@ -51,7 +69,9 @@ export class GatewayHomeComponent implements OnInit {
   LoadIndexControlEnabled: boolean = false;
   changes: boolean = false;
 
-  constructor(private readonly route: ActivatedRoute, private readonly router: Router, private readonly app: AppComponent, public dialog: MatDialog,
+  msg !: string[];
+
+  constructor(private readonly utilService: UtilsService, private readonly route: ActivatedRoute, private readonly router: Router, private readonly app: AppComponent, public dialog: MatDialog,
     private readonly gatewayService: GatewayService, private readonly alertService: AlertService, private historicService: HistoricService,
     private readonly dataService: DataService, private readonly userService: UserService, private readonly loginService: LoginService,
     private readonly gatewayFieldService: GatewayFieldService, private readonly configService: ConfigService) {
@@ -279,41 +299,80 @@ export class GatewayHomeComponent implements OnInit {
     return true;
   }
 
+  
+
+  
+
   async createGateway() {
 
-    if (await this.isInvalidGateway()) return;
-
-    this.showSpinner = true;
-
+    try {
+    this.showSpinner = false;
     let result = await this.validateGateway();
+    this.configurationByIdResponse = await this.configService.getConfigurationById(this.configId).toPromise();
+    this.configurationById = [...this.configurationByIdResponse.result];  
+    let activa = this.configurationById.map((index) => {
+        return index.activa;
+      });
+    let gateway = Object.assign({}, this.gatewayForm.getRawValue());
+
     if (result) {
-
-
-      let gateway = Object.assign({}, this.gatewayForm.getRawValue());
-      delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
-      gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
-      gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
-
-      const siteId = (this.siteId) ? this.siteId : 0;
-
-      const newGtw = await this.gatewayService.createGtw(siteId, gateway).toPromise();
-      if (newGtw.error) {
-        this.showSpinner = false;
-        await this.alertService.errorMessage(`Error`, newGtw.error);
-        return;
+      if (activa[0] === 1){
+        this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipv, 0).toPromise();
+        this.configurationIp = [...this.configurationIpResponse.result];
+        if (this.configurationIp.length != 0){
+        this.msg = this.configurationIp.map((index) => {
+          return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+          })
+          await this.alertService.errorMessage(``,`La IP virtual ${gateway.ipv} esta duplicada en ${this.msg}`);
+          return;
+        }
+        this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipb1, 0).toPromise();
+        this.configurationIp = [...this.configurationIpResponse.result];
+        if (this.configurationIp.length != 0){
+          this.msg = this.configurationIp.map((index) => {
+            return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+          })
+          await this.alertService.errorMessage(``,`La IP cpu0 ${gateway.ipb1} esta duplicada en ${this.msg}`);
+          return;
+        }        
+        this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipb2, 0).toPromise();
+        this.configurationIp = [...this.configurationIpResponse.result];
+        if (this.configurationIp.length != 0){
+        this.msg = this.configurationIp.map((index) => {
+          return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+          })
+          await this.alertService.errorMessage(``,`La IP cpu1 ${gateway.ipb2} esta duplicada en ${this.msg}`);
+          return;
+        }
       }
-
-      let title = this.dataService.getDataGatewayTitle();
-      title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
-      await this.historicService.updateCfg(107, this.gatewayForm.value.nombre, title).toPromise();
-      this.showSpinner = false;
-      await this.alertService.successMessage(``, `Pasarela ${newGtw.name} creada correctamente`);
-
-      this.dataService.updateDataConfigId(this.configId);
-      this.dataService.updateDataGatewayPreviousUrl('NEW');
-      this.router.navigate(['/home/gateway/' + newGtw.insertId]);
     }
-  }
+
+        delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
+        gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
+        gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
+        const siteId = (this.siteId) ? this.siteId : 0;
+  
+        const newGtw = await this.gatewayService.createGtw(siteId, gateway).toPromise();
+        if (newGtw.error) {
+          this.showSpinner = false;
+          await this.alertService.errorMessage(`Error`, newGtw.error);
+          return;
+        }
+        let title = this.dataService.getDataGatewayTitle();
+        title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+        await this.historicService.updateCfg(107, this.gatewayForm.value.nombre, title).toPromise();
+        this.showSpinner = false;
+        await this.alertService.successMessage(``, `Pasarela ${newGtw.name} creada correctamente`);
+        this.dataService.updateDataConfigId(this.configId);
+        this.dataService.updateDataGatewayPreviousUrl('NEW');
+        this.router.navigate(['/home/gateway/' + newGtw.insertId]);
+      
+  
+      
+    }catch(error:any){
+      this.app.catchError(error);
+      }
+    }  
 
   async checkGatewayNameError(name: string): Promise<boolean> {
     const result = await this.gatewayService.checkName(name, this.configId, this.gateway.idCGW).toPromise();
@@ -605,15 +664,15 @@ export class GatewayHomeComponent implements OnInit {
     });
 
     telResources.forEach((resource: any) => {
-      if (resource.precision_audio == 0) {
+     
         if (resource.tipo_interfaz_tel == 3 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 5) {
           loadIndex += 2;
         } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
-          loadIndex++;
+          loadIndex += 1;
         }
-      }
 
     });
+    
 
     if (loadIndex > 16) {
       this.selectedClass = "indexOverload"

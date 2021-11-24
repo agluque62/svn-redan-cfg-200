@@ -4,6 +4,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppComponent } from 'src/app/app.component';
 import { AppSettings } from 'src/app/core/app.settings';
 import { ConfigurationGateway } from 'src/app/_models/configs/configuration/ConfigurationGateway';
+import { ConfigurationIp } from 'src/app/_models/configs/configuration/ConfigurationIp';
+import { ConfigurationIpResponse } from 'src/app/_models/configs/configuration/response/ConfigurationIpResponse';
 import { Gateway } from 'src/app/_models/configs/gateway/Gateway';
 import { AlertService } from 'src/app/_services/alert.service';
 import { ConfigService } from 'src/app/_services/config.service';
@@ -26,6 +28,12 @@ export class GatewayCopyFormComponent implements OnInit {
   ipv!: string;
   ipCpu0!: string;
   ipCpu1!: string;
+  
+  configurationIp!: ConfigurationIp[];
+  configurationIpResponse!: ConfigurationIpResponse;
+
+  nEmplazamiento !: string[];
+
 
   configId!: number;
 
@@ -106,38 +114,70 @@ export class GatewayCopyFormComponent implements OnInit {
         let result;
         this.showSpinner = true;
         let isValidate = await this.validateGateway(this.copyForm.value.ipv, this.copyForm.value.ipCpu0, this.copyForm.value.ipCpu1, this.copyForm.value.name)
-        if (!isValidate) return;
-        if (this.copyForm.value.ipv === this.copyForm.value.ipCpu0 || this.copyForm.value.ipv === this.copyForm.value.ipCpu1
-          || this.copyForm.value.ipCpu0 === this.copyForm.value.ipCpu1) {
-          this.showSpinner = false;
-          await this.alertService.errorMessage(`Error`, `La Ip ${this.copyForm.value.ipv}, la Ip ${this.copyForm.value.ipCpu0} y la ip ${this.copyForm.value.ipCpu1} no pueden ser iguales.`);
+        if (!isValidate) {
           return;
-        }
-        this.showSpinner = false;
-        if ((await this.utilService.checkIps(this.copyForm.value.ipv, null)).length === 0 &&
-          (await this.utilService.checkIps(this.copyForm.value.ipCpu0, null)).length == 0 &&
-          (await this.utilService.checkIps(this.copyForm.value.ipCpu1, null)).length == 0) {
-          result = await this.gatewayService.copyGtw(this.gateway.idCGW, this.copyForm.value.name, this.copyForm.value.ipv, this.copyForm.value.ipCpu0,
-            this.copyForm.value.ipCpu1).toPromise();
-
-          if (result && result.data === 'OK') {
-            let title = this.dataService.getDataGatewayTitle();
-            title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
-            await this.historicService.updateCfg(107, this.copyForm.value.name, title).toPromise();
-            await this.alertService.successMessage(``, `La pasarela ${this.gateway.name} ha sido copiada`);
-            this.dialogRef.close(true);
-          } else {
-            if (result.error && result.error === 'ER_DUP_ENTRY') {
-              await this.alertService.errorMessage(``, `El nombre ${this.copyForm.value.name} ya existe en esta configuración.`);
-            } else if (result.error && result.error === 'ER_DUP_IP0_ENTRY') {
-              await this.alertService.errorMessage(``, `La ip ${this.copyForm.value.ipCpu0} ya existe en esta configuración.`);
-            } else if (result.error && result.error === "ER_DUP_IP1_ENTRY") {
-              await this.alertService.errorMessage(``, `La ip ${this.copyForm.value.ipCpu1} ya existe en esta configuración.`);
-            }
-          }
         } else {
-          await this.alertService.errorMessage(``, `La ip ${this.copyForm.value.ipCpu0} o la ip ${this.copyForm.value.ipCpu1}  ya existe alguna configuración supervisada.`);
+          if (this.copyForm.value.ipv === this.copyForm.value.ipCpu0 || this.copyForm.value.ipv === this.copyForm.value.ipCpu1 
+              || this.copyForm.value.ipCpu0 === this.copyForm.value.ipCpu1) {
+              this.showSpinner = false;
+              await this.alertService.errorMessage(`Error`, `La Ip ${this.copyForm.value.ipv}, la Ip ${this.copyForm.value.ipCpu0} y la ip ${this.copyForm.value.ipCpu1} no pueden ser iguales.`);
+              return;
+          }
+          this.showSpinner = false;
+          if ((await this.utilService.checkIps(this.copyForm.value.ipv, 0)).length === 0 &&
+              (await this.utilService.checkIps(this.copyForm.value.ipCpu0, 0)).length === 0 &&
+              (await this.utilService.checkIps(this.copyForm.value.ipCpu1, 0)).length === 0) {
+                result = await this.gatewayService.copyGtw(this.gateway.idCGW, this.copyForm.value.name, this.copyForm.value.ipv, this.copyForm.value.ipCpu0,
+                this.copyForm.value.ipCpu1).toPromise();
+  
+                if (result && result.data === 'OK') {
+                  let title = this.dataService.getDataGatewayTitle();
+                  title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+                  await this.historicService.updateCfg(107, this.copyForm.value.name, title).toPromise();
+                  await this.alertService.successMessage(``, `La pasarela ${this.gateway.name} ha sido copiada`);
+                  this.dialogRef.close(true);
+                } else {
+                  if (result.error && result.error === 'ER_DUP_ENTRY') {
+                    await this.alertService.errorMessage(``, `El nombre ${this.copyForm.value.name} ya existe en esta configuración.`);
+                  } else if (result.error && result.error === 'ER_DUP_IP0_ENTRY') {
+                    await this.alertService.errorMessage(``, `La ip ${this.copyForm.value.ipCpu0} ya existe en esta configuración.`);
+                  } else if (result.error && result.error === "ER_DUP_IP1_ENTRY") {
+                    await this.alertService.errorMessage(``, `La ip ${this.copyForm.value.ipCpu1} ya existe en esta configuración.`);
+                  }
+                }
+          } else {
+              this.configurationIpResponse = await this.configService.checkConfigIp(this.copyForm.value.ipv, 0).toPromise();
+              this.configurationIp = [...this.configurationIpResponse.result];
+              if (this.configurationIp.length!=0){
+                this.nEmplazamiento = this.configurationIp.map((index) => {
+                  return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+                })      
+                await this.alertService.errorMessage(``,`La IP virtual ${this.copyForm.value.ipv} esta duplicada en ${this.nEmplazamiento}`);
+                return;        
+              }
+
+              this.configurationIpResponse = await this.configService.checkConfigIp(this.copyForm.value.ipCpu0, 0).toPromise();
+              this.configurationIp = [...this.configurationIpResponse.result];
+              if (this.configurationIp.length!=0){
+                this.nEmplazamiento = this.configurationIp.map((index) => {
+                  return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+                })      
+                await this.alertService.errorMessage(``,`La IP cpu0 ${this.copyForm.value.ipCpu0} esta duplicada en ${this.nEmplazamiento}`);
+                return;        
+              }
+
+              this.configurationIpResponse = await this.configService.checkConfigIp(this.copyForm.value.ipCpu1, 0).toPromise();
+              this.configurationIp = [...this.configurationIpResponse.result];
+              if (this.configurationIp.length!=0){
+                this.nEmplazamiento = this.configurationIp.map((index) => {
+                  return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+                })      
+                await this.alertService.errorMessage(``,`La IP cpu1 ${this.copyForm.value.ipCpu1} esta duplicada en ${this.nEmplazamiento}`);
+                return;        
+              }
+          }
         }
+        
       } else {
         this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }

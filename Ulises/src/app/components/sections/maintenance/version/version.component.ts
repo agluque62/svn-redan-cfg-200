@@ -46,7 +46,7 @@ export class VersionComponent implements OnInit {
     const header = [["Versión", 'NodeJS', 'MySQL', 'Archivos', 'Fecha', 'Tamaño', 'MD5']];
     let body: any = [];
     this.version.file.forEach(archivos => {
-      body.push([this.version.version, this.version.nodejsversion, this.version.mysqlversion, archivos.Name, archivos.date, archivos.fileSizeInBytes, archivos.md5])
+      body.push([`${this.version.version}.${this.version.subversion}`, this.version.nodejsversion, this.version.mysqlversion, archivos.Name, archivos.date, archivos.fileSizeInBytes, archivos.md5])
     });
     const doc = new jsPDF('l');
     doc.setFontSize(11);
@@ -87,7 +87,7 @@ export class VersionComponent implements OnInit {
       data += header.join(';');
       data += "\n";      
       this.version.file.forEach(archivos => {
-        data += [this.version.version, this.version.nodejsversion, this.version.mysqlversion, archivos.Name, archivos.date, archivos.fileSizeInBytes, archivos.md5].join(';');
+        data += [`${this.version.version}.${this.version.subversion}`, this.version.nodejsversion, this.version.mysqlversion, archivos.Name, archivos.date, archivos.fileSizeInBytes, archivos.md5].join(';');
         data += "\n";
       
       });

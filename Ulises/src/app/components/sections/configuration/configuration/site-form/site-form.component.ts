@@ -35,6 +35,7 @@ export class SiteFormComponent implements OnInit {
 
   configurationIp!: ConfigurationIp[];
   configurationIpResponse!: ConfigurationIpResponse;
+  nEmplazamiento!: string[];
 
 
   @ViewChild('importGW') importGW!: ElementRef;
@@ -42,9 +43,11 @@ export class SiteFormComponent implements OnInit {
   visualizationMode: boolean = false;
   appset: any;
 
-  constructor(private readonly router: Router, public dialogRef: MatDialogRef<SiteFormComponent>, private readonly configService: ConfigService, private readonly utilService: UtilsService, @Inject(MAT_DIALOG_DATA) public data: Site,
+  constructor(private readonly router: Router, public dialogRef: MatDialogRef<SiteFormComponent>, private readonly configService: ConfigService,
+     private readonly utilService: UtilsService, @Inject(MAT_DIALOG_DATA) public data: Site,
     private readonly alertService: AlertService, private readonly siteService: SiteService, private readonly app: AppComponent,
-    private readonly gatewayService: GatewayService, private readonly dataService: DataService, private readonly userService: UserService, private historicService: HistoricService) { }
+    private readonly gatewayService: GatewayService, private readonly dataService: DataService, private readonly userService: UserService, 
+    private historicService: HistoricService) { }
 
   ngOnInit(): void {
 
@@ -220,10 +223,12 @@ export class SiteFormComponent implements OnInit {
         const file: File = new File([bytes], this.importJsonName);
         if (this.importJson.general.ipv !== this.importJson.general.cpus[0].ipb &&
           this.importJson.general.cpus[0].ipb !== this.importJson.general.cpus[1].ipb &&
-          this.importJson.general.cpus[1].ipb !== this.importJson.general.ipv) {
-          if ((await this.utilService.checkIps(this.importJson.general.ipv, null)).length == 0 &&
+          this.importJson.general.cpus[1].ipb !== this.importJson.general.ipv) {  
+
+            if ((await this.utilService.checkIps(this.importJson.general.ipv, null)).length == 0 &&
             (await this.utilService.checkIps(this.importJson.general.cpus[0].ipb, null)).length == 0 &&
             (await this.utilService.checkIps(this.importJson.general.cpus[1].ipb, null)).length == 0) {
+
             result = await this.gatewayService.importGtw(file, this.configurationId, this.site.idEMPLAZAMIENTO).toPromise();
             if (result && result.msg) {
               let title = this.dataService.getDataGatewayTitle();
@@ -235,14 +240,43 @@ export class SiteFormComponent implements OnInit {
             } else {
               await this.alertService.errorMessage(``, `${result.err}.`);
             }
-          } else {
-            await this.alertService.errorMessage(`Error`, `El nombre o Ips ya existe. Cambie los datos antes de importar.`);
-          }
-        } else {
+            } else {
+              
+              if((await this.utilService.checkIps(this.importJson.general.ipv, null)).length != 0){
+                if (this.utilService.configurationIp.length != 0) {
+                  this.nEmplazamiento = this.utilService.configurationIp.map((index) => {
+                    return `en la pasarela ${index.nombre}`;
+                  })
+                  await this.alertService.errorMessage(``,`La IP virtual ${this.importJson.general.ipv} esta duplicada en ${this.nEmplazamiento}`);
+                  return;
+                }
+              }
+              if(await (await this.utilService.checkIps(this.importJson.general.cpus[0].ipb, null)).length !=0){
+                if (this.utilService.configurationIp.length != 0) {
+                  this.nEmplazamiento = this.utilService.configurationIp.map((index) => {
+                    return `en la pasarela ${index.nombre}`;
+                  })
+                  await this.alertService.errorMessage(``,`La CPU0 ${this.importJson.general.cpus[0].ipb} esta duplicada en ${this.nEmplazamiento}`);
+                  return;
+                }
+              }
+              if((await this.utilService.checkIps(this.importJson.general.cpus[1].ipb, null)).length != 0){
+                if (this.utilService.configurationIp.length != 0) {
+                  this.nEmplazamiento = this.utilService.configurationIp.map((index) => {
+                    return `en la pasarela ${index.nombre}`;
+                  })
+                await this.alertService.errorMessage(``,`La CPU1 ${this.importJson.general.cpus[1].ipb} esta duplicada en ${this.nEmplazamiento}`);
+                return;
+              }
+              } 
+            }
+
+
+        }else{
           await this.alertService.errorMessage(`Error`, `Las Ips deben ser diferentes entre sí.`);
         }
       } else {
-        this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+          this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }
     } catch (error: any) {
       this.app.catchError(error);
@@ -251,6 +285,6 @@ export class SiteFormComponent implements OnInit {
 
   cancelModifyImportGtw() {
     this.type = 'EDIT';
-
   }
 }
+  

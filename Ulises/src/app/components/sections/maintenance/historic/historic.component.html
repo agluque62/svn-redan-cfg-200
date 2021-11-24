@@ -3,7 +3,7 @@
         {{ 'Históricos' }}
     </div>
 
-    <spinner *ngIf="!ready && !firstRequest"></spinner>
+    <spinner *ngIf="!ready"></spinner>
     <div class="globalFilters">
         <mat-form-field appearance="fill">
             <mat-label>{{'Fecha de inicio'}}</mat-label>
@@ -34,7 +34,7 @@
     <div class="filter">
         <mat-form-field class="type-selector" appearance="fill">
             <mat-label>{{'Filtrar recursos'}}</mat-label>
-            <mat-select [(value)]="selectedFilter" multiple (selectionChange)="updateData()">
+            <mat-select [(value)]="selectedFilter" multiple (selectionChange)="updateData(false)">
                 <mat-option [value]="filter" *ngFor="let filter of filters">
                     {{ filter }}
                 </mat-option>
@@ -45,7 +45,7 @@
 
             <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Tipo')">
                 <mat-label>{{'Tipo'}}</mat-label>
-                <mat-select [(value)]="selectedType" multiple (selectionChange)="updateData()">
+                <mat-select [(value)]="selectedType" multiple (selectionChange)="updateData(false)">
                     <mat-option [value]="type.value" *ngFor="let type of typeOptions">
                         {{ type.viewValue }}
                     </mat-option>
@@ -59,7 +59,7 @@
 
             <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Grupo')">
                 <mat-label>{{'Grupo'}}</mat-label>
-                <mat-select [(value)]="selectedGroup" multiple (selectionChange)="updateData()">
+                <mat-select [(value)]="selectedGroup" multiple (selectionChange)="updateData(false)">
                     <mat-option [value]="group" *ngFor="let group of groupOptions">
                         {{ group.TipoHw }}
                     </mat-option>
@@ -68,7 +68,7 @@
 
             <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Componente')">
                 <mat-label>{{'Componente'}}</mat-label>
-                <mat-select [(value)]="selectedComponent" multiple (selectionChange)="updateData()">
+                <mat-select [(value)]="selectedComponent" multiple (selectionChange)="updateData(false)">
                     <mat-option [value]="component" *ngFor="let component of componentOptions">
                         {{ component.IdHw }}
                     </mat-option>
@@ -77,7 +77,7 @@
 
             <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Tipo de registro')">
                 <mat-label>{{'Tipo de registro'}}</mat-label>
-                <mat-select [(value)]="selectedRegister" multiple (selectionChange)="updateData()">
+                <mat-select [(value)]="selectedRegister" multiple (selectionChange)="updateData(false)">
                     <mat-option [value]="register" *ngFor="let register of codeOptions">
                         {{ register.Incidencia }}
                     </mat-option>
@@ -154,7 +154,7 @@
             <button mat-raised-button (click)="downloadPDF()">{{'PDF'}}</button>
             <button mat-raised-button (click)="downloadExcel()">{{'Excel'}}</button>
         </div>
-        <button mat-raised-button id="getBtn" (click)="updateData()">
+        <button mat-raised-button id="getBtn" (click)="updateData(true)">
             {{'Obtener'}}
         </button>
     </div>

@@ -44,6 +44,7 @@ export class ConfigService extends BaseService {
             .pipe(catchError(this.handleError));
     }
 
+
     createConfiguration(name: string, description: string, activa: number): Observable<any> {
         const url = `/configurations/cfg`;
 
@@ -69,6 +70,13 @@ export class ConfigService extends BaseService {
 
         return this.http.get<ConfigurationIpResponse>(url, this.buildOptions())
             .pipe(catchError(this.handleError));
+    }
+
+    getConfigurationByGtw(idGTW: number):Observable<number>{
+        const url = `/configurations/checkConf/${idGTW}`;
+
+    return this.http.get<number>(url, this.buildOptions())
+        .pipe(catchError(this.handleError));
     }
 
     updateConfiguration(configuration: Configuration): Observable<any> {

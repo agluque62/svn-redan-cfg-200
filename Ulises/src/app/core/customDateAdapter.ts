@@ -54,12 +54,10 @@ export class CustomDateAdapter extends NativeDateAdapter  {
     }
 
     copyTime(date: Date): number {
-        console.log('copy', date);
         return date.getTime();
     }
 
     parse(value: any): Date | null {
-        console.log(value);
 
         if ((typeof value === 'string') && (value.indexOf('/') > -1)) {
             const str = value.split('/');

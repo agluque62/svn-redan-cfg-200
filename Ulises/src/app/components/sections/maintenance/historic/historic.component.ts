@@ -80,22 +80,35 @@ export class HistoricComponent implements OnInit {
 
     public dateControl = new FormControl(new Date());
 
-    ready = false;
-    newDate = false;
-    firstRequest = true;
+    ready = true;
+    controlFlag = true;
 
     constructor(private readonly historicService: HistoricService, private readonly alertService: AlertService, private readonly app: AppComponent,
         private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router, private changeDetectorRefs: ChangeDetectorRef) { }
 
     ngOnInit() {
-        this.Log("hist-comp ");
-
         this.checkPermissions();
         this.getGroups();
         this.getCodes();
         this.getComponents();
         this.initDefaultDates();
-        
+        this.historicService.checkIfExistschangesOnFilters().subscribe((data: any) => {
+            if (data !== undefined && this.controlFlag) {
+                this.dateEnd = data.dateEnd !== undefined ? new Date(data.dateEnd) : new Date();
+                this.dateStart = data.dateStart !== undefined ? new Date(data.dateStart) : new Date(this.dateEnd.getFullYear(), this.dateEnd.getMonth(), this.dateEnd.getDate(), 0, 0, 0);
+                this.selectedLimit = data.limit !== undefined ? data.limit : this.limitOptions[1];
+                this.selectedFilter = data.localFilters !== undefined ? data.localFilters : [];
+                this.selectedType = data.selectedType !== undefined ? data.selectedType : [];
+                this.updateData(true);
+                this.controlFlag = false;
+            }else if (data !== undefined && !this.controlFlag){
+                this.dateEnd = data.dateEnd !== undefined ? new Date(data.dateEnd) : new Date();
+                this.dateStart = data.dateStart !== undefined ? new Date(data.dateStart) : new Date(this.dateEnd.getFullYear(), this.dateEnd.getMonth(), this.dateEnd.getDate(), 0, 0, 0);
+                this.selectedLimit = data.limit !== undefined ? data.limit : this.limitOptions[1];
+                this.selectedFilter = data.localFilters !== undefined ? data.localFilters : [];
+                this.selectedType = data.selectedType !== undefined ? data.selectedType : [];
+            }
+        });
     }
 
     async checkPermissions() {
@@ -110,52 +123,82 @@ export class HistoricComponent implements OnInit {
         return !this.userService.isRole('ADMIN') && !this.userService.isRole('HISTORICS');
     }
 
-    async updateData() {
-
-        this.Log("hist-comp updateDate IN");
-
+    async updateData(needRequest: boolean) {
         this.ready = false;
-        this.dataUsed = [];
 
-        if (this.newDate || this.firstRequest) {
-            if (!this.dateEnd)
-                this.initDefaultDates();
+        if (!this.dateEnd)
+            this.initDefaultDates();
+
+        if (needRequest || this.dataRaw.length === 0) {
             await this.retrieveHistoricsByDate();
-            this.newDate = false;
         }
 
-        if (this.selectedFilter.includes('Tipo')) {
-            this.checkRowType();
-        }
+        let alarmsDataFilters: any = [];
+        let groupFilters: any = [];
+        let compFilters: any = [];
+        let registerFilters: any = [];
+        let result: any = [];
 
-        if (this.selectedFilter.includes('Grupo')) {
-            await this.retrieveHistoricsByGroup();
-        }
+        if (this.selectedFilter.length > 0) {
+            result = await this.dataRaw.historics.filter((row: any) => {
+                let includesTypeFilter: boolean = true;
+                let includesGroupFilter: boolean = true;
+                let includesCompFilter: boolean = true;
+                let includesRegFilter: boolean = true;
 
-        if (this.selectedFilter.includes('Componente')) {
-            await this.retrieveHistoricsByComponent();
-        }
+                if (this.selectedFilter.includes('Tipo')) {
+                    if (this.selectedType.includes(1) && !alarmsDataFilters.includes(0)) {
+                        alarmsDataFilters.push(0);
+                    }
+                    if (this.selectedType.includes(2) && !alarmsDataFilters.includes(1)) {
+                        alarmsDataFilters.push(1);
+                    }
+                    includesTypeFilter = alarmsDataFilters.includes(row.Alarma);
 
-        if (this.selectedFilter.includes('Tipo de registro')) {
-            await this.retrieveHistoricsByRegister();
-        }
+                }
 
-        if (this.selectedFilter.includes('Descripción')) {
-            await this.retrieveHistoricsByDescription();
-        }
-        this.dataUsed = this.selectedFilter.length === 0 ? await this.dataRaw.historics : await this.dataUsed;
+                if (this.selectedFilter.includes('Grupo')) {
+                    groupFilters = this.selectedGroup.map(function (x) {
+                        return x.TipoHw;
+                    });
+                    includesGroupFilter = groupFilters.includes(row.TipoHw);
+                }
+                if (this.selectedFilter.includes('Componente')) {
+                    compFilters = this.selectedComponent.map(function (x) {
+                        return x.IdHw;
+                    });
+                    includesCompFilter = compFilters.includes(row.IdHw);
+                }
 
-        this.assignDataSource(await this.dataUsed);
+                if (this.selectedFilter.includes('Tipo de registro')) {
+                    registerFilters = this.selectedRegister.map(function (x) {
+                        return x.IdIncidencia;
+                    });
+                    includesRegFilter = registerFilters.includes(row.IdIncidencia);
+                }
+
+                return includesTypeFilter && includesGroupFilter && includesCompFilter && includesRegFilter;
+            });
+            this.dataUsed = result;
+        } else {
+            this.dataUsed = this.dataRaw.historics;
+        }
+        this.historicService.setFilters({
+            'dateStart': this.dateStart,
+            'dateEnd': this.dateEnd,
+            'limit': this.selectedLimit,
+            'localFilters': this.selectedFilter,
+            'selectedType': this.selectedType
+        });
+        this.assignDataSource(this.dataUsed);
         this.ready = true;
-
-        this.Log("hist-comp updateDate OUT");
     }
 
     initDefaultDates() {
-        this.Log("hist-comp initDefaultDates");
-
-        this.dateEnd = new Date();
-        this.dateStart = new Date(this.dateEnd.getFullYear(), this.dateEnd.getMonth(), this.dateEnd.getDate(), 0, 0, 0);
+        if (this.dateStart === undefined && this.dateEnd === undefined) {
+            this.dateEnd = new Date();
+            this.dateStart = new Date(this.dateEnd.getFullYear(), this.dateEnd.getMonth(), this.dateEnd.getDate(), 0, 0, 0);
+        }
     }
 
     downloadPDF() {
@@ -212,114 +255,23 @@ export class HistoricComponent implements OnInit {
         myLink.click();
     }
 
-    async retrieveHistoricsByRegister() {
-
-        this.Log("hist-comp retrieveHistoricsByRegister");
-
-        let arrayTemp = this.selectedRegister.map(function (x) {
-            return x.IdIncidencia;
-        });
-        let result = this.dataRaw.historics.filter((row: any) => {
-            return arrayTemp.includes(row.IdIncidencia);
-        })
-        result.forEach((row: any) => {
-            if (!this.dataUsed.includes(row)) {
-                this.dataUsed.push(row);
-            }
-        });
-    }
-
-    async retrieveHistoricsByComponent() {
-        this.Log("hist-comp retriveHistoricsByComponent");
-
-        let arrayTemp = this.selectedComponent.map(function (x) {
-            return x.IdHw;
-        });
-
-        let result = this.dataRaw.historics.filter((row: any) => {
-            return arrayTemp.includes(row.IdHw);
-        })
-
-        result.forEach((row: any) => {
-            if (!this.dataUsed.includes(row)) {
-                this.dataUsed.push(row);
-            }
-        });
-    }
-
-    async retrieveHistoricsByGroup() {
-        this.Log("hist-comp retriveHistoricsByGroup");
-
-        let arrayTemp = this.selectedGroup.map(function (x) {
-            return x.TipoHw;
-        });
-
-        let result = this.dataRaw.historics.filter((row: any) => {
-            return arrayTemp.includes(row.TipoHw);
-        })
-
-        result.forEach((row: any) => {
-            if (!this.dataUsed.includes(row)) {
-                this.dataUsed.push(row);
-            }
-        });
-    }
-
     async retrieveHistoricsByDate() {
-        this.Log("hist-comp retriveHistoricsByDate");
         try {
             this.dataRaw = await this.historicService.getHistoricsByDate(this.getISODate(this.dateStart),
                 this.getISODate(this.dateEnd), 0, this.selectedLimit).toPromise();
 
-            if (this.dataRaw.error) {
-                await this.alertService.errorMessage(``, `${this.dataRaw.error}`);
+            if (this.dataUsed.error) {
+                await this.alertService.errorMessage(``, `${this.dataUsed.error}`);
                 return;
             }
 
-            this.firstRequest = false;
         } catch (error: any) {
             this.ready = false;
             this.app.catchError(error);
         }
     }
 
-    async retrieveHistoricsByEvents() {
-        this.Log("hist-comp retriveHistoricsByEvent");
-
-        let result = this.dataRaw.historics.filter((row: any) => {
-            return row.Alarma === 0;
-        })
-        result.forEach((row: any) => {
-            if (!this.dataUsed.includes(row)) {
-                this.dataUsed.push(row);
-            }
-        });
-    }
-
-    async retrieveHistoricsByAlarms() {
-        this.Log("hist-comp retriveHistoricsByAlarms");
-
-        let result = this.dataRaw.historics.filter((row: any) => {
-            return row.Alarma === 1;
-        })
-        result.forEach((row: any) => {
-            if (!this.dataUsed.includes(row)) {
-                this.dataUsed.push(row);
-            }
-        });
-    }
-
-    async retrieveHistoricsByDescription() {
-
-        this.Log("hist-comp retriveHistoricsByDescription");
-
-        if (this.selectedFilter.length == 1)
-            this.dataUsed = await this.dataRaw.historics;
-    }
-
     async getGroups() {
-        this.Log("hist-comp getGroups");
-
         try {
             const result = await this.historicService.getGroups().toPromise();
             if (result.error) {
@@ -337,8 +289,6 @@ export class HistoricComponent implements OnInit {
     }
 
     async getComponents() {
-        this.Log("hist-comp getComponents");
-
         try {
             const result = await this.historicService.getComponents().toPromise();
             if (result.error) {
@@ -357,8 +307,6 @@ export class HistoricComponent implements OnInit {
     }
 
     async getCodes() {
-        this.Log("hist-comp getCodes");
-
         try {
             const result = await this.historicService.getCodes().toPromise();
             if (result.error) {
@@ -375,43 +323,21 @@ export class HistoricComponent implements OnInit {
         }
     }
 
-    async retrieveHistorics() {
-        this.Log("hist-comp retriveHistorics");
-
-        try {
-            this.ready = false;
-
-            this.dataRaw = await this.historicService.getHistorics().toPromise();
-
-            if (this.dataRaw.error) {
-                await this.alertService.errorMessage(``, `${this.dataRaw.error}`);
-                return;
-            }
-            this.dataUsed = this.dataRaw.historics;
-            this.ready = true;
-        } catch (error: any) {
-            this.ready = true;
-            this.app.catchError(error);
-        }
-    }
-
     assignDataSource(historics: Historic[]) {
-        this.Log("hist-comp assingDataSource");
 
-        if (this.dataSource && this.dataSource.filteredData.length > 0) {
-            this.dataSource = new MatTableDataSource(historics);
+        if (this.selectedFilter.length > 0 && this.dataSource) {
+            this.dataSource.data = this.dataUsed;
             this.changeDetectorRefs.detectChanges();
-
         } else {
-            this.dataSource = new MatTableDataSource(historics);
+            this.dataSource = new MatTableDataSource(this.dataUsed);
         }
+
         this.dataSource.filterPredicate = this.getFilterPredicate();
         setTimeout(() => this.dataSource.paginator = this.paginator);
+        this.ready = true;
     }
 
     getISODate(date: Date) {
-        this.Log("hist-comp getISODate");
-
         return `${date.getFullYear()}-${this._to2digit(date.getMonth() + 1)}-${this._to2digit(date.getDate())}T${this._to2digit(date.getHours())}:${this._to2digit(date.getMinutes())}:${this._to2digit(date.getSeconds())}.${this._to3digit(date.getMilliseconds())}`;
     }
 
@@ -424,15 +350,11 @@ export class HistoricComponent implements OnInit {
     }
 
     applyFilter(event: Event) {
-        this.Log("hist-comp applyFilter");
-
         const filterValue = (event.target as HTMLInputElement).value;
         this.dataSource.filter = filterValue ? filterValue.trim().toLowerCase() : '';
     }
 
     getFilterPredicate() {
-        this.Log("hist-comp getFilterPredicate");
-
         return (row: any, filters: string) => {
 
             const description = filters;
@@ -448,21 +370,15 @@ export class HistoricComponent implements OnInit {
     }
 
     cleanGlobalControls(event: any) {
-        this.newDate = true;
+        this.controlFlag = false;
         this.selectedFilter = [];
+        this.historicService.setFilters({
+            'dateStart': this.dateStart,
+            'dateEnd': this.dateEnd,
+            'limit': this.selectedLimit,
+            'localFilters': [],
+            'selectedType': []
+        });
     }
 
-    checkRowType() {
-        if (this.selectedType.includes(1)) {
-            this.retrieveHistoricsByEvents();
-        }
-
-        if (this.selectedType.includes(2)) {
-            this.retrieveHistoricsByAlarms();
-        }
-    }
-
-    Log(msg: any){
-        console.log((new Date()).toUTCString(), msg);
-    }
 }
