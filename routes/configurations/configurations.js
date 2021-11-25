@@ -366,6 +366,13 @@ router.route('/checkConfigIp/:ip/:idCFG')
 
 });
 
+router.route('/checkConf/:idGTW')
+.get(function (req, res) {
+    logging.Info(req.method, req.originalUrl);
+    myLibConfigurations.getConfigurationsByGtW(req.params.idGTW, res);
+});
+
+
 router.route('/active')
     .get(function (req, res) {
         logging.Info(req.method, req.originalUrl);
@@ -395,6 +402,16 @@ router.route('/:configuration/gatewaysHasResources')
             res.json(name);
         });
     });
+
+    //////////////////
+//Otra nueva para obtener el id de la Configuración a partir de la Gtw
+router.route('/checkConf/:idGTW')
+.put(function (req, res) {
+    logging.Info(req.method, req.originalUrl);
+    myLibGateways.getConfigurationByGtw(req.params.idGTW, function (result) {
+        res.json(result);
+    });
+});
 router.route('/:configuration/gatewaysOut')
     .get(function (req, res) {
         logging.Info(req.method, req.originalUrl);
