@@ -17,6 +17,8 @@ import { ConfigService } from 'src/app/_services/config.service';
 import { HistoricService } from 'src/app/_services/historic.service';
 import { TableBSSService } from 'src/app/_services/tableBss.service';
 
+import * as formsFields from '../../../../../../../assets/validateInfoFields.json';
+
 interface customValues {
   value: number;
   viewValue: string;
@@ -54,6 +56,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   displayRegKey: boolean = false;
   ready: boolean = false;
   editMode: boolean = false;
+  isCheckedRegistryKey: boolean = false;
+  isChangedAGCAD: boolean = false;
+  isChangedAGCDA: boolean = false;
 
   tmpNameResource: string = '';
 
@@ -143,6 +148,18 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     { value: 2, viewValue: 'Forzado' },
   ];
 
+  typeLists: customValues[] = [
+    { value: 0, viewValue: 'Ninguna' },
+    { value: 1, viewValue: 'Lista Negra' },
+    { value: 2, viewValue: 'Lista Blanca' }
+  ];
+
+  supCollateral: customValues[] = [
+    { value: 0, viewValue: 'No' },
+    { value: 1, viewValue: 'A Usuario' },
+    { value: 2, viewValue: 'A Dominio' }
+  ];
+
   selectedResource: number = this.types[0].value;
   resourceId!: number;
 
@@ -153,6 +170,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   changes = false;
   tablesBss: any;
   precAudioIsDisable = false;
+
 
   constructor(private readonly cfr: ComponentFactoryResolver, private readonly resourceService: ResourceService,
     private readonly alertService: AlertService, private readonly route: ActivatedRoute, private readonly app: AppComponent,
@@ -284,6 +302,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   }
 
   enableRegistryKey(event: boolean) {
+    this.isCheckedRegistryKey = true;
     this.displayRegKey = event;
   }
 
@@ -420,7 +439,6 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     let message;
 
     if (this.thirdTabRef.instance.uriListToDisplay != undefined) {
-
       let blList = this.thirdTabRef.instance.uriListToDisplay['LSN'];
       let blListFiltered = blList.filter((x: any) => x.uri != '');
 
@@ -447,6 +465,10 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     }
     if (this.displayTbMessage) confirm = await this.alertService.confirmationMessage("", `No se ha escogido tabla de calificación de audio. ¿Desea continuar?`);
 
+    if (this.resourceForm.value.indicacion_entrada_audio !== 1) {
+      this.resourceForm.get('umbral_vad')?.clearValidators();
+      this.resourceForm.get('umbral_vad')?.updateValueAndValidity();
+    }
     if (this.resourceForm.valid && (nameIsValid?.toString() === 'NO_ERROR' || nameIsValid === undefined) && !ranksKO && ((confirm?.isConfirmed == true && this.displayTbMessage) || !this.displayTbMessage)) {
       let confirmLoadIndex = await this.checkLoadIndex();
       if ((confirmLoadIndex.response?.isConfirmed == true && confirmLoadIndex.loadIndex > 16) || (confirmLoadIndex.response === undefined)) {
@@ -502,8 +524,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
         if (res && res.result == 'OK') {
           if (this.editMode) {
-            title += this.validateFormDirty(this.selectedResource == 1);
-            await this.historicService.updateCfg(115, this.resource.nombre, title).toPromise();
+            this.validateFormDirty(title, 115);
             if (this.resource.nombre != this.resourceForm.value.nombre)
               this.resource.nombre = this.resourceForm.value.nombre;
           } else {
@@ -549,20 +570,26 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     let loadIndex = 0;
     let confirm;
     let recIndex = 0;
+    let prevIndex = 0;
     let total = 0;
     let showMessage = false;
 
     if (LoadIndexControlEnabled) {
       loadIndex = this.calculateLoadIndex(hardwareResume);
       recIndex = this.calculateCurrentLoadIndex();
-      total = this.editMode ? loadIndex - recIndex : loadIndex;
+      prevIndex = this.calculatePreviewLoadIndex(hardwareResume);
 
-      if (((this.editMode && this.selectedResource == 1 && this.resource.tipo_agente !== this.resourceForm.value.tipo_agente) ||
-        (this.editMode && this.selectedResource == 2 && this.resource.tipo_interfaz_tel !== this.resourceForm.value.tipo_interfaz_tel)) && total > 16) {
+      total = this.editMode ? (loadIndex - prevIndex) + recIndex : loadIndex + recIndex;
+
+
+
+      if (((this.editMode && this.selectedResource == 1 && this.resource.tipo_agente != this.resourceForm.value.tipo_agente) ||
+        (this.editMode && this.selectedResource == 2 && this.resource.tipo_interfaz_tel != this.resourceForm.value.tipo_interfaz_tel)) && total > 16 || this.editMode && total > 16) {
         showMessage = true;
       } else if (!this.editMode && total > 16) {
         showMessage = true;
       }
+
       if (showMessage) confirm = await this.alertService.confirmationMessage("", `El índice de carga al añadir este tipo de recurso es de: ${total}. ¿Desea continuar?`);
     }
     return { 'response': confirm, 'loadIndex': total };
@@ -849,6 +876,53 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     }
     return loadIndex;
   }
+  calculatePreviewLoadIndex(hardwareResume: any) {
+    let radio = hardwareResume.radio;
+    let telResources = hardwareResume.tfno;
+    let loadIndex = 0;
+
+    radio.forEach((resource: any) => {
+      if (this.resourceForm.value.idrecurso_radio == resource.idrecurso_radio) {
+        if (resource.precision_audio == 0) {
+          if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
+            loadIndex += 1;
+          } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
+            loadIndex += 1;
+          } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && (resource.metodo_bss == 0 || resource.metodo_bss == 1)) {
+            loadIndex += 4;
+          }
+
+        } else if (resource.precision_audio == 1) {
+          if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
+            loadIndex += 2;
+          } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
+            loadIndex += 2;
+          } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 0 || resource.metodo_bss == 1) {
+            loadIndex += 4;
+          } else if (resource.tipo_agente == 2 || resource.tipo_agente == 3) {
+            loadIndex += 8;
+          }
+
+        }
+      }
+
+    });
+
+    telResources.forEach((resource: any) => {
+      if (this.resourceForm.value.idrecurso_telefono == resource.idrecurso_telefono) {
+        if (resource.precision_audio == 0) {
+          if (resource.tipo_interfaz_tel == 3 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 5) {
+            loadIndex += 2;
+          } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
+            loadIndex++;
+          }
+        }
+      }
+    });
+    return loadIndex;
+  }
+
+
   calculateLoadIndex(hardwareResume: any) {
     let radioResources = hardwareResume.radio;
     let telResources = hardwareResume.tfno;
@@ -858,6 +932,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       if (resource.precision_audio == 0) {
         if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
           loadIndex += 1;
+
         } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
           loadIndex += 1;
         } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && (resource.metodo_bss == 0 || resource.metodo_bss == 1)) {
@@ -874,6 +949,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         } else if (resource.tipo_agente == 2 || resource.tipo_agente == 3) {
           loadIndex += 8;
         }
+
       }
     });
 
@@ -887,103 +963,267 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       }
     });
 
-    if (this.selectedResource === 1) {
-
-      if (this.resourceForm.value.precision_audio == 0) {
-        if (this.resourceForm.value.tipo_agente == 0 || this.resourceForm.value.tipo_agente == 1 || this.resourceForm.value.tipo_agente == 5) {
-          loadIndex += 1;
-        } else if (this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6 && this.resourceForm.value.metodo_bss == 2) {
-          loadIndex += 1;
-        } else if (this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6 &&
-          this.resourceForm.value.metodo_bss == 0 || this.resourceForm.value.metodo_bss == 1) {
-          loadIndex += 4;
-        }
-
-      } else if (this.resourceForm.value.precision_audio == 1) {
-        if (this.resourceForm.value.tipo_agente == 0 || this.resourceForm.value.tipo_agente == 1 || this.resourceForm.value.tipo_agente == 5) {
-          loadIndex += 2;
-        } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) && this.resourceForm.value.metodo_bss == 2) {
-          loadIndex += 2;
-        } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) &&
-          (this.resourceForm.value.metodo_bss == 0 || this.resourceForm.value.metodo_bss == 1)) {
-          loadIndex += 4;
-        } else if (this.resourceForm.value.tipo_agente == 2 || this.resourceForm.value.tipo_agente == 3) {
-          loadIndex += 8;
-        }
-
-      }
-
-    } else if (this.selectedResource === 2) {
-      if (this.resourceForm.value.precision_audio == 0) {
-        if (this.resourceForm.value.tipo_interfaz_tel == 3 || this.resourceForm.value.tipo_interfaz_tel == 4 || this.resourceForm.value.tipo_interfaz_tel == 5) {
-          loadIndex += 2;
-        } else if (this.resourceForm.value.tipo_interfaz_tel == 0 || this.resourceForm.value.tipo_interfaz_tel == 1 || this.resourceForm.value.tipo_interfaz_tel == 2) {
-          loadIndex++;
-        }
-      }
-    }
     return loadIndex;
   }
 
-  validateFormDirty(isRadio: boolean) {
-    let title = this.resourceForm.dirty ? " Parametro(s):" : "";
-    title += this.resourceForm.get("nombre")?.dirty ? ' Nombre: ' + this.resourceForm.get("nombre")?.value : "";
-    title += this.resourceForm.get("codec")?.dirty ? ' codec: ' + this.codecs[this.resourceForm.get("codec")?.value].viewValue : "";
-    title += this.resourceForm.get("clave_registro")?.dirty ? ' Clave Registro: ' + this.resourceForm.get("clave_registro")?.value : "";
-    title += this.resourceForm.get("ajuste_ad")?.dirty ? ' Ajuste Cero digital en A/D (dB): ' + this.resourceForm.get("ajuste_ad")?.value : "";
-    title += this.resourceForm.get("ajuste_da")?.dirty ? ' Ajuste Cero digital en D/A (dB): ' + this.resourceForm.get("ajuste_da")?.value : "";
-    title += this.resourceForm.get("precision_audio")?.dirty ? ' Precisión de audio: ' + (this.resourceForm.get("precision_audio")?.value === 0 ? 'Normal' : 'Estricto') : "";
-    title += this.resourceForm.get("fila")?.dirty ? ' Posición fila: ' + this.resourceForm.get("fila")?.value : "";
-    title += this.resourceForm.get("columna")?.dirty ? ' Posición columna: ' + this.resourceForm.get("columna")?.value : "";
-    title += this.resourceForm.get("pasarela_id")?.dirty ? ' ID Pasarela: ' + this.resourceForm.get("pasarela_id")?.value : "";
-    if (isRadio) {
-      title += this.resourceForm.get("listaUris")?.dirty ? ' Lista de Uris: ' + this.resourceForm.get("listaUris")?.value : "";
-      title += this.resourceForm.get("climax_bss")?.dirty ? ' BSS/CLIMAX: ' + (this.resourceForm.get("climax_bss")?.value === 0 ? 'No' : 'Si') : "";
-      title += this.resourceForm.get("cola_bss_sqh")?.dirty ? ' Cola BSS SQH: ' + this.resourceForm.get("cola_bss_sqh")?.value : "";
-      title += this.resourceForm.get("evento_ptt_squelch")?.dirty ? ' Eventos PTT/Squelch: ' + (this.resourceForm.get("evento_ptt_squelch")?.value === 0 ? 'No' : 'Si') : "";
-      title += this.resourceForm.get("frecuencia")?.dirty ? ' Frecuencia: ' + this.resourceForm.get("frecuencia")?.value : "";
-      title += this.resourceForm.get("habilita_grabacion")?.dirty ? ' Habilita grabación: ' + (this.resourceForm.get("habilita_grabacion")?.value === 0 ? 'No' : 'Si') : "";
-      title += this.resourceForm.get("idrecurso_radio")?.dirty ? ' idrecurso_radio: ' + this.resourceForm.get("idrecurso_radio")?.value : "";
-      title += this.resourceForm.get("indicacion_entrada_audio")?.dirty ? ' Indicación entrada audio: ' + this.iAudio[this.resourceForm.get("indicacion_entrada_audio")?.value] : "";
-      title += this.resourceForm.get("indicacion_salida_audio")?.dirty ? ' Indicación salida audio: ' + this.resourceForm.get("indicacion_salida_audio")?.value : "";
-      title += this.resourceForm.get("metodo_bss")?.dirty ? ' Metodo BSS: ' + this.bssMethods[this.resourceForm.get("metodo_bss")?.value].viewValue : "";
-      title += this.resourceForm.get("metodo_climax")?.dirty ? ' Modo Climax: ' + this.climaxModes[this.resourceForm.get("metodo_climax")?.value].viewValue : "";
-      title += this.resourceForm.get("prioridad_ptt")?.dirty ? ' Prioridad Ptt: ' + this.pttPriority[this.resourceForm.get("prioridad_ptt")?.value].viewValue : "";
-      title += this.resourceForm.get("prioridad_sesion_sip")?.dirty ? ' Prioridad Sesion SIP: ' + this.prioritySessionsSIP[this.resourceForm.get("prioridad_sesion_sip")?.value].viewValue : "";
-      title += this.resourceForm.get("restriccion_entrantes")?.dirty ? ' Restriccion Entrantes: ' + this.resourceForm.get("restriccion_entrantes")?.value : "";
-      title += this.resourceForm.get("retardo_fijo_climax")?.dirty ? ' Retraso fijo climax: ' + this.resourceForm.get("retardo_fijo_climax")?.value : "";
-      title += this.resourceForm.get("retraso_interno_grs")?.dirty ? ' Retraso interno GRS (ms.): ' + this.resourceForm.get("retraso_interno_grs")?.value : "";
-      title += this.resourceForm.get("tabla_bss_id")?.dirty ? ' Tabla bss: ' + this.tablesBss[this.tablesBss.findIndex((x: any) => x.idtabla_bss === this.resourceForm.value.tabla_bss_id)].name : "";
-      title += this.resourceForm.get("tipo_agente")?.dirty ? ' Tipo agente: ' + this.radioAgents[this.resourceForm.get("tipo_agente")?.value] : "";
-      title += this.resourceForm.get("tipo_climax")?.dirty ? ' Tipo climax: ' + this.resourceForm.get("tipo_climax")?.value : "";
-      title += this.resourceForm.get("umbral_vad")?.dirty ? ' Umbral VAD (dB): ' + this.resourceForm.get("umbral_vad")?.value : "";
-      title += this.resourceForm.get("ventana_bss")?.dirty ? ' Ventana BSS (ms): ' + this.resourceForm.get("ventana_bss")?.value : "";
-    } else {
-      title += this.resourceForm.get("DetInversionPol")?.dirty ? ' Detecta Inversion Polaridad: ' + (this.resourceForm.get("DetInversionPol")?.value === 0 ? 'No' : 'Si') : "";
-      title += this.resourceForm.get("additional_itiporespuesta")?.dirty ? ' additional_itiporespuesta: ' + this.resourceForm.get("additional_itiporespuesta")?.value : "";
-      title += this.resourceForm.get("additional_superv_options")?.dirty ? ' additional_superv_options: ' + this.resourceForm.get("additional_superv_options")?.value : "";
-      title += this.resourceForm.get("additional_uri_remota")?.dirty ? ' URI Remota Adiccional: ' + this.resourceForm.get("additional_uri_remota")?.value : "";
-      title += this.resourceForm.get("ats_user")?.dirty ? ' ATS User: ' + this.resourceForm.get("ats_user")?.value : "";
-      title += this.resourceForm.get("cola_vox")?.dirty ? ' Cola VOX (sg.): ' + this.resourceForm.get("cola_vox")?.value : "";
-      title += this.resourceForm.get("destino_test")?.dirty ? ' Destino llamadas salientes de test: ' + this.resourceForm.get("destino_test")?.value : "";
-      title += this.resourceForm.get("deteccion_vox")?.dirty ? ' Deteccion VOX: ' + (this.resourceForm.get("deteccion_vox")?.value === 0 ? 'No' : 'Si') : "";
-      title += this.resourceForm.get("duracion_tono_interrup")?.dirty ? ' Duracion tono interrupt (sg.): ' + this.resourceForm.get("duracion_tono_interrup")?.value : "";
-      title += this.resourceForm.get("iDetLineaAB")?.dirty ? ' Detecta Fallo Linea: ' + (this.resourceForm.get("iDetLineaAB")?.value === 0 ? 'No' : 'Si') : "";
-      title += this.resourceForm.get("iEnableNoED137")?.dirty ? ' Permite Llamadas No ED137: ' + (this.resourceForm.get("iEnableNoED137")?.value === 0 ? 'No' : 'Si') : "";
-      title += this.resourceForm.get("itiporespuesta")?.dirty ? ' itiporespuesta: ' + this.resourceForm.get("itiporespuesta")?.value : "";
-      title += this.resourceForm.get("lado")?.dirty ? ' Lado: ' + this.resourceForm.get("lado")?.value : "";
-      title += this.resourceForm.get("origen_test")?.dirty ? ' Origen llamadas salientes de test: ' + this.resourceForm.get("origen_test")?.value : "";
-      title += this.resourceForm.get("periodo_tonos")?.dirty ? ' Duración tono interrupción (sg.): ' + this.resourceForm.get("periodo_tonos")?.value : "";
-      title += this.resourceForm.get("ranks")?.dirty ? ' ranks: ' + this.resourceForm.get("ranks")?.value : "";
-      title += this.resourceForm.get("respuesta_automatica")?.dirty ? ' Respuesta automática: ' + (this.resourceForm.get("respuesta_automatica")?.value === 0 ? 'No' : 'Si') : "";
-      title += this.resourceForm.get("supervisa_colateral")?.dirty ? ' Supervisa colateral: ' + (this.resourceForm.get("supervisa_colateral")?.value === 0 ? 'No' : 'Si') : "";
-      title += this.resourceForm.get("tiempo_supervision")?.dirty ? ' Tiempo supervision: ' + this.resourceForm.get("tiempo_supervision")?.value : "";
-      title += this.resourceForm.get("tipo_interfaz_tel")?.dirty ? ' Tipo de Interfaz telefónico: ' + this.telephonicInterfaces[this.resourceForm.get("tipo_interfaz_tel")?.value].viewValue : "";
-      title += this.resourceForm.get("umbral_vox")?.dirty ? ' Umbral VOX (sg.): ' + this.resourceForm.get("umbral_vox")?.value : "";
-      title += this.resourceForm.get("uri_telefonica")?.dirty ? ' URI Telefónica: ' + this.resourceForm.get("uri_telefonica")?.value : "";
-      title += this.resourceForm.get("idrecurso_telefono")?.dirty ? ' idrecurso_telefono: ' + this.resourceForm.get("idrecurso_telefono")?.value : "";
+  async validateFormDirty(initTitle: string, code: number) {
+    let title = `${initTitle} - Parametro(s): `;
+    let arrayToCheckFields = this.selectedResource == 1 ? formsFields.common.concat(formsFields.radio) : formsFields.common.concat(formsFields.tel);
+
+    if (this.isCheckedRegistryKey) {
+      title += `Habilitado Clave registro: ${this.registerKeyExists ? 'Si' : 'No'}; `
+      await this.historicService.updateCfg(code, this.resource.nombre, title).toPromise();
     }
-    return title;
+
+    if (this.isChangedAGCAD) {
+      title = `${initTitle} - Parametro(s): `;
+      title += `Habilitado AGC en A/D: ${this.displayAGCAD ? 'Si' : 'No'}; `
+      await this.historicService.updateCfg(code, this.resource.nombre, title).toPromise();
+    }
+
+    if (this.isChangedAGCDA) {
+      title = `${initTitle} - Parametro(s): `;
+      title += `Habilitado AGC en D/A: ${this.displayAGCDA ? 'Si' : 'No'}; `
+      await this.historicService.updateCfg(code, this.resource.nombre, title).toPromise();
+    }
+
+    if (this.resourceForm.dirty || this.isCheckedRegistryKey || this.isChangedAGCAD || this.isChangedAGCDA) {
+      arrayToCheckFields.forEach(async (data: any, index: number) => {
+        let value: string = "";
+        let msg: string = "";
+        let indexFinded: number;
+
+        title = `${initTitle} - Parametro(s): `;
+        if (this.resourceForm.get(data.field)?.dirty) {
+
+          switch (data.field) {
+            case "tipo_agente":
+              value = this.customFilter(this.radioAgents, data.field);
+              msg = `${data.label} ${value}; `;
+              break;
+            case "tipo_interfaz_tel":
+              value = this.customFilter(this.telephonicInterfaces, data.field);
+              msg = `${data.label} ${value}; `;
+              break;
+            case "indicacion_entrada_audio":
+              value = this.customFilter(this.iAudio, data.field);
+              if (value === "VAD" && !this.resourceForm.get("umbral_vad")?.dirty) {
+                msg = `${data.label} ${value}; Umbral VAD (dB): ${this.resourceForm.value.umbral_vad};`;
+                arrayToCheckFields.splice(index, 1);
+              } else {
+                msg = `${data.label} ${value}; `;
+              }
+              break;
+            case "climax_bss":
+            case "tipo_climax":
+            case "metodo_climax":
+              if (this.resourceForm.value.climax_bss === true || this.resourceForm.value.climax_bss === 1) {
+                if (this.resourceForm.value.tipo_climax === 0) {
+                  msg = `${data.label} Si; Ventana BSS (ms): ${this.resourceForm.value.ventana_bss};
+                  Modo Climax: No;`;
+                } else if (this.resourceForm.value.tipo_climax === 1) {
+                  value = this.customFilter(this.climaxModes, 'tipo_climax');
+
+                  let calClimax = this.customFilter(this.calClimaxModes, 'metodo_climax');
+                  msg = `${data.label} Si; Ventana BSS (ms): ${this.resourceForm.value.ventana_bss};
+                  Modo Climax: ${value}; Modo cálculo climax: ${calClimax};`;
+
+                  // DELETE ventana_bss on array
+                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                    return data.field == 'ventana_bss';
+                  });
+                  arrayToCheckFields.splice(indexFinded, 1);
+
+                  // DELETE tipo_climax on array
+                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                    return data.field == 'tipo_climax';
+                  });
+                  arrayToCheckFields.splice(indexFinded, 1);
+
+                  // DELETE metodo_climax on array
+                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                    return data.field == 'metodo_climax';
+                  });
+                  arrayToCheckFields.splice(indexFinded, 1);
+                } else {
+                  value = this.customFilter(this.climaxModes, 'tipo_climax');
+
+                  let calClimax = this.customFilter(this.calClimaxModes, 'metodo_climax');
+                  msg = `${data.label} Si; Ventana BSS (ms): ${this.resourceForm.value.ventana_bss};
+                  Modo Climax: ${value}; Modo cálculo climax: ${calClimax}; Retraso fijo climax (ms): ${this.resourceForm.value.retardo_fijo_climax}; `;
+                  // DELETE ventana_bss on array
+                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                    return data.field == 'ventana_bss';
+                  });
+                  arrayToCheckFields.splice(indexFinded, 1);
+
+                  // DELETE tipo_climax on array
+                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                    return data.field == 'tipo_climax';
+                  });
+                  arrayToCheckFields.splice(indexFinded, 1);
+
+                  // DELETE metodo_climax on array
+                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                    return data.field == 'metodo_climax';
+                  });
+
+                  arrayToCheckFields.splice(indexFinded, 1);
+                  // DELETE retardo_fijo_climax on array
+                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                    return data.field == 'retardo_fijo_climax';
+                  });
+                  arrayToCheckFields.splice(indexFinded, 1);
+                }
+              } else if (this.resourceForm.value.climax_bss === false) {
+                msg = `${data.label} No;`;
+              }
+              break;
+            case "listaUris":
+              msg = '';
+              this.resourceForm.get(data.field)?.value.forEach(async (uri: any, index: number) => {
+
+                if (uri.hasOwnProperty("modified") && uri.modified === true) {
+                  title = `${initTitle} - Parametro(s): `;
+                  title += `${data.label} ${uri.tipo}: ${uri.uri}`
+                  delete this.resourceForm.get(data.field)?.value[index].modified;
+                  await this.historicService.updateCfg(code, this.resource.nombre, title).toPromise();
+                }
+
+              });
+              break;
+            case "restriccion_entrantes":
+              value = this.customFilter(this.typeLists, data.field);
+              msg = `${data.label} ${value}; `;
+              break;
+            case "prioridad_sesion_sip":
+              value = this.customFilter(this.prioritySessionsSIP, data.field);
+              msg = `${data.label} ${value}; `;
+              break;
+            case "prioridad_ptt":
+              value = this.customFilter(this.pttPriority, data.field);
+              msg = `${data.label} ${value}; `;
+              break;
+            case "metodo_bss":
+              msg = `${data.label} ${this.bssMethods[this.resourceForm.get(data.field)?.value].viewValue}; `;
+              break;
+            case "tabla_bss_id":
+              msg = `${data.label} ${this.tablesBss[this.tablesBss.findIndex((x: any) => x.idtabla_bss === this.resourceForm.value.tabla_bss_id)].name}; `;
+              break;
+            case "iEnableNoED137":
+            case "DetInversionPol":
+            case "iDetLineaAB":
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === true ? 'Si' : 'No'}; `;
+              break;
+            case "deteccion_vox":
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === true ? 'Si' : 'No'}; 
+              Umbral VOX (dB): ${this.resourceForm.get('umbral_vox')?.value}; Cola VOX (sg.): ${this.resourceForm.get('cola_vox')?.value};`;
+
+              // DELETE umbral_vox on array
+              indexFinded = arrayToCheckFields.findIndex(function (data) {
+                return data.field == 'umbral_vox';
+              });
+              arrayToCheckFields.splice(indexFinded, 1);
+
+              // DELETE cola_vox on array
+              indexFinded = arrayToCheckFields.findIndex(function (data) {
+                return data.field == 'cola_vox';
+              });
+              arrayToCheckFields.splice(indexFinded, 1);
+              break;
+            case "respuesta_automatica":
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === true ? 'Si' : 'No'}; 
+              Duración tonos resp. estado (sg.): ${this.resourceForm.get('periodo_tonos')?.value};`;
+
+              // DELETE periodo_tonos on array
+              indexFinded = arrayToCheckFields.findIndex(function (data) {
+                return data.field == 'periodo_tonos';
+              });
+              arrayToCheckFields.splice(indexFinded, 1);
+              break;
+            case "lado":
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 0 ? 'A' : 'B'}; `
+              break;
+            case "ranks":
+              msg = '';
+              this.resourceForm.get(data.field)?.value.forEach(async (rank: any, index: number) => {
+
+                if (rank.hasOwnProperty("modified") && rank.modified === true) {
+                  title = `${initTitle} - Parametro(s): `;
+                  title += `${data.label} ${rank.tipo === 0 ? 'origen: ' : 'destino: '} ${rank.inicial} - ${rank.final} `
+                  delete this.resourceForm.get(data.field)?.value[index].modified;
+                  await this.historicService.updateCfg(code, this.resource.nombre, title).toPromise();
+                }
+
+              });
+              break;
+            case "supervisa_colateral":
+              value = this.customFilter(this.supCollateral, data.field);
+              msg = `${data.label} ${value}; Option Response: ${this.resourceForm.value.itiporespuesta === 0 ? 'No' : 'Si'};
+              Tiempo Supervision (sg.): ${this.resourceForm.value.tiempo_supervision}`;
+              // DELETE itiporespuesta on array
+              indexFinded = arrayToCheckFields.findIndex(function (data) {
+                return data.field == 'itiporespuesta';
+              });
+              arrayToCheckFields.splice(indexFinded, 1);
+
+              // DELETE tiempo_supervision on array
+              indexFinded = arrayToCheckFields.findIndex(function (data) {
+                return data.field == 'tiempo_supervision';
+              });
+              arrayToCheckFields.splice(indexFinded, 1);
+              break;
+            case "additional_superv_options":
+              value = this.customFilter(this.supCollateral, data.field);
+              msg = `${data.label} ${value}; Option Response: ${this.resourceForm.value.additional_itiporespuesta === 0 ? 'No' : 'Si'};
+              Tiempo Supervision (sg.): ${this.resourceForm.value.tiempo_supervision};`;
+              // DELETE additional_itiporespuesta on array
+              indexFinded = arrayToCheckFields.findIndex(function (data) {
+                return data.field == 'additional_itiporespuesta';
+              });
+              arrayToCheckFields.splice(indexFinded, 1);
+              // DELETE tiempo_supervision on array
+              indexFinded = arrayToCheckFields.findIndex(function (data) {
+                return data.field == 'tiempo_supervision';
+              });
+              arrayToCheckFields.splice(indexFinded, 1);
+              break;
+            case "itiporespuesta":
+              msg = `Option Response: ${this.resourceForm.value.itiporespuesta === 0 ? 'No' : 'Si'};`
+              break;
+            case "additional_itiporespuesta":
+              msg = `Option Response: ${this.resourceForm.value.additional_itiporespuesta === 0 ? 'No' : 'Si'};`
+              break;
+            default:
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value}; `;
+              break;
+          }
+          if (msg !== '') {
+            title += msg;
+            await this.historicService.updateCfg(code, this.resource.nombre, title).toPromise();
+          }
+
+        }
+      });
+    }
   }
 
+  checkControlsAudioAD(checked: any) {
+    this.isChangedAGCAD = true;
+    this.displayAGCAD = checked;
+  }
+
+  checkControlsAudioDA(checked: any) {
+    this.isChangedAGCDA = true;
+    this.displayAGCDA = checked;
+  }
+
+  customFilter(array: any, key: string) {
+    let result = array.filter((datarow: any) => {
+      if ((datarow.value == this.resourceForm.get(key)?.value)) {
+        return datarow;
+      }
+    })[0].viewValue;
+    return result;
+  }
 }

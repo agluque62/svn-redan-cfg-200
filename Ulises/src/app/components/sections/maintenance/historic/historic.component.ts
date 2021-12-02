@@ -63,6 +63,7 @@ export class HistoricComponent implements OnInit {
     dataSource!: MatTableDataSource<Historic>;
     dataUsed: any = [];
     dataRaw: any = [];
+    datatemp: any = [];
     typeOptions = [
         { value: 1, viewValue: 'Eventos' },
         { value: 2, viewValue: 'Alarmas' }
@@ -84,7 +85,36 @@ export class HistoricComponent implements OnInit {
     controlFlag = true;
 
     constructor(private readonly historicService: HistoricService, private readonly alertService: AlertService, private readonly app: AppComponent,
-        private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router, private changeDetectorRefs: ChangeDetectorRef) { }
+        private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router, private changeDetectorRefs: ChangeDetectorRef) {
+        this.historicService.checkIfExistschangesOnFilters().subscribe((data: any) => {
+            this.ready = false;
+            if (data !== undefined && this.controlFlag) {
+                this.dateEnd = data.dateEnd !== undefined ? new Date(data.dateEnd) : new Date();
+                this.dateStart = data.dateStart !== undefined ? new Date(data.dateStart) : new Date(this.dateEnd.getFullYear(), this.dateEnd.getMonth(), this.dateEnd.getDate(), 0, 0, 0);
+                this.selectedLimit = data.limit !== undefined ? data.limit : this.limitOptions[1];
+                this.selectedFilter = data.localFilters !== undefined ? data.localFilters : [];
+                this.selectedType = data.selectedType !== undefined ? data.selectedType : [];
+
+                this.selectedGroup = data.selectedGroup !== undefined ? data.selectedGroup : [];
+                this.selectedComponent = data.selectedComponent !== undefined ? data.selectedComponent : [];
+                this.selectedRegister = data.selectedRegister !== undefined ? data.selectedRegister : [];
+
+                this.updateData(true);
+                this.controlFlag = false;
+            } else if (data !== undefined && !this.controlFlag) {
+                this.dateEnd = data.dateEnd !== undefined ? new Date(data.dateEnd) : new Date();
+                this.dateStart = data.dateStart !== undefined ? new Date(data.dateStart) : new Date(this.dateEnd.getFullYear(), this.dateEnd.getMonth(), this.dateEnd.getDate(), 0, 0, 0);
+                this.selectedLimit = data.limit !== undefined ? data.limit : this.limitOptions[1];
+                this.selectedFilter = data.localFilters !== undefined ? data.localFilters : [];
+                this.selectedType = data.selectedType !== undefined ? data.selectedType : [];
+
+                this.selectedGroup = data.selectedGroup !== undefined ? data.selectedGroup : [];
+                this.selectedComponent = data.selectedComponent !== undefined ? data.selectedComponent : [];
+                this.selectedRegister = data.selectedRegister !== undefined ? data.selectedRegister : [];
+            }
+            this.ready = true;
+        });
+    }
 
     ngOnInit() {
         this.checkPermissions();
@@ -92,23 +122,7 @@ export class HistoricComponent implements OnInit {
         this.getCodes();
         this.getComponents();
         this.initDefaultDates();
-        this.historicService.checkIfExistschangesOnFilters().subscribe((data: any) => {
-            if (data !== undefined && this.controlFlag) {
-                this.dateEnd = data.dateEnd !== undefined ? new Date(data.dateEnd) : new Date();
-                this.dateStart = data.dateStart !== undefined ? new Date(data.dateStart) : new Date(this.dateEnd.getFullYear(), this.dateEnd.getMonth(), this.dateEnd.getDate(), 0, 0, 0);
-                this.selectedLimit = data.limit !== undefined ? data.limit : this.limitOptions[1];
-                this.selectedFilter = data.localFilters !== undefined ? data.localFilters : [];
-                this.selectedType = data.selectedType !== undefined ? data.selectedType : [];
-                this.updateData(true);
-                this.controlFlag = false;
-            }else if (data !== undefined && !this.controlFlag){
-                this.dateEnd = data.dateEnd !== undefined ? new Date(data.dateEnd) : new Date();
-                this.dateStart = data.dateStart !== undefined ? new Date(data.dateStart) : new Date(this.dateEnd.getFullYear(), this.dateEnd.getMonth(), this.dateEnd.getDate(), 0, 0, 0);
-                this.selectedLimit = data.limit !== undefined ? data.limit : this.limitOptions[1];
-                this.selectedFilter = data.localFilters !== undefined ? data.localFilters : [];
-                this.selectedType = data.selectedType !== undefined ? data.selectedType : [];
-            }
-        });
+
     }
 
     async checkPermissions() {
@@ -125,7 +139,6 @@ export class HistoricComponent implements OnInit {
 
     async updateData(needRequest: boolean) {
         this.ready = false;
-
         if (!this.dateEnd)
             this.initDefaultDates();
 
@@ -134,9 +147,6 @@ export class HistoricComponent implements OnInit {
         }
 
         let alarmsDataFilters: any = [];
-        let groupFilters: any = [];
-        let compFilters: any = [];
-        let registerFilters: any = [];
         let result: any = [];
 
         if (this.selectedFilter.length > 0) {
@@ -158,23 +168,15 @@ export class HistoricComponent implements OnInit {
                 }
 
                 if (this.selectedFilter.includes('Grupo')) {
-                    groupFilters = this.selectedGroup.map(function (x) {
-                        return x.TipoHw;
-                    });
-                    includesGroupFilter = groupFilters.includes(row.TipoHw);
+                    includesGroupFilter = this.selectedGroup.includes(row.TipoHw);
                 }
+
                 if (this.selectedFilter.includes('Componente')) {
-                    compFilters = this.selectedComponent.map(function (x) {
-                        return x.IdHw;
-                    });
-                    includesCompFilter = compFilters.includes(row.IdHw);
+                    includesCompFilter = this.selectedComponent.includes(row.IdHw);
                 }
 
                 if (this.selectedFilter.includes('Tipo de registro')) {
-                    registerFilters = this.selectedRegister.map(function (x) {
-                        return x.IdIncidencia;
-                    });
-                    includesRegFilter = registerFilters.includes(row.IdIncidencia);
+                    includesRegFilter = this.selectedRegister.includes(row.IdIncidencia);
                 }
 
                 return includesTypeFilter && includesGroupFilter && includesCompFilter && includesRegFilter;
@@ -188,7 +190,10 @@ export class HistoricComponent implements OnInit {
             'dateEnd': this.dateEnd,
             'limit': this.selectedLimit,
             'localFilters': this.selectedFilter,
-            'selectedType': this.selectedType
+            'selectedType': this.selectedType,
+            'selectedGroup': this.selectedGroup,
+            'selectedComponent': this.selectedComponent,
+            'selectedRegister': this.selectedRegister
         });
         this.assignDataSource(this.dataUsed);
         this.ready = true;
@@ -277,10 +282,9 @@ export class HistoricComponent implements OnInit {
             if (result.error) {
                 this.alertService.errorMessage(``, result.error);
             } else {
-                this.groupOptions = result.groups;
-                if (this.groupOptions.length > 0) {
-                    this.selectedGroup.push(this.groupOptions[0]);
-                }
+                this.groupOptions = result.groups.map(function (x: any) {
+                    return x.TipoHw;
+                });
             }
         } catch (error: any) {
             this.ready = true;
@@ -294,10 +298,9 @@ export class HistoricComponent implements OnInit {
             if (result.error) {
                 this.alertService.errorMessage(``, result.error);
             } else {
-                this.componentOptions = result.components;
-                if (this.componentOptions.length > 0) {
-                    this.selectedComponent.push(this.componentOptions[0]);
-                }
+                this.componentOptions = result.components.map(function (x: any) {
+                    return x.IdHw;
+                });
             }
 
         } catch (error: any) {
@@ -312,10 +315,9 @@ export class HistoricComponent implements OnInit {
             if (result.error) {
                 this.alertService.errorMessage(``, result.error);
             } else {
-                this.codeOptions = result.codes;
-                if (this.codeOptions.length > 0) {
-                    this.selectedRegister.push(this.codeOptions[0]);
-                }
+                this.codeOptions = result.codes.map(function (x: any) {
+                    return x.Incidencia;
+                });
             }
         } catch (error: any) {
             this.ready = true;
@@ -377,7 +379,11 @@ export class HistoricComponent implements OnInit {
             'dateEnd': this.dateEnd,
             'limit': this.selectedLimit,
             'localFilters': [],
-            'selectedType': []
+            'selectedType': [],
+            'selectedGroup': [],
+            'selectedComponent': [],
+            'selectedRegister': []
+
         });
     }
 

@@ -416,7 +416,7 @@ export class ConfigurationViewComponent implements OnInit {
         while (i < this.arrayipv.length) {
           this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipv[i], this.configuration.idCFG).toPromise();
           this.configurationIp = [...this.configurationIpResponse.result];
-
+          
           if (this.configurationIp.length != 0) {
             this.nEmplazamiento = this.configurationIp.map((index) => {
               return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;

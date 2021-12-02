@@ -71,6 +71,47 @@ export class GatewayHomeComponent implements OnInit {
 
   msg !: string[];
 
+  dirtyCaseOnlyValue: any[] = [
+    { id: 0, value: 'nombre', msg: ' Nombre: '},
+    { id: 1,  value: 'ipv', msg: ' Dir. IP Virtual: '},
+    { id: 2,  value: 'EMPLAZAMIENTO_idEMPLAZAMIENTO', msg: ' Id. Emplazamiento: '},
+    { id: 3,  value: 'dvrrp', msg: ' Retardo activacion modo dual(ms.): '},
+    { id: 4,  value: 'pendiente_actualizar', msg: ' Pendiente actualizar: '},
+    { id: 5,  value: 'ultima_actualizacion', msg: ' Última actualización: '},
+    { id: 6,  value: 'ipb1', msg: ' Ip cpu0: '},
+    { id: 7,  value: 'ipb2', msg: ' Ip cpu1: '},
+    { id: 8,  value: 'ipg1', msg: ' Ip gateway0: '},
+    { id: 9,  value: 'ipg2', msg: ' Ip gateway1: '},
+    { id: 10,  value: 'msb1', msg: ' Máscara cpu0: '},
+    { id: 11,  value: 'msb2', msg: ' Máscara cpu1: '},
+    { id: 12,  value: 'PuertoLocalSIP ', msg: ' Puerto local SIP: ', servicetab:'SIP'},
+    { id: 13,  value: 'periodo_supervision', msg: ' Periodo de supervisión: ', servicetab:'SIP'},
+    { id: 14,  value: 'puerto_servicio_snmp', msg: ' Puerto Servicio SNMP: ', servicetab:'SNMP'},
+    { id: 15,  value: 'comunidad_snmp', msg: ' Comunidad SNMP: ', servicetab:'SNMP'},
+    { id: 16,  value: 'puerto_snmp', msg: ' Puerto SNMP: ', servicetab:'SNMP'},
+    { id: 17,  value: 'nombre_snmp', msg: ' Nombre SNMP: ', servicetab:'SNMP'},
+    { id: 18,  value: 'localizacion_snmp', msg: ' Ubicación SNMP: ', servicetab:'SNMP'},
+    { id: 19,  value: 'contacto_snmp', msg: ' Contacto SNMP: ', servicetab:'SNMP'},
+    { id: 20,  value: 'puerto_servicio_web', msg: ' Puerto Servicio Web: ', servicetab:'Web'},
+    { id: 21,  value: 'tiempo_sesion', msg: ' Tiempo Sesion: ', servicetab:'Web'},
+    { id: 22,  value: 'puerto_rtsp', msg: ' Puerto RTSP: ', servicetab:'REC'},
+    { id: 23,  value: 'servidor_rtsp', msg: ' IP Servidor RTSP (A): ', servicetab:'REC'},
+    { id: 24,  value: 'servidor_rtspb', msg: ' IP Servidor RTSP (B): ', servicetab:'REC'},
+  ]
+
+  dirtyCaseTernary: any[] = [
+    { id: 26,  value: 'dual', msg: ' CPU Dual: ', op1: 'No', op2: 'Si' },
+    { id: 27,  value: 'sppe', msg: ' Supervisión Puerta de Enlace: ', op1: 'No', op2: ' Segundos'},
+    { id: 28,  value: 'snmpv2', msg: ' SNMP V2: ', op1: 'No', op2: 'Si', servicetab:'SNMP'}
+  ]
+
+  dirtyCaseArrays: any [] = [
+    { id: 29,  value: 'proxys', msg: ' Proxys: ', servicetab:'SIP'},
+    { id: 30,  value: 'registrars', msg: ' SIP Servers: ', servicetab:'SIP'},
+    { id: 31,  value: 'listServers', msg: ' List Servers: ', servicetab:'Sync'},
+    { id: 32,  value: 'traps', msg: ' Traps : ', servicetab:'SNMP'}
+  ]
+  
   constructor(private readonly utilService: UtilsService, private readonly route: ActivatedRoute, private readonly router: Router, private readonly app: AppComponent, public dialog: MatDialog,
     private readonly gatewayService: GatewayService, private readonly alertService: AlertService, private historicService: HistoricService,
     private readonly dataService: DataService, private readonly userService: UserService, private readonly loginService: LoginService,
@@ -101,7 +142,8 @@ export class GatewayHomeComponent implements OnInit {
 
         this.type = 'EDIT';
         await this.initEdit(gatewayId);
-        this.title = await this.getGatewayTitle();
+        this.title = `${await this.getGatewayTitle()} - Pasarela: ${this.gateway.name}`;
+        this.dataService.updateDataGatewayTitle(this.title);
       } else {
         this.type = 'CREATE';
         this.initCreate();
@@ -299,80 +341,80 @@ export class GatewayHomeComponent implements OnInit {
     return true;
   }
 
-  
 
-  
+
+
 
   async createGateway() {
 
     try {
-    this.showSpinner = false;
-    let result = await this.validateGateway();
-    this.configurationByIdResponse = await this.configService.getConfigurationById(this.configId).toPromise();
-    this.configurationById = [...this.configurationByIdResponse.result];  
-    let activa = this.configurationById.map((index) => {
+      this.showSpinner = false;
+      let result = await this.validateGateway();
+      this.configurationByIdResponse = await this.configService.getConfigurationById(this.configId).toPromise();
+      this.configurationById = [...this.configurationByIdResponse.result];
+      let activa = this.configurationById.map((index) => {
         return index.activa;
       });
-    let gateway = Object.assign({}, this.gatewayForm.getRawValue());
+      let gateway = Object.assign({}, this.gatewayForm.getRawValue());
 
-    if (result) {
-      if (activa[0] === 1){
-        this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipv, 0).toPromise();
-        this.configurationIp = [...this.configurationIpResponse.result];
-        if (this.configurationIp.length != 0){
-        this.msg = this.configurationIp.map((index) => {
-          return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
-          })
-          await this.alertService.errorMessage(``,`La IP virtual ${gateway.ipv} esta duplicada en ${this.msg}`);
-          return;
-        }
-        this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipb1, 0).toPromise();
-        this.configurationIp = [...this.configurationIpResponse.result];
-        if (this.configurationIp.length != 0){
-          this.msg = this.configurationIp.map((index) => {
-            return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
-          })
-          await this.alertService.errorMessage(``,`La IP cpu0 ${gateway.ipb1} esta duplicada en ${this.msg}`);
-          return;
-        }        
-        this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipb2, 0).toPromise();
-        this.configurationIp = [...this.configurationIpResponse.result];
-        if (this.configurationIp.length != 0){
-        this.msg = this.configurationIp.map((index) => {
-          return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
-          })
-          await this.alertService.errorMessage(``,`La IP cpu1 ${gateway.ipb2} esta duplicada en ${this.msg}`);
-          return;
+      if (result) {
+        if (activa[0] === 1) {
+          this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipv, 0).toPromise();
+          this.configurationIp = [...this.configurationIpResponse.result];
+          if (this.configurationIp.length != 0) {
+            this.msg = this.configurationIp.map((index) => {
+              return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+            })
+            await this.alertService.errorMessage(``, `La IP virtual ${gateway.ipv} esta duplicada en ${this.msg}`);
+            return;
+          }
+          this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipb1, 0).toPromise();
+          this.configurationIp = [...this.configurationIpResponse.result];
+          if (this.configurationIp.length != 0) {
+            this.msg = this.configurationIp.map((index) => {
+              return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+            })
+            await this.alertService.errorMessage(``, `La IP cpu0 ${gateway.ipb1} esta duplicada en ${this.msg}`);
+            return;
+          }
+          this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipb2, 0).toPromise();
+          this.configurationIp = [...this.configurationIpResponse.result];
+          if (this.configurationIp.length != 0) {
+            this.msg = this.configurationIp.map((index) => {
+              return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+            })
+            await this.alertService.errorMessage(``, `La IP cpu1 ${gateway.ipb2} esta duplicada en ${this.msg}`);
+            return;
+          }
         }
       }
-    }
 
-        delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
-        gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
-        gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
-        const siteId = (this.siteId) ? this.siteId : 0;
-  
-        const newGtw = await this.gatewayService.createGtw(siteId, gateway).toPromise();
-        if (newGtw.error) {
-          this.showSpinner = false;
-          await this.alertService.errorMessage(`Error`, newGtw.error);
-          return;
-        }
-        let title = this.dataService.getDataGatewayTitle();
-        title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
-        await this.historicService.updateCfg(107, this.gatewayForm.value.nombre, title).toPromise();
+      delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
+      gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
+      gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
+      const siteId = (this.siteId) ? this.siteId : 0;
+
+      const newGtw = await this.gatewayService.createGtw(siteId, gateway).toPromise();
+      if (newGtw.error) {
         this.showSpinner = false;
-        await this.alertService.successMessage(``, `Pasarela ${newGtw.name} creada correctamente`);
-        this.dataService.updateDataConfigId(this.configId);
-        this.dataService.updateDataGatewayPreviousUrl('NEW');
-        this.router.navigate(['/home/gateway/' + newGtw.insertId]);
-      
-  
-      
-    }catch(error:any){
-      this.app.catchError(error);
+        await this.alertService.errorMessage(`Error`, newGtw.error);
+        return;
       }
-    }  
+      let title = this.dataService.getDataGatewayTitle();
+      title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+      await this.historicService.updateCfg(107, this.gatewayForm.value.nombre, title).toPromise();
+      this.showSpinner = false;
+      await this.alertService.successMessage(``, `Pasarela ${newGtw.name} creada correctamente`);
+      this.dataService.updateDataConfigId(this.configId);
+      this.dataService.updateDataGatewayPreviousUrl('NEW');
+      this.router.navigate(['/home/gateway/' + newGtw.insertId]);
+
+
+
+    } catch (error: any) {
+      this.app.catchError(error);
+    }
+  }
 
   async checkGatewayNameError(name: string): Promise<boolean> {
     const result = await this.gatewayService.checkName(name, this.configId, this.gateway.idCGW).toPromise();
@@ -523,8 +565,7 @@ export class GatewayHomeComponent implements OnInit {
       }
 
       let title = this.dataService.getDataGatewayTitle();
-      title = title + this.validateFormDirty();
-      await this.historicService.updateCfg(109, this.gatewayPost.nombre, title).toPromise();
+      this.validateFormDirty(title);
       if (this.gatewayPost.nombre != this.gatewayForm.value.nombre)
         this.gatewayPost.nombre = this.gatewayForm.value.nombre;
       this.gatewayForm.patchValue({
@@ -664,15 +705,15 @@ export class GatewayHomeComponent implements OnInit {
     });
 
     telResources.forEach((resource: any) => {
-     
-        if (resource.tipo_interfaz_tel == 3 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 5) {
-          loadIndex += 2;
-        } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
-          loadIndex += 1;
-        }
+
+      if (resource.tipo_interfaz_tel == 3 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 5) {
+        loadIndex += 2;
+      } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
+        loadIndex += 1;
+      }
 
     });
-    
+
 
     if (loadIndex > 16) {
       this.selectedClass = "indexOverload"
@@ -681,44 +722,108 @@ export class GatewayHomeComponent implements OnInit {
       this.selectedClass = "indexLoad";
       this.loadIndex = loadIndex.toString();
     }
-
+  }
+  
+  showDataDirtyCaseOnlyValue(value: string, msg: string){
+    if (this.gatewayForm.get(value)?.dirty)
+      return ` ${msg} ${this.gatewayForm.get(value)?.value}`;
+    else
+      return ``;
   }
 
-  validateFormDirty() {
-    let title = this.gatewayForm.dirty ? " Parametro(s):" : "";
-    title += this.gatewayForm.get("nombre")?.dirty ? ' Nombre: ' + this.gatewayForm.get("nombre")?.value : "";
-    title += this.gatewayForm.get("ipv")?.dirty ? ' Dir. IP Virtual: ' + this.gatewayForm.get("ipv")?.value : "";
-    title += this.gatewayForm.get("dual")?.dirty ? ' CPU Dual: ' + (this.gatewayForm.get("dual")?.value === 0 ? 'No' : 'Si') : "";
-    title += this.gatewayForm.get("EMPLAZAMIENTO_idEMPLAZAMIENTO")?.dirty ? ' Id. Emplazamiento: ' + this.gatewayForm.get("EMPLAZAMIENTO_idEMPLAZAMIENTO")?.value : "";
-    title += this.gatewayForm.get("dvrrp")?.dirty ? ' Retardo activacion modo dual(ms.): ' + this.gatewayForm.get("dvrrp")?.value : "";
-    title += this.gatewayForm.get("sppe")?.dirty ? ' Supervisión Puerta de Enlace: ' + (this.gatewayForm.get("sppe")?.value === 0 ? 'No' : `${this.gatewayForm.get("sppe")?.value} Segundos`) : "";
-    title += this.gatewayForm.get("pendiente_actualizar")?.dirty ? ' Pendiente actualizar: ' + this.gatewayForm.get("pendiente_actualizar")?.value : "";
-    title += this.gatewayForm.get("ultima_actualizacion")?.dirty ? ' Última actualización: ' + this.gatewayForm.get("ultima_actualizacion")?.value : "";
-    title += this.gatewayForm.get("ipb1")?.dirty ? ' Ip cpu0: ' + this.gatewayForm.get("ipb1")?.value : "";
-    title += this.gatewayForm.get("ipb2")?.dirty ? ' Ip cpu1: ' + this.gatewayForm.get("ipb2")?.value : "";
-    title += this.gatewayForm.get("ipg1")?.dirty ? ' Ip gateway0: ' + this.gatewayForm.get("ipg1")?.value : "";
-    title += this.gatewayForm.get("ipg2")?.dirty ? ' Ip gateway1: ' + this.gatewayForm.get("ipg2")?.value : "";
-    title += this.gatewayForm.get("msb1")?.dirty ? ' Máscara cpu0: ' + this.gatewayForm.get("msb1")?.value : "";
-    title += this.gatewayForm.get("msb2")?.dirty ? ' Máscara cpu0: ' + this.gatewayForm.get("msb2")?.value : "";
-    title += this.gatewayForm.get("PuertoLocalSIP")?.dirty ? ' Puerto local SIP: ' + this.gatewayForm.get("PuertoLocalSIP")?.value : "";
-    title += this.gatewayForm.get("periodo_supervision")?.dirty ? ' Periodo de supervisión: ' + this.gatewayForm.get("periodo_supervision")?.value : "";
-    title += this.gatewayForm.get("proxys")?.dirty ? ' Proxys: ' + this.gatewayForm.get("proxys")?.value : "";
-    title += this.gatewayForm.get("registrars")?.dirty ? ' SIP servers: ' + this.gatewayForm.get("registrars")?.value : "";
-    title += this.gatewayForm.get("listServers")?.dirty ? ' List Servers: ' + this.gatewayForm.get("listServers")?.value : "";
-    title += this.gatewayForm.get("puerto_servicio_snmp")?.dirty ? ' Puerto Servicio SNMP: ' + this.gatewayForm.get("puerto_servicio_snmp")?.value : "";
-    title += this.gatewayForm.get("snmpv2")?.dirty ? ' SNMP V2: ' + (this.gatewayForm.get("snmpv2")?.value === 0 ? 'No' : 'Si') : "";
-    title += this.gatewayForm.get("comunidad_snmp")?.dirty ? ' Comunidad SNMP: ' + this.gatewayForm.get("comunidad_snmp")?.value : "";
-    title += this.gatewayForm.get("puerto_snmp")?.dirty ? ' Puerto SNMP: ' + this.gatewayForm.get("puerto_snmp")?.value : "";
-    title += this.gatewayForm.get("nombre_snmp")?.dirty ? ' Nombre SNMP: ' + this.gatewayForm.get("nombre_snmp")?.value : "";
-    title += this.gatewayForm.get("localizacion_snmp")?.dirty ? ' Ubicación SNMP: ' + this.gatewayForm.get("localizacion_snmp")?.value : "";
-    title += this.gatewayForm.get("contacto_snmp")?.dirty ? ' Contacto SNMP: ' + this.gatewayForm.get("contacto_snmp")?.value : "";
-    title += this.gatewayForm.get("traps")?.dirty ? ' Traps: ' + this.gatewayForm.get("traps")?.value : "";
-    title += this.gatewayForm.get("puerto_servicio_web")?.dirty ? ' Puerto Servicio Web: ' + this.gatewayForm.get("puerto_servicio_web")?.value : "";
-    title += this.gatewayForm.get("tiempo_sesion")?.dirty ? ' Tiempo Sesion: ' + this.gatewayForm.get("tiempo_sesion")?.value : "";
-    title += this.gatewayForm.get("puerto_rtsp")?.dirty ? ' Puerto RTSP: ' + this.gatewayForm.get("puerto_rtsp")?.value : "";
-    title += this.gatewayForm.get("servidor_rtsp")?.dirty ? 'IP Servidor RTSP (A): ' + this.gatewayForm.get("servidor_rtsp")?.value : "";
-    title += this.gatewayForm.get("servidor_rtspb")?.dirty ? 'IP Servidor RTSP (B): ' + this.gatewayForm.get("servidor_rtspb")?.value : "";
-    return title;
+  showDataDirtyCaseTernary(value: string, msg:  string, op1: string, op2:string){
+    if(this.gatewayForm.get(value)?.dirty) {
+      if (value === 'sppe'){
+        return `${msg} ${this.gatewayForm.get(value)?.value === 0 ? op1 : this.gatewayForm.get(value)?.value + op2 } `;
+      } else {
+        return `${msg} ${this.gatewayForm.get(value)?.value === 0 ? op1 : op2} `;
+      }
+    } else {
+      return ``;
+    }
+  }
+
+  showDataDirtyCaseArrays(value: string, msg: string){
+    let historic = msg;
+    if(this.gatewayForm.get(value)?.dirty){
+        if(value === 'traps'){
+          this.gatewayForm.get(value)?.value.forEach((element: any) => {
+            if(this.gatewayForm.get(value)?.value[this.gatewayForm.get(value)?.value.length - 1] === element){
+              historic += element;
+            } else {
+              historic += `${element} - `
+            }
+          })
+        } else {
+          this.gatewayForm.get(value)?.value.forEach((element: any) => {
+            if (this.gatewayForm.get(value)?.value[this.gatewayForm.get(value)?.value.length - 1] === element){
+              historic += element.ip;
+            } else {
+              historic += `${element.ip} - `
+            }
+          });
+        }
+      return historic;
+    }else{
+      return ``;
+    }    
+  }
+
+  isEmpty(title: string){
+    if (title == ``) 
+      return true;
+    return false;
+  }
+
+  typeService(element: any){
+    let serviceType = ``;
+      if((typeof(element.servicetab) != 'undefined')){
+        if (element.servicetab === 'SIP'){
+          serviceType+= ` (SIP) `
+        }
+        if(element.servicetab === 'Sync'){
+          serviceType+= ' (Sincronización) '
+        }
+        if (element.servicetab === 'SNMP'){
+          serviceType+= ` (SNMP) `
+        }
+        if (element.servicetab === 'Web'){
+          serviceType+= ` (Web) `
+        }
+        if (element.servicetab === 'REC'){
+          serviceType+= ` (Grabación) `
+        }
+      }
+    return serviceType;
+  }
+
+  validateFormDirty(title: string) {
+    let emptyString = true;
+    let changeHistorics= ``;
+    this.dirtyCaseOnlyValue.forEach((element: any) => {
+      changeHistorics = ` Parametro(s): `;
+      emptyString = this.isEmpty(this.showDataDirtyCaseOnlyValue(element.value, element.msg));
+      if(!emptyString){
+        changeHistorics = `${title} ${changeHistorics} ${this.typeService(element)} ${this.showDataDirtyCaseOnlyValue(element.value, element.msg)}`;
+        this.historicService.updateCfg(109, this.gatewayPost.nombre, changeHistorics).toPromise();
+      }
+    });
+    this.dirtyCaseTernary.forEach((element: any) => {
+      changeHistorics = ` Parametro(s): `;
+      emptyString = this.isEmpty(this.showDataDirtyCaseTernary(element.value, element.msg, element.op1, element.op2));
+      if(!emptyString){
+        changeHistorics = `${title} ${changeHistorics} ${this.typeService(element)} ${this.showDataDirtyCaseTernary(element.value, element.msg, element.op1, element.op2)}`;
+        this.historicService.updateCfg(109, this.gatewayPost.nombre, changeHistorics).toPromise();
+      }
+    });
+    this.dirtyCaseArrays.forEach((element: any) => {
+      changeHistorics = ` Parametro(s): `;
+      emptyString = this.isEmpty(this.showDataDirtyCaseArrays(element.value, element.msg));
+      if(!emptyString){
+        changeHistorics = `${title} ${changeHistorics} ${this.typeService(element)} ${this.showDataDirtyCaseArrays(element.value, element.msg)}`;
+        this.historicService.updateCfg(109, this.gatewayPost.nombre, changeHistorics).toPromise();
+      }
+    });
   }
 }
 

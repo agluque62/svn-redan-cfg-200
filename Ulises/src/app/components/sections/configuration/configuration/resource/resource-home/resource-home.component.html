@@ -83,7 +83,7 @@
                             <div class="audio-settings">
                                 <div class="agc">
                                     <mat-checkbox class="agc-checkbox" [disabled]="visualizationMode"
-                                        [checked]="displayAGCAD" (change)="displayAGCAD = $event.checked">
+                                        [checked]="displayAGCAD" (change)="checkControlsAudioAD($event.checked)">
                                         AGC en A/D
                                     </mat-checkbox>
                                     <mat-form-field *ngIf="!displayAGCAD" appearance="legacy">
@@ -100,7 +100,7 @@
                                 </div>
                                 <div class="agc">
                                     <mat-checkbox class="agc-checkbox" [disabled]="visualizationMode"
-                                        [checked]="displayAGCDA" (change)="displayAGCDA = $event.checked">
+                                        [checked]="displayAGCDA" (change)="checkControlsAudioDA($event.checked)">
                                         AGC en D/A
                                     </mat-checkbox>
                                     <mat-form-field *ngIf="!displayAGCDA" appearance="legacy">

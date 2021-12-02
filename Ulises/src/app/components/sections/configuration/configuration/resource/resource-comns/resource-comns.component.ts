@@ -33,8 +33,8 @@ export class ResourceComnsComponent implements OnInit {
     { value: 2, viewValue: 'Radio Rx' }
   ];
 
-  subURILabels: string[] = [ "A","B" ]
-  
+  subURILabels: string[] = ["A", "B"]
+
   resourceForm!: FormGroup;
 
   sites: any;
@@ -162,14 +162,19 @@ export class ResourceComnsComponent implements OnInit {
       await this.alertService.errorMessage(``, AppSettings.INVALID_URI);
       event.target.value = '';
     } else {
+      this.resourceForm.get('listaUris')?.markAsDirty();
       if (event.target.value === '') {
         const uri = this.resourceForm.value.listaUris.find((uri: any) => uri.tipo === type && uri.nivel_colateral === collateralLevel);
         this.resourceForm.value.listaUris.splice(this.resourceForm.value.listaUris.indexOf(uri), 1);
       } else {
         let uri = this.resourceForm.value.listaUris.find((uri: any) => uri.tipo === type && uri.nivel_colateral === collateralLevel);
-        (uri) ? 
-          this.resourceForm.value.listaUris[this.resourceForm.value.listaUris.indexOf(uri)].uri = event.target.value 
-          : this.resourceForm.value.listaUris.push({ 'uri': event.target.value, 'tipo': type, 'nivel_colateral': collateralLevel });
+
+        if (uri) {
+          this.resourceForm.value.listaUris[this.resourceForm.value.listaUris.indexOf(uri)].uri = event.target.value;
+          this.resourceForm.value.listaUris[this.resourceForm.value.listaUris.indexOf(uri)]['modified'] = true;
+        } else {
+          this.resourceForm.value.listaUris.push({ 'uri': event.target.value, 'tipo': type, 'nivel_colateral': collateralLevel, modified: true });
+        }
       }
     }
   }

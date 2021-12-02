@@ -84,6 +84,8 @@ export class ResourceListsComponent implements OnInit {
     async saveUri(event: any, pos: number, tipo: string) {
         if (event.target.value.match(AppSettings.URI_PATTERN) != undefined || event.target.value === '') {
             this.uriListToDisplay[tipo][pos].uri = event.target.value;
+            this.uriListToDisplay[tipo][pos]['modified'] = true;
+            this.resourceForm.get('listaUris')?.markAsDirty();
         } else if (event.target.value.match(AppSettings.URI_PATTERN) == undefined && event.target.value != '') {
             await this.alertService.errorMessage(``, AppSettings.INVALID_URI);
             event.target.value = '';

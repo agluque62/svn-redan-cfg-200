@@ -248,6 +248,7 @@ export class GatewayServicesComponent implements OnInit {
       this.form.markAsDirty();
       this.serversFormControl.reset();
       this.resetErrors();
+      this.form.get("proxys")?.markAsDirty();
       await this.alertService.successMessage(``, `Proxy borrado correctamente`);
     }
   }
@@ -277,6 +278,7 @@ export class GatewayServicesComponent implements OnInit {
       const selected = this.form.value.proxys.length === 0 ? true : false;
       this.form.value.proxys.push({ 'ip': this.proxyFormControl.value, 'selected': selected });
       this.form.markAsDirty();
+      this.form.get("proxys")?.markAsDirty();
       await this.alertService.successMessage(``, `Proxy ${this.proxyFormControl.value} añadido correctamente`);
 
       this.proxies = [];
@@ -316,6 +318,7 @@ export class GatewayServicesComponent implements OnInit {
       this.form.markAsDirty();
       this.serversFormControl.reset();
       this.resetErrors();
+      this.form.get("registrars")?.markAsDirty();
       await this.alertService.successMessage(``, `Registrar borrado correctamente`);
     }
   }
@@ -345,6 +348,7 @@ export class GatewayServicesComponent implements OnInit {
       const selected = this.form.value.registrars.length === 0 ? true : false;
       this.form.value.registrars.push({ 'ip': this.registrarsFormControl.value, 'selected': selected });
       this.form.markAsDirty();
+      this.form.get("registrars")?.markAsDirty();
       await this.alertService.successMessage(``, `Registrar ${this.registrarsFormControl.value} añadido correctamente`);
 
       this.registrars = [];
@@ -384,6 +388,7 @@ export class GatewayServicesComponent implements OnInit {
       this.form.markAsDirty();
       this.serversFormControl.reset();
       this.resetErrors();
+      this.form.get("listServers")?.markAsDirty();
       await this.alertService.successMessage(``, `Servidor borrado correctamente`);
     }
   }
@@ -413,6 +418,7 @@ export class GatewayServicesComponent implements OnInit {
       const selected = this.form.value.listServers.length === 0 ? true : false;
       this.form.value.listServers.push({ 'ip': this.serversFormControl.value, 'selected': selected });
       this.form.markAsDirty();
+      this.form.get("listServers")?.markAsDirty();
       await this.alertService.successMessage(``, `Servidor NTP ${this.serversFormControl.value} añadido correctamente`);
 
       this.servers = [];
@@ -443,6 +449,7 @@ export class GatewayServicesComponent implements OnInit {
       this.selectedTrap = null;
       this.resetErrors();
       this.form.markAsDirty();
+      this.form.get("traps")?.markAsDirty();
     }
   }
 
@@ -497,6 +504,7 @@ export class GatewayServicesComponent implements OnInit {
       this.trapServerFormControl.reset();
       this.resetErrors();
     }
+    this.form.get("traps")?.markAsDirty();
   }
 
   selectTrap(trap: string) {

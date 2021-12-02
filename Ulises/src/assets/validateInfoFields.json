@@ -1,0 +1,220 @@
+{
+    "common": [
+        {
+            "label": "Nombre: ",
+            "field": "nombre"
+        },
+        {
+            "label": "Codec: ",
+            "field": "codec"
+        },
+        {
+            "label": "Clave Registro:",
+            "field": "clave_registro"
+        },
+        {
+            "label": "Ajuste Cero digital en A/D (dB): ",
+            "field": "ajuste_ad"
+        },
+        {
+            "label": "Ajuste Cero digital en D/A (dB): ",
+            "field": "ajuste_da"
+        },
+        {
+            "label": "Precisión de audio:",
+            "field": "precision_audio"
+        },
+        {
+            "label": "Posición fila: ",
+            "field": "fila"
+        },
+        {
+            "label": "Posición columna: ",
+            "field": "columna"
+        },
+        {
+            "label": "ID Pasarela: ",
+            "field": "pasarela_id"
+        }
+    ],
+    "radio": [
+        {
+            "label": "Lista de Uris: ",
+            "field": "listaUris"
+        },
+        {
+            "label": "BSS/CLIMAX: ",
+            "field": "climax_bss"
+        },
+        {
+            "label": "Cola BSS SQH: ",
+            "field": "cola_bss_sqh"
+        },
+        {
+            "label": "Eventos PTT/Squelch: ",
+            "field": "evento_ptt_squelch"
+        },
+        {
+            "label": "Frecuencia: ",
+            "field": "frecuencia"
+        },
+        {
+            "label": "Habilita grabación: ",
+            "field": "habilita_grabacion"
+        },
+        {
+            "label": "ID Recurso: ",
+            "field": "idrecurso_radio"
+        },
+        {
+            "label": "Indicación entrada audio: ",
+            "field": "indicacion_entrada_audio"
+        },
+        {
+            "label": "Indicación salida audio: ",
+            "field": "indicacion_salida_audio"
+        },
+        {
+            "label": "Metodo BSS: ",
+            "field": "metodo_bss"
+        },
+        {
+            "label": "Modo Climax: ",
+            "field": "metodo_climax"
+        },
+        {
+            "label": "Prioridad Ptt: ",
+            "field": "prioridad_ptt"
+        },
+        {
+            "label": "Prioridad Sesion SIP: ",
+            "field": "prioridad_sesion_sip"
+        },
+        {
+            "label": "Restriccion Entrantes: ",
+            "field": "restriccion_entrantes"
+        },
+        {
+            "label": "Retraso fijo climax (ms): ",
+            "field": "retardo_fijo_climax"
+        },
+        {
+            "label": "Retraso interno GRS (ms.): ",
+            "field": "retraso_interno_grs"
+        },
+        {
+            "label": "Tabla de calificación de audio: ",
+            "field": "tabla_bss_id"
+        },
+        {
+            "label": "Tipo agente: ",
+            "field": "tipo_agente"
+        },
+        {
+            "label": "Tipo climax: ",
+            "field": "tipo_climax"
+        },
+        {
+            "label": "Umbral VAD (dB): ",
+            "field": "umbral_vad"
+        },
+        {
+            "label": "Ventana BSS (ms): ",
+            "field": "ventana_bss"
+        }
+    ],
+    "tel": [
+        {
+            "label": "Detecta Inversion Polaridad: ",
+            "field": "DetInversionPol"
+        },
+        {
+            "label": "additional_itiporespuesta: ",
+            "field": "additional_itiporespuesta"
+        },
+        {
+            "label": "Supervisa colateral: ",
+            "field": "additional_superv_options"
+        },
+        {
+            "label": "URI Remota Adiccional:",
+            "field": "additional_uri_remota"
+        },
+        {
+            "label": "ATS User: ",
+            "field": "ats_user"
+        },
+        {
+            "label": "Cola VOX (sg.):",
+            "field": "cola_vox"
+        },
+        {
+            "label": "Destino llamadas salientes de test: ",
+            "field": "destino_test"
+        },
+        {
+            "label": "Detección Vox: ",
+            "field": "deteccion_vox"
+        },
+        {
+            "label": "Duracion tono interrupt (sg.): ",
+            "field": "duracion_tono_interrup"
+        },
+        {
+            "label": "Detecta Fallo Linea: ",
+            "field": "iDetLineaAB"
+        },
+        {
+            "label": "Permite Llamadas No ED137: ",
+            "field": "iEnableNoED137"
+        },
+        {
+            "label": "itiporespuesta: ",
+            "field": "itiporespuesta"
+        },
+        {
+            "label": "Lado: ",
+            "field": "lado"
+        },
+        {
+            "label": "Origen llamadas salientes de test: ",
+            "field": "origen_test"
+        },
+        {
+            "label": "Duración tonos resp. estado (sg.): ",
+            "field": "periodo_tonos"
+        },
+        {
+            "label": "Rango número ATS: ",
+            "field": "ranks"
+        },
+        {
+            "label": "Respuesta automática: ",
+            "field": "respuesta_automatica"
+        },
+        {
+            "label": "Supervisa colateral: ",
+            "field": "supervisa_colateral"
+        },
+        {
+            "label": "Tiempo supervision: ",
+            "field": "tiempo_supervision"
+        },
+        {
+            "label": "Tipo de Interfaz telefónico: ",
+            "field": "tipo_interfaz_tel"
+        },
+        {
+            "label": "Umbral VOX (sg.): ",
+            "field": "umbral_vox"
+        },
+        {
+            "label": "URI Telefónica: ",
+            "field": "uri_telefonica"
+        },
+        {
+            "label": "idrecurso_telefono: ",
+            "field": "idrecurso_telefono"
+        }
+    ]
+}

@@ -64,7 +64,6 @@ export class ResourceNRangeComponent implements OnInit {
   }
 
   async saveValue(event: any, pos: number, type: number, key: string) {
-
     if (event.target.value.match(AppSettings.AGVN_PATTERN) != undefined) {
       if (type == 0) { // Origin
         if (key === 'inicial') {
@@ -72,14 +71,18 @@ export class ResourceNRangeComponent implements OnInit {
             await this.alertService.errorMessage(``, `El numero de inicio no puede ser mayor que el final`);
             event.target.value = "";
           } else {
+            this.resourceForm.get('ranks')?.markAsDirty();
             this.originRanks[pos][key] = event.target.value;
+            this.originRanks[pos]['modified'] = true;
           }
         } else if (key === 'final') {
           if (this.originRanks[pos]['inicial'] !== '' && event.target.value < this.originRanks[pos]['inicial']) {
             await this.alertService.errorMessage(``, `El numero final no puede ser menor que el inicial`);
             event.target.value = "";
           } else {
+            this.resourceForm.get('ranks')?.markAsDirty();
             this.originRanks[pos][key] = event.target.value;
+            this.originRanks[pos]['modified'] = true;
           }
         }
       } else if (type == 1) { // Destination
@@ -88,23 +91,31 @@ export class ResourceNRangeComponent implements OnInit {
             await this.alertService.errorMessage(``, `El numero de inicio no puede ser mayor que el final`);
             event.target.value = "";
           } else {
+            this.resourceForm.get('ranks')?.markAsDirty();
             this.destinationRanks[pos][key] = event.target.value;
+            this.destinationRanks[pos]['modified'] = true;
           }
         } else if (key === 'final') {
           if (this.destinationRanks[pos]['inicial'] !== '' && event.target.value < this.destinationRanks[pos]['inicial']) {
             await this.alertService.errorMessage(``, `El numero final no puede ser menor que el inicial`);
             event.target.value = "";
           } else {
+            this.resourceForm.get('ranks')?.markAsDirty();
             this.destinationRanks[pos][key] = event.target.value;
+            this.destinationRanks[pos]['modified'] = true;
           }
         }
       }
     } else if (event.target.value === "") {
       if (type == 0) {
         this.originRanks[pos][key] = event.target.value;
+        this.originRanks[pos]['modified'] = true;
       } else if (type == 1) {
         this.destinationRanks[pos][key] = event.target.value;
+        this.destinationRanks[pos]['modified'] = true;
       }
+      
+      this.resourceForm.get('ranks')?.markAsDirty();
     } else if (event.target.value.match(AppSettings.AGVN_PATTERN) == undefined && event.target.value != '') {
       await this.alertService.errorMessage(``, `Número no válido. El valor debe estar entre 200000 y 399999. Y debe ser de longitud 6`);
       event.target.value = "";
