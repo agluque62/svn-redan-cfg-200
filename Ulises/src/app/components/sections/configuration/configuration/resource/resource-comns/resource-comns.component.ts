@@ -163,13 +163,17 @@ export class ResourceComnsComponent implements OnInit {
       event.target.value = '';
     } else {
       this.resourceForm.get('listaUris')?.markAsDirty();
+
+      let uri = this.resourceForm.value.listaUris.find((uri: any) => uri.tipo === type && uri.nivel_colateral === collateralLevel);
       if (event.target.value === '') {
-        const uri = this.resourceForm.value.listaUris.find((uri: any) => uri.tipo === type && uri.nivel_colateral === collateralLevel);
-        this.resourceForm.value.listaUris.splice(this.resourceForm.value.listaUris.indexOf(uri), 1);
+        this.resourceForm.value.listaUris[this.resourceForm.value.listaUris.indexOf(uri)]['modified'] = true;
+        this.resourceForm.value.listaUris[this.resourceForm.value.listaUris.indexOf(uri)]['previous'] = this.resourceForm.value.listaUris[this.resourceForm.value.listaUris.indexOf(uri)].uri;
+        this.resourceForm.value.listaUris[this.resourceForm.value.listaUris.indexOf(uri)].uri = event.target.value;
+        // this.resourceForm.value.listaUris.splice(this.resourceForm.value.listaUris.indexOf(uri), 1);
       } else {
-        let uri = this.resourceForm.value.listaUris.find((uri: any) => uri.tipo === type && uri.nivel_colateral === collateralLevel);
 
         if (uri) {
+          this.resourceForm.value.listaUris[this.resourceForm.value.listaUris.indexOf(uri)]['previous'] = this.resourceForm.value.listaUris[this.resourceForm.value.listaUris.indexOf(uri)].uri;
           this.resourceForm.value.listaUris[this.resourceForm.value.listaUris.indexOf(uri)].uri = event.target.value;
           this.resourceForm.value.listaUris[this.resourceForm.value.listaUris.indexOf(uri)]['modified'] = true;
         } else {
@@ -185,24 +189,90 @@ export class ResourceComnsComponent implements OnInit {
    * @param type 
    * @param uri 
    */
+
+   pushUri(type: string, pos: number, subUri: boolean) {
+    let uripush;
+    let cnt = 0;
+    this.resourceForm.value.listaUris.forEach((element: any) => {
+      if (element.tipo === type && element.nivel_colateral === pos)
+        cnt++;
+      else {
+        if (subUri) {
+          if (element.tipo === type && element.nivel_colateral === pos + 1) {
+            cnt++;
+          }
+        }
+      }
+    });
+    return uripush = cnt != 0 ? false : true;
+  };
+
+  updateUri (type: string, level: number, uri: string, subUri: boolean){
+    for (let index = 0; index < this.resourceForm.value.listaUris.length; index++) {
+      if (this.resourceForm.value.listaUris[index].tipo === type && this.resourceForm.value.listaUris[index].nivel_colateral === level){
+            this.resourceForm.value.listaUris[index]['previous'] = this.resourceForm.value.listaUris[index].uri;
+            this.resourceForm.value.listaUris[index]['modified'] = true; 
+            this.resourceForm.value.listaUris[index].uri = uri;
+      } else {
+        if (subUri) {
+          if(this.resourceForm.value.listaUris[index].tipo === type && this.resourceForm.value.listaUris[index].nivel_colateral === level+1){
+            this.resourceForm.value.listaUris[index]['previous'] = this.resourceForm.value.listaUris[index].uri;
+            this.resourceForm.value.listaUris[index]['modified'] = true;
+            this.resourceForm.value.listaUris[index].uri = uri;
+          }
+        }
+      }
+    }
+  };
+
+  pushUpdateUri(lenght: number, type: string, level:number, uri: string, prevUri: string, bool: boolean){
+    if (this.resourceForm.value.listaUris.length < lenght) {
+      if (this.resourceForm.value.listaUris.length === 0) {
+        this.resourceForm.value.listaUris.push({ 'uri': uri, 'tipo': type, 'nivel_colateral': level, previous: prevUri, 'modified': true });
+      } else {
+        if (this.pushUri(type, level, bool)) {
+          this.resourceForm.value.listaUris.push({ 'uri': uri, 'tipo': type, 'nivel_colateral': level, previous: prevUri, 'modified': true });
+        }else {
+          this.updateUri(type, level, uri, bool);
+        }
+      }
+    } else {
+      
+      this.updateUri(type, level, uri, bool);
+    }
+  }
+
   makeURI(site: number, level: number, type: string) {
 
     let uri = ``;
-
     if (this.displayConfResourceOpts) {
       uri = `${this.resourcesConf.data[this.selectedConfResource].rName}@${this.resourcesConf.data[this.selectedConfResource].gIpv}:${this.resourcesConf.data[this.selectedConfResource].puerto_sip}`;
     } else {
       uri = `${this.selectedExtResource.uri}`;
     }
-
     let keyType = "";
-
     keyType = (type.includes('TX')) ? 'tx' : 'rx';
     let pos = level === 1 || level === 3 || level === 5 ? 0 : 1;
-
+    let prevUri = this.uriList[site].fields[keyType][pos].uri;
     this.uriList[site].fields[keyType][pos].uri = uri;
-    this.resourceForm.value.listaUris.push({ 'uri': uri, 'tipo': type, 'nivel_colateral': level });
+    this.resourceForm.get('listaUris')?.markAsDirty();
+    switch (this.resourceForm.value.tipo_agente) {
+      case 0:
+        this.pushUpdateUri(2, type, level, uri, prevUri, false);
+        break;
+      case 1:
+        this.pushUpdateUri(4, type, level, uri, prevUri, true);
+        break;
+      case 2:
+        this.pushUpdateUri(6, type, level, uri, prevUri, false);
+        break;
+      case 3:
+        this.pushUpdateUri(12, type, level, uri, prevUri, true);
+        break;
+    }
   }
+  
+
 
   async getSites() {
     const configId = this.dataService.getDataConfigId();

@@ -48,7 +48,7 @@
     </mat-form-field>
     <mat-form-field appearance="fill">
         <mat-label>Duración tono interrupción (sg.)</mat-label>
-        <mat-select [disabled]="visualizationMode" [(value)]="duration" name="duration">
+        <mat-select [disabled]="visualizationMode" [(value)]="duration" name="duration" (selectionChange)="this.resourceForm.get('duracion_tono_interrup')?.markAsDirty();">
             <mat-option *ngFor="let duration of durations" [value]="duration.value">
                 {{duration.viewValue}}
             </mat-option>

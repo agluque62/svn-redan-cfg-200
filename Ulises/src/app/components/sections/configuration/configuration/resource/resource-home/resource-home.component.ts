@@ -117,7 +117,13 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   bssMethods: customValues[] = [
     { value: 0, viewValue: 'Ninguno' },
     { value: 1, viewValue: 'RSSI' },
-    { value: 2, viewValue: 'RSSI/NUCLEO' },
+    { value: 2, viewValue: 'RSSI/NUCLEO' }
+  ];
+
+  favBssMethods: customValues[] = [
+    { value: 0, viewValue: 'RSSI' },
+    { value: 1, viewValue: 'NUCLEO' },
+    { value: 2, viewValue: 'Ninguno' }
   ];
 
   pttPriority: customValues[] = [
@@ -160,6 +166,25 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     { value: 2, viewValue: 'A Dominio' }
   ];
 
+  timeOpts: customValues[] = [
+    { value: 0, viewValue: 'Normal' },
+    { value: 256, viewValue: 'Siempre Tránsito' }
+  ];
+
+  durations: customValues[] = [
+    { value: 5, viewValue: '5' },
+    { value: 6, viewValue: '6' },
+    { value: 7, viewValue: '7' },
+    { value: 8, viewValue: '8' },
+    { value: 9, viewValue: '9' },
+    { value: 10, viewValue: '10' },
+    { value: 11, viewValue: '11' },
+    { value: 12, viewValue: '12' },
+    { value: 13, viewValue: '13' },
+    { value: 14, viewValue: '14' },
+    { value: 15, viewValue: '15' }
+  ];
+
   selectedResource: number = this.types[0].value;
   resourceId!: number;
 
@@ -170,7 +195,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   changes = false;
   tablesBss: any;
   precAudioIsDisable = false;
-
+  rawLists: any = [];
 
   constructor(private readonly cfr: ComponentFactoryResolver, private readonly resourceService: ResourceService,
     private readonly alertService: AlertService, private readonly route: ActivatedRoute, private readonly app: AppComponent,
@@ -186,6 +211,18 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     this.resourceId = Number(this.route.snapshot.paramMap.get('id'));
     const slot = await this.dataService.getDataSlot();
     this.tablesBss = (await this.tableBssService.getTableAudioBss().toPromise()).tables;
+    this.tablesBss.unshift({
+      FechaCreacion: "",
+      description: "Ninguna",
+      idtabla_bss: 0,
+      name: 'Ninguna',
+      valor0: 0,
+      valor1: 0,
+      valor2: 0,
+      valor3: 0,
+      valor4: 0,
+      valor5: 0
+    })
     this.GATEWAY_ID = slot.gatewayId;
 
     this.COLUMN = slot.columna;
@@ -440,9 +477,14 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
     if (this.thirdTabRef.instance.uriListToDisplay != undefined) {
       let blList = this.thirdTabRef.instance.uriListToDisplay['LSN'];
-      let blListFiltered = blList.filter((x: any) => x.uri != '');
-
       let wList = this.thirdTabRef.instance.uriListToDisplay['LSB'];
+
+      let rawBlList = blList;
+      let rawWList = wList;
+
+      this.rawLists = rawBlList.concat(rawWList);
+
+      let blListFiltered = blList.filter((x: any) => x.uri != '');
       let wListFiltered = wList.filter((x: any) => x.uri != '');
 
       this.resourceForm.patchValue({ listaUris: blListFiltered.concat(wListFiltered) });
@@ -528,7 +570,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
             if (this.resource.nombre != this.resourceForm.value.nombre)
               this.resource.nombre = this.resourceForm.value.nombre;
           } else {
-            await this.historicService.updateCfg(113, this.resourceForm.value.nombre, title).toPromise();
+            this.validateFormDirty(title, 113);
           }
           await this.alertService.successMessage(``, message);
           this.dataService.updateDataGatewayPreviousUrl('RESOURCE');
@@ -971,20 +1013,21 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     let arrayToCheckFields = this.selectedResource == 1 ? formsFields.common.concat(formsFields.radio) : formsFields.common.concat(formsFields.tel);
 
     if (this.isCheckedRegistryKey) {
-      title += `Habilitado Clave registro: ${this.registerKeyExists ? 'Si' : 'No'}; `
-      await this.historicService.updateCfg(code, this.resource.nombre, title).toPromise();
+      let keyCondition = (this.resourceForm.value.clave_registro !== null && this.resourceForm.value.clave_registro !== '' && this.isCheckedRegistryKey);
+      title += `Habilitado Clave registro: ${keyCondition ? 'Si' : 'No'}; `
+      await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
     }
 
     if (this.isChangedAGCAD) {
       title = `${initTitle} - Parametro(s): `;
       title += `Habilitado AGC en A/D: ${this.displayAGCAD ? 'Si' : 'No'}; `
-      await this.historicService.updateCfg(code, this.resource.nombre, title).toPromise();
+      await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
     }
 
     if (this.isChangedAGCDA) {
       title = `${initTitle} - Parametro(s): `;
       title += `Habilitado AGC en D/A: ${this.displayAGCDA ? 'Si' : 'No'}; `
-      await this.historicService.updateCfg(code, this.resource.nombre, title).toPromise();
+      await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
     }
 
     if (this.resourceForm.dirty || this.isCheckedRegistryKey || this.isChangedAGCAD || this.isChangedAGCDA) {
@@ -997,6 +1040,11 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         if (this.resourceForm.get(data.field)?.dirty) {
 
           switch (data.field) {
+            case "nombre":
+              if (this.editMode) {
+                msg = `${data.label} ${this.resourceForm.get(data.field)?.value}; `;
+              }
+              break;
             case "tipo_agente":
               value = this.customFilter(this.radioAgents, data.field);
               msg = `${data.label} ${value}; `;
@@ -1081,16 +1129,45 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               break;
             case "listaUris":
               msg = '';
-              this.resourceForm.get(data.field)?.value.forEach(async (uri: any, index: number) => {
+              if (this.rawLists.length > 0) {
+                // BL - WL
+                this.rawLists.forEach(async (uri: any, index: number) => {
+                  if (uri.hasOwnProperty("modified") && uri.modified === true) {
 
-                if (uri.hasOwnProperty("modified") && uri.modified === true) {
-                  title = `${initTitle} - Parametro(s): `;
-                  title += `${data.label} ${uri.tipo}: ${uri.uri}`
-                  delete this.resourceForm.get(data.field)?.value[index].modified;
-                  await this.historicService.updateCfg(code, this.resource.nombre, title).toPromise();
-                }
+                    title = `${initTitle} - Parametro(s): `;
 
-              });
+                    title += `${data.label} ${uri.tipo}: ${uri.uri === '' ? "Vacio" : uri.uri}; URI Anterior: ${uri.previous};`;
+
+                    await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
+                  }
+
+                });
+              } else {
+                this.resourceForm.get(data.field)?.value.forEach(async (uri: any, index: number) => {
+                  if (uri.hasOwnProperty("modified") && uri.modified === true) {
+                    let emp = `Emplazamiento `;
+
+                    if (uri.nivel_colateral === 1 || uri.nivel_colateral === 2) {
+                      emp += 1;
+                    } else if (uri.nivel_colateral === 3 || uri.nivel_colateral === 4) {
+                      emp += 2;
+                    } else if (uri.nivel_colateral === 5 || uri.nivel_colateral === 6) {
+                      emp += 3;
+                    } else {
+                      emp = '';
+                    }
+                    title = `${initTitle} - Parametro(s): `;
+
+                    title += `${data.label} ${uri.tipo}: ${uri.uri === '' ? "Vacio" : uri.uri}; ${emp}; URI Anterior: ${uri.previous};`;
+
+                    delete this.resourceForm.get(data.field)?.value[index].modified;
+                    delete this.resourceForm.get(data.field)?.value[index].previous;
+                    await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
+                  }
+
+                });
+              }
+
               break;
             case "restriccion_entrantes":
               value = this.customFilter(this.typeLists, data.field);
@@ -1105,13 +1182,20 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               msg = `${data.label} ${value}; `;
               break;
             case "metodo_bss":
-              msg = `${data.label} ${this.bssMethods[this.resourceForm.get(data.field)?.value].viewValue}; `;
+              if (this.resourceForm.value.tipo_agente < 3){
+                value = this.customFilter(this.bssMethods, data.field);
+              }else{
+                value = this.customFilter(this.favBssMethods, data.field);
+              }
+              msg = `${data.label} ${value}; `;
               break;
             case "tabla_bss_id":
               msg = `${data.label} ${this.tablesBss[this.tablesBss.findIndex((x: any) => x.idtabla_bss === this.resourceForm.value.tabla_bss_id)].name}; `;
               break;
             case "iEnableNoED137":
             case "DetInversionPol":
+            case "evento_ptt_squelch":
+            case "habilita_grabacion":
             case "iDetLineaAB":
               msg = `${data.label} ${this.resourceForm.get(data.field)?.value === true ? 'Si' : 'No'}; `;
               break;
@@ -1132,9 +1216,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               arrayToCheckFields.splice(indexFinded, 1);
               break;
             case "respuesta_automatica":
-              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === true ? 'Si' : 'No'}; 
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 1 || this.resourceForm.get(data.field)?.value === true ? 'Si' : 'No'}; 
               Duración tonos resp. estado (sg.): ${this.resourceForm.get('periodo_tonos')?.value};`;
-
               // DELETE periodo_tonos on array
               indexFinded = arrayToCheckFields.findIndex(function (data) {
                 return data.field == 'periodo_tonos';
@@ -1145,14 +1228,14 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 0 ? 'A' : 'B'}; `
               break;
             case "ranks":
-              msg = '';
+              msg = ''; 
               this.resourceForm.get(data.field)?.value.forEach(async (rank: any, index: number) => {
 
                 if (rank.hasOwnProperty("modified") && rank.modified === true) {
                   title = `${initTitle} - Parametro(s): `;
                   title += `${data.label} ${rank.tipo === 0 ? 'origen: ' : 'destino: '} ${rank.inicial} - ${rank.final} `
                   delete this.resourceForm.get(data.field)?.value[index].modified;
-                  await this.historicService.updateCfg(code, this.resource.nombre, title).toPromise();
+                  await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
                 }
 
               });
@@ -1175,7 +1258,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               break;
             case "additional_superv_options":
               value = this.customFilter(this.supCollateral, data.field);
-              msg = `${data.label} ${value}; Option Response: ${this.resourceForm.value.additional_itiporespuesta === 0 ? 'No' : 'Si'};
+              msg = `${data.label} ${value}; Additional Options Response: ${this.resourceForm.value.additional_itiporespuesta === 0 ? 'No' : 'Si'};
               Tiempo Supervision (sg.): ${this.resourceForm.value.tiempo_supervision};`;
               // DELETE additional_itiporespuesta on array
               indexFinded = arrayToCheckFields.findIndex(function (data) {
@@ -1189,10 +1272,22 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               arrayToCheckFields.splice(indexFinded, 1);
               break;
             case "itiporespuesta":
-              msg = `Option Response: ${this.resourceForm.value.itiporespuesta === 0 ? 'No' : 'Si'};`
-              break;
             case "additional_itiporespuesta":
-              msg = `Option Response: ${this.resourceForm.value.additional_itiporespuesta === 0 ? 'No' : 'Si'};`
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 0 ? 'No' : 'Si'};`
+              break;
+            case "duracion_tono_interrup":
+              let result = this.timeOpts.filter((datarow: any) => {
+                if ((datarow.value == this.secondTabRef.instance.timeOpt)) {
+                  return datarow;
+                }
+              })[0].viewValue;
+              msg = `Time Out respuesta llamada: ${result}; 
+              ${data.label} ${this.resourceForm.get(data.field)?.value > 256 ?
+                  (this.resourceForm.get(data.field)?.value - 256) : this.resourceForm.get(data.field)?.value}; `;
+              break;
+            case "precision_audio":
+              value = this.customFilter(this.indexAudio, data.field);
+              msg = `${data.label} ${value}; `;
               break;
             default:
               msg = `${data.label} ${this.resourceForm.get(data.field)?.value}; `;
@@ -1200,7 +1295,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
           }
           if (msg !== '') {
             title += msg;
-            await this.historicService.updateCfg(code, this.resource.nombre, title).toPromise();
+            await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
           }
 
         }

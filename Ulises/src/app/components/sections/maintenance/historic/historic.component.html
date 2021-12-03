@@ -60,8 +60,8 @@
             <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Grupo')">
                 <mat-label>{{'Grupo'}}</mat-label>
                 <mat-select [(ngModel)]="selectedGroup" multiple (selectionChange)="updateData(false)">
-                    <mat-option [value]="group" *ngFor="let group of groupOptions">
-                        {{ group }}
+                    <mat-option [value]="group.TipoHw" *ngFor="let group of groupOptions">
+                        {{ group.TipoHw }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -69,8 +69,8 @@
             <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Componente')">
                 <mat-label>{{'Componente'}}</mat-label>
                 <mat-select [(ngModel)]="selectedComponent" multiple (selectionChange)="updateData(false)">
-                    <mat-option [value]="component" *ngFor="let component of componentOptions">
-                        {{ component }}
+                    <mat-option [value]="component.IdHw" *ngFor="let component of componentOptions">
+                        {{ component.IdHw }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -78,8 +78,8 @@
             <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Tipo de registro')">
                 <mat-label>{{'Tipo de registro'}}</mat-label>
                 <mat-select [(ngModel)]="selectedRegister" multiple (selectionChange)="updateData(false)">
-                    <mat-option [value]="register" *ngFor="let register of codeOptions">
-                        {{ register }}
+                    <mat-option [value]="register.IdIncidencia" *ngFor="let register of codeOptions">
+                        {{ register.Incidencia }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>

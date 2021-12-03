@@ -129,28 +129,32 @@
             "field": "DetInversionPol"
         },
         {
-            "label": "additional_itiporespuesta: ",
-            "field": "additional_itiporespuesta"
+            "label": "URI Telefónica: ",
+            "field": "uri_telefonica"
         },
         {
             "label": "Supervisa colateral: ",
-            "field": "additional_superv_options"
+            "field": "supervisa_colateral"
+        },
+        {
+            "label": "Options Response: ",
+            "field": "itiporespuesta"
         },
         {
             "label": "URI Remota Adiccional:",
             "field": "additional_uri_remota"
         },
         {
-            "label": "ATS User: ",
+            "label": "Supervisa colateral Adiccional: ",
+            "field": "additional_superv_options"
+        },
+        {
+            "label": "Additional Options Response: ",
+            "field": "additional_itiporespuesta"
+        },
+        {
+            "label": "AGVN User Name: ",
             "field": "ats_user"
-        },
-        {
-            "label": "Cola VOX (sg.):",
-            "field": "cola_vox"
-        },
-        {
-            "label": "Destino llamadas salientes de test: ",
-            "field": "destino_test"
         },
         {
             "label": "Detección Vox: ",
@@ -169,16 +173,20 @@
             "field": "iEnableNoED137"
         },
         {
-            "label": "itiporespuesta: ",
-            "field": "itiporespuesta"
-        },
-        {
             "label": "Lado: ",
             "field": "lado"
         },
         {
             "label": "Origen llamadas salientes de test: ",
             "field": "origen_test"
+        },
+        {
+            "label": "Destino llamadas salientes de test: ",
+            "field": "destino_test"
+        },
+        {
+            "label": "Respuesta automática: ",
+            "field": "respuesta_automatica"
         },
         {
             "label": "Duración tonos resp. estado (sg.): ",
@@ -189,14 +197,6 @@
             "field": "ranks"
         },
         {
-            "label": "Respuesta automática: ",
-            "field": "respuesta_automatica"
-        },
-        {
-            "label": "Supervisa colateral: ",
-            "field": "supervisa_colateral"
-        },
-        {
             "label": "Tiempo supervision: ",
             "field": "tiempo_supervision"
         },
@@ -205,12 +205,12 @@
             "field": "tipo_interfaz_tel"
         },
         {
-            "label": "Umbral VOX (sg.): ",
+            "label": "Umbral VOX (dB): ",
             "field": "umbral_vox"
         },
         {
-            "label": "URI Telefónica: ",
-            "field": "uri_telefonica"
+            "label": "Cola VOX (sg.):",
+            "field": "cola_vox"
         },
         {
             "label": "idrecurso_telefono: ",

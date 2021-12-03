@@ -62,6 +62,8 @@ export class ATSFormComponent implements OnInit {
       this.checkTimeOut();
     } else {
       this.isR2 = false;
+      this.timeOpt = 0;
+      this.duration = this.resourceForm.value.duracion_tono_interrup;
     }
     
     if(this.resourceForm.value.respuesta_automatica === 1){
@@ -89,6 +91,7 @@ export class ATSFormComponent implements OnInit {
 
   changeTimeOpt(event: any) {
     this.timeOpt = event.value;
+    this.resourceForm.get('duracion_tono_interrup')?.markAsDirty();
   }
 
   automaticResponseIsChecked(opt: boolean) {

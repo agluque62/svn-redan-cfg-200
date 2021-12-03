@@ -1,3 +1,3 @@
 export class HistoricsGroup {
-    TipoHw!: string;
+    TipoHw!: number;
 }

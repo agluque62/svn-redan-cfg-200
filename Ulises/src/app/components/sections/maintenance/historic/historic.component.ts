@@ -181,6 +181,7 @@ export class HistoricComponent implements OnInit {
 
                 return includesTypeFilter && includesGroupFilter && includesCompFilter && includesRegFilter;
             });
+            
             this.dataUsed = result;
         } else {
             this.dataUsed = this.dataRaw.historics;
@@ -282,9 +283,7 @@ export class HistoricComponent implements OnInit {
             if (result.error) {
                 this.alertService.errorMessage(``, result.error);
             } else {
-                this.groupOptions = result.groups.map(function (x: any) {
-                    return x.TipoHw;
-                });
+                this.groupOptions = result.groups;
             }
         } catch (error: any) {
             this.ready = true;
@@ -298,9 +297,7 @@ export class HistoricComponent implements OnInit {
             if (result.error) {
                 this.alertService.errorMessage(``, result.error);
             } else {
-                this.componentOptions = result.components.map(function (x: any) {
-                    return x.IdHw;
-                });
+                this.componentOptions = result.components;
             }
 
         } catch (error: any) {
@@ -315,9 +312,7 @@ export class HistoricComponent implements OnInit {
             if (result.error) {
                 this.alertService.errorMessage(``, result.error);
             } else {
-                this.codeOptions = result.codes.map(function (x: any) {
-                    return x.Incidencia;
-                });
+                this.codeOptions = result.codes;
             }
         } catch (error: any) {
             this.ready = true;

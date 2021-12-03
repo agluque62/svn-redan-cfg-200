@@ -173,7 +173,12 @@ export class ResourceCollateralsComponent implements OnInit {
     let uri = '';
     
     if (this.resources[this.selectedResource] !== undefined) {
-
+      if(additional){
+        this.resourceForm.get('additional_uri_remota')?.markAsDirty();
+      }else{
+        this.resourceForm.get('uri_telefonica')?.markAsDirty();
+      }
+      
       if (this.telAGVNNameSelected != '' && this.telAGVNNameSelected != undefined) {
         firstPartUri = this.telAGVNNameSelected;
         secondPartUri = this.selectedTypeResource === 0 ? this.resources[this.selectedResource]["gIpv"] : this.resources[this.selectedResource]["gIpv"].split("@")[1];

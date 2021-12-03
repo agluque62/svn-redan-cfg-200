@@ -1,3 +1,3 @@
 export class HistoricsComponent {
-    IdHw!: string;
+    IdHw!: number;
 }

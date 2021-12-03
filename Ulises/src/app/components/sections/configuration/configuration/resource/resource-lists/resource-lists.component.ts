@@ -83,6 +83,7 @@ export class ResourceListsComponent implements OnInit {
 
     async saveUri(event: any, pos: number, tipo: string) {
         if (event.target.value.match(AppSettings.URI_PATTERN) != undefined || event.target.value === '') {
+            this.uriListToDisplay[tipo][pos]['previous'] = this.uriListToDisplay[tipo][pos].uri;
             this.uriListToDisplay[tipo][pos].uri = event.target.value;
             this.uriListToDisplay[tipo][pos]['modified'] = true;
             this.resourceForm.get('listaUris')?.markAsDirty();
