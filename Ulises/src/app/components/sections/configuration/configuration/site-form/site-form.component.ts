@@ -94,14 +94,16 @@ export class SiteFormComponent implements OnInit {
     try {
       if (this.siteForm.valid) {
         const result = await this.siteService.createSite(this.configurationId, this.siteForm.value.name).toPromise();
-        if (result.error) {
-          await this.alertService.errorMessage(``, result.data);
+        if (result.error && result.error === 'ER_DUP_ENTRY') {
+          await this.alertService.errorMessage(``, `El nombre ${this.siteForm.value.name} ya existe en esta configuración.`);
           return;
+        } else if (result.error){
+          await this.alertService.errorMessage(``, result.error);
+          return;
+        } else {
+          await this.alertService.successMessage(``, `Emplazamiento ${this.siteForm.value.name} creado`);
+          this.dialogRef.close(true);
         }
-
-        await this.alertService.successMessage(``, `Emplazamiento ${this.siteForm.value.name} creado`);
-
-        this.dialogRef.close(true);
       } else {
         this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
       }

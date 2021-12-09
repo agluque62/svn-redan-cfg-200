@@ -387,8 +387,6 @@ export class GatewayHomeComponent implements OnInit {
             return;
           }
         }
-      }
-
       delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
       gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
       gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
@@ -409,8 +407,7 @@ export class GatewayHomeComponent implements OnInit {
       this.dataService.updateDataGatewayPreviousUrl('NEW');
       this.router.navigate(['/home/gateway/' + newGtw.insertId]);
 
-
-
+      }
     } catch (error: any) {
       this.app.catchError(error);
     }
