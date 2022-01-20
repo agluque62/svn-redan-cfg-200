@@ -481,6 +481,9 @@ app.get('/alive',
         else {
             // msg4Login(req, 'La sesion ha expirado. Identifiquese de nuevo');
             // console.log('redirect to /login from /alive');
+			// RM4970. Se cierra la sesión en el servidor cuando se ha cerrando antes en el cliente.
+			ctrlSesiones.localSession = null;
+            logging.Trace("La Session ha expirado en el cliente...");
             res.status(401).json({ 'error': 'La sesión ha expirado. Identifiquese de nuevo.' })
         }
     });
