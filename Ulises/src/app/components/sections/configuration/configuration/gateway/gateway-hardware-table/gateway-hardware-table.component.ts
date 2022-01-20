@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { Gateway } from 'src/app/_models/configs/gateway/Gateway';
 import { DataService } from 'src/app/_services/data.service';
 import { HardwareService } from 'src/app/_services/hardware.service';
+import { HistoricService } from 'src/app/_services/historic.service';
 import { UserService } from 'src/app/_services/user.service';
 
 @Component({
@@ -46,14 +47,14 @@ export class GatewayHardwareTableComponent implements OnInit {
     visualizationMode: boolean = false;
 
     constructor(private readonly router: Router, private readonly hardwareService: HardwareService, private readonly dataService: DataService,
-        private readonly userService: UserService) { }
+        private readonly userService: UserService, private historicService: HistoricService) { }
 
     ngOnInit(): void {
 
         this.visualizationMode = (this.visualizationPermission()) ? true : false;
 
         window.addEventListener('mouseup', e => {
-            this.isDragging = (e.offsetX-this.coordX !== 0 && e.offsetY-this.coordY !== 0);
+            this.isDragging = (e.offsetX - this.coordX !== 0 && e.offsetY - this.coordY !== 0);
         });
 
         window.addEventListener('mousedown', e => {
@@ -141,9 +142,9 @@ export class GatewayHardwareTableComponent implements OnInit {
                     this.dashboard.push(this.getItem(item.fila, item.columna, item.nombre, this.AGENT_TYPE_TELEPHONE, item));
                 }
             } else {
-                let row = Math.floor((index)/4);
+                let row = Math.floor((index) / 4);
                 let col = index % 4;
-                this.freeCells.push({ columna: col, fila: row});
+                this.freeCells.push({ columna: col, fila: row });
             }
             cont++;
         });
@@ -226,10 +227,13 @@ export class GatewayHardwareTableComponent implements OnInit {
                 const idResource = (targetItem.idrecurso_radio) ? targetItem.idrecurso_radio : targetItem.idrecurso_telefono;
                 const type = (targetItem.idrecurso_radio) ? 1 : 2;
 
+                let title = this.dataService.getDataGatewayTitle();
+                title = `${title} - ${type === 1 ? "Radio" : "Teléfono"},`;
+                title = `${title} Movido a: Columna - ${element.columna}, Fila - ${element.fila}`;
                 if (this.isEmptyCell(targetItem)) {
                     await this.hardwareService.updatePositions(this.gateway.idCGW, idResource, type, targetItem, sourceItem).toPromise();
                     const idx = this.freeCells.findIndex(object => object.columna === nextItem.columna && object.fila === nextItem.fila);
-                    this.freeCells.splice(idx,1);
+                    this.freeCells.splice(idx, 1);
                     this.freeCells.push(previousItem);
                 } else {
                     if (this.enabledSwap) {
@@ -237,8 +241,10 @@ export class GatewayHardwareTableComponent implements OnInit {
                         await this.hardwareService.updatePositions(this.gateway.idCGW, idResource, type, targetItem, sourceItem).toPromise();
                     } else {
                         this.enabledSwap = true;
-                    }    
+                    }
                 }
+                await this.historicService.updateCfg(115, targetItem.nombre, title).toPromise();
+                this.gateway.pendiente_actualizar = 1;
             }
         });
     }
@@ -247,8 +253,8 @@ export class GatewayHardwareTableComponent implements OnInit {
 
         let isEmpty: boolean = false;
 
-        this.freeCells.forEach( obj => {
-            if (obj.columna === target.columna && obj.fila === target.fila) {        
+        this.freeCells.forEach(obj => {
+            if (obj.columna === target.columna && obj.fila === target.fila) {
                 isEmpty = true;
             }
         });

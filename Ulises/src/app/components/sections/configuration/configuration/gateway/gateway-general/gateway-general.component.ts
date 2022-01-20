@@ -63,22 +63,6 @@ export class GatewayGeneralComponent implements OnInit {
   }
 
   async siteChanges(value: number) {
-
-    const site = this.siteOptions.find(sites => { return sites.idEMPLAZAMIENTO === value });
-    const result = await this.alertService.confirmationMessage(``,
-      `¿Quiere transladar la pasarela ${this.gateway.name} del emplazamiento ${this.gateway.emplazamiento} al emplazamiento ${site?.name}?`);
-
-    if (result.value) {
-      const result = await this.siteService.changeSite(this.gateway.idCGW, this.gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO, value).toPromise();
-      if (result.error) {
-        await this.alertService.errorMessage(``, result.error);
-      }
-
-      if (result.data === 'OK') {
-        await this.alertService.successMessage(``, `La pasarela ha sido cambiada de emplazamiento.`);
-      }
-    } else {
-      this.form.value.EMPLAZAMIENTO_idEMPLAZAMIENTO = this.gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
-    }
+    this.form.value.EMPLAZAMIENTO_idEMPLAZAMIENTO = value;
   }
 }

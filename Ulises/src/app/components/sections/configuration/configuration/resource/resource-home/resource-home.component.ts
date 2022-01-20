@@ -210,19 +210,22 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     this.appset = AppSettings;
     this.resourceId = Number(this.route.snapshot.paramMap.get('id'));
     const slot = await this.dataService.getDataSlot();
-    this.tablesBss = (await this.tableBssService.getTableAudioBss().toPromise()).tables;
-    this.tablesBss.unshift({
-      FechaCreacion: "",
-      description: "Ninguna",
-      idtabla_bss: 0,
-      name: 'Ninguna',
-      valor0: 0,
-      valor1: 0,
-      valor2: 0,
-      valor3: 0,
-      valor4: 0,
-      valor5: 0
-    })
+    this.tablesBss = (await this.tableBssService.getTableAudioBss().toPromise())?.tables;
+    if (this.tablesBss !== null) {
+      this.tablesBss.unshift({
+        FechaCreacion: "",
+        description: "Ninguna",
+        idtabla_bss: 0,
+        name: 'Ninguna',
+        valor0: 0,
+        valor1: 0,
+        valor2: 0,
+        valor3: 0,
+        valor4: 0,
+        valor5: 0
+      });
+    }
+
     this.GATEWAY_ID = slot.gatewayId;
 
     this.COLUMN = slot.columna;
@@ -471,6 +474,23 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       });
   }
 
+  async checkOutgoingCallsNumbers(): Promise<boolean> {
+    let result = false;
+    // Tel resource ATS-R2 || ATS-N5
+    if (this.selectedResource === 2 && (this.resourceForm.get('tipo_interfaz_tel')?.value === 3 || this.resourceForm.get('tipo_interfaz_tel')?.value === 4)) {
+      if (this.resourceForm.get('origen_test')?.value === this.resourceForm.get('destino_test')?.value &&
+        this.resourceForm.get('origen_test')?.value !== '' &&
+        this.resourceForm.get('destino_test')?.value !== '') {
+
+        const message = `Origen llamadas salientes de test no puede ser igual que Destino llamadas salientes de test`;
+        await this.alertService.errorMessage(`Error`, message);
+        result = true;
+      }
+    }
+
+    return result
+  }
+
   async onSubmit() {
     let res;
     let message;
@@ -511,7 +531,11 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       this.resourceForm.get('umbral_vad')?.clearValidators();
       this.resourceForm.get('umbral_vad')?.updateValueAndValidity();
     }
-    if (this.resourceForm.valid && (nameIsValid?.toString() === 'NO_ERROR' || nameIsValid === undefined) && !ranksKO && ((confirm?.isConfirmed == true && this.displayTbMessage) || !this.displayTbMessage)) {
+    if (this.resourceForm.valid &&
+      (nameIsValid?.toString() === 'NO_ERROR' || nameIsValid === undefined) &&
+      !ranksKO &&
+      !(await this.checkOutgoingCallsNumbers()) &&
+      ((confirm?.isConfirmed == true && this.displayTbMessage) || !this.displayTbMessage)) {
       let confirmLoadIndex = await this.checkLoadIndex();
       if ((confirmLoadIndex.response?.isConfirmed == true && confirmLoadIndex.loadIndex > 16) || (confirmLoadIndex.response === undefined)) {
         this.resourceForm.get('frecuencia')?.setValidators([]); // Issue 2747
@@ -814,6 +838,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       this.selectTelephonicForm();
       this.loadCollateralsTab();
     }
+    if (!this.editMode && this.resourceForm.value.nombre !== '') { // issue 2881
+      this.resourceForm.controls['nombre'].markAsDirty();
+    }
   }
 
   /**
@@ -918,6 +945,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     }
     return loadIndex;
   }
+
   calculatePreviewLoadIndex(hardwareResume: any) {
     let radio = hardwareResume.radio;
     let telResources = hardwareResume.tfno;
@@ -963,7 +991,6 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     });
     return loadIndex;
   }
-
 
   calculateLoadIndex(hardwareResume: any) {
     let radioResources = hardwareResume.radio;
@@ -1029,7 +1056,6 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       title += `Habilitado AGC en D/A: ${this.displayAGCDA ? 'Si' : 'No'}; `
       await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
     }
-
     if (this.resourceForm.dirty || this.isCheckedRegistryKey || this.isChangedAGCAD || this.isChangedAGCDA) {
       arrayToCheckFields.forEach(async (data: any, index: number) => {
         let value: string = "";
@@ -1041,9 +1067,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
           switch (data.field) {
             case "nombre":
-              if (this.editMode) {
-                msg = `${data.label} ${this.resourceForm.get(data.field)?.value}; `;
-              }
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value}; `;
               break;
             case "tipo_agente":
               value = this.customFilter(this.radioAgents, data.field);
@@ -1182,9 +1206,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               msg = `${data.label} ${value}; `;
               break;
             case "metodo_bss":
-              if (this.resourceForm.value.tipo_agente < 3){
+              if (this.resourceForm.value.tipo_agente < 3) {
                 value = this.customFilter(this.bssMethods, data.field);
-              }else{
+              } else {
                 value = this.customFilter(this.favBssMethods, data.field);
               }
               msg = `${data.label} ${value}; `;
@@ -1228,7 +1252,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 0 ? 'A' : 'B'}; `
               break;
             case "ranks":
-              msg = ''; 
+              msg = '';
               this.resourceForm.get(data.field)?.value.forEach(async (rank: any, index: number) => {
 
                 if (rank.hasOwnProperty("modified") && rank.modified === true) {
@@ -1293,6 +1317,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               msg = `${data.label} ${this.resourceForm.get(data.field)?.value}; `;
               break;
           }
+
           if (msg !== '') {
             title += msg;
             await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();

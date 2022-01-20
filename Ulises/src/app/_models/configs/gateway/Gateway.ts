@@ -33,7 +33,7 @@ export class Gateway {
     constructor(siteId?: number) {
         this.puerto_sip = 5060;
         this.periodo_supervision = 90;
-        this.dvrrp = 2;
+        this.dvrrp = 2000;
         this.puerto_servicio_snmp = 65000;
         this.puerto_snmp = 161;
         this.nombre_snmp = 'ULISESG5000i';

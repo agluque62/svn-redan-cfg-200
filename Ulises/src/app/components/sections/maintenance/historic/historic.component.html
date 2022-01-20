@@ -54,7 +54,7 @@
 
             <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Descripción')">
                 <mat-label>Descripción</mat-label>
-                <input matInput (keyup)="applyFilter($event)" #input>
+                <input matInput (keyup)="applyFilter($event)" [(ngModel)]="filterValue" #input>
             </mat-form-field>
 
             <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Grupo')">

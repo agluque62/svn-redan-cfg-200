@@ -27,6 +27,7 @@ import { ConfigurationIpResponse } from 'src/app/_models/configs/configuration/r
 import { ConfigurationIp } from 'src/app/_models/configs/configuration/ConfigurationIp';
 import { ConfigurationById } from 'src/app/_models/configs/configuration/ConfigurationById';
 import { ConfigurationByIdResponse } from 'src/app/_models/configs/configuration/response/ConfigurationByIdRespose';
+import { SiteService } from 'src/app/_services/site.service';
 @Component({
   selector: 'gateway-home',
   templateUrl: './gateway-home.component.html',
@@ -71,51 +72,53 @@ export class GatewayHomeComponent implements OnInit {
 
   msg !: string[];
 
+  siteOptions!: any[];
+
   dirtyCaseOnlyValue: any[] = [
-    { id: 0, value: 'nombre', msg: ' Nombre: '},
-    { id: 1,  value: 'ipv', msg: ' Dir. IP Virtual: '},
-    { id: 2,  value: 'EMPLAZAMIENTO_idEMPLAZAMIENTO', msg: ' Id. Emplazamiento: '},
-    { id: 3,  value: 'dvrrp', msg: ' Retardo activacion modo dual(ms.): '},
-    { id: 4,  value: 'pendiente_actualizar', msg: ' Pendiente actualizar: '},
-    { id: 5,  value: 'ultima_actualizacion', msg: ' Última actualización: '},
-    { id: 6,  value: 'ipb1', msg: ' Ip cpu0: '},
-    { id: 7,  value: 'ipb2', msg: ' Ip cpu1: '},
-    { id: 8,  value: 'ipg1', msg: ' Ip gateway0: '},
-    { id: 9,  value: 'ipg2', msg: ' Ip gateway1: '},
-    { id: 10,  value: 'msb1', msg: ' Máscara cpu0: '},
-    { id: 11,  value: 'msb2', msg: ' Máscara cpu1: '},
-    { id: 12,  value: 'PuertoLocalSIP ', msg: ' Puerto local SIP: ', servicetab:'SIP'},
-    { id: 13,  value: 'periodo_supervision', msg: ' Periodo de supervisión: ', servicetab:'SIP'},
-    { id: 14,  value: 'puerto_servicio_snmp', msg: ' Puerto Servicio SNMP: ', servicetab:'SNMP'},
-    { id: 15,  value: 'comunidad_snmp', msg: ' Comunidad SNMP: ', servicetab:'SNMP'},
-    { id: 16,  value: 'puerto_snmp', msg: ' Puerto SNMP: ', servicetab:'SNMP'},
-    { id: 17,  value: 'nombre_snmp', msg: ' Nombre SNMP: ', servicetab:'SNMP'},
-    { id: 18,  value: 'localizacion_snmp', msg: ' Ubicación SNMP: ', servicetab:'SNMP'},
-    { id: 19,  value: 'contacto_snmp', msg: ' Contacto SNMP: ', servicetab:'SNMP'},
-    { id: 20,  value: 'puerto_servicio_web', msg: ' Puerto Servicio Web: ', servicetab:'Web'},
-    { id: 21,  value: 'tiempo_sesion', msg: ' Tiempo Sesion: ', servicetab:'Web'},
-    { id: 22,  value: 'puerto_rtsp', msg: ' Puerto RTSP: ', servicetab:'REC'},
-    { id: 23,  value: 'servidor_rtsp', msg: ' IP Servidor RTSP (A): ', servicetab:'REC'},
-    { id: 24,  value: 'servidor_rtspb', msg: ' IP Servidor RTSP (B): ', servicetab:'REC'},
+    { id: 0, value: 'nombre', msg: ' Nombre: ' },
+    { id: 1, value: 'ipv', msg: ' Dir. IP Virtual: ' },
+    { id: 2, value: 'EMPLAZAMIENTO_idEMPLAZAMIENTO', msg: ' Emplazamiento: ' },
+    { id: 3, value: 'dvrrp', msg: ' Retardo activacion modo dual(ms.): ' },
+    { id: 4, value: 'pendiente_actualizar', msg: ' Pendiente actualizar: ' },
+    { id: 5, value: 'ultima_actualizacion', msg: ' Última actualización: ' },
+    { id: 6, value: 'ipb1', msg: ' Ip cpu0: ' },
+    { id: 7, value: 'ipb2', msg: ' Ip cpu1: ' },
+    { id: 8, value: 'ipg1', msg: ' Ip gateway0: ' },
+    { id: 9, value: 'ipg2', msg: ' Ip gateway1: ' },
+    { id: 10, value: 'msb1', msg: ' Máscara cpu0: ' },
+    { id: 11, value: 'msb2', msg: ' Máscara cpu1: ' },
+    { id: 12, value: 'PuertoLocalSIP ', msg: ' Puerto local SIP: ', servicetab: 'SIP' },
+    { id: 13, value: 'periodo_supervision', msg: ' Periodo de supervisión: ', servicetab: 'SIP' },
+    { id: 14, value: 'puerto_servicio_snmp', msg: ' Puerto Servicio SNMP: ', servicetab: 'SNMP' },
+    { id: 15, value: 'comunidad_snmp', msg: ' Comunidad SNMP: ', servicetab: 'SNMP' },
+    { id: 16, value: 'puerto_snmp', msg: ' Puerto SNMP: ', servicetab: 'SNMP' },
+    { id: 17, value: 'nombre_snmp', msg: ' Nombre SNMP: ', servicetab: 'SNMP' },
+    { id: 18, value: 'localizacion_snmp', msg: ' Ubicación SNMP: ', servicetab: 'SNMP' },
+    { id: 19, value: 'contacto_snmp', msg: ' Contacto SNMP: ', servicetab: 'SNMP' },
+    { id: 20, value: 'puerto_servicio_web', msg: ' Puerto Servicio Web: ', servicetab: 'Web' },
+    { id: 21, value: 'tiempo_sesion', msg: ' Tiempo Sesion: ', servicetab: 'Web' },
+    { id: 22, value: 'puerto_rtsp', msg: ' Puerto RTSP: ', servicetab: 'REC' },
+    { id: 23, value: 'servidor_rtsp', msg: ' IP Servidor RTSP (A): ', servicetab: 'REC' },
+    { id: 24, value: 'servidor_rtspb', msg: ' IP Servidor RTSP (B): ', servicetab: 'REC' },
   ]
 
   dirtyCaseTernary: any[] = [
-    { id: 26,  value: 'dual', msg: ' CPU Dual: ', op1: 'No', op2: 'Si' },
-    { id: 27,  value: 'sppe', msg: ' Supervisión Puerta de Enlace: ', op1: 'No', op2: ' Segundos'},
-    { id: 28,  value: 'snmpv2', msg: ' SNMP V2: ', op1: 'No', op2: 'Si', servicetab:'SNMP'}
+    { id: 26, value: 'dual', msg: ' CPU Dual: ', op1: 'No', op2: 'Si' },
+    { id: 27, value: 'sppe', msg: ' Supervisión Puerta de Enlace: ', op1: 'No', op2: ' Segundos' },
+    { id: 28, value: 'snmpv2', msg: ' SNMP V2: ', op1: 'No', op2: 'Si', servicetab: 'SNMP' }
   ]
 
-  dirtyCaseArrays: any [] = [
-    { id: 29,  value: 'proxys', msg: ' Proxys: ', servicetab:'SIP'},
-    { id: 30,  value: 'registrars', msg: ' SIP Servers: ', servicetab:'SIP'},
-    { id: 31,  value: 'listServers', msg: ' List Servers: ', servicetab:'Sync'},
-    { id: 32,  value: 'traps', msg: ' Traps : ', servicetab:'SNMP'}
+  dirtyCaseArrays: any[] = [
+    { id: 29, value: 'proxys', msg: ' Proxys: ', servicetab: 'SIP' },
+    { id: 30, value: 'registrars', msg: ' SIP Servers: ', servicetab: 'SIP' },
+    { id: 31, value: 'listServers', msg: ' List Servers: ', servicetab: 'Sync' },
+    { id: 32, value: 'traps', msg: ' Traps : ', servicetab: 'SNMP' }
   ]
-  
+
   constructor(private readonly utilService: UtilsService, private readonly route: ActivatedRoute, private readonly router: Router, private readonly app: AppComponent, public dialog: MatDialog,
     private readonly gatewayService: GatewayService, private readonly alertService: AlertService, private historicService: HistoricService,
     private readonly dataService: DataService, private readonly userService: UserService, private readonly loginService: LoginService,
-    private readonly gatewayFieldService: GatewayFieldService, private readonly configService: ConfigService) {
+    private readonly gatewayFieldService: GatewayFieldService, private readonly configService: ConfigService, private readonly siteService: SiteService) {
   }
 
   async ngOnInit() {
@@ -153,6 +156,7 @@ export class GatewayHomeComponent implements OnInit {
       this.gatewayForm = this.initForm();
       this.checkFormChanges();
       this.initStatusGateway = { ...this.gatewayForm.value };
+      await this.getSites();
       this.ready = true;
     } catch (error: any) {
       this.app.catchError(error);
@@ -203,6 +207,8 @@ export class GatewayHomeComponent implements OnInit {
   }
 
   async activateInField() {
+    let confName = (await this.configService.getConfigurationById(this.configId).toPromise()).result[0]?.NAME;
+    let siteName = this.siteOptions.filter((site: any) => { return site.idEMPLAZAMIENTO === this.siteId })[0]?.name;
 
     if (this.changes || this.gatewayForm.dirty || JSON.stringify(this.gatewayForm.value) !== JSON.stringify(this.initStatusGateway)) {
       await this.alertService.errorMessage(``, `No ha guardado los cambios de la pasarela`);
@@ -222,15 +228,12 @@ export class GatewayHomeComponent implements OnInit {
         const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
         const result = await this.gatewayFieldService.updateGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb1, gtwActual).toPromise();
 
-        //await this.historicService.updateCfg(110, this.gatewayForm.value.nombre
-        //  ,title+" - cpu0: "+this.gatewayForm.value.ipb1).toPromise();
-
         if (result.res && result.res === 'Configuracion Activada...') {
           await this.initEdit(this.gateway.idCGW);
           this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
           this.gatewayForm = this.initForm();
           this.checkFormChanges();
-          await this.historicService.updateCfg(121, `${this.gateway.name} CPU 0`).toPromise();
+          await this.historicService.updateCfg(121, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} CPU 0`).toPromise();
           await this.alertService.successMessage(``, result.res);
           this.showSpinner = false;
           return;
@@ -243,15 +246,12 @@ export class GatewayHomeComponent implements OnInit {
         const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
         const result = await this.gatewayFieldService.updateGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb2, gtwActual).toPromise();
 
-        //await this.historicService.updateCfg(110, this.gatewayForm.value.nombre
-        //  ,title+" - cpu1: "+this.gatewayForm.value.ipb2).toPromise();
-
         if (result.res && result.res === 'Configuracion Activada...') {
           await this.initEdit(this.gateway.idCGW);
           this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
           this.gatewayForm = this.initForm();
           this.checkFormChanges();
-          await this.historicService.updateCfg(121, `${this.gateway.name} CPU 1`).toPromise();
+          await this.historicService.updateCfg(121, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} CPU 1`).toPromise();
           await this.alertService.successMessage(``, result.res);
           this.showSpinner = false;
           return;
@@ -259,28 +259,28 @@ export class GatewayHomeComponent implements OnInit {
       }
 
       if (gtwFieldCpu0.code === 'ECONNREFUSED' || gtwFieldCpu1.code === 'ECONNREFUSED') {
-        await this.historicService.updateCfg(122, `${this.gateway.name} Error conexión a la pasarela`).toPromise();
+        await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error conexión a la pasarela`).toPromise();
         await this.alertService.errorMessage(``, `Error de conexión a la pasarela`);
         this.showSpinner = false;
         return;
       }
 
       if (gtwFieldCpu0.code === 'ETIMEDOUT' && gtwFieldCpu1.code === 'ETIMEDOUT') {
-        await this.historicService.updateCfg(122, `${this.gateway.name} Error timeout`).toPromise();
+        await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error timeout`).toPromise();
         await this.alertService.errorMessage(``, `Error de timeout en la conexión a la pasarela`);
         this.showSpinner = false;
         return;
       }
 
       if (gtwFieldCpu0.code === 'EHOSTUNREACH' || gtwFieldCpu1.code === 'EHOSTUNREACH') {
-        await this.historicService.updateCfg(122, `${this.gateway.name} Error de conexión al host`).toPromise();
+        await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error de conexión al host`).toPromise();
         await this.alertService.errorMessage(``, `Error no es posible conectar con la pasarela`);
         this.showSpinner = false;
         return;
       }
 
       if (!this.validateGtwFieldJson(gtwFieldCpu0) && !this.validateGtwFieldJson(gtwFieldCpu1)) {
-        await this.historicService.updateCfg(122, `${this.gateway.name} Error de formato`).toPromise();
+        await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error de formato`).toPromise();
         await this.alertService.errorMessage(``, `Error el formato del JSON recibido no es correcto`);
         this.showSpinner = false;
         return;
@@ -338,12 +338,13 @@ export class GatewayHomeComponent implements OnInit {
       return false;
     }
 
+    if (await this.checkRTSPIPs()) {
+      this.showSpinner = false;
+      return false;
+    }
+
     return true;
   }
-
-
-
-
 
   async createGateway() {
 
@@ -387,25 +388,25 @@ export class GatewayHomeComponent implements OnInit {
             return;
           }
         }
-      delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
-      gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
-      gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
-      const siteId = (this.siteId) ? this.siteId : 0;
+        delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
+        gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
+        gateway.pendiente_actualizar = gateway.pendiente_actualizar ? 1 : 0;
+        const siteId = (this.siteId) ? this.siteId : 0;
 
-      const newGtw = await this.gatewayService.createGtw(siteId, gateway).toPromise();
-      if (newGtw.error) {
+        const newGtw = await this.gatewayService.createGtw(siteId, gateway).toPromise();
+        if (newGtw.error) {
+          this.showSpinner = false;
+          await this.alertService.errorMessage(`Error`, newGtw.error);
+          return;
+        }
+        let title = this.dataService.getDataGatewayTitle();
+        title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+        await this.historicService.updateCfg(107, this.gatewayForm.value.nombre, title).toPromise();
         this.showSpinner = false;
-        await this.alertService.errorMessage(`Error`, newGtw.error);
-        return;
-      }
-      let title = this.dataService.getDataGatewayTitle();
-      title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
-      await this.historicService.updateCfg(107, this.gatewayForm.value.nombre, title).toPromise();
-      this.showSpinner = false;
-      await this.alertService.successMessage(``, `Pasarela ${newGtw.name} creada correctamente`);
-      this.dataService.updateDataConfigId(this.configId);
-      this.dataService.updateDataGatewayPreviousUrl('NEW');
-      this.router.navigate(['/home/gateway/' + newGtw.insertId]);
+        await this.alertService.successMessage(``, `Pasarela ${newGtw.name} creada correctamente`);
+        this.dataService.updateDataConfigId(this.configId);
+        this.dataService.updateDataGatewayPreviousUrl('NEW');
+        this.router.navigate(['/home/gateway/' + newGtw.insertId]);
 
       }
     } catch (error: any) {
@@ -430,6 +431,22 @@ export class GatewayHomeComponent implements OnInit {
       await this.alertService.errorMessage(`Error`, message);
       return true;
     }
+    return false;
+  }
+
+  async checkRTSPIPs() {
+    if (this.gatewayForm.value.servidor_rtsp === this.gatewayForm.value.servidor_rtspb &&
+      this.gatewayForm.value.servidor_rtsp !== '' &&
+      this.gatewayForm.value.servidor_rtspb !== '') {
+      const message = `La dirección IP RTSP (A) no puede ser igual que la RTSP (B)`;
+      await this.alertService.errorMessage(`Error`, message);
+      return true;
+    } else if (this.gatewayForm.value.servidor_rtsp === '' && this.gatewayForm.value.servidor_rtspb !== '') {
+      const message = `El campo de dirección IP RTSP (A) no puede estar vacío`;
+      await this.alertService.errorMessage(`Error`, message);
+      return true;
+    }
+
     return false;
   }
 
@@ -541,6 +558,31 @@ export class GatewayHomeComponent implements OnInit {
     return false;
   }
 
+  async getSites() {
+    try {
+      this.siteOptions = [];
+
+      if (this.configId) {
+        const result = await this.siteService.getSites(this.configId).toPromise();
+        if (result.error) {
+          await this.alertService.errorMessage(``, result.error);
+        }
+
+        this.siteOptions = (result.data != 'NO_DATA') ? [...result.data] : [];
+      }
+    } catch (error: any) {
+      this.app.catchError(error);
+    }
+  }
+
+  async siteChanges() {
+
+    const result = await this.siteService.changeSite(this.gateway.idCGW, this.gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO,
+      this.gatewayForm.value.EMPLAZAMIENTO_idEMPLAZAMIENTO).toPromise();
+
+    return result;
+  }
+
   async updateGateway() {
 
     if (await this.isInvalidGateway()) return;
@@ -569,7 +611,7 @@ export class GatewayHomeComponent implements OnInit {
         pendiente_actualizar: true
       });
       this.initStatusGateway = { ...this.gatewayForm.value };
-
+      await this.siteChanges();
       this.showSpinner = false;
       await this.alertService.successMessage(``, `Pasarela ${updatedGtw.name} actualizada correctamente`);
       this.gatewayForm.markAsPristine();
@@ -640,8 +682,8 @@ export class GatewayHomeComponent implements OnInit {
       ipb2: new FormControl({ value: this.gatewayPost.ipb2, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
       ipg1: new FormControl({ value: this.gatewayPost.ipg1, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
       ipg2: new FormControl({ value: this.gatewayPost.ipg2, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
-      msb1: new FormControl({ value: this.gatewayPost.msb1, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
-      msb2: new FormControl({ value: this.gatewayPost.msb2, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
+      msb1: new FormControl({ value: this.gatewayPost.msb1, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.SUBNET_MASK)]),
+      msb2: new FormControl({ value: this.gatewayPost.msb2, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.SUBNET_MASK)]),
       PuertoLocalSIP: new FormControl({ value: this.gatewayPost.PuertoLocalSIP, disabled: true }),
 //      periodo_supervision: new FormControl({ value: this.gatewayPost.periodo_supervision, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.ONLY_NUMBERS)]),
       periodo_supervision: new FormControl({ 
@@ -711,7 +753,6 @@ export class GatewayHomeComponent implements OnInit {
 
     });
 
-
     if (loadIndex > 16) {
       this.selectedClass = "indexOverload"
       this.loadIndex = `${loadIndex} - Indice máximo sobrepasado.`
@@ -720,18 +761,28 @@ export class GatewayHomeComponent implements OnInit {
       this.loadIndex = loadIndex.toString();
     }
   }
-  
-  showDataDirtyCaseOnlyValue(value: string, msg: string){
-    if (this.gatewayForm.get(value)?.dirty)
-      return ` ${msg} ${this.gatewayForm.get(value)?.value}`;
-    else
-      return ``;
+
+  showDataDirtyCaseOnlyValue(value: string, msg: string) {
+    let result = ``;
+    if (value === 'EMPLAZAMIENTO_idEMPLAZAMIENTO') {
+      let infoFiltered = this.siteOptions.filter((res: any) => { return res.idEMPLAZAMIENTO === this.gatewayForm.get(value)?.value });
+
+      if (this.gatewayForm.get(value)?.dirty) {
+        result = ` ${msg} ${infoFiltered[0]?.name}`;
+      }
+    } else {
+      if (this.gatewayForm.get(value)?.dirty) {
+        result = ` ${msg} ${this.gatewayForm.get(value)?.value}`;
+      }
+    }
+
+    return result;
   }
 
-  showDataDirtyCaseTernary(value: string, msg:  string, op1: string, op2:string){
-    if(this.gatewayForm.get(value)?.dirty) {
-      if (value === 'sppe'){
-        return `${msg} ${this.gatewayForm.get(value)?.value === 0 ? op1 : this.gatewayForm.get(value)?.value + op2 } `;
+  showDataDirtyCaseTernary(value: string, msg: string, op1: string, op2: string) {
+    if (this.gatewayForm.get(value)?.dirty) {
+      if (value === 'sppe') {
+        return `${msg} ${this.gatewayForm.get(value)?.value === 0 ? op1 : this.gatewayForm.get(value)?.value + op2} `;
       } else {
         return `${msg} ${this.gatewayForm.get(value)?.value === 0 ? op1 : op2} `;
       }
@@ -740,67 +791,67 @@ export class GatewayHomeComponent implements OnInit {
     }
   }
 
-  showDataDirtyCaseArrays(value: string, msg: string){
+  showDataDirtyCaseArrays(value: string, msg: string) {
     let historic = msg;
-    if(this.gatewayForm.get(value)?.dirty){
-        if(value === 'traps'){
-          this.gatewayForm.get(value)?.value.forEach((element: any) => {
-            if(this.gatewayForm.get(value)?.value[this.gatewayForm.get(value)?.value.length - 1] === element){
-              historic += element;
-            } else {
-              historic += `${element} - `
-            }
-          })
-        } else {
-          this.gatewayForm.get(value)?.value.forEach((element: any) => {
-            if (this.gatewayForm.get(value)?.value[this.gatewayForm.get(value)?.value.length - 1] === element){
-              historic += element.ip;
-            } else {
-              historic += `${element.ip} - `
-            }
-          });
-        }
+    if (this.gatewayForm.get(value)?.dirty) {
+      if (value === 'traps') {
+        this.gatewayForm.get(value)?.value.forEach((element: any) => {
+          if (this.gatewayForm.get(value)?.value[this.gatewayForm.get(value)?.value.length - 1] === element) {
+            historic += element;
+          } else {
+            historic += `${element} - `
+          }
+        })
+      } else {
+        this.gatewayForm.get(value)?.value.forEach((element: any) => {
+          if (this.gatewayForm.get(value)?.value[this.gatewayForm.get(value)?.value.length - 1] === element) {
+            historic += element.ip;
+          } else {
+            historic += `${element.ip} - `
+          }
+        });
+      }
       return historic;
-    }else{
+    } else {
       return ``;
-    }    
+    }
   }
 
-  isEmpty(title: string){
-    if (title == ``) 
+  isEmpty(title: string) {
+    if (title == ``)
       return true;
     return false;
   }
 
-  typeService(element: any){
+  typeService(element: any) {
     let serviceType = ``;
-      if((typeof(element.servicetab) != 'undefined')){
-        if (element.servicetab === 'SIP'){
-          serviceType+= ` (SIP) `
-        }
-        if(element.servicetab === 'Sync'){
-          serviceType+= ' (Sincronización) '
-        }
-        if (element.servicetab === 'SNMP'){
-          serviceType+= ` (SNMP) `
-        }
-        if (element.servicetab === 'Web'){
-          serviceType+= ` (Web) `
-        }
-        if (element.servicetab === 'REC'){
-          serviceType+= ` (Grabación) `
-        }
+    if ((typeof (element.servicetab) != 'undefined')) {
+      if (element.servicetab === 'SIP') {
+        serviceType += ` (SIP) `
       }
+      if (element.servicetab === 'Sync') {
+        serviceType += ' (Sincronización) '
+      }
+      if (element.servicetab === 'SNMP') {
+        serviceType += ` (SNMP) `
+      }
+      if (element.servicetab === 'Web') {
+        serviceType += ` (Web) `
+      }
+      if (element.servicetab === 'REC') {
+        serviceType += ` (Grabación) `
+      }
+    }
     return serviceType;
   }
 
   validateFormDirty(title: string) {
     let emptyString = true;
-    let changeHistorics= ``;
+    let changeHistorics = ``;
     this.dirtyCaseOnlyValue.forEach((element: any) => {
       changeHistorics = ` Parametro(s): `;
       emptyString = this.isEmpty(this.showDataDirtyCaseOnlyValue(element.value, element.msg));
-      if(!emptyString){
+      if (!emptyString) {
         changeHistorics = `${title} ${changeHistorics} ${this.typeService(element)} ${this.showDataDirtyCaseOnlyValue(element.value, element.msg)}`;
         this.historicService.updateCfg(109, this.gatewayPost.nombre, changeHistorics).toPromise();
       }
@@ -808,7 +859,7 @@ export class GatewayHomeComponent implements OnInit {
     this.dirtyCaseTernary.forEach((element: any) => {
       changeHistorics = ` Parametro(s): `;
       emptyString = this.isEmpty(this.showDataDirtyCaseTernary(element.value, element.msg, element.op1, element.op2));
-      if(!emptyString){
+      if (!emptyString) {
         changeHistorics = `${title} ${changeHistorics} ${this.typeService(element)} ${this.showDataDirtyCaseTernary(element.value, element.msg, element.op1, element.op2)}`;
         this.historicService.updateCfg(109, this.gatewayPost.nombre, changeHistorics).toPromise();
       }
@@ -816,7 +867,7 @@ export class GatewayHomeComponent implements OnInit {
     this.dirtyCaseArrays.forEach((element: any) => {
       changeHistorics = ` Parametro(s): `;
       emptyString = this.isEmpty(this.showDataDirtyCaseArrays(element.value, element.msg));
-      if(!emptyString){
+      if (!emptyString) {
         changeHistorics = `${title} ${changeHistorics} ${this.typeService(element)} ${this.showDataDirtyCaseArrays(element.value, element.msg)}`;
         this.historicService.updateCfg(109, this.gatewayPost.nombre, changeHistorics).toPromise();
       }

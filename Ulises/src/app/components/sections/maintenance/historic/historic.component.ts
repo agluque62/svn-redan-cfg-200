@@ -83,10 +83,11 @@ export class HistoricComponent implements OnInit {
 
     ready = true;
     controlFlag = true;
+    filterValue!: string;
 
     constructor(private readonly historicService: HistoricService, private readonly alertService: AlertService, private readonly app: AppComponent,
         private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router, private changeDetectorRefs: ChangeDetectorRef) {
-        this.historicService.checkIfExistschangesOnFilters().subscribe((data: any) => {
+        this.historicService.checkIfExistschangesOnFilters().subscribe(async (data: any) => {
             this.ready = false;
             if (data !== undefined && this.controlFlag) {
                 this.dateEnd = data.dateEnd !== undefined ? new Date(data.dateEnd) : new Date();
@@ -98,8 +99,12 @@ export class HistoricComponent implements OnInit {
                 this.selectedGroup = data.selectedGroup !== undefined ? data.selectedGroup : [];
                 this.selectedComponent = data.selectedComponent !== undefined ? data.selectedComponent : [];
                 this.selectedRegister = data.selectedRegister !== undefined ? data.selectedRegister : [];
-
-                this.updateData(true);
+                this.filterValue = data.filterValue !== undefined ? data.filterValue : '';
+                
+                await this.updateData(true);
+                if(this.filterValue && this.filterValue !== ''){ // issue 2892
+                    this.dataSource.filter = this.filterValue ? this.filterValue.trim().toLowerCase() : '';
+                }
                 this.controlFlag = false;
             } else if (data !== undefined && !this.controlFlag) {
                 this.dateEnd = data.dateEnd !== undefined ? new Date(data.dateEnd) : new Date();
@@ -111,7 +116,9 @@ export class HistoricComponent implements OnInit {
                 this.selectedGroup = data.selectedGroup !== undefined ? data.selectedGroup : [];
                 this.selectedComponent = data.selectedComponent !== undefined ? data.selectedComponent : [];
                 this.selectedRegister = data.selectedRegister !== undefined ? data.selectedRegister : [];
+                this.filterValue = data.filterValue !== undefined ? data.filterValue : '';
             }
+
             this.ready = true;
         });
     }
@@ -186,6 +193,7 @@ export class HistoricComponent implements OnInit {
         } else {
             this.dataUsed = this.dataRaw.historics;
         }
+        
         this.historicService.setFilters({
             'dateStart': this.dateStart,
             'dateEnd': this.dateEnd,
@@ -194,7 +202,8 @@ export class HistoricComponent implements OnInit {
             'selectedType': this.selectedType,
             'selectedGroup': this.selectedGroup,
             'selectedComponent': this.selectedComponent,
-            'selectedRegister': this.selectedRegister
+            'selectedRegister': this.selectedRegister,
+            'filterValue': this.filterValue
         });
         this.assignDataSource(this.dataUsed);
         this.ready = true;
@@ -347,8 +356,19 @@ export class HistoricComponent implements OnInit {
     }
 
     applyFilter(event: Event) {
-        const filterValue = (event.target as HTMLInputElement).value;
-        this.dataSource.filter = filterValue ? filterValue.trim().toLowerCase() : '';
+        this.filterValue = (event.target as HTMLInputElement).value;
+        this.dataSource.filter = this.filterValue ? this.filterValue.trim().toLowerCase() : '';
+        this.historicService.setFilters({
+            'dateStart': this.dateStart,
+            'dateEnd': this.dateEnd,
+            'limit': this.selectedLimit,
+            'localFilters': this.selectedFilter,
+            'selectedType': this.selectedType,
+            'selectedGroup': this.selectedGroup,
+            'selectedComponent': this.selectedComponent,
+            'selectedRegister': this.selectedRegister,
+            'filterValue': this.filterValue
+        });
     }
 
     getFilterPredicate() {
@@ -377,8 +397,8 @@ export class HistoricComponent implements OnInit {
             'selectedType': [],
             'selectedGroup': [],
             'selectedComponent': [],
-            'selectedRegister': []
-
+            'selectedRegister': [],
+            'filterValue': ''
         });
     }
 

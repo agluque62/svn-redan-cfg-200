@@ -19,7 +19,7 @@ export class AudioBssTableFormComponent implements OnInit {
   type: string = 'CREATE';
   visualizationMode: boolean = false;
   rssiValues: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-  
+
   showSpinner: boolean = false;
 
   appset: any;
@@ -30,7 +30,10 @@ export class AudioBssTableFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.appset = AppSettings;
-    if (this.data.name && this.data.name != '') {
+
+    if (this.data.idtabla_bss === -1) {
+      this.type = 'CREATE';
+    } else {
       this.type = 'EDIT';
     }
 
@@ -48,7 +51,7 @@ export class AudioBssTableFormComponent implements OnInit {
 
     this.tableBssForm = new FormGroup({
       idtabla_bss: new FormControl(this.data.idtabla_bss),
-      name: new FormControl({ value: this.data.name, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.NAME_PATTERN)]),
+      name: new FormControl({ value: this.data.name, disabled: this.visualizationMode }, [Validators.required, Validators.pattern(AppSettings.NAME_PATTERN)]),
       description: new FormControl({ value: this.data.description, disabled: this.visualizationMode }),
       FechaCreacion: new FormControl({ value: this.data.FechaCreacion, disabled: true }),
       valor0: new FormControl({ value: this.data.valor0, disabled: this.visualizationMode }),
@@ -87,7 +90,7 @@ export class AudioBssTableFormComponent implements OnInit {
       this.showSpinner = true;
       const editResult = await this.tableBssService.editTableAudioBss(this.tableBssForm.value).toPromise();
       this.showSpinner = false;
-          
+
       if (editResult && editResult.error) {
         await this.alertService.errorMessage(`Error`, editResult.error);
       } else {
@@ -108,22 +111,23 @@ export class AudioBssTableFormComponent implements OnInit {
 
   async deleteTableBss() {
 
-    if (this.tableBssForm.valid) {
-      const confirmed = await this.alertService.confirmationMessage(``, `¿Desea eliminar la tabla ${this.data.name}?`);
+    const confirmed = await this.alertService.confirmationMessage(``, `¿Desea eliminar la tabla ${this.data.name}?`);
 
-      if (confirmed.value) {
-        const deleteResult = await this.tableBssService.deleteTableAudioBss(this.data).toPromise();
+    if (confirmed.value) {
+      const deleteResult = await this.tableBssService.deleteTableAudioBss(this.data).toPromise();
 
-        if (deleteResult && deleteResult.error) {
-          await this.alertService.errorMessage(`Error`, deleteResult.error);
-        } else {
-          await this.alertService.successMessage(`Éxito`, `Tabla ${this.data.name} externo eliminada correctamente correctamente`);
-          this.dialogRef.close();
+      if (deleteResult && deleteResult.error) {
+        let msg = deleteResult.error;
+        
+        if (deleteResult.error === 'CANT_DELETE') {
+          msg = `No se puede eliminar una tabla asignada a un recurso. La tabla esta asignada al recurso: ${deleteResult.ResourceName}.`;
         }
-
+        await this.alertService.errorMessage(`Error`, msg);
+      } else {
+        await this.alertService.successMessage(`Éxito`, `Tabla ${this.data.name} externo eliminada correctamente correctamente`);
+        this.dialogRef.close();
       }
-    } else {
-      await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+
     }
   }
 }
