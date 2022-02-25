@@ -282,9 +282,11 @@ function msg4Login(req, msg) {
 
 var isAuthenticated = function (req, res, next) {
 
-	logging.Info(req.method, req.originalUrl, IsAuthReq(req), ctrlSesiones.localSession);
+	logging.Info(req.method, req.originalUrl, req.isAuthenticated(), ctrlSesiones.localSession);
+    // logging.Info(ctrlSesiones.localSession)
+    // logging.Info(req.isAuthenticated())
 
-    if (ctrlSesiones.localSession != null && IsAuthReq(req)) {
+    if (ctrlSesiones.localSession != null && req.isAuthenticated()) {
 		// 20210604. AGL. Cada acceso 'autorizado' renueva la session...
 		req.session.lastAccess = new Date().getTime();
 		ctrlSesiones.localSession = req.session;
@@ -296,7 +298,7 @@ var isAuthenticated = function (req, res, next) {
 }
 
 app.get('/auth', (req, res) => {
-    return res.json(IsAuthReq(req));
+    return res.json(req.isAuthenticated());
 })
 
 app.get('/', (req, res) => {
@@ -469,7 +471,7 @@ app.get('/alive',
             ctrlSesiones.localSession.lastTick = moment();
         }
 
-        if (IsAuthReq(req)) {
+        if (req.isAuthenticated()) {
             /** 20210622. El alive no necesita devolver las GW pendientes... */
             // bdtgw.getGatewaysPendings(function (npas) {
             //     res.json({ alive: "ok", gwpendientes: npas });
@@ -775,8 +777,4 @@ function deleteBackupLog(url, data, callback) {
     }).on('error', (err) => {
         callback(err);
     });
-}
-
-function IsAuthReq(req){
-	return debug ? true : req.isAuthenticated();
 }
