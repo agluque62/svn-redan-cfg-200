@@ -146,7 +146,7 @@
     "logfile_path": "./logs/ug5kserv.log",
     "logfile_sizefile": 1000000,
     "morgan": false,
-	"timeout": 10000
+	"timeout": 60000
 	},
   "MemorySupervisor": {
     "Tick": 600000,
