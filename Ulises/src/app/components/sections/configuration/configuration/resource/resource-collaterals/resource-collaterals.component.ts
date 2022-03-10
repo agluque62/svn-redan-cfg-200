@@ -7,6 +7,7 @@ import { DataService } from 'src/app/_services/data.service';
 import { GatewayService } from 'src/app/_services/gateway.service';
 import { ResourceService } from 'src/app/_services/resource.service';
 import { UserService } from 'src/app/_services/user.service';
+import { AppSettings } from 'src/app/core/app.settings';
 
 interface customValues {
   value: number;
@@ -73,6 +74,7 @@ export class ResourceCollateralsComponent implements OnInit {
   resources: any = [];
   telhardwareResume: any;
   telAGVNNameSelected!: string;
+  appset: any;
 
   resourceForm!: FormGroup;
 
@@ -82,7 +84,7 @@ export class ResourceCollateralsComponent implements OnInit {
   ngOnInit(): void {
     this.visualizationMode = (this.visualizationPermission()) ? true : false;
     this.getSites();
-
+    this.appset = AppSettings;
     this.resourceForm.patchValue({
       uri_telefonica: this.resourceForm.value.uri_telefonica.replace('sip:', ''),
       additional_uri_remota: this.resourceForm.value.additional_uri_remota.replace('sip:', '')
@@ -171,7 +173,7 @@ export class ResourceCollateralsComponent implements OnInit {
     let firstPartUri = '';
     let secondPartUri = '';
     let uri = '';
-    
+
     if (this.resources[this.selectedResource] !== undefined) {
       if(additional){
         this.resourceForm.get('additional_uri_remota')?.markAsDirty();

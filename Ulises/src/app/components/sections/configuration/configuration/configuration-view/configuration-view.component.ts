@@ -345,8 +345,8 @@ export class ConfigurationViewComponent implements OnInit {
             await this.historicService.updateCfg(122, `${gateway.result[0].name}}: Error conexión a la pasarela`).toPromise();
             message.push(`${gateway.result[0].name}: Error de conexión a la pasarela`);
             error = true;
-          } else if (!success && gtwFieldCpu0.code === 'ETIMEDOUT' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'ETIMEDOUT')) {
-            await this.historicService.updateCfg(122, `${gateway.result[0].name}} Error timeout`).toPromise();
+          } else if (!success && gtwFieldCpu0.code === 'ETIMEDOUT' && (gtwFieldCpu1 && gtwFieldCpu1.code === 'ETIMEDOUT')) {
+            await this.historicService.updateCfg(122, `${gateway.result[0].name} Error timeout`).toPromise();
             message.push(`${gateway.result[0].name}: Error de timeout en la conexión a la pasarela`);
             error = true;
           } else if (!success && gtwFieldCpu0.code === 'EHOSTUNREACH' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'EHOSTUNREACH')) {

@@ -10,9 +10,12 @@
                     <mat-label>NombreRecurso@IP:Puerto</mat-label>
                     <input matInput formControlName="uri_telefonica">
                 </mat-form-field>
+                
                 <button mat-raised-button [disabled]="visualizationMode" (click)="makeURI()"> {{arrows}} </button>
             </div>
-
+            <mat-error *ngIf="resourceForm.get('uri_telefonica')?.hasError('pattern')">
+                {{ appset.INVALID_URI }}
+            </mat-error>
             <div class="supCollSelect">
                 <mat-form-field appearance="fill">
                     <mat-label>Supervisa Colateral</mat-label>
@@ -33,9 +36,12 @@
                     <mat-label>NombreRecurso@IP:Puerto</mat-label>
                     <input matInput formControlName="additional_uri_remota">
                 </mat-form-field>
+                
                 <button mat-raised-button [disabled]="visualizationMode" (click)="makeURI(true)"> {{arrows}} </button>
             </div>
-
+            <mat-error *ngIf="resourceForm.get('additional_uri_remota')?.hasError('pattern')">
+                {{ appset.INVALID_URI }}
+            </mat-error>
             <div class="supCollSelect">
                 <mat-form-field appearance="fill">
                     <mat-label>

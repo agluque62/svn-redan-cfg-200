@@ -443,7 +443,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       DetInversionPol: new FormControl({ value: this.resource.DetInversionPol, disabled: this.visualizationMode }),
       additional_itiporespuesta: new FormControl({ value: this.resource.additional_itiporespuesta, disabled: this.visualizationMode }),
       additional_superv_options: new FormControl({ value: this.resource.additional_superv_options, disabled: this.visualizationMode }),
-      additional_uri_remota: new FormControl({ value: this.resource.additional_uri_remota, disabled: this.visualizationMode }),
+      additional_uri_remota: new FormControl({ value: this.resource.additional_uri_remota, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.URI_PATTERN)]),
       ats_user: new FormControl({ value: this.resource.ats_user, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.AGVN_PATTERN)]),
       cola_vox: new FormControl({ value: this.resource.cola_vox, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.COLA_VOX), Validators.min(0), Validators.max(30)]),
       destino_test: new FormControl({ value: this.resource.destino_test, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.AGVN_PATTERN)]),
@@ -461,7 +461,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       tiempo_supervision: new FormControl({ value: this.resource.tiempo_supervision, disabled: this.visualizationMode }),
       tipo_interfaz_tel: new FormControl({ value: this.resource.tipo_interfaz_tel, disabled: this.visualizationMode }),
       umbral_vox: new FormControl({ value: this.resource.umbral_vox, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.UMBRAL_VOX), Validators.min(-35), Validators.max(-15)]),
-      uri_telefonica: new FormControl({ value: this.resource.uri_telefonica, disabled: this.visualizationMode }),
+      uri_telefonica: new FormControl({ value: this.resource.uri_telefonica, disabled: this.visualizationMode}, [Validators.pattern(AppSettings.URI_PATTERN)]),
       idrecurso_telefono: new FormControl({ value: this.resource.idrecurso_telefono, disabled: this.visualizationMode })
     });
     this.resourceForm.valueChanges
@@ -574,6 +574,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
         this.resourceForm.value.additional_itiporespuesta = typeof (this.resourceForm.value.additional_itiporespuesta) === 'boolean' ?
           (this.resourceForm.value.additional_itiporespuesta ? 1 : 0) : this.resourceForm.value.additional_itiporespuesta;
+       
+        this.checkUriList();
 
         this.showSpinner = true;
         if (this.editMode) {
@@ -1345,5 +1347,34 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       }
     })[0].viewValue;
     return result;
+  }
+
+  checkUriList() {
+   switch (this.resourceForm.value.tipo_agente) {
+      case 0:
+        this.updateUriList([1]);
+        break;
+      case 1:
+          this.updateUriList([1,2]);
+        break;
+      case 2:
+          this.updateUriList([1,3,5]);
+        break;
+      case 3:
+          this.updateUriList([1,2,3,4,5,6]);
+        break;
+    }
+  }
+
+  updateUriList(collateralLevels: number[]) {
+    let uriList: any = [];
+    let cnt = 0;
+    for (let index = 0; index < this.resourceForm.value.listaUris.length; index++){
+      if (collateralLevels.includes(this.resourceForm.value.listaUris[index].nivel_colateral)) {
+        uriList[cnt] = this.resourceForm.value.listaUris[index];
+        cnt++;
+      }
+    }
+    this.resourceForm.value.listaUris = uriList;
   }
 }
