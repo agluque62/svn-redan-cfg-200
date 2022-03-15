@@ -162,6 +162,7 @@ export class SiteFormComponent implements OnInit {
 
   async importGateway($event: any) {
     try {
+      const conf = await this.configService.getConfigurationById(this.configurationId).toPromise();
       let result;
       const fileToUpload = $event.target.files[0];
       this.importJsonName = $event.target.files[0].name;
@@ -174,33 +175,54 @@ export class SiteFormComponent implements OnInit {
       }
       const confirm = await this.alertService.confirmationMessage(``, `¿Confirma que quiere importa pasarela?`);
       if (confirm.value && fileToUpload !== null) {
-        if ((await this.utilService.checkIps(this.importJson.general.ipv, null)).length == 0 &&
-          (await this.utilService.checkIps(this.importJson.general.cpus[0].ipb, null)).length == 0 &&
-          (await this.utilService.checkIps(this.importJson.general.cpus[1].ipb, null)).length == 0) {
-          result = await this.gatewayService.importGtw(fileToUpload, this.configurationId, this.site.idEMPLAZAMIENTO).toPromise();
-          if (result && result.msg) {
-            let title = this.dataService.getDataGatewayTitle();
-            title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
-            let beginIndexName = this.importJsonName.indexOf("_") > 0 ? this.importJsonName.indexOf("_") : 0;
-            let finalIndexName = this.importJsonName.indexOf("_", beginIndexName + 1) > 0 ? this.importJsonName.indexOf("_", beginIndexName + 1) : this.importJsonName.length;
-            let name = this.importJsonName.substring(beginIndexName + 1, finalIndexName - 2)
-            await this.historicService.updateCfg(107, name, title).toPromise();
-            await this.alertService.successMessage(``, `Pasarela importada correctamente.`);
-            this.importGW.nativeElement.value = '';
-            this.dialogRef.close(true);
-            return;
-          } else {
-            await this.alertService.errorMessage(`Error`, `${result.err}.`);
+        if (conf.result[0].activa == 1) {
+          if ((await this.utilService.checkIps(this.importJson.general.ipv, null)).length == 0 &&
+            (await this.utilService.checkIps(this.importJson.general.cpus[0].ipb, null)).length == 0 &&
+            (await this.utilService.checkIps(this.importJson.general.cpus[1].ipb, null)).length == 0) {
+            result = await this.gatewayService.importGtw(fileToUpload, this.configurationId, this.site.idEMPLAZAMIENTO).toPromise();
+            if (result && result.msg) {
+              let title = this.dataService.getDataGatewayTitle();
+              title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+              let beginIndexName = this.importJsonName.indexOf("_") > 0 ? this.importJsonName.indexOf("_") : 0;
+              let finalIndexName = this.importJsonName.indexOf("_", beginIndexName + 1) > 0 ? this.importJsonName.indexOf("_", beginIndexName + 1) : this.importJsonName.length;
+              let name = this.importJsonName.substring(beginIndexName + 1, finalIndexName - 2)
+              await this.historicService.updateCfg(107, name, title).toPromise();
+              await this.alertService.successMessage(``, `Pasarela importada correctamente.`);
+              this.importGW.nativeElement.value = '';
+              this.dialogRef.close(true);
+              return;
+            } else {
+              await this.alertService.errorMessage(`Error`, `${result.err}.`);
+              context.type = 'IMPORT';
+              this.importGW.nativeElement.value = '';
+              return;
+            }
+          }
+          else {
+            await this.alertService.errorMessage(`Error`, `Configuracion no importada. La pasarela ${this.importJson.general.name} ya existe. Cambie los datos antes de importar.`);
             context.type = 'IMPORT';
             this.importGW.nativeElement.value = '';
             return;
           }
-
         } else {
-          await this.alertService.errorMessage(`Error`, `Configuracion no importada. La pasarela ${this.importJson.general.name} ya existe. Cambie los datos antes de importar.`);
-          context.type = 'IMPORT';
-          this.importGW.nativeElement.value = '';
-          return;
+          result = await this.gatewayService.importGtw(fileToUpload, this.configurationId, this.site.idEMPLAZAMIENTO).toPromise();
+            if (result && result.msg) {
+              let title = this.dataService.getDataGatewayTitle();
+              title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+              let beginIndexName = this.importJsonName.indexOf("_") > 0 ? this.importJsonName.indexOf("_") : 0;
+              let finalIndexName = this.importJsonName.indexOf("_", beginIndexName + 1) > 0 ? this.importJsonName.indexOf("_", beginIndexName + 1) : this.importJsonName.length;
+              let name = this.importJsonName.substring(beginIndexName + 1, finalIndexName - 2)
+              await this.historicService.updateCfg(107, name, title).toPromise();
+              await this.alertService.successMessage(``, `Pasarela importada correctamente.`);
+              this.importGW.nativeElement.value = '';
+              this.dialogRef.close(true);
+              return;
+            } else {
+              await this.alertService.errorMessage(`Error`, `${result.err}.`);
+              context.type = 'IMPORT';
+              this.importGW.nativeElement.value = '';
+              return;
+            }
         }
       } else {
         this.cancelModifyImportGtw;
@@ -209,7 +231,6 @@ export class SiteFormComponent implements OnInit {
       this.app.catchError(error);
     }
   }
-
   async importGtwModified() {
     try {
       if (this.importForm.valid) {
