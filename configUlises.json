@@ -133,7 +133,7 @@
     ],
     "LoadIndexControlEnabled": true,
     "MySQL": "5.6.26",
-    "NodeJS": "8.*.*",
+    "NodeJS": "13.14.*",
     "R16Mode": false,
     "SubVersion": "0",
     "Version": "2.1",
