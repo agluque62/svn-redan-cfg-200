@@ -7,11 +7,14 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 
 import { AppRoutingModule } from './app.routing';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS  } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 import { AuthGuard } from './guards/auth-guard';
 import { CustomMaterialModule } from './core/material.module';
+
+import { Http4debugInterceptor} from './interceptors/http4debug.interceptor';
+
 
 @NgModule({
   declarations: [
@@ -27,8 +30,10 @@ import { CustomMaterialModule } from './core/material.module';
     CustomMaterialModule
   ],
   providers: [
-    AuthGuard
+    AuthGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: Http4debugInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+export var Debugging = window.location.port == "4200";
