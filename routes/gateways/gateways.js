@@ -27,12 +27,17 @@ function getGatewayField(url, callback) {
     const options = {
         method: 'GET',
         uri: url,
-        headers: { 'RedanClient': 'SERVER' }
+        headers: { 'RedanClient': 'SERVER' },
+        timeout: gcfg.Ulises.timeout
     };
-
+	
     request(options, async (error, response, body) => {
-        callback(JSON.parse(response.body));
+		if (response && response.body)
+			callback(JSON.parse(response.body));
+		else
+			logging.Error("GetGatewayField Response Error", url, response);
     }).on('error', (err) => {
+		logging.Error("GetGatewayField OnError", url, err);
         callback(err);
     });
 }
@@ -42,24 +47,30 @@ function postGatewayField(url, data, callback) {
     const options = {
         headers: { 'RedanClient': 'SERVER', 'Content-Type': 'application/json' },
         url: url,
+        timeout: gcfg.Ulises.timeout,
         body: JSON.stringify(data)
     }
 
-    request.post(options, async (error, response, body) => {
-        callback(JSON.parse(body));
+	request.post(options, async (error, response, body) => {
+		if (response && response.body)
+			callback(JSON.parse(body));
+		else
+			logging.Error("postGatewayField Response Error", url, response);
     }).on('error', (err) => {
-        console.log('err');
-        callback(err);
+		logging.Error("postGatewayField OnError", url, err);
+        // callback(err);
     });
 }
 
 router.route('/:id/field/:ip')
     .get(async function (req, res) {
+        logging.Info(req.method, req.originalUrl);
         getGatewayField(`http://${req.params.ip}:8080/config`, function (result) {
             return res.json(result);
         });
     })
     .post(function (req, res) {
+        logging.Info(req.method, req.originalUrl);
         postGatewayField(`http://${req.params.ip}:8080/config`, req.body.data, function (result) {
 
             if (result.res && result.res === 'Configuracion Activada...') {
