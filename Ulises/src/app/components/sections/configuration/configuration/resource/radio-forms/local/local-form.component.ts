@@ -30,6 +30,10 @@ export class LocalFormComponent implements OnInit {
     { value: 2, viewValue: 'Forzado' },
   ];
 
+  oAudio: customValues[] = [
+    { value: 0, viewValue: 'Hardware' }
+  ];
+
   bssMethods: customValues[] = [
     { value: 0, viewValue: 'Ninguno' },
     { value: 1, viewValue: 'RSSI' },

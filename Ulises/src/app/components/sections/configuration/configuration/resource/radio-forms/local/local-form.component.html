@@ -23,6 +23,15 @@
     </mat-form-field>
 
     <mat-form-field appearance="fill">
+      <mat-label>Indicación salida audio</mat-label>
+      <mat-select formControlName="indicacion_salida_audio" name="oAudio">
+          <mat-option *ngFor="let type of oAudio" [value]="type.value">
+              {{type.viewValue}}
+          </mat-option>
+      </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
       <mat-label>Métodos BSS disponibles</mat-label>
       <mat-select formControlName="metodo_bss" name="bssMethods">
         <mat-option *ngFor="let type of bssMethods" [value]="type.value">
