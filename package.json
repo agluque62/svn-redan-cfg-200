@@ -1,9 +1,10 @@
 {
-  "name": "UG5K-Serv",
+  "name": "redan-server",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "debug": "node --expose-gc --inspect app.js"
   },
   "dependencies": {
     "alertify.js": "^1.0.11",
