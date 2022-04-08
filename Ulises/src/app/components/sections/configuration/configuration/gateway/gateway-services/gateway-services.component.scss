@@ -102,8 +102,11 @@
                     }
                 }
             }
-
-            .proxies, .registrars, .sinc {
+            .proxies, .registrars{
+                display: none;
+            }
+            // .proxies, .registrars,
+             .sinc {
 
                 display: flex;
 
