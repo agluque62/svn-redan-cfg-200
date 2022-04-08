@@ -7,4 +7,5 @@ export class ConfigurationGateway {
     Activa!: number;
     ultima_actualizacion!: string;
     pendiente_actualizar!: number;
+    ipInfo!:string;
 }
