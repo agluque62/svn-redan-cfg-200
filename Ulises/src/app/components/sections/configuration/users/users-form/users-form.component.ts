@@ -9,6 +9,9 @@ import { HistoricService } from 'src/app/_services/historic.service';
 import { UserService } from 'src/app/_services/user.service';
 import { UtilsService } from 'src/app/_services/utils.service';
 
+import { LoginUser } from 'src/app/_models/login/LoginUser';
+
+
 interface ProfileItem {
   label: string,
   pow: number,
@@ -30,6 +33,8 @@ export class UsersFormComponent implements OnInit {
   MAX_COLUMN_ITEMS: number = 7;
 
   showSpinner: boolean = false;
+  currentUser!: LoginUser;
+
 
   profiles: ProfileItem[] = [
     {
@@ -127,6 +132,9 @@ export class UsersFormComponent implements OnInit {
     this.initForm();
 
     this.ready = true;
+
+    this.currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+
   }
 
   initForm() {
@@ -179,6 +187,11 @@ export class UsersFormComponent implements OnInit {
   }
 
   async deleteUser() {
+    if (this.user.name == this.currentUser.name){
+      await this.alertService.errorMessage("", "!No se puede eliminar el usuario loggeado!");
+      return;
+    }
+
     try {
       const confirm = await this.alertService.confirmationMessage(``, `¿Seguro que quiere eliminar el usuario ${this.user.name}?`)
       if (confirm.value) {
