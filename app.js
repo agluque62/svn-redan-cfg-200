@@ -1,5 +1,5 @@
 /** 20191003 Detecta si se ha arrancado en debug */
-var debug = typeof v8debug === 'object'
+global.debug = typeof v8debug === 'object'
     || /--debug|--inspect/.test(process.execArgv.join(' '));
 var express = require('express');
 var path = require('path');
@@ -30,7 +30,7 @@ var version = require('./routes/version/version');
 // var logging = require('./lib/loggingDate.js');
 var logging = require('./lib/nu-log.js');
 /** 20191003 Configuracion diferenciada en modo debug */
-var config = require(debug ? './configUlises-dev.json' : './configUlises.json');
+var config = require(global.debug ? './configUlises-dev.json' : './configUlises.json');
 //var controlAccess=require('./routes/services/accessControl');
 var myLibHistorics = require('./lib/historics.js');
 var myLibConfig = require('./lib/configurations.js');
@@ -48,7 +48,7 @@ var flash = require('connect-flash');
 var moment = require('moment');
 var ctrlSesiones = { user: null, localSession: null };
 var aliveGtws = [];
-var homepath = debug ? "/Ulises/dist/Ulises" : "/frontend";
+var homepath = global.debug ? "/Ulises/dist/Ulises" : "/frontend";
 
 /** 20180829. Variables de Entorno en Base de Datos */
 process.env.DB_HOST = process.env.DB_HOST || config.Ulises.dbhost;
@@ -143,7 +143,7 @@ passport.deserializeUser(function (id, cb) {
 });
 /*****/
 
-logging.Info('Program started. DEBUG = ' + debug);
+logging.Info('Program started. DEBUG = ' + global.debug);
 var app = express();
 
 // view engine setup
@@ -229,7 +229,7 @@ app.options('*', cors());
 app.use(cors());
 
 app.use(function (req, res, next) {
-    res.setTimeout(config.Ulises.timeout, function () {       
+    res.setTimeout(config.Ulises.timeout * 2, function () {       
         logging.Info('Request has timed out.');
         res.json({code: 'ETIMEDOUT'});
     });
@@ -376,39 +376,37 @@ app.get('/access', (req, res) => {
     res.sendFile(process.cwd() + homepath + "/index.html");
 });
 
+var http_client = require('./lib/httpclient');
 app.post('/backup/:host',
-    function (req, res) {
-        postBackupManual(`http://${req.params.host}/backup`, {}, function (result) {
-            res.json(result);
-        });
+    async function (req, res) {
+        var data = await http_client.post(`http://${req.params.host}/backup`, {});
+        if (!res.writableEnded){
+            res.json(data);
+        }
     });
 
 app.get('/backup/:host/log',
-    function (req, res) {
-        getBackupLog(`http://${req.params.host}/log`, function (result) {
-            res.json(result);
-        });
+    async function (req, res) {
+        var data = await http_client.get(`http://${req.params.host}/log`);
+        res.json(data);
     });
 
 app.post('/backup/:host/log',
-    function (req, res) {
-        deleteBackupLog(`http://${req.params.host}/log`, {}, function (result) {
-            res.json(result);
-        });
+    async function (req, res) {
+        var data = await http_client.post(`http://${req.params.host}/log`, {logs:[]});
+        res.json(data);
     });
 
 app.post('/backup/:host/config',
-    function (req, res) {
-        postBackupConfig(`http://${req.params.host}/config`, req.body, function (result) {
-            res.json(result);
-        });
+    async function (req, res) {
+        var data = await http_client.post(`http://${req.params.host}/config`, req.body);
+        res.json(data);
     });
 
 app.get('/backup/:host/config',
-    function (req, res) {
-        getBackupLog(`http://${req.params.host}/config`, function (result) {
-            res.json(result);
-        });
+    async function (req, res) {
+        var data = await http_client.get(`http://${req.params.host}/config`);
+        res.json(data);
     });
 
 app.get('/about',
@@ -544,7 +542,7 @@ app.post('/localconfig',
 
         // Chequear coherencia.
         if (validateLocalConfig(req.body)) {
-			var filename = debug ? "./configUlises-dev.json" : "./configUlises.json";
+			var filename = global.debug ? "./configUlises-dev.json" : "./configUlises.json";
             // Lo salvo en los datos...
             config.Ulises = req.body;
             // Lo salvo en el fichero...
@@ -656,7 +654,7 @@ var synch = setInterval(function () {
     }
 }, config.Ulises.refreshTime);
 /*************************/
-var filesupervised = debug ? "./configUlises-dev.json" : "./configUlises.json";
+var filesupervised = global.debug ? "./configUlises-dev.json" : "./configUlises.json";
 fs.watchFile(require.resolve(filesupervised), function () {
     /** Para cargar dinamicamente los cambios de configuracion */
     delete require.cache[require.resolve(filesupervised)];
@@ -714,69 +712,6 @@ process.on('uncaughtException', function (err) {
     logging.Error('Caught exception: ', err.message, err.stack);
 });
 
-function postBackupManual(url, data, callback) {
-
-    const options = {
-        headers: { 'Content-Type': 'application/json' },
-        url: url,
-        body: JSON.stringify(data)
-    }
-
-    request.post(options, async (error, response, body) => {
-        callback(JSON.parse(body));
-    }).on('error', (err) => {
-        callback(err);
-    });
-}
-
-function postBackupConfig(url, data, callback) {
-
-    const options = {
-        headers: { 'Content-Type': 'application/json' },
-        url: url,
-        body: JSON.stringify(data)
-    }
-
-    request.post(options, async (error, response, body) => {
-        callback(JSON.parse(body));
-    }).on('error', (err) => {
-        callback(err);
-    });
-}
-
-
-function getBackupLog(url, callback) {
-
-    const options = {
-        method: 'GET',
-        uri: url
-    };
-
-    request(options, async (error, response, body) => {
-        try {
-            callback(JSON.parse(response.body));
-        } catch (error) {
-            callback(error);
-        }
-    }).on('error', (err) => {
-        callback(err);
-    });
-}
-
-function deleteBackupLog(url, data, callback) {
-    const options = {
-        headers: { 'Content-Type': 'application/json' },
-        url: url,
-        body: JSON.stringify(data)
-    }
-
-    request.post(options, async (error, response, body) => {
-        callback(JSON.parse(body));
-    }).on('error', (err) => {
-        callback(err);
-    });
-}
-
 function IsAuthReq(req){
-	return debug ? true : req.isAuthenticated();
+	return global.debug ? true : req.isAuthenticated();
 }

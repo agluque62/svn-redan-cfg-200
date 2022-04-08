@@ -6,7 +6,12 @@
     "minuto": 15
   },
   "log": {
-    "logs": []
+    "log": [
+      "Item-1",
+      "Item-2",
+      "Item-3"
+    ],
+    "resultado": "OK"
   },
   "backup": {}
 }
