@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppComponent } from 'src/app/app.component';
-import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
+// import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
 import { AlertService } from 'src/app/_services/alert.service';
 import { BackupService } from 'src/app/_services/backup.service';
 import { ConfigService } from 'src/app/_services/config.service';
@@ -15,7 +15,8 @@ import { UserService } from 'src/app/_services/user.service';
 })
 export class BackupManualComponent implements OnInit {
 
-  localConfig!: LocalConfig;
+  ServiceDomainLocation = '';
+  ServiceDomainAvailable = false;
 
   constructor(private readonly loginService: LoginService, private readonly app: AppComponent,
     private readonly userService: UserService, private readonly router: Router,
@@ -25,7 +26,7 @@ export class BackupManualComponent implements OnInit {
   ngOnInit(): void {
     this.checkPermissions();
   }
-
+  
   async checkPermissions() {
     if (this.notPermission()) {
       await this.loginService.logout().toPromise();
@@ -43,13 +44,25 @@ export class BackupManualComponent implements OnInit {
     const confirm = await this.alertService.confirmationMessage(``, `¿Hacer backup de la base de datos ahora?`);
 
     if (confirm.value) {
-      this.localConfig = await this.configService.getLocalConfig().toPromise();
-      const result = await this.backupService.makeManualBackup(this.localConfig.BackupServiceDomain).toPromise();
+      // this.localConfig = await this.configService.getLocalConfig().toPromise();
+      const result = await this.backupService.makeManualBackup(this.ServiceDomainLocation).toPromise();
       if (result.resultado.includes('Error')) {
         await this.alertService.errorMessage(``, `${result.resultado}`);
         return;
       }
       await this.alertService.successMessage(``, `${result.resultado}`);        
     }
+  }
+
+  onServiceActive(domain: string){
+    this.ServiceDomainLocation = domain;
+    this.ServiceDomainAvailable=true;
+    console.log('Servicio Activo en ', domain);
+  }
+
+  onServiceInactive(){
+    this.ServiceDomainLocation = '';
+    this.ServiceDomainAvailable=false;
+    console.log('Servicio no conectado o en error');
   }
 }

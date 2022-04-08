@@ -4,7 +4,12 @@
 
         margin: 15px;
 
-        .path, .time {
+        .readonly {
+            pointer-events:none;
+        }
+
+
+        .path, .time, .domain {
 
             display: flex;
             flex-direction: column;

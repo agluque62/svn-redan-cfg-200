@@ -18,7 +18,9 @@ import { UserService } from 'src/app/_services/user.service';
 export class BackupHistoricComponent implements OnInit {
 
   backupLogResponse!: any;
-  localConfig!: LocalConfig;
+  // localConfig!: LocalConfig;
+  ServiceDomainLocation: string = '';
+  ServiceDomainAvailable: boolean = false;
 
   dataSource!: MatTableDataSource<any>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -29,7 +31,7 @@ export class BackupHistoricComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkPermissions();
-    this.retrieveBackupLog();
+    // this.retrieveBackupLog();
   }
 
   async checkPermissions() {
@@ -50,8 +52,8 @@ export class BackupHistoricComponent implements OnInit {
   }
 
   async retrieveBackupLog() {
-    this.localConfig = await this.configService.getLocalConfig().toPromise();
-    this.backupLogResponse = await this.backupService.getBackupLog(this.localConfig.BackupServiceDomain).toPromise();
+    // this.localConfig = await this.configService.getLocalConfig().toPromise();
+    this.backupLogResponse = await this.backupService.getBackupLog(this.ServiceDomainLocation).toPromise();
 
     if (this.backupLogResponse.error != null) {
       await this.alertService.errorMessage(`Error`, this.backupLogResponse.error);
@@ -79,15 +81,30 @@ export class BackupHistoricComponent implements OnInit {
     const confirm = await this.alertService.confirmationMessage(``, `¿Eliminar definitivamente el archivo log?`);
 
     if (confirm.value) {
-      this.localConfig = await this.configService.getLocalConfig().toPromise();
-      const deleteLogResponse = await this.backupService.deleteBackupLog(this.localConfig.BackupServiceDomain).toPromise();
+      // this.localConfig = await this.configService.getLocalConfig().toPromise();
+      const deleteLogResponse = await this.backupService.deleteBackupLog(this.ServiceDomainLocation).toPromise();
   
       if (deleteLogResponse && deleteLogResponse.resultado === 'OK') {
         await this.alertService.successMessage(``, `Log borrado correctamente`);    
+        this.dataSource.data=[];
         this.retrieveBackupLog();
         return;
       }  
     }
+  }
+
+  onServiceActive(domain: string){
+    this.ServiceDomainLocation=domain;
+    this.ServiceDomainAvailable=true;
+    this.retrieveBackupLog();
+    console.log('Backup Service active on ', domain);
+  }
+
+  onServiceInactive(){
+    this.ServiceDomainLocation='';
+    this.ServiceDomainAvailable=false;
+    this.dataSource.data=[];
+    console.log('Backup Service inactive');
   }
 }
 

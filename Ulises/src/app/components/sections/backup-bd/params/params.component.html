@@ -1,56 +1,61 @@
 <div class="backup-params">
 
+    <bkp-info (ServiceActive)="onServiceActive($event)" (ServiceInactive)="onServiceInactive()"></bkp-info>
+
     <div class="title">
         {{ 'Parámetros' }}
     </div>
 
-    <div class="path">
-        <mat-form-field appearance="fill">
-            <mat-label>{{'Path'}}</mat-label>
-            <input matInput [(ngModel)]="path">
-        </mat-form-field>
+    <div *ngIf="ServiceDomainAvailable">
 
-        <div class="label">
-            <mat-label>{{'Conservación de backup'}}</mat-label>
-        </div>
-
-        <mat-form-field class="select" appearance="fill">
-            <mat-label>{{ 'Días' }}</mat-label>
-            <mat-select [(ngModel)]="days">
-                <mat-option [value]="day" *ngFor="let day of daysOptions">
-                    {{ day }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-    </div>
-
-    <div class="time">
-        <div class="label">
-            <mat-label>{{'Inicio de backup'}}</mat-label>
-        </div>
-
-        <div class="selectors">
-            <mat-form-field class="select" appearance="fill">
-                <mat-label>{{'Hora'}}</mat-label>
-                <mat-select [(ngModel)]="hours">
-                    <mat-option [value]="hour" *ngFor="let hour of hoursOptions">
-                        {{ hour }}
-                    </mat-option>
-                </mat-select>
+        <div class="path">
+            <mat-form-field appearance="fill">
+                <mat-label>{{'Path'}}</mat-label>
+                <input matInput [(ngModel)]="path">
             </mat-form-field>
 
+            <div class="label">
+                <mat-label>{{'Conservación de backup'}}</mat-label>
+            </div>
+
             <mat-form-field class="select" appearance="fill">
-                <mat-label>{{'Minutos'}}</mat-label>
-                <mat-select [(ngModel)]="minutes">
-                    <mat-option [value]="min" *ngFor="let min of minutesOptions">
-                        {{ min }}
+                <mat-label>{{ 'Días' }}</mat-label>
+                <mat-select [(ngModel)]="days">
+                    <mat-option [value]="day" *ngFor="let day of daysOptions">
+                        {{ day }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
-    </div>
 
-    <div class="btn">
-        <button mat-raised-button class="create-btn custom-raised-btn" (click)="confirm()">{{'Confirmar'}}</button>
+        <div class="time">
+            <div class="label">
+                <mat-label>{{'Inicio de backup'}}</mat-label>
+            </div>
+
+            <div class="selectors">
+                <mat-form-field class="select" appearance="fill">
+                    <mat-label>{{'Hora'}}</mat-label>
+                    <mat-select [(ngModel)]="hours">
+                        <mat-option [value]="hour" *ngFor="let hour of hoursOptions">
+                            {{ hour }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="select" appearance="fill">
+                    <mat-label>{{'Minutos'}}</mat-label>
+                    <mat-select [(ngModel)]="minutes">
+                        <mat-option [value]="min" *ngFor="let min of minutesOptions">
+                            {{ min }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="btn">
+            <button mat-raised-button class="create-btn custom-raised-btn" (click)="confirm()">{{'Confirmar'}}</button>
+        </div>
     </div>
 </div>

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ParamsComponent } from './params/params.component';
 import { RestoreComponent } from './restore/restore.component';
+import { BkpinfoComponent } from './backup-service-info/bkpinfo.component';
 import { BackupHistoricComponent } from './backup-historic/backup-historic.component';
 import { BackupManualComponent } from './backup-manual/backup-manual.component';
 import { CustomMaterialModule } from 'src/app/core/material.module';
@@ -12,6 +13,7 @@ import { CustomMaterialModule } from 'src/app/core/material.module';
 
 @NgModule({
     declarations: [
+        BkpinfoComponent,
         ParamsComponent,
         RestoreComponent,
         BackupHistoricComponent,

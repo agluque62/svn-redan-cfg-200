@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppComponent } from 'src/app/app.component';
-import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
+// import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
 import { AlertService } from 'src/app/_services/alert.service';
 import { BackupService } from 'src/app/_services/backup.service';
 import { ConfigService } from 'src/app/_services/config.service';
@@ -15,6 +15,9 @@ import { UserService } from 'src/app/_services/user.service';
 })
 export class ParamsComponent implements OnInit {
 
+  ServiceDomainLocation: string = '';
+  ServiceDomainAvailable: boolean = false;
+
   daysOptions = _Array.range(1, 31, 1);
   hoursOptions = [...Array(24).keys()];
   minutesOptions = [...Array(60).keys()];
@@ -24,7 +27,7 @@ export class ParamsComponent implements OnInit {
   hours: number = 0;
   minutes: number = 1;
 
-  localConfig!: LocalConfig;
+  // localConfig!: LocalConfig;
 
   constructor(private readonly loginService: LoginService, private readonly app: AppComponent,
     private readonly userService: UserService, private readonly router: Router,
@@ -38,12 +41,8 @@ export class ParamsComponent implements OnInit {
   }
 
   async initData() {
-    this.localConfig = await this.configService.getLocalConfig().toPromise();
-    const result = await this.backupService.getConfig(this.localConfig.BackupServiceDomain).toPromise();
-    this.path = (result.path) ? result.path : `C:\\ProgramData\\MySQLBackup\\Backup\\`;
-    this.hours = (result.hora) ? result.hora : 0;
-    this.minutes = (result.minuto) ? result.minuto : 1;
-    this.days = (result.profundidad) ? result.profundidad : 7;
+    // this.localConfig = await this.configService.getLocalConfig().toPromise();
+//    await this.loadParameters();
   }
 
   async checkPermissions() {
@@ -59,24 +58,54 @@ export class ParamsComponent implements OnInit {
   }
 
   async confirm() {
+    const confirm = await this.alertService.confirmationMessage(``, `¿Confirma la actualización de parámetros?`);
+    if (confirm.value){
+      const data = {
+        'path': this.path,
+        'profundidad': this.days,
+        'hora': this.hours,
+        'minuto': this.minutes
+      };
+  
+      const result = await this.backupService.changeConfig(/*this.localConfig.BackupServiceDomain*/this.ServiceDomainLocation, data).toPromise();
+  
+      if (result.resultado !== 'OK') {
+        await this.alertService.errorMessage(``, `${result.resultado}`);
+      }
+      else{
 
-    const data = {
-      'path': this.path,
-      'profundidad': this.days,
-      'hora': this.hours,
-      'minuto': this.minutes
-    };
-
-    const result = await this.backupService.changeConfig(this.localConfig.BackupServiceDomain, data).toPromise();
-
-    if (result.resultado !== 'OK') {
-      await this.alertService.errorMessage(``, `${result.resultado}`);
-      return;
+        await this.alertService.successMessage(``, `Configuración actualizada`);
+      }
     }
+  }
 
-    await this.alertService.successMessage(``, `Configuración actualizada`);
+  async loadParameters(){
+    const result = await this.backupService.getConfig(this.ServiceDomainLocation).toPromise();
+    if (!result.path || !result.profundidad || !result.hora || !result.minuto){
+      await this.alertService.errorMessage(``, `${result.resultado}`);
+    }
+    else{
+      this.path = (result.path) ? result.path : `C:\\ProgramData\\MySQLBackup\\Backup\\`;
+      this.hours = (result.hora) ? result.hora : 0;
+      this.minutes = (result.minuto) ? result.minuto : 1;
+      this.days = (result.profundidad) ? result.profundidad : 7;  
+    }
+  }
+
+  onServiceActive(domain: string){
+    this.ServiceDomainLocation=domain;
+    this.ServiceDomainAvailable=true;
+    this.loadParameters();
+    console.log('Backup Service active on ', domain);
+  }
+
+  onServiceInactive(){
+    this.ServiceDomainLocation='';
+    this.ServiceDomainAvailable=false;
+    console.log('Backup Service inactive');
   }
 }
+
 
 interface _Iterable extends Iterable<{}> {
   length: number;
