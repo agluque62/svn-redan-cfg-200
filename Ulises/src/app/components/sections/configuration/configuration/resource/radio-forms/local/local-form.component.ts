@@ -23,6 +23,7 @@ export class LocalFormComponent implements OnInit {
   displayClimaxTime: boolean = false;
   checkClimaxBSS: boolean = false;
   displayClimaxMethod: boolean = false;
+  displayBSSWindow: boolean = false;
 
   iAudio: customValues[] = [
     { value: 0, viewValue: 'Hardware' },
@@ -71,6 +72,14 @@ export class LocalFormComponent implements OnInit {
     this.displayUmbralVAD(this.resourceForm.value.indicacion_entrada_audio);
   }
 
+  ngOnCheckBssClimax(value: boolean){
+    this.climaxModeActive=value;
+    if (value){
+      this.checkBssType();
+      this.checkClimaxType();
+    }
+  }
+
   displayUmbralVAD(valueSelected: number) {
     this.vadIsSelected = (valueSelected === 1);
   }
@@ -88,11 +97,16 @@ export class LocalFormComponent implements OnInit {
     this.checkClimaxMethod();
   }
 
+  checkBssType(){
+    this.displayBSSWindow = (this.resourceForm.value.metodo_bss !== 0);
+  }
+
   checkIfClimaxBSSIsSelected() {
     if ((this.resourceForm.value.climax_bss === 1 || this.resourceForm.value.climax_bss) && this.resourceForm.value.tipo_agente != 0 &&  this.resourceForm.value.tipo_agente != 1) {
       this.checkClimaxBSS = true;
       this.climaxModeActive = true;
       this.checkClimaxType();
+      this.checkBssType();
     }else{
       this.checkClimaxBSS = false;
       this.climaxModeActive = false;
