@@ -24,7 +24,7 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-form-field *ngIf="isR2" appearance="fill">
+    <mat-form-field appearance="fill">
         <mat-label>Time Out respuesta llamada</mat-label>
         <mat-select [(value)]="timeOpt" name="timeoutSel" (selectionChange)="changeTimeOpt($event)">
             <mat-option *ngFor="let opt of timeOpts" [value]="opt.value">
