@@ -1,0 +1,16 @@
+{
+  "config": {
+    "path": "c:\\path1",
+    "profundidad": 2,
+    "hora": 2,
+    "minuto": 15
+  },
+  "log": {
+    "log": [
+      "Item-1",
+      "Item-2",
+      "Item-3"
+    ],
+    "resultado": "OK"
+  }
+}
