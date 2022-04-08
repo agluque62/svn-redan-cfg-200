@@ -408,13 +408,15 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       prioridad_ptt: new FormControl({ value: this.resource.prioridad_ptt, disabled: this.visualizationMode }),
       prioridad_sesion_sip: new FormControl({ value: this.resource.prioridad_sesion_sip, disabled: this.visualizationMode }),
       restriccion_entrantes: new FormControl({ value: this.resource.restriccion_entrantes, disabled: this.visualizationMode }),
-      retardo_fijo_climax: new FormControl({ value: this.resource.retardo_fijo_climax, disabled: this.visualizationMode }),
+      retardo_fijo_climax: new FormControl({ value: this.resource.retardo_fijo_climax, disabled: this.visualizationMode },
+        [Validators.required, Validators.pattern(AppSettings.ONLY_NUMBERS), Validators.min(AppSettings.controlRanges.retardo_fijo_climax.min), Validators.max(AppSettings.controlRanges.retardo_fijo_climax.max)]),
       retraso_interno_grs: new FormControl({ value: this.resource.retraso_interno_grs, disabled: this.visualizationMode }, [Validators.required, Validators.min(0), Validators.max(250)]),
       tabla_bss_id: new FormControl({ value: this.resource.tabla_bss_id, disabled: this.visualizationMode }),
       tipo_agente: new FormControl({ value: this.resource.tipo_agente, disabled: this.visualizationMode }),
       tipo_climax: new FormControl({ value: this.resource.tipo_climax, disabled: this.visualizationMode }),
       umbral_vad: new FormControl({ value: this.resource.umbral_vad, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.UMBRAL_VOX), Validators.min(-35), Validators.max(-15)]),
-      ventana_bss: new FormControl({ value: this.resource.ventana_bss, disabled: this.visualizationMode }),
+      ventana_bss: new FormControl({ value: this.resource.ventana_bss, disabled: this.visualizationMode },
+        [Validators.required, Validators.pattern(AppSettings.ONLY_NUMBERS), Validators.min(AppSettings.controlRanges.ventana_bss.min), Validators.max(AppSettings.controlRanges.ventana_bss.max)]),
     });
 
     this.resourceForm.valueChanges
@@ -808,6 +810,10 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         this.resourceForm.patchValue({ 'precision_audio': 1 });
       } else {
         this.precAudioIsDisable = false;
+        if (this.resourceForm.get('ventana_bss')?.invalid)
+          this.resourceForm.patchValue({ 'ventana_bss': 50 });
+        if (this.resourceForm.get('retardo_fijo_climax')?.invalid)
+          this.resourceForm.patchValue({ 'retardo_fijo_climax': 50 });
       }
 
       this.displayRadioTab = true;
