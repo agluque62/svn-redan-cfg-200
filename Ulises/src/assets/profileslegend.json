@@ -1,39 +1,39 @@
 {
     "roles": [
         {
-            "rol": "Visualización (C.Central+RCS)",
+            "rol": "Visualizacion CFIGR+RCS",
             "CFG": "Si",
             "RCS": "Si",
             "GW": "No",
             "Funciones_asociadas": "Permite visualizar los parámetros configurados en todas las aplicaciones sin ninguna otra funcionalidad adicional. Quedan excluidas las pantallas de back-up e Históricos."
         },
         {
-            "rol": "RCS.Mando",
+            "rol": "Mando (RCS)",
             "CFG": "No",
             "RCS": "Si",
             "GW": "No",
-            "Funciones_asociadas": "Permite realizar, desde la aplicación de supervisión, telemandos sobre los equipos desde la aplicación de supervisión: RESET, BITE, Conmutación Principal/Reserva de equipos radio, Test RF (modo bucle), Acceso a MIB-2 de cada CPU."
+            "Funciones_asociadas": "Permite realizar, desde la aplicación de supervisión, telemandos sobre los equipos desde la aplicación de supervisión: RESET, BITE, Conmutación Principal/Reserva de equipos radio, Test RF (modo bucle), Acceso a MIB-2 de cada CPU,  Activación/desactivación de servicios.(Debe tener asignado como mínimo el perfil de visualización)."
         },
         {
-            "rol": "Inhibición de histórico alarmas en GW",
+            "rol": "Inhibición de histórico alarmas en GW (RCS)",
             "CFG": "No",
             "RCS": "Si",
             "GW": "No",
-            "Funciones_asociadas": "Permite configurar que los eventos generados por determinadas pasarelas, generen estados de alarma en el sistema."
+            "Funciones_asociadas": "Permite configurar que los eventos generados por determinadas pasarelas, generen estados de alarma o no, en el sistema. (Debe tener asignado como mínimo el perfil de visualización)"
         },
         {
-            "rol": "RCS. Reconocimiento de alarmas",
+            "rol": "Reconocimiento de alarmas (RCS)",
             "CFG": "No",
             "RCS": "Si",
             "GW": "No",
-            "Funciones_asociadas": "Permite reconocer las alarmas desde la aplicación de supervisión."
+            "Funciones_asociadas": "Permite reconocer las alarmas desde la aplicación de supervisión RCS."
         },
         {
-            "rol": "C.Central Gestión de Usuarios",
+            "rol": "Gestión perfiles de Usuario (CFIGR+RCS+CFIGL)",
             "CFG": "Si",
             "RCS": "No",
             "GW": "No",
-            "Funciones_asociadas": "Permite realizar todas las funciones relacionadas con la asignación de perfiles/roles a los usuarios"
+            "Funciones_asociadas": "Permite realizar todas las funciones relacionadas con la asignación de perfiles/roles a los usuarios para todas las aplicaciones (CFIGR+RCS+CFIGL), desde el menú de usuarios de la aplicación CFIGR."
         },
         {
             "rol": "Selección de configuraciones a supervisar",
@@ -43,67 +43,67 @@
             "Funciones_asociadas": "Permite establecer que configuraciones de la base de datos deben ser supervisadas o no."
         },
         {
-            "rol": "C.Central Administrador",
+            "rol": "Administrador General (CFIGR+RCS+CFIGL)",
             "CFG": "Si",
             "RCS": "Si",
             "GW": "Si",
             "Funciones_asociadas": "Control completo de todas las aplicaciones y dispositivos."
         },
         {
-            "rol": "GW Local. Visualización",
+            "rol": "Visualización CFIGL",
             "CFG": "No",
             "RCS": "No",
             "GW": "Si",
             "Funciones_asociadas": "Permite visualizar los parámetros configurados en la aplicación de configuración local de las pasarelas"
         },
         {
-            "rol": "GW Local. Administrador",
+            "rol": "Administrador CFIGL",
             "CFG": "No",
             "RCS": "No",
             "GW": "Si",
             "Funciones_asociadas": "Control completo de la aplicación de configuración local de las pasarelas"
         },
         {
-            "rol": "C.Central Históricos/Estadísticas",
+            "rol": "Históricos/Estadísticas CFIGR",
             "CFG": "Si",
             "RCS": "No",
             "GW": "No",
-            "Funciones_asociadas": "Permite el acceso y la gestión del servicio de históricos."
+            "Funciones_asociadas": "Permite el acceso y la gestión del servicio de históricos de las aplicaciones CFIGR y RCS, desde el menú de mantenimiento_historico, de la aplicación CFIGR."
         },
         {
-            "rol": "C.Central Backup BD",
+            "rol": "Backup BD CFIGR",
             "CFG": "Si",
             "RCS": "No",
             "GW": "No",
             "Funciones_asociadas": "Permite configurar el sistema de BACKUP automático del sistema."
         },
         {
-            "rol": "RCS. Control aviso acústico",
+            "rol": "Control aviso acústico RCS",
             "CFG": "No",
             "RCS": "Si",
             "GW": "No",
             "Funciones_asociadas": "Permite activar / desactivar el nivel acústico de señalización de alarmas."
         },
         {
-            "rol": "GW Local. Gestión de configuraciones",
+            "rol": "Gestión de configuraciones CFIGL",
             "CFG": "No",
             "RCS": "No",
             "GW": "Si",
             "Funciones_asociadas": "Permite realizar las siguientes funciones desde las pasarelas: Gestión de preconfiguraciones locales (importar, exportar, guardar, activar y borrar), Modificación de parámetros y aplicar los cambios."
         },
         {
-            "rol": "RCS. Actualización SW de GWs",
+            "rol": "Actualización Software de GWs (RCS)",
             "CFG": "No",
             "RCS": "Si",
             "GW": "No",
             "Funciones_asociadas": "Permite cargar nuevas versiones de software en las pasarelas."
         },
         {
-            "rol": "C.Central. Gestión Configuraciones",
+            "rol": "Gestión Configuraciones CFIGR",
             "CFG": "Si",
             "RCS": "No",
             "GW": "No",
-            "Funciones_asociadas": "Permite el diseño de configuraciones en la aplicación central de configuración y cargar configuraciones desde la aplicación centralizada"
+            "Funciones_asociadas": "Permite el diseño de configuraciones en la aplicación CFIGR y su carga / activación."
         }
     ]
 }

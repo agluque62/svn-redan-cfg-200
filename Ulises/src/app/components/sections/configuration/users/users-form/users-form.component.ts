@@ -38,27 +38,27 @@ export class UsersFormComponent implements OnInit {
 
   profiles: ProfileItem[] = [
     {
-      label: 'Visualización (C.Central+RCS)',
+      label: 'Visualizacion CFIGR+RCS',
       pow: 1,
       selected: false
     },
     {
-      label: 'RCS.Mando',
+      label: 'Mando (RCS)',
       pow: 2,
       selected: false
     },
     {
-      label: 'Inhibición de histórico alarmas de GW',
+      label: 'Inhibición de histórico alarmas en GW (RCS)',
       pow: 4,
       selected: false
     },
     {
-      label: 'RCS. Reconocimiento de alarmas',
+      label: 'Reconocimiento de alarmas (RCS)',
       pow: 8,
       selected: false
     },
     {
-      label: 'C.Central Gestión de Usuarios',
+      label: 'Gestión perfiles de Usuario (CFIGR+RCS+CFIGL)',
       pow: 16,
       selected: false
     },
@@ -68,47 +68,47 @@ export class UsersFormComponent implements OnInit {
       selected: false
     },
     {
-      label: 'C.Central Administrador',
+      label: 'Administrador General (CFIGR+RCS+CFIGL)',
       pow: 64,
       selected: false
     },
     {
-      label: 'GW Local. Visualización',
+      label: 'Visualización CFIGL',
       pow: 128,
       selected: false
     },
     {
-      label: 'GW Local. Administrador',
+      label: 'Administrador CFIGL',
       pow: 256,
       selected: false
     },
     {
-      label: 'C.Central Históricos/Estadísticas',
+      label: 'Históricos/Estadísticas CFIGR',
       pow: 512,
       selected: false
     },
     {
-      label: 'C.Central Backup BD',
+      label: 'Backup BD CFIGR',
       pow: 1024,
       selected: false
     },
     {
-      label: 'RCS. Control aviso acústico',
+      label: 'Control aviso acústico RCS',
       pow: 2048,
       selected: false
     },
     {
-      label: 'GW Local. Gestión de configuraciones',
+      label: 'Gestión de configuraciones CFIGL',
       pow: 4096,
       selected: false
     },
     {
-      label: 'RCS. Actualización SW de GWs',
+      label: 'Actualización Software de GWs (RCS)',
       pow: 8192,
       selected: false
     },
     {
-      label: 'C.Central. Gestión Configuraciones',
+      label: 'Gestión Configuraciones CFIGR',
       pow: 32768,
       selected: false
     }
