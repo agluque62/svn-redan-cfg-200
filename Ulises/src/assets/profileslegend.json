@@ -92,7 +92,7 @@
             "Funciones_asociadas": "Permite realizar las siguientes funciones desde las pasarelas: Gestión de preconfiguraciones locales (importar, exportar, guardar, activar y borrar), Modificación de parámetros y aplicar los cambios."
         },
         {
-            "rol": "RCS. Actualización SQ de GWs",
+            "rol": "RCS. Actualización SW de GWs",
             "CFG": "No",
             "RCS": "Si",
             "GW": "No",
