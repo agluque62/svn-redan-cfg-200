@@ -23,30 +23,41 @@
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>Métodos BSS disponibles</mat-label>
-      <mat-select formControlName="metodo_bss" name="bssMethods">
-        <mat-option *ngFor="let type of bssMethods" [value]="type.value">
-          {{type.viewValue}}
-        </mat-option>
+      <mat-label>Indicación salida audio</mat-label>
+      <mat-select formControlName="indicacion_salida_audio" name="oAudio">
+          <mat-option *ngFor="let type of oAudio" [value]="type.value">
+              {{type.viewValue}}
+          </mat-option>
       </mat-select>
-    </mat-form-field>
+  </mat-form-field>
 
     <mat-checkbox formControlName="climax_bss" [checked]="checkClimaxBSS" *ngIf="displayBSSClimax"
-      (change)="climaxModeActive = $event.checked">
-      BSS/CLIMAX</mat-checkbox>
-
+      (change)="ngOnCheckBssClimax($event.checked)">
+      BSS/CLIMAX
+    </mat-checkbox>
+  
     <div class="climaxElements" *ngIf="climaxModeActive">
       <mat-form-field appearance="fill">
+        <mat-label>Métodos BSS disponibles</mat-label>
+        <mat-select formControlName="metodo_bss" name="bssMethods" (selectionChange)="checkBssType()">
+          <mat-option *ngFor="let type of bssMethods" [value]="type.value">
+            {{type.viewValue}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill" *ngIf="displayBSSWindow">
         <mat-label>Ventana BSS (ms)</mat-label>
-        <input matInput formControlName="ventana_bss">
+        <input matInput formControlName="ventana_bss" >
         <mat-error
         *ngIf="resourceForm.get('ventana_bss')?.hasError('min') || resourceForm.get('ventana_bss')?.hasError('max')">
         {{ appset.controlRanges.ventana_bss.msg }}
       </mat-error>
       <mat-error *ngIf="resourceForm.get('ventana_bss')?.hasError('pattern')">{{ appset.NUMBERS_FORMAT_INVALID }}</mat-error>
       <mat-error *ngIf="resourceForm.get('ventana_bss')?.hasError('required')">{{ appset.FIELD_REQUIRED }}</mat-error>
-    </mat-form-field>
+    </mat-form-field>  
+    </div>
 
+    <div class="climaxElements" *ngIf="climaxModeActive">
       <mat-form-field appearance="fill">
         <mat-label>Modo Climax</mat-label>
         <mat-select formControlName="tipo_climax" (selectionChange)="checkClimaxType()" name="climaxModes">
