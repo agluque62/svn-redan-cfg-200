@@ -118,7 +118,6 @@ dist
 .pnp.*
 
 uploads/
-frontend/
 
 /install/src-zip.7z
 /Ulises/src/assets/images/corporativo-old.png
