@@ -9,7 +9,7 @@
     "log2con": "info",
     "log2file": "silly",
     "LoginSystemTrace": false,
-    "Date": "09/02/2022",
+    "Date": "30/06/2022",
     "Files": [
       {
         "Name": "app.js",
@@ -135,8 +135,8 @@
     "MySQL": "5.6.26",
     "NodeJS": "13.14.*",
     "R16Mode": false,
-    "SubVersion": "0",
-    "Version": "2.1",
+    "SubVersion": "b1",
+    "Version": "2.2",
     "dbdatabase": "ug5kv2",
     "dbhost": "localhost",
     "dbpassword": "U5K-G",
