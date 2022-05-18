@@ -15,12 +15,21 @@ var async = require('async');
 var gcfg = require('../../configUlises.json');
 
 var request = require('request');
+var moment = require('moment');
 
+var SimulateGws = false;
 // Middleware Resources
 //var myGatewaysModule = require('./resources.js');
 
 // Nest routers by attaching them as middleware:
 //router.use('/:gatewayId/resources', myGatewaysModule);
+
+function getNewCurrentUtcDateIso(){
+    return moment().toISOString().slice(0, 19);
+}
+function toJsonDate(isoDate){
+    return moment(isoDate).format("DD/MM/YYYY HH:mm:ss UTC");
+}
 
 function getGatewayField(url, callback) {
 
@@ -36,7 +45,15 @@ function getGatewayField(url, callback) {
         }
     }).on('error', (err) => {
         logging.Error("On getGatewayField Error => ", err);
-        callback(err);
+        if (SimulateGws){
+            var ret = {
+                fechaHora: "", general: {}, idConf: "", hardware: [], recursos: [], servicios:[], tipo: 0, users:[]
+            };
+            callback(ret);
+        }
+        else {
+                callback(err);
+        }
     });
 }
 
@@ -54,6 +71,9 @@ function postGatewayField(url, data, callback) {
         }
     }).on('error', (err) => {
         logging.Error("On postGatewayField Error => ", err);
+        if (SimulateGws){
+            err.res = "Configuracion Activada...";
+        }
         callback(err);
     });
 }
@@ -65,10 +85,17 @@ router.route('/:id/field/:ip')
         });
     })
     .post(function (req, res) {
-        postGatewayField(`http://${req.params.ip}:8080/config`, req.body.data, function (result) {
+            var bdtDate = getNewCurrentUtcDateIso();
+            var jsonDate = toJsonDate(bdtDate);        
+            logging.Info("bdtDate = " + bdtDate + ", jsonDate = " + req.body.data.fechaHora + ", new jsonDate = ", jsonDate);
+
+            // Se pone en el fichero JSON el timestamp de la carga (UTC)
+            req.body.data.fechaHora = jsonDate;
+            postGatewayField(`http://${req.params.ip}:8080/config`, req.body.data, function (result) {
 
             if (result.res && result.res === 'Configuracion Activada...') {
-                myLibGateways.setGatewayPendingToUpdateToZero(+req.params.id, function (result_update) {
+                // Se pasa a la rutina la misma fecha que en el fichero JSON.
+                myLibGateways.setGatewayPendingToUpdateToZero(req.params.id, bdtDate, function (result_update) {
                 });
             }
             return res.json(result);
