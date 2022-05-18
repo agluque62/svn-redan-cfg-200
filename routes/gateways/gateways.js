@@ -31,8 +31,11 @@ function getGatewayField(url, callback) {
     };
 
     request(options, async (error, response, body) => {
-        callback(JSON.parse(response.body));
+        if (response){
+            callback(JSON.parse(response.body));
+        }
     }).on('error', (err) => {
+        logging.Error("On getGatewayField Error => ", err);
         callback(err);
     });
 }
@@ -46,9 +49,11 @@ function postGatewayField(url, data, callback) {
     }
 
     request.post(options, async (error, response, body) => {
-        callback(JSON.parse(body));
+        if (body){
+            callback(JSON.parse(body));
+        }
     }).on('error', (err) => {
-        console.log('err');
+        logging.Error("On postGatewayField Error => ", err);
         callback(err);
     });
 }
