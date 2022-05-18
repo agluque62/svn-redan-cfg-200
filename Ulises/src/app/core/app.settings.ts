@@ -39,7 +39,7 @@ export class AppSettings {
     public static WRONG_RANGE = "Este campo solo admite números en el rango de 0-10";
 
     public static controlRanges = {
-        "ventana_bss": {min: 50, max: 2000, msg: "Valor fuera de rango (50, 2000 ms)"},
+        "ventana_bss": {min: 300, max: 2000, msg: "Valor fuera de rango (300, 2000 ms)"},
         "retardo_fijo_climax": {min: 0, max: 200, msg: "Valor fuera de rango (0, 200 ms)"}
     };
 }
