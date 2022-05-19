@@ -282,7 +282,7 @@ function msg4Login(req, msg) {
 
 var isAuthenticated = function (req, res, next) {
 
-	logging.Info(req.method, req.originalUrl, IsAuthReq(req), ctrlSesiones.localSession);
+	logging.Trace('On isAuthenticated ', req.method, req.originalUrl, IsAuthReq(req), ctrlSesiones.localSession);
 
     if (ctrlSesiones.localSession != null && IsAuthReq(req)) {
 		// 20210604. AGL. Cada acceso 'autorizado' renueva la session...

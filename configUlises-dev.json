@@ -143,7 +143,7 @@
     "dbport": "3306",
     "dbuser": "root",
     "logfile_maxfiles": 4,
-    "logfile_path": "./logs/ug5kserv.log",
+    "logfile_path": "./logs/ug5kserv.csv",
     "logfile_sizefile": 1000000,
     "morgan": false,
     "timeout": 60000
