@@ -17,7 +17,7 @@ var logging = require('../../lib/nu-log.js');
 var gatewaysRouter = express.Router({ mergeParams: true });
 
 var PdfPrinter = require('pdfmake');
-const { response } = require('../../app.js');
+// const { response } = require('../../app.js');
 var fonts = {
     Roboto: {
         normal: 'fonts/Roboto-Regular.ttf',
@@ -36,11 +36,11 @@ function getPdfDocDefinition(data, cfgName) {
             header: {
                 fontSize: 16,
                 bold: true,
-                color: 'red', alignment: 'center',
+                color: 'green', alignment: 'center',
                 margin: [0, 20, 0, 10]
             },
             footer: {
-                fontSize: 9, color: 'red',
+                fontSize: 9, color: 'green',
                 margin: [10, 10, 10, 20]
             },
             level0: {
@@ -87,7 +87,7 @@ function getPdfDocDefinition(data, cfgName) {
             },
             defaultStyle: {
                 fontSize: 12,
-                color: 'green',
+                color: 'black',
                 alignment: 'justify'
             }
         },
@@ -100,7 +100,7 @@ function getPdfDocDefinition(data, cfgName) {
                 margin: [10, 10, 10, 10],
                 columns: [
                     { text: (new Date()).toLocaleString(), style: 'footer', alignment: 'left' },
-                    { text: "Nucleo. 2017-2019. All rights reserved.", style: 'footer', alignment: 'center' },
+                    { text: "Grupo Amper. 2017-2022. All rights reserved.", style: 'footer', alignment: 'center' },
                     { text: 'Pg ' + currentPage.toString() + ' de ' + pageCount, style: 'footer', alignment: 'right' }
                 ]
             };
