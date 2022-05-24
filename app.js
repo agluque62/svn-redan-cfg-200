@@ -89,12 +89,13 @@ function checkPerfil(userprofile) {
 passport.use(new Strategy(
     function (username, password, cb) {
         logging.Trace(config.Ulises.LoginSystemTrace, 'Passport Strategy function: ' + username + '/' + password);
-        logging.Info(ctrlSesiones.localSession);
+        logging.Info('LocalSession =>', ctrlSesiones.localSession);
         if (ctrlSesiones.localSession) {
             insertHistoric(ACCESS_SYSTEM_FAIL, username, 'Existe una sesion activa.');
             return cb(null, false, { message: 'Existe una sesion activa.' });
         }
-        var pwdB64 = new Buffer(password).toString('base64');
+        // var pwdB64 = new Buffer(password).toString('base64');
+        var pwdB64 = Buffer.from(password).toString('base64');
         require("./lib/users").findByUsername(username, function (err, user) {
             if (err) {
                 insertHistoric(ACCESS_SYSTEM_FAIL, username, err);
@@ -428,16 +429,18 @@ app.get('/login', function (req, res, next) {
 app.post('/login', function (req, res, next) {
     passport.authenticate('local', function (err, user, info) {
 
-        logging.Info(err, user, info);
-        logging.Info(ctrlSesiones.localSession);
 
         if (err) {
+            logging.Error('Login user error => ', err, info);
             return next(err);
         }
 
         if (!user) {
+            logging.Error('Login No user => ', user, info);
             return res.status(401).json({ "message": info.message })
         }
+
+        logging.Info('Login User => ', user);
 
         req.logIn(user, function (err) {
             if (err) { return next(err); }
@@ -465,21 +468,26 @@ app.get('/alive',
 
         if (ctrlSesiones.localSession) {
             ctrlSesiones.localSession.lastTick = moment();
-        }
 
-        if (IsAuthReq(req)) {
-            /** 20210622. El alive no necesita devolver las GW pendientes... */
-            // bdtgw.getGatewaysPendings(function (npas) {
-            //     res.json({ alive: "ok", gwpendientes: npas });
-            // });
-            res.json({ alive: "ok", nticks: /*nticks++*/0 });
+            if (IsAuthReq(req)) {
+                /** 20210622. El alive no necesita devolver las GW pendientes... */
+                // bdtgw.getGatewaysPendings(function (npas) {
+                //     res.json({ alive: "ok", gwpendientes: npas });
+                // });
+                res.json({ alive: "ok", nticks: /*nticks++*/0 });
+            }
+            else {
+                // msg4Login(req, 'La sesion ha expirado. Identifiquese de nuevo');
+                // console.log('redirect to /login from /alive');
+                // RM4970. Se cierra la sesión en el servidor cuando se ha cerrando antes en el cliente.
+                ctrlSesiones.localSession = null;
+                logging.Info("La Session ha expirado en el cliente...");
+                res.status(401).json({ 'error': 'La sesión ha expirado. Identifiquese de nuevo.' })
+            }
         }
         else {
-            // msg4Login(req, 'La sesion ha expirado. Identifiquese de nuevo');
-            // console.log('redirect to /login from /alive');
-			// RM4970. Se cierra la sesión en el servidor cuando se ha cerrando antes en el cliente.
-			ctrlSesiones.localSession = null;
-            logging.Trace("La Session ha expirado en el cliente...");
+            // La sesión ha expirado en el Servidor...
+            logging.Info("La Session ha expirado en el servidor...");
             res.status(401).json({ 'error': 'La sesión ha expirado. Identifiquese de nuevo.' })
         }
     });

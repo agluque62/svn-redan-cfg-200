@@ -3,7 +3,7 @@
     "Region": "Región Centro",
     "BackupServiceDomain": "localhost:3000",
     "HistoricsDeep": 90,
-    "LoginTimeOut": 30,
+    "LoginTimeOut": 10,
     "refreshTime": 1000,
     "maxCycleTime": 30000,
     "log2con": "info",
