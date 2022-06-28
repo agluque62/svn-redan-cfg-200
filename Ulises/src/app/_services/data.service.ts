@@ -9,15 +9,15 @@ export class DataService {
     gatewayPreviousUrl!: string;
 
     getDataConfigId(): number {        
-        return Number(JSON.parse(localStorage.getItem('configId') || ''));
+        return Number(JSON.parse(localStorage.getItem('configId') || '-1'));
     }
 
     getDataSiteId(): number {
-        return Number(JSON.parse(localStorage.getItem('siteId') || ''));
+        return Number(JSON.parse(localStorage.getItem('siteId') || '-1'));
     }
 
     getDataGatewayTitle(): string {
-        return localStorage.getItem('gatewayTitle') || '';
+        return localStorage.getItem('gatewayTitle') || 'Not Found';
     }
 
     getDataError(): string {
@@ -25,7 +25,7 @@ export class DataService {
     }
 
     getDataSlot() {
-        return JSON.parse(localStorage.getItem('slot') || '');
+        return JSON.parse(localStorage.getItem('slot') || '-1');
     }
 
     getDataGatewayPreviousUrl(): string {

@@ -40,6 +40,7 @@ export class AppComponent {
   }
 
   catchError(error: HttpErrorResponse) {
+    console.log("Exception Error => ", error);
     if (error.status == AppSettings.UNAUTHORIZED_ERROR_CODE) {
       this.dataService.updateDataError(error.error.error);
       this.router.navigate(['/access']);
