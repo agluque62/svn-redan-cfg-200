@@ -1,4 +1,4 @@
-var express = require('express');
+﻿var express = require('express');
 var router = express.Router();
 
 var bodyParser = require('body-parser');
@@ -12,6 +12,8 @@ var myLibUsuarios = require('../../lib/users.js');
 
 //var logging = require('../../lib/loggingDate.js');
 var logging = require('../../lib/nu-log.js');
+var moment = require('moment');
+
 
 // Nesting routers by attaching them as middleware:
 var gatewaysRouter = express.Router({ mergeParams: true });
@@ -236,7 +238,8 @@ function generatePDF(data, callback) {
         const result = Buffer.concat(chunks);
         const date = new Date();
         callback({
-            'file_name': 'Cfg_' + getDate() + '_InformeCfg.pdf',
+            'file_name': nameOfFile(cfgName, 'pdf'),
+            // 'file_name': 'Cfg_' + getDate() + '_InformeCfg.pdf',
             'file_data': result.toString('base64')
         });
     });
@@ -250,6 +253,10 @@ function getDate() {
     var date = new Date();
 
     return `${date.getDay()}_${date.getMonth()+1}_${date.getFullYear()} (${weekday})`; 
+}
+
+function nameOfFile(cfg, ext){
+    return moment().format('YYYYMMDD-HHmm ') + 'Cfg_(' + cfg + ')_InformeCfg.' + ext;
 }
 
 
@@ -328,7 +335,8 @@ function generateExcel(gws) {
     }
 
     var document = {
-        'file_name': 'Cfg_' + cfgName + '-' + getDate() + '_InformeCfg.csv',
+        'file_name': nameOfFile(cfgName, 'csv'),
+        // 'file_name': 'Cfg_' + cfgName + '-' + getDate() + '_InformeCfg.csv',
         'file_data': strData
     };
 
