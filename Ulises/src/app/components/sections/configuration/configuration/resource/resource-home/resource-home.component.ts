@@ -607,8 +607,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
           await this.displayErrorMessage("create");
         }
       }
-
     } else if (!this.resourceForm.valid) {
+      this.validateErrorsPrint(this.resourceForm.controls);
       await this.displayErrorMessage("form");
     } else if (nameIsValid?.toString() === 'NAME_DUP') {
       await this.displayErrorMessage("resourceName");
@@ -811,7 +811,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       } else {
         this.precAudioIsDisable = false;
         if (this.resourceForm.get('ventana_bss')?.invalid)
-          this.resourceForm.patchValue({ 'ventana_bss': 50 });
+          this.resourceForm.patchValue({ 'ventana_bss': 300 });
         if (this.resourceForm.get('retardo_fijo_climax')?.invalid)
           this.resourceForm.patchValue({ 'retardo_fijo_climax': 50 });
       }
@@ -1383,4 +1383,14 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     }
     this.resourceForm.value.listaUris = uriList;
   }
+
+  validateErrorsPrint(controles: Object){
+    console.error("Validate Errors");
+    for (const [key, val] of Object.entries(controles)) {
+      if (val.invalid){
+        console.error(key);
+      }
+    }
+  }
+
 }
