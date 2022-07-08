@@ -84,8 +84,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   ];
 
   indexAudio: customValues[] = [
-    { value: 0, viewValue: 'Normal' },
-    { value: 1, viewValue: 'Estricto' }
+    { value: 1, viewValue: 'Normal' },
+    { value: 0, viewValue: 'Estricto' }
   ];
 
   codecs: customValues[] = [
