@@ -119,8 +119,8 @@
                                 <div class="agc" *ngIf="selectedResource === 1">
                                     <mat-form-field appearance="fill">
                                         <mat-label>Precisión Audio</mat-label>
-                                        <mat-select [disabled]="precAudioIsDisable"
-                                            formControlName="precision_audio" name="indexAudio">
+                                        <mat-select [disabled]="precAudioIsDisable" formControlName="precision_audio"
+                                            name="indexAudio">
                                             <mat-option *ngFor="let type of indexAudio" [value]="type.value">
                                                 {{type.viewValue}}
                                             </mat-option>
@@ -144,7 +144,8 @@
                             </div>
                             <mat-form-field *ngIf="displayRadioTab" id="formSelector" appearance="fill">
                                 <mat-label>Tipo de Agente de Radio</mat-label>
-                                <mat-select formControlName="tipo_agente" (selectionChange)="checkResourceType()" name="rdAgent">
+                                <mat-select formControlName="tipo_agente" (selectionChange)="checkResourceType()"
+                                    name="rdAgent">
                                     <mat-option *ngFor="let rdAgent of radioAgents" [value]="rdAgent.value">
                                         {{rdAgent.viewValue}}
                                     </mat-option>
@@ -163,16 +164,18 @@
                             <template #secondTabTemplate></template>
                         </div>
                     </mat-tab>
-                    <mat-tab>
-                        <ng-template mat-tab-label>
-                            <span [ngClass]="{'no-display': displayComnsTab==false }">Comunicaciones</span>
-                            <span [ngClass]="{'no-display': displayListsTab==false }">Listas B/N</span>
-                            <span [ngClass]="{'no-display': displayNumberRange==false }">Rango número ATS</span>
-                        </ng-template>
-                        <div [ngStyle]="{'margin': '10px'}">
-                            <template #thirdTabTemplate></template>
-                        </div>
-                    </mat-tab>
+                    <div *ngIf="this.resourceForm.value.tipo_interfaz_tel !== 7">
+                        <mat-tab>
+                            <ng-template mat-tab-label>
+                                <span [ngClass]="{'no-display': displayComnsTab==false }">Comunicaciones</span>
+                                <span [ngClass]="{'no-display': displayListsTab==false }">Listas B/N</span>
+                                <span [ngClass]="{'no-display': displayNumberRange==false }">Rango número ATS</span>
+                            </ng-template>
+                            <div [ngStyle]="{'margin': '10px'}">
+                                <template #thirdTabTemplate></template>
+                            </div>
+                        </mat-tab>
+                    </div>
                     <mat-tab [disabled]='!displayCollaterals' label="Colaterales">
                         <ng-template mat-tab-label>
                             <span [ngClass]="{'no-display': displayCollaterals==false }">Colaterales</span>

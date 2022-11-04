@@ -50,9 +50,15 @@ export class GatewayServicesComponent implements OnInit {
   MAX_SERVERS: number = 2;
   MAX_TRAPS: number = 4;
 
+  refresher: any = [
+    { value: 0, viewValue: 'No propone refresher'},
+    { value: 1, viewValue: 'Propone refresher UAC'},
+    { value: 2, viewValue: 'Propone refresher UAS'},
+  ]
+
   visualizationMode: boolean = false;
   showSpinner: boolean = false;
-
+  supervisionSelected: boolean = false;
   appset: any;
 
   constructor(private readonly gatewayService: GatewayService, private readonly app: AppComponent, private readonly alertService: AlertService,
@@ -71,6 +77,7 @@ export class GatewayServicesComponent implements OnInit {
         this.gatewayAvaibleServicesItem = [...this.gatewayAvailableServicesResponse.result];
         this.ready = true;
       }
+      this.supervisionSelected = this.form.value.supervisionTlf === 1 ? true : false;
 
       this.initSNMPV2();
     } catch (error: any) {
@@ -183,7 +190,9 @@ export class GatewayServicesComponent implements OnInit {
           listServers: [...this.getServerItems(ips, "NTP")],
           proxys: [...this.getServerItems(ips, "PRX")],
           registrars: [...this.getServerItems(ips, "REG")],
-          traps: [...this.getTraps(ips)]
+          traps: [...this.getTraps(ips)],
+          refresher: gtwData.refresher,
+          supervisionTlf: gtwData.supervisionTlf
         });
 
         this.traps = [];
@@ -584,5 +593,16 @@ export class GatewayServicesComponent implements OnInit {
     return gatewayIps.filter(ips => ips.tipo === "TRPV1" || ips.tipo === "TRPV2").map((gatewayIp: GatewayIp) => {
       return gatewayIp.ip;
     })
+  }
+
+  changeRefresher(event:any){
+    this.form.get('refresher')?.markAsDirty()
+  }
+
+  resetSupervisionTlf(opt: any){
+    this.supervisionSelected = opt;
+    if(!this.supervisionSelected){
+      this.form.patchValue({ refresh: 0 })
+    }
   }
 }

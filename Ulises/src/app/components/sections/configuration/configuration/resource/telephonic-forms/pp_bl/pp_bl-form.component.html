@@ -29,4 +29,12 @@
             {{ appset.NUMBERS_FORMAT_INVALID }}
         </mat-error>
     </mat-form-field>
+    <mat-checkbox formControlName="iControlTmLlam" (change)="resetCallDuration($event.checked)">Duración de Llamada por Tiempo</mat-checkbox>
+    <mat-form-field appearance="legacy" *ngIf="duracionLlamadaIsChecked">
+        <mat-label>Tiempo maximo de Llamada (sg)</mat-label>
+        <input matInput formControlName="iTmMaxConversacion">
+        <mat-error *ngIf="resourceForm.get('iTmMaxConversacion')?.hasError('min') || resourceForm.get('iTmMaxConversacion')?.hasError('max')">
+            {{ appset.INVALID_RANGE_TIME }}
+        </mat-error>
+    </mat-form-field>
 </form>

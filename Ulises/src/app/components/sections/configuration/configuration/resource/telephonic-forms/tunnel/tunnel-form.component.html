@@ -1,0 +1,4 @@
+<form class="main-form" [formGroup]="resourceForm" *ngIf="isReady">
+    <mat-checkbox formControlName="llamada_automatica" (change)="automaticCallingIsChecked($event.checked)">Llamada
+        automática</mat-checkbox>
+</form>

@@ -213,8 +213,36 @@
             "field": "cola_vox"
         },
         {
-            "label": "idrecurso_telefono: ",
+            "label": "idrecurso telefono:",
             "field": "idrecurso_telefono"
+        },
+        {
+            "label": "Llamada automatica:",
+            "field": "llamada_automatica"
+        },
+        {
+            "label": "Duración Llamada:",
+            "field": "iControlTmLlam"
+        },
+        {
+            "label": "Tiempo max Llamada:",
+            "field": "iTmMaxConversacion"
+        },
+        {
+            "label": "Conversion de respuestas SIP - R2:",
+            "field": "RespuestaSIP_ATSR2"
+        },
+        {
+            "label": "Duración de tono de bloqueo (s):",
+            "field": "TmTonoBloqueo"
+        },
+        {
+            "label": "Tiempo entre Bloqueo y Liberación (ms):",
+            "field": "TmBloqueoLib"
+        },
+        {
+            "label": "Timeout respuesta SIP (ms):",
+            "field": "timeout_respuesta_SIP"
         }
     ]
 }

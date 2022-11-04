@@ -22,6 +22,13 @@ export class ATSFormComponent implements OnInit {
     { value: 1, viewValue: 'B' }
   ];
 
+  RespuestaSIP_ATSR2 !: number;
+
+  SIPResponseConversion: customValues[] = [
+    { value: 0, viewValue: 'Modo ED137'},
+    { value: 1, viewValue: 'Modo SDC91'}
+  ]
+
   timeOpt!: number;
   duration!: number;
 
@@ -72,6 +79,8 @@ export class ATSFormComponent implements OnInit {
       this.automaticResponse = false;
     }
 
+
+
     this.isReady = true;
   }
 
@@ -92,6 +101,16 @@ export class ATSFormComponent implements OnInit {
   changeTimeOpt(event: any) {
     this.timeOpt = event.value;
     this.resourceForm.get('duracion_tono_interrup')?.markAsDirty();
+  }
+
+  changeSIPOpt(event: any){
+    this.RespuestaSIP_ATSR2 = event.value;
+    this.resourceForm.get('RespuestaSIP_ATSR2')?.markAsDirty();
+    
+    if(this.RespuestaSIP_ATSR2 === 0){
+      this.resourceForm.patchValue({ TmTonoBloqueo: 1});
+      this.resourceForm.patchValue({ TmBloqueoLib: 100});
+    } 
   }
 
   automaticResponseIsChecked(opt: boolean) {

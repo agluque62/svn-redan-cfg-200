@@ -29,6 +29,8 @@ export class Gateway {
     tiempo_sesion!: number;
     ultima_actualizacion!: string;
     pendiente_actualizar!: number;
+    refresher!: number;
+    supervisionTlf !:number;
 
     constructor(siteId?: number) {
         this.puerto_sip = 5060;
@@ -53,5 +55,7 @@ export class Gateway {
         this.servidor_rtspb = '';
         this.sppe = 0;
         this.snmpv2 = 1;
+        this.supervisionTlf = 1;
+        this.refresher = 0;
     }
 }

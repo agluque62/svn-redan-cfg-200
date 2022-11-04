@@ -10,16 +10,19 @@
                     <mat-label>NombreRecurso@IP:Puerto</mat-label>
                     <input matInput formControlName="uri_telefonica">
                 </mat-form-field>
-                
+
                 <button mat-raised-button [disabled]="visualizationMode" (click)="makeURI()"> {{arrows}} </button>
             </div>
             <mat-error *ngIf="resourceForm.get('uri_telefonica')?.hasError('pattern')">
                 {{ appset.INVALID_URI }}
             </mat-error>
+
+
             <div class="supCollSelect">
                 <mat-form-field appearance="fill">
                     <mat-label>Supervisa Colateral</mat-label>
-                    <mat-select name="supCollateral" formControlName="supervisa_colateral" (selectionChange)="displaySupSelect()">
+                    <mat-select name="supCollateral" formControlName="supervisa_colateral"
+                        (selectionChange)="displaySupSelect()">
                         <mat-option *ngFor="let opt of supCollateral" [value]="opt.value">
                             {{opt.viewValue}}
                         </mat-option>
@@ -27,35 +30,41 @@
                 </mat-form-field>
             </div>
 
-            <mat-checkbox *ngIf="displayOptResponse1" class="checkbox" formControlName="itiporespuesta">Cualquier respuesta es válida</mat-checkbox>
+            <mat-checkbox *ngIf="displayOptResponse1" class="checkbox" formControlName="itiporespuesta">Cualquier
+                respuesta es válida</mat-checkbox>
 
-            <hr class="hr">
 
-            <div class="uri-row">
-                <mat-form-field appearance="legacy">
-                    <mat-label>NombreRecurso@IP:Puerto</mat-label>
-                    <input matInput formControlName="additional_uri_remota">
-                </mat-form-field>
-                
-                <button mat-raised-button [disabled]="visualizationMode" (click)="makeURI(true)"> {{arrows}} </button>
-            </div>
-            <mat-error *ngIf="resourceForm.get('additional_uri_remota')?.hasError('pattern')">
-                {{ appset.INVALID_URI }}
-            </mat-error>
-            <div class="supCollSelect">
-                <mat-form-field appearance="fill">
-                    <mat-label>
-                        Supervisa Colateral</mat-label>
-                    <mat-select name="supCollateral" formControlName="additional_superv_options" (selectionChange)="displaySupSelect()">
-                        <mat-option *ngFor="let opt of supCollateral" [value]="opt.value">
-                            {{opt.viewValue}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+            <span *ngIf="!showOnlyFirst">
+                <hr class="hr">
+                <div class="uri-row">
+                    <mat-form-field appearance="legacy">
+                        <mat-label>NombreRecurso@IP:Puerto</mat-label>
+                        <input matInput formControlName="additional_uri_remota">
+                    </mat-form-field>
 
-            <mat-checkbox *ngIf="displayOptResponse2" class="checkbox add-iti" formControlName="additional_itiporespuesta">Cualquier respuesta es válida</mat-checkbox>
+                    <button mat-raised-button [disabled]="visualizationMode" (click)="makeURI(true)"> {{arrows}}
+                    </button>
+                </div>
+                <mat-error *ngIf="resourceForm.get('additional_uri_remota')?.hasError('pattern')">
+                    {{ appset.INVALID_URI }}
+                </mat-error>
+                <div class="supCollSelect">
+                    <mat-form-field appearance="fill">
+                        <mat-label>
+                            Supervisa Colateral</mat-label>
+                        <mat-select name="supCollateral" formControlName="additional_superv_options"
+                            (selectionChange)="displaySupSelect()">
+                            <mat-option *ngFor="let opt of supCollateral" [value]="opt.value">
+                                {{opt.viewValue}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
 
+                <mat-checkbox *ngIf="displayOptResponse2" class="checkbox add-iti"
+                    formControlName="additional_itiporespuesta">Cualquier respuesta es válida</mat-checkbox>
+
+            </span>
             <mat-form-field appearance="fill" *ngIf="displayTimeSelect">
                 <mat-label>Tiempo supervisión (sg.)</mat-label>
                 <mat-select name="timeSup" [disabled]="visualizationMode" formControlName="tiempo_supervision">
@@ -64,12 +73,15 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
+
+
         </div>
 
         <div class="telephonic-resources">
             <mat-form-field appearance="fill">
                 <mat-label>Seleccione tipo de recurso</mat-label>
-                <mat-select (selectionChange)="checkResourceTypeSelected()" [(value)]="selectedTypeResource" name="resourceTypes">
+                <mat-select (selectionChange)="checkResourceTypeSelected()" [(value)]="selectedTypeResource"
+                    name="resourceTypes">
                     <mat-option *ngFor="let resource of resourceTypes" [value]="resource.value">
                         {{resource.viewValue}}
                     </mat-option>
@@ -77,14 +89,14 @@
             </mat-form-field>
             <mat-form-field *ngIf="displaySelectFilter" appearance="fill">
                 <mat-label>Filtrar recursos...</mat-label>
-                <mat-select name="optionsFilter" [(value)]="selectedOptFilter" (selectionChange)="checkExtOptSelected()">
+                <mat-select name="optionsFilter" [(value)]="selectedOptFilter"
+                    (selectionChange)="checkExtOptSelected()">
                     <mat-option *ngFor="let filter of optionsFilter" [value]="filter.value">
                         {{filter.viewValue}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <div class="filter"
-                *ngIf="(selectedOptFilter == 4 || selectedOptFilter == 5) && displaySelectFilter">
+            <div class="filter" *ngIf="(selectedOptFilter == 4 || selectedOptFilter == 5) && displaySelectFilter">
                 <mat-form-field appearance="legacy">
                     <mat-label>Carácteres a buscar</mat-label>
                     <input matInput (change)="getFilterValue($event)">

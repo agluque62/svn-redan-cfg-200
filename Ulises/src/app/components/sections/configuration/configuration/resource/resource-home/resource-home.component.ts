@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from 'src/app/_services/alert.service';
 import { RadioResource } from 'src/app/_models/resource/RadioResource';
@@ -16,6 +16,7 @@ import { GatewayService } from 'src/app/_services/gateway.service';
 import { ConfigService } from 'src/app/_services/config.service';
 import { HistoricService } from 'src/app/_services/historic.service';
 import { TableBSSService } from 'src/app/_services/tableBss.service';
+
 
 import * as formsFields from '../../../../../../../assets/validateInfoFields.json';
 
@@ -35,11 +36,14 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   @ViewChild('thirdTabTemplate', { read: ViewContainerRef, }) thirdTabContainer!: ViewContainerRef;
   @ViewChild('collateralsTabTemplate', { read: ViewContainerRef, }) collateralsContainer!: ViewContainerRef;
 
+  showNumberRange = true;
+
   gateway!: Gateway;
   gatewayResponse!: GatewayResponse;
 
   gatewayTitle!: string;
   title!: string;
+  c = console.log.bind(document)
 
   GATEWAY_ID!: number;
   COLUMN!: string;
@@ -111,7 +115,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     { value: 3, viewValue: 'ATS-R2' },
     { value: 4, viewValue: 'ATS-N5' },
     { value: 5, viewValue: 'LCEN' },
-    { value: 6, viewValue: 'ATS-QSIG' }
+    { value: 6, viewValue: 'ATS-QSIG' },
+    { value: 7, viewValue: 'TUNNEL 2H' }
   ];
 
   bssMethods: customValues[] = [
@@ -202,7 +207,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     private readonly router: Router, private readonly dataService: DataService, private readonly userService: UserService,
     private readonly loginService: LoginService, private gatewayService: GatewayService, private readonly configService: ConfigService,
     private historicService: HistoricService,
-    private readonly tableBssService: TableBSSService) { }
+    private readonly tableBssService: TableBSSService,
+    private cdr: ChangeDetectorRef) { }
 
   async ngOnInit() {
     this.displayAudioPrecision = (await this.loginService.version().toPromise()).R16Mode; // It is no longer used in the html (ngIf)
@@ -234,7 +240,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
     this.initGateway();
 
-    if (this.resourceId != 0) { // edit mode
+    if (this.resourceId !== 0) { // edit mode
       this.resource = await this.getResource();
       if (this.selectedResource == 1) {
         if (this.resource.frecuencia == 0) {// Issue 2747
@@ -250,8 +256,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
           }
         }
         this.resource.listaUris = (await this.resourceService.getUriList(this.resource.idrecurso_radio).toPromise()).uris;
+        this.resource.ranks = (await this.resourceService.getRanges(this.resource.idrecurso_telefono).toPromise()).ranks ?? [];
       } else {
-        this.resource.ranks = (await this.resourceService.getRanges(this.resource.idrecurso_telefono).toPromise()).ranks;
+        this.resource.ranks = (await this.resourceService.getRanges(this.resource.idrecurso_telefono).toPromise()).ranks ?? [];
         this.resource.uri_telefonica = this.resource.uri_telefonica.replace('sip:', '');
         this.resource.additional_uri_remota = this.resource.additional_uri_remota === null || this.resource.additional_uri_remota === undefined ? '' : this.resource.additional_uri_remota;
         this.resource.additional_uri_remota = this.resource.additional_uri_remota.replace('sip:', '');
@@ -278,7 +285,6 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     }
 
     this.setTitle();
-
     this.ready = true;
   }
 
@@ -286,6 +292,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.checkResourceType();
     }, 500);
+    this.cdr.detectChanges();
+
   }
 
   async initGateway() {
@@ -463,8 +471,14 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       tiempo_supervision: new FormControl({ value: this.resource.tiempo_supervision, disabled: this.visualizationMode }),
       tipo_interfaz_tel: new FormControl({ value: this.resource.tipo_interfaz_tel, disabled: this.visualizationMode }),
       umbral_vox: new FormControl({ value: this.resource.umbral_vox, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.UMBRAL_VOX), Validators.min(-35), Validators.max(-15)]),
-      uri_telefonica: new FormControl({ value: this.resource.uri_telefonica, disabled: this.visualizationMode}, [Validators.pattern(AppSettings.URI_PATTERN)]),
-      idrecurso_telefono: new FormControl({ value: this.resource.idrecurso_telefono, disabled: this.visualizationMode })
+      uri_telefonica: new FormControl({ value: this.resource.uri_telefonica, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.URI_PATTERN)]),
+      idrecurso_telefono: new FormControl({ value: this.resource.idrecurso_telefono, disabled: this.visualizationMode }),
+      llamada_automatica: new FormControl({ value: this.resource.llamada_automatica, disabled: this.visualizationMode }),
+      iControlTmLlam: new FormControl({ value: this.resource.iControlTmLlam, disabled: this.visualizationMode }),
+      iTmMaxConversacion: new FormControl({ value: this.resource.iTmMaxConversacion, disabled: this.visualizationMode }, [Validators.min(0), Validators.max(600)]),
+      RespuestaSIP_ATSR2: new FormControl({value: this.resource.RespuestaSIP_ATSR2, disabled: this.visualizationMode}),
+      TmTonoBloqueo: new FormControl({ value: this.resource.TmTonoBloqueo, disabled: this.visualizationMode}, [Validators.min(1), Validators.max(100)]),
+      TmBloqueoLib: new FormControl({ value: this.resource.TmBloqueoLib, disabled: this.visualizationMode}, [Validators.min(100), Validators.max(1000)]),
     });
     this.resourceForm.valueChanges
       .subscribe(value => {
@@ -497,7 +511,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     let res;
     let message;
 
-    if (this.thirdTabRef.instance.uriListToDisplay != undefined) {
+    if (this.thirdTabRef && this.thirdTabRef.instance.uriListToDisplay != undefined) {
       let blList = this.thirdTabRef.instance.uriListToDisplay['LSN'];
       let wList = this.thirdTabRef.instance.uriListToDisplay['LSB'];
 
@@ -511,7 +525,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
       this.resourceForm.patchValue({ listaUris: blListFiltered.concat(wListFiltered) });
     }
-    if (this.thirdTabRef.instance.ranks != undefined) {
+    if (this.thirdTabRef && this.thirdTabRef.instance && this.thirdTabRef.instance.ranks != undefined) {
       this.resourceForm.patchValue({ ranks: this.thirdTabRef.instance.ranks });
     }
 
@@ -570,13 +584,15 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         this.resourceForm.value.deteccion_vox = this.resourceForm.value.deteccion_vox ? 1 : 0;
         this.resourceForm.value.iEnableNoED137 = this.resourceForm.value.iEnableNoED137 ? 1 : 0;
         this.resourceForm.value.precision_audio = this.resourceForm.value.precision_audio ? 1 : 0;
+        this.resourceForm.value.llamada_automatica = this.resourceForm.value.llamada_automatica ? 1 : 0;
+        this.resourceForm.value.duracion_llamada = this.resourceForm.value.duracion_llamada ? 1 : 0;
 
         this.resourceForm.value.itiporespuesta = typeof (this.resourceForm.value.itiporespuesta) === 'boolean' ?
           (this.resourceForm.value.itiporespuesta ? 1 : 0) : this.resourceForm.value.itiporespuesta;
 
         this.resourceForm.value.additional_itiporespuesta = typeof (this.resourceForm.value.additional_itiporespuesta) === 'boolean' ?
           (this.resourceForm.value.additional_itiporespuesta ? 1 : 0) : this.resourceForm.value.additional_itiporespuesta;
-       
+
         this.checkUriList();
 
         this.showSpinner = true;
@@ -619,7 +635,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
   checkCompleteRanks() {
     let wrongRanks = false;
-    if (this.selectedResource == 2) {
+    if (this.selectedResource == 2 && this.resourceForm.value.ranks !== undefined) {
       this.resourceForm.value.ranks.forEach((rank: any) => {
         if (rank.inicial !== '' && rank.final === '') {
           wrongRanks = true;
@@ -738,6 +754,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       this.secondTabRef.destroy();
     }
     let displayDest = false;
+    let displayOnlyFirstCollateral = false;
     switch (this.resourceForm.value.tipo_interfaz_tel) {
       case 0:
         const { PPBLFormComponent } = await import('../telephonic-forms/pp_bl/pp_bl-form.component');
@@ -774,9 +791,19 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       case 6:
         // DO NOTHING
         break;
+      case 7:
+        const { TunnelFormComponent } = await import('../telephonic-forms/tunnel/tunnel-form.component');
+        this.secondTabRef = this.secondTabContainer.createComponent(
+          this.cfr.resolveComponentFactory(TunnelFormComponent)
+        );
+        displayOnlyFirstCollateral = true
+        this.resourceForm.patchValue({ ranks: [] })
+        break;
+
     }
-    this.secondTabRef.instance.resourceForm = this.resourceForm;
-    this.loadRangeNumberTab(displayDest);
+    this.loadCollateralsTab(displayOnlyFirstCollateral);
+    this.resourceForm.value.tipo_interfaz_tel !== 7 ? this.loadRangeNumberTab(displayDest) : '';
+    this.resourceForm.value.tipo_interfaz_tel !== 6 ? this.secondTabRef.instance.resourceForm = this.resourceForm : '';
   }
 
   initResource() {
@@ -841,10 +868,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       this.displayComnsTab = false;
       this.displayListsTab = false;
       this.displayTelephonicTab = true;
-      this.displayNumberRange = true;
       this.displayCollaterals = true;
+      this.displayNumberRange = true;
       this.selectTelephonicForm();
-      this.loadCollateralsTab();
     }
     if (!this.editMode && this.resourceForm.value.nombre !== '') { // issue 2881
       this.resourceForm.controls['nombre'].markAsDirty();
@@ -855,22 +881,29 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
    * 
    */
   async loadRangeNumberTab(displayDest: boolean) {
-    if (this.thirdTabRef != null) {
-      await this.thirdTabRef.destroy();
-    }
-    const { ResourceNRangeComponent } = await import('../resource-nrange/resource-nrange.component');
-    this.thirdTabRef = this.thirdTabContainer.createComponent(
-      this.cfr.resolveComponentFactory(ResourceNRangeComponent)
-    );
-    this.thirdTabRef.instance.resourceForm = this.resourceForm;
-    this.thirdTabRef.instance.displayDestination = displayDest;
+
+
+    setTimeout(async () => {
+
+      if (this.thirdTabRef != null) {
+        await this.thirdTabRef.destroy();
+      }
+      const { ResourceNRangeComponent } = await import('../resource-nrange/resource-nrange.component');
+      this.thirdTabRef = this.thirdTabContainer.createComponent(
+        this.cfr.resolveComponentFactory(ResourceNRangeComponent)
+      );
+      this.thirdTabRef.instance.resourceForm = this.resourceForm;
+      this.thirdTabRef.instance.displayDestination = displayDest;
+
+    }, 500);
 
   }
 
   /**
    * 
    */
-  async loadCollateralsTab() {
+  async loadCollateralsTab(display: boolean) {
+
     if (this.collateralsTabRef != null) {
       await this.collateralsTabRef.destroy();
     }
@@ -880,6 +913,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     );
     this.collateralsTabRef.instance.resourceForm = this.resourceForm;
     this.collateralsTabRef.instance.gatewayId = this.GATEWAY_ID;
+    this.collateralsTabRef.instance.showOnlyFirst = display;
+    this.collateralsTabRef.instance.resourceName = this.resource.nombre;
+    this.collateralsTabRef.instance.idGateway = this.GATEWAY_ID;
   }
 
   /**
@@ -910,8 +946,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     this.thirdTabRef = this.thirdTabContainer.createComponent(
       this.cfr.resolveComponentFactory(ResourceListsComponent)
     );
-
     this.thirdTabRef.instance.resourceForm = this.resourceForm;
+
+
   }
 
   calculateCurrentLoadIndex() {
@@ -958,7 +995,6 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     let radio = hardwareResume.radio;
     let telResources = hardwareResume.tfno;
     let loadIndex = 0;
-
     radio.forEach((resource: any) => {
       if (this.resourceForm.value.idrecurso_radio == resource.idrecurso_radio) {
         if (resource.precision_audio == 0) {
@@ -985,7 +1021,6 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       }
 
     });
-
     telResources.forEach((resource: any) => {
       if (this.resourceForm.value.idrecurso_telefono == resource.idrecurso_telefono) {
         if (resource.precision_audio == 0) {
@@ -1065,6 +1100,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
     }
     if (this.resourceForm.dirty || this.isCheckedRegistryKey || this.isChangedAGCAD || this.isChangedAGCDA) {
+
       arrayToCheckFields.forEach(async (data: any, index: number) => {
         let value: string = "";
         let msg: string = "";
@@ -1072,7 +1108,6 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
         title = `${initTitle} - Parametro(s): `;
         if (this.resourceForm.get(data.field)?.dirty) {
-
           switch (data.field) {
             case "nombre":
               msg = `${data.label} ${this.resourceForm.get(data.field)?.value}; `;
@@ -1161,7 +1196,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               break;
             case "listaUris":
               msg = '';
-              if (this.rawLists.length > 0) {
+              if (this.rawLists && this.rawLists.length > 0) {
                 // BL - WL
                 this.rawLists.forEach(async (uri: any, index: number) => {
                   if (uri.hasOwnProperty("modified") && uri.modified === true) {
@@ -1321,6 +1356,17 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               value = this.customFilter(this.indexAudio, data.field);
               msg = `${data.label} ${value}; `;
               break;
+            case "llamada_automatica":
+              value = `${this.resourceForm.value.llamada_automatica ? 'Si' : 'No'}`;
+              msg = `${data.label} ${value}; `;
+              break;
+            case "iControlTmLlam":
+              value = `${this.resourceForm.value.iControlTmLlam ? 'Si' : 'No'}`;
+              msg = `${data.label} ${value};`;
+              break;
+            case "RespuestaSIP_ATSR2":
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 0 ? 'Modo ED137' : 'Modo SDC91'}; `
+              break;
             default:
               msg = `${data.label} ${this.resourceForm.get(data.field)?.value}; `;
               break;
@@ -1356,18 +1402,18 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   }
 
   checkUriList() {
-   switch (this.resourceForm.value.tipo_agente) {
+    switch (this.resourceForm.value.tipo_agente) {
       case 0:
         this.updateUriList([1]);
         break;
       case 1:
-          this.updateUriList([1,2]);
+        this.updateUriList([1, 2]);
         break;
       case 2:
-          this.updateUriList([1,3,5]);
+        this.updateUriList([1, 3, 5]);
         break;
       case 3:
-          this.updateUriList([1,2,3,4,5,6]);
+        this.updateUriList([1, 2, 3, 4, 5, 6]);
         break;
     }
   }
@@ -1375,7 +1421,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   updateUriList(collateralLevels: number[]) {
     let uriList: any = [];
     let cnt = 0;
-    for (let index = 0; index < this.resourceForm.value.listaUris.length; index++){
+    for (let index = 0; index < this.resourceForm.value.listaUris.length; index++) {
       if (collateralLevels.includes(this.resourceForm.value.listaUris[index].nivel_colateral)) {
         uriList[cnt] = this.resourceForm.value.listaUris[index];
         cnt++;
@@ -1384,10 +1430,10 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     this.resourceForm.value.listaUris = uriList;
   }
 
-  validateErrorsPrint(controles: Object){
+  validateErrorsPrint(controles: Object) {
     console.error("Validate Errors");
     for (const [key, val] of Object.entries(controles)) {
-      if (val.invalid){
+      if (val.invalid) {
         console.error(key);
       }
     }

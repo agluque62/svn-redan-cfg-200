@@ -23,6 +23,10 @@ export class ResourceCollateralsComponent implements OnInit {
 
   arrows: string = "<<";
 
+  resourceName: any;
+  showOnlyFirst: any;
+  idGateway: any;
+
   resourceTypes: customValues[] = [
     { value: 0, viewValue: 'Recursos configurados' },
     { value: 1, viewValue: 'Recursos externos' }
@@ -163,7 +167,14 @@ export class ResourceCollateralsComponent implements OnInit {
     this.telAGVNNameSelected = '';
     this.selectedResource = -1;
     if (this.selectedSite != undefined && this.selectedGateway != undefined) {
-      this.resources = (await this.resourceService.getTelResources(confName, this.selectedSite, this.selectedGateway, 2).toPromise()).data;
+      let resources = (await this.resourceService.getTelResources(confName, this.selectedSite, this.selectedGateway, 2).toPromise()).data;
+
+      if (this.resourceForm.value.tipo_interfaz_tel && this.resourceForm.value.tipo_interfaz_tel === 7) {
+        this.resources = resources.filter((resource: any) =>
+          (resource.rName !== this.resourceName && resource.tipo_interfaz_tel === 7))
+      } else {
+        this.resources = this.resources
+      }
       this.displayConfResource = true;
     }
   }
@@ -175,12 +186,12 @@ export class ResourceCollateralsComponent implements OnInit {
     let uri = '';
 
     if (this.resources[this.selectedResource] !== undefined) {
-      if(additional){
+      if (additional) {
         this.resourceForm.get('additional_uri_remota')?.markAsDirty();
-      }else{
+      } else {
         this.resourceForm.get('uri_telefonica')?.markAsDirty();
       }
-      
+
       if (this.telAGVNNameSelected != '' && this.telAGVNNameSelected != undefined) {
         firstPartUri = this.telAGVNNameSelected;
         secondPartUri = this.selectedTypeResource === 0 ? this.resources[this.selectedResource]["gIpv"] : this.resources[this.selectedResource]["gIpv"].split("@")[1];
@@ -235,7 +246,7 @@ export class ResourceCollateralsComponent implements OnInit {
       this.telhardwareResume.forEach((resource: any) => {
         if (this.resources[this.selectedResource].rName === resource.nombre) {
           obtainedResourceId = resource.idrecurso_telefono;
-          
+
         }
       });
       if (obtainedResourceId !== undefined) {

@@ -33,6 +33,7 @@ import { registerLocaleData } from '@angular/common';
 import localeES from '@angular/common/locales/es';
 import { SpinnerModule } from '../../common/spinner/spinner.module';
 import { UsersProfileLegendComponent } from './users/users-profile-legend/users-profile-legend.component';
+import { TunnelFormComponent } from './configuration/resource/telephonic-forms/tunnel/tunnel-form.component';
 
 registerLocaleData(localeES, 'es');
 
@@ -61,7 +62,8 @@ registerLocaleData(localeES, 'es');
     LCENFormComponent,
     ResourceNRangeComponent,
     ResourceCollateralsComponent,
-    UsersProfileLegendComponent
+    UsersProfileLegendComponent,
+    TunnelFormComponent
   ],
   imports: [
     CommonModule,

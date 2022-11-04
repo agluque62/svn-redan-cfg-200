@@ -21,19 +21,31 @@
                         <mat-label>{{'Puerto'}}</mat-label>
                         <input matInput formControlName="PuertoLocalSIP">
                     </mat-form-field>
+                    <mat-checkbox formControlName="supervisionTlf" [disabled]="false"
+                        (change)="resetSupervisionTlf($event.checked)">Supervisión sesiones telefónicas</mat-checkbox>
 
-                    <mat-form-field appearance="fill">
+                    <mat-form-field appearance="fill" *ngIf="supervisionSelected">
                         <mat-label>{{'Periodo de supervisión (sg.)'}}</mat-label>
                         <input matInput required formControlName="periodo_supervision">
                         <mat-error *ngIf="form.controls['periodo_supervision'].hasError('required')">
                             {{ appset.FIELD_REQUIRED }}
                         </mat-error>
-                        <mat-error *ngIf="form.controls['periodo_supervision'].hasError('min') || form.controls['periodo_supervision'].hasError('max')">
+                        <mat-error
+                            *ngIf="form.controls['periodo_supervision'].hasError('min') || form.controls['periodo_supervision'].hasError('max')">
                             {{ 'El campo debe estar en el rango 90 ... 1800' }}
                         </mat-error>
                         <mat-error *ngIf="form.controls['periodo_supervision'].hasError('pattern')">
                             {{ appset.NUMBERS_FORMAT_INVALID }}
                         </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" *ngIf="supervisionSelected">
+                        <mat-label>Refresher</mat-label>
+                        <mat-select [(value)]="this.form.value.refresher" formControlName="refresher" (selectionChange)="changeRefresher($event)">
+                            <mat-option *ngFor="let rfs of refresher" [value]="rfs.value">
+                                {{rfs.viewValue}}
+                            </mat-option>
+                        </mat-select>
                     </mat-form-field>
 
                     <div class="proxies">
@@ -154,7 +166,8 @@
 
                                 <div class="form-item">
                                     <mat-label>{{'SNMP V2'}}</mat-label>
-                                    <mat-checkbox class="checkbox" formControlName="snmpv2" (click)="changeSNMPV2()"></mat-checkbox>
+                                    <mat-checkbox class="checkbox" formControlName="snmpv2" (click)="changeSNMPV2()">
+                                    </mat-checkbox>
                                 </div>
 
                                 <mat-form-field appearance="fill">
@@ -187,7 +200,7 @@
                                 </mat-form-field>
                             </div>
                         </div>
-                        
+
                         <mat-label>Configuracion de Traps</mat-label>
                         <div class="traps traps-group">
                             <div class="col" *ngIf="!visualizationMode">

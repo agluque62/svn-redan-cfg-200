@@ -16,6 +16,30 @@
             {{ appset.FIELD_REQUIRED }}
         </mat-error>
     </mat-form-field>
+    <mat-form-field appearance="fill" *ngIf="isR2 && !automaticResponse">
+        <mat-label>Conversion de respuestas SIP - R2</mat-label>
+        <mat-select [(value)]="this.resourceForm.value.RespuestaSIP_ATSR2" formControlName="RespuestaSIP_ATSR2" name="timeoutSel" (selectionChange)="changeSIPOpt($event)">
+            <mat-option *ngFor="let sip of SIPResponseConversion" [value]="sip.value">
+                {{sip.viewValue}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="legacy" *ngIf="isR2 && this.resourceForm.value.RespuestaSIP_ATSR2 === 1">
+        <mat-label>Duración de tono de bloqueo (s)</mat-label>
+        <input matInput formControlName="TmTonoBloqueo" [maxLength]="6">
+        <mat-error
+            *ngIf="resourceForm.get('TmTonoBloqueo')?.hasError('min') || resourceForm.get('TmTonoBloqueo')?.hasError('max')">
+            {{ appset.INVALID_RANGE_TONE }}
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="legacy" *ngIf="isR2 && this.resourceForm.value.RespuestaSIP_ATSR2 === 1">
+        <mat-label>Tiempo entre Bloqueo y Liberación (ms)</mat-label>
+        <input matInput formControlName="TmBloqueoLib" [maxLength]="6">
+        <mat-error
+            *ngIf="resourceForm.get('TmBloqueoLib')?.hasError('min') || resourceForm.get('TmBloqueoLib')?.hasError('max')">
+            {{ appset.INVALID_RANGE_BLOQ }}
+        </mat-error>
+    </mat-form-field>
     <mat-form-field appearance="fill">
         <mat-label>Lado</mat-label>
         <mat-select formControlName="lado" ([value])="this.resourceForm.value.lado" name="side">
@@ -48,7 +72,8 @@
     </mat-form-field>
     <mat-form-field appearance="fill">
         <mat-label>Duración tono interrupción (sg.)</mat-label>
-        <mat-select [disabled]="visualizationMode" [(value)]="duration" name="duration" (selectionChange)="this.resourceForm.get('duracion_tono_interrup')?.markAsDirty();">
+        <mat-select [disabled]="visualizationMode" [(value)]="duration" name="duration"
+            (selectionChange)="this.resourceForm.get('duracion_tono_interrup')?.markAsDirty();">
             <mat-option *ngFor="let duration of durations" [value]="duration.value">
                 {{duration.viewValue}}
             </mat-option>

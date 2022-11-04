@@ -27,6 +27,7 @@ import { HistoricService } from 'src/app/_services/historic.service';
 import { GatewayResponse } from 'src/app/_models/configs/gateway/GatewayResponse';
 import { ConfigurationIpResponse } from 'src/app/_models/configs/configuration/response/ConfigurationIpResponse';
 import { ConfigurationIp } from 'src/app/_models/configs/configuration/ConfigurationIp';
+import { SweetAlertResult } from 'sweetalert2';
 
 @Component({
   selector: 'configuration-view',
@@ -69,7 +70,9 @@ export class ConfigurationViewComponent implements OnInit {
   configActived: boolean = false;
 
   nEmplazamiento!: string[];
-  
+
+  trapMsg: any = [];
+
   constructor(private readonly route: ActivatedRoute, private readonly configService: ConfigService, private readonly router: Router,
     private readonly app: AppComponent, private readonly siteService: SiteService, public dialog: MatDialog,
     private readonly alertService: AlertService, private readonly dataService: DataService, private readonly loginService: LoginService,
@@ -139,9 +142,8 @@ export class ConfigurationViewComponent implements OnInit {
           this.arrayIdGTW = this.configurationGateways.map((id) => {
             return id.idCGW;
           });
-          this.getIpArrays();
+          this.getIpandTrapsArrays();
         }
-
         this.ready = true;
       }
 
@@ -150,32 +152,32 @@ export class ConfigurationViewComponent implements OnInit {
     }
   }
 
-  async getIpArrays() {
-    var i = 0;
-    while (i != this.arrayIdGTW.length) {
-      this.gatewayResponse = await this.gatewayService.getGatewayById(this.arrayIdGTW[i]).toPromise();
+  async getIpandTrapsArrays() {
+    this.arrayIdGTW.forEach(async element => {
+      this.gatewayResponse = await this.gatewayService.getGatewayById(element).toPromise();
       this.arrayipv.push(
         this.gatewayResponse.result.map((ipv) => {
           return ipv.ipv;
         })
       )
-      this.gatewayResponse = await this.gatewayService.getGatewayById(this.arrayIdGTW[i]).toPromise();
       this.arrayipcp0.push(
         this.gatewayResponse.result.map((ipv) => {
           return ipv.ip_cpu0;
         })
       )
-      this.gatewayResponse = await this.gatewayService.getGatewayById(this.arrayIdGTW[i]).toPromise();
       this.arrayipcp1.push(
         this.gatewayResponse.result.map((ipv) => {
           return ipv.ip_cpu1;
         })
       )
-      i++;
+      let gtw = await this.gatewayService.getGatewayAll(element).toPromise()
+      if(gtw.servicios.snmp.traps.length === 0){
+        this.trapMsg.push(gtw.general.name)
       }
- }
-  
- initGateways() {
+    });
+  }
+
+  initGateways() {
     this.configurationGateways = [...this.configurationGatewaysResponse.general];
   }
 
@@ -301,8 +303,20 @@ export class ConfigurationViewComponent implements OnInit {
 
     const confirm = await this.alertService.confirmationMessage(``, `¿Seguro que quieres activar las pasarelas de esta configuración en campo?`);
     if (confirm.value) {
-      this.showSpinner = true;
+      if(this.trapMsg.length !== 0){
+        let confirm = await this.alertService.confirmationMessage(`Las pasarelas ${this.trapMsg.join(', ')} no contienen TRAPS. `, `¿Deseas continuar?`);
+        if (confirm.value){
+          this.activate(message, error)
+        }
+      } else {
+        this.activate(message, error);
+      }
+      
+    }
+  }
 
+  async activate(message: any, error: any){
+    this.showSpinner = true;
       await Promise.all(this.configurationGateways.map(async gtw => {
 
         const gateway = await this.gatewayService.getGatewayById(gtw.idCGW).toPromise();
@@ -367,7 +381,6 @@ export class ConfigurationViewComponent implements OnInit {
       this.showSpinner = false;
       const alertMsg = message.toString().replace(/,/g, '<br/>');
       await this.alertService.fieldMessage(``, alertMsg);
-    }
   }
 
   async saveSupervisedConfig() {
@@ -394,10 +407,10 @@ export class ConfigurationViewComponent implements OnInit {
           await this.alertService.errorMessage(``, result.error);
           return;
         }
-        if(this.supervised != this.configActived){
+        if (this.supervised != this.configActived) {
           let title = " - Configuración Supervisada:";
-          title += this.supervised? " Activada" : " Desactivada";
-          await this.historicService.updateCfg(103, form.value.name+title).toPromise();
+          title += this.supervised ? " Activada" : " Desactivada";
+          await this.historicService.updateCfg(103, form.value.name + title).toPromise();
         }
         await this.alertService.successMessage(``, `Configuración ${form.value.name} actualizada`);
       } else {
@@ -409,28 +422,29 @@ export class ConfigurationViewComponent implements OnInit {
   }
 
   async saveConfig() {
+    let confirm: SweetAlertResult;
     try {
       if (this.configuration.activa == 1) {
         var i = 0;
-        
+
         while (i < this.arrayipv.length) {
           this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipv[i], this.configuration.idCFG).toPromise();
           this.configurationIp = [...this.configurationIpResponse.result];
-          
+
           if (this.configurationIp.length != 0) {
             this.nEmplazamiento = this.configurationIp.map((index) => {
               return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
             })
-            await this.alertService.errorMessage(``,`La IP virtual ${this.arrayipv[i]} esta duplicada en ${this.nEmplazamiento}`);
+            await this.alertService.errorMessage(``, `La IP virtual ${this.arrayipv[i]} esta duplicada en ${this.nEmplazamiento}`);
             return;
           }
-          this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipcp0[i],this.configuration.idCFG).toPromise();
+          this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipcp0[i], this.configuration.idCFG).toPromise();
           this.configurationIp = [...this.configurationIpResponse.result];
           if (this.configurationIp.length != 0) {
             this.nEmplazamiento = this.configurationIp.map((index) => {
               return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
             })
-            await this.alertService.errorMessage(``,`La IP cpu0 ${this.arrayipcp0[i]} esta duplicada en ${this.nEmplazamiento}`);
+            await this.alertService.errorMessage(``, `La IP cpu0 ${this.arrayipcp0[i]} esta duplicada en ${this.nEmplazamiento}`);
             return;
           }
           this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipcp1[i], this.configuration.idCFG).toPromise();
@@ -439,44 +453,20 @@ export class ConfigurationViewComponent implements OnInit {
             this.nEmplazamiento = this.configurationIp.map((index) => {
               return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
             })
-            await this.alertService.errorMessage(``,`La IP cpu1 ${this.arrayipcp1[i]} esta duplicada en ${this.nEmplazamiento}`);
+            await this.alertService.errorMessage(``, `La IP cpu1 ${this.arrayipcp1[i]} esta duplicada en ${this.nEmplazamiento}`);
             return;
-          }         
-
-        i++;
+          }
+          i++;
         }
       }
 
-
-      if (this.configForm.valid) {
-        this.showSpinner = true;
-        const checkName = await this.configService.checkConfigurationName(this.configForm.value.idCFG, this.configForm.value.name).toPromise();
-
-        if (checkName.data == 'DUP_NAME') {
-          this.showSpinner = false;
-          await this.alertService.errorMessage(``, `El nombre ${this.configForm.value.name} ya existe en el sistema. Utilice otro`);
-          return;
+      if(this.trapMsg.length !== 0){
+        confirm = await this.alertService.confirmationMessage(`Las pasarelas ${this.trapMsg.join(', ')} no contienen TRAPS.`, `¿Deseas continuar?`);
+        if (confirm.value){
+          this.save()
         }
-        const result = await this.configService.updateConfiguration(this.configForm.value).toPromise();
-
-        if (result.error) {
-          this.showSpinner = false;
-          await this.alertService.errorMessage(``, result.error);
-          return;
-        }
-
-        if(this.configForm.value.activa != this.configActived){
-          let title = " - Configuración Supervisada:";
-          title += this.configForm.value.activa? " Activada" : " Desactivada";
-          await this.historicService.updateCfg(103, this.configForm.value.name+title).toPromise();
-        }
-        
-        this.showSpinner = false;
-        await this.alertService.successMessage(``, `Configuración ${this.configForm.value.name} actualizada`);
-        await this.init();
-        this.changes = false;
       } else {
-        this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+        this.save();
       }
     }
     catch (error: any) {
@@ -484,6 +474,37 @@ export class ConfigurationViewComponent implements OnInit {
     }
   }
 
+  async save() {
+    if (this.configForm.valid) {
+      this.showSpinner = true;
+      const checkName = await this.configService.checkConfigurationName(this.configForm.value.idCFG, this.configForm.value.name).toPromise();
+      if (checkName.data == 'DUP_NAME') {
+        this.showSpinner = false;
+        await this.alertService.errorMessage(``, `El nombre ${this.configForm.value.name} ya existe en el sistema. Utilice otro`);
+        return;
+      }
+      const result = await this.configService.updateConfiguration(this.configForm.value).toPromise();
+
+      if (result.error) {
+        this.showSpinner = false;
+        await this.alertService.errorMessage(``, result.error);
+        return;
+      }
+
+      if (this.configForm.value.activa != this.configActived) {
+        let title = " - Configuración Supervisada:";
+        title += this.configForm.value.activa ? " Activada" : " Desactivada";
+        await this.historicService.updateCfg(103, this.configForm.value.name + title).toPromise();
+      }
+
+      this.showSpinner = false;
+      await this.alertService.successMessage(``, `Configuración ${this.configForm.value.name} actualizada`);
+      await this.init();
+      this.changes = false;
+    } else {
+      this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+    }
+  }
   copyConfig() {
     const dialogRef = this.dialog.open(ConfigurationCopyFormComponent, {
       data: this.configuration,

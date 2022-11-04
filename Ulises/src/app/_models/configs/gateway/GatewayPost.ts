@@ -30,6 +30,8 @@ export class GatewayPost {
     traps!: string[];
     ultima_actualizacion!: string;
     pendiente_actualizar!: number;
+    refresher!: number;
+    supervisionTlf!: number;
 
     constructor(gateway: Gateway, gatewayIps: GatewayIp[]) {
         this.PuertoLocalSIP = gateway.puerto_sip && gateway.puerto_sip.toString();
@@ -59,6 +61,8 @@ export class GatewayPost {
         this.proxys = [...this.getServerItems(gatewayIps, "PRX")];
         this.registrars = [...this.getServerItems(gatewayIps, "REG")];
         this.traps = [...this.getTraps(gatewayIps)];
+        this.supervisionTlf = gateway.supervisionTlf;
+        this.refresher = gateway.refresher;
     }
 
     getServerItems(gatewayIps: GatewayIp[], type: string) {

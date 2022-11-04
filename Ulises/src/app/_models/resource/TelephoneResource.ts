@@ -32,6 +32,12 @@ export class TelephoneResource {
     pasarela_id!: number;
     ranks!: any;
     IT_int_Warning!: number;
+    llamada_automatica !: number;
+    iControlTmLlam !: number;
+    iTmMaxConversacion !: number;
+    RespuestaSIP_ATSR2 !: number;
+    TmTonoBloqueo !: number;
+    TmBloqueoLib !: number;
     
     constructor() {
         this.ajuste_ad = 0;
@@ -60,5 +66,11 @@ export class TelephoneResource {
         this.tipo_interfaz_tel = 0;
         this.umbral_vox = -35;
         this.uri_telefonica = "";
+        this.llamada_automatica = 0;
+        this.iControlTmLlam = 0;
+        this.iTmMaxConversacion = 0;
+        this.RespuestaSIP_ATSR2 = 0;
+        this.TmTonoBloqueo = 1;
+        this.TmBloqueoLib = 100;
     }
 }

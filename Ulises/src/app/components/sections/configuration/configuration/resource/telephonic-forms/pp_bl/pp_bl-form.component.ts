@@ -18,13 +18,16 @@ export class PPBLFormComponent implements OnInit {
   resourceForm!: FormGroup;
 
   detectVoxIsChecked: boolean = false;
+  duracionLlamadaIsChecked: boolean = false;
   appset: any;
-  
+
   constructor(private readonly alertService: AlertService) { }
 
   ngOnInit(): void {
     this.appset = AppSettings;
     this.displayDetectVox();
+    this.displayCallDuration();
+    this.duracionLlamadaIsChecked = this.resourceForm.value.iControlTmLlam === 0 ? false : true
   }
 
   async checkAGVNName(event: any) {
@@ -43,9 +46,23 @@ export class PPBLFormComponent implements OnInit {
 
   resetVoxValues(isChecked: boolean) {
     this.detectVoxIsChecked = isChecked;
-    if (!this.detectVoxIsChecked) { 
+    if (!this.detectVoxIsChecked) {
       this.resourceForm.patchValue({ umbral_vox: -35 });
       this.resourceForm.patchValue({ cola_vox: 0 });
     }
   }
+
+  displayCallDuration() {
+    if (this.resourceForm.value.duracion_llamada)
+      this.duracionLlamadaIsChecked = true
+  }
+
+  resetCallDuration(isChecked: boolean) {
+    this.duracionLlamadaIsChecked = isChecked;
+    if (!this.duracionLlamadaIsChecked) {
+      this.resourceForm.patchValue({ iTmMaxConversacion: 0 });
+    }
+  }
+
+
 }

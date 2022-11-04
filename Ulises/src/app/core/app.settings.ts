@@ -25,6 +25,10 @@ export class AppSettings {
     public static INVALID_RANGE_VAD = "Valor fuera de rango (-35, -15)";
     public static INVALID_RANGE_DA = "Valor fuera de rango (-24.3, 1.10)";
     public static INVALID_RANGE_AD = "Valor fuera de rango (-13.5, 1.20)";
+    public static INVALID_RANGE_TIME = "Valor fuera de rango (0,600)";
+    public static INVALID_RANGE_SIP = "Valor fuera de rango (10, 10000)";
+    public static INVALID_RANGE_TONE = "Valor fuera de rango (1, 100)";
+    public static INVALID_RANGE_BLOQ = "Valor fuera de rango (100, 1000)";
     public static INVALID_RANGE_FREC = "Formato de frecuencia no válido. Rangos permitidos: 118.000 - 137.995 | 200.000 - 399.995";
     public static INVALID_NAME = "No se pueden usar caracteres especiales como espacios,?,-,@, ni identificadores de usuario de longitud mayor de 32 caracteres.";
     public static INVALID_AGV_NUMBER = "Número no válido. El valor debe estar entre 200000 y 399999. Y debe ser de longitud 6";

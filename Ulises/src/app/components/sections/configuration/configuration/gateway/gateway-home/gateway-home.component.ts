@@ -35,6 +35,8 @@ import { SiteService } from 'src/app/_services/site.service';
 })
 export class GatewayHomeComponent implements OnInit {
 
+  config: any;
+
   gateway!: Gateway;
   gatewayResponse!: GatewayResponse;
   gatewayIps!: GatewayIp[];
@@ -74,6 +76,12 @@ export class GatewayHomeComponent implements OnInit {
 
   siteOptions!: any[];
 
+  refresher: any = [
+    { value: 0, viewValue: 'No propone refresher' },
+    { value: 1, viewValue: 'Propone refresher UAC' },
+    { value: 2, viewValue: 'Propone refresher UAS' },
+  ]
+
   dirtyCaseOnlyValue: any[] = [
     { id: 0, value: 'nombre', msg: ' Nombre: ' },
     { id: 1, value: 'ipv', msg: ' Dir. IP Virtual: ' },
@@ -105,15 +113,18 @@ export class GatewayHomeComponent implements OnInit {
   dirtyCaseTernary: any[] = [
     { id: 26, value: 'dual', msg: ' CPU Dual: ', op1: 'No', op2: 'Si' },
     { id: 27, value: 'sppe', msg: ' Supervisión Puerta de Enlace: ', op1: 'No', op2: ' Segundos' },
-    { id: 28, value: 'snmpv2', msg: ' SNMP V2: ', op1: 'No', op2: 'Si', servicetab: 'SNMP' }
+    { id: 28, value: 'snmpv2', msg: ' SNMP V2: ', op1: 'No', op2: 'Si', servicetab: 'SNMP' },
+    { id: 33, value: 'supervisionTlf', msg: ' SupervisionTlf: ', op1: 'No', op2: 'Si', servicetab: 'SIP' }
   ]
 
   dirtyCaseArrays: any[] = [
     { id: 29, value: 'proxys', msg: ' Proxys: ', servicetab: 'SIP' },
     { id: 30, value: 'registrars', msg: ' SIP Servers: ', servicetab: 'SIP' },
     { id: 31, value: 'listServers', msg: ' List Servers: ', servicetab: 'Sync' },
-    { id: 32, value: 'traps', msg: ' Traps : ', servicetab: 'SNMP' }
+    { id: 32, value: 'traps', msg: ' Traps : ', servicetab: 'SNMP' },
+    { id: 34, value: 'refresher', msg: ' Refresher: ', servicetab: 'SIP' }
   ]
+
 
   constructor(private readonly utilService: UtilsService, private readonly route: ActivatedRoute, private readonly router: Router, private readonly app: AppComponent, public dialog: MatDialog,
     private readonly gatewayService: GatewayService, private readonly alertService: AlertService, private historicService: HistoricService,
@@ -174,8 +185,8 @@ export class GatewayHomeComponent implements OnInit {
   }
 
   async getGatewayTitle() {
-    const config = await this.configService.getConfigurationById(this.configId).toPromise();
-    const title = `Configuración: ${config.result[0].NAME} - Emplazamiento: ${this.gateway.emplazamiento}`;
+    this.config = await this.configService.getConfigurationById(this.configId).toPromise();
+    const title = `Configuración: ${this.config.result[0].NAME} - Emplazamiento: ${this.gateway.emplazamiento}`;
     this.dataService.updateDataGatewayTitle(title);
     return title;
   }
@@ -217,74 +228,85 @@ export class GatewayHomeComponent implements OnInit {
 
     const confirm = await this.alertService.confirmationMessage(``, `¿Seguro que quieres activar esta pasarela en campo?`);
     if (confirm.value) {
-      this.showSpinner = true;
-
-      let title = this.dataService.getDataGatewayTitle();
-
-      // Check CPU 0
-      const gtwFieldCpu0 = await this.gatewayFieldService.getGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb1).toPromise();
-
-      if (this.validateGtwFieldJson(gtwFieldCpu0)) {
-        const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
-        const result = await this.gatewayFieldService.updateGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb1, gtwActual).toPromise();
-
-        if (result.res && result.res === 'Configuracion Activada...') {
-          await this.initEdit(this.gateway.idCGW);
-          this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
-          this.gatewayForm = this.initForm();
-          this.checkFormChanges();
-          await this.historicService.updateCfg(121, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} CPU 0`).toPromise();
-          await this.alertService.successMessage(``, result.res);
-          this.showSpinner = false;
-          return;
+      if (this.gatewayForm.value.traps.length === 0) {
+        const confirmTraps = await this.alertService.confirmationMessage(`No hay traps activados`, `¿Deseas continuar?`);
+        if (confirmTraps.value) {
+          this.activateGTW(confName, siteName)
         }
+      } else {
+        this.activateGTW(confName, siteName)
       }
+    }
+  }
 
-      // Check CPU 1
-      const gtwFieldCpu1 = await this.gatewayFieldService.getGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb2).toPromise();
-      if (this.validateGtwFieldJson(gtwFieldCpu1)) {
-        const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
-        const result = await this.gatewayFieldService.updateGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb2, gtwActual).toPromise();
+  async activateGTW(confName: any, siteName: any) {
+    this.showSpinner = true;
 
-        if (result.res && result.res === 'Configuracion Activada...') {
-          await this.initEdit(this.gateway.idCGW);
-          this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
-          this.gatewayForm = this.initForm();
-          this.checkFormChanges();
-          await this.historicService.updateCfg(121, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} CPU 1`).toPromise();
-          await this.alertService.successMessage(``, result.res);
-          this.showSpinner = false;
-          return;
-        }
-      }
+    let title = this.dataService.getDataGatewayTitle();
 
-      if (gtwFieldCpu0.code === 'ECONNREFUSED' || gtwFieldCpu1.code === 'ECONNREFUSED') {
-        await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error conexión a la pasarela`).toPromise();
-        await this.alertService.errorMessage(``, `Error de conexión a la pasarela`);
+    // Check CPU 0
+    const gtwFieldCpu0 = await this.gatewayFieldService.getGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb1).toPromise();
+
+    if (this.validateGtwFieldJson(gtwFieldCpu0)) {
+      const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
+      const result = await this.gatewayFieldService.updateGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb1, gtwActual).toPromise();
+
+      if (result.res && result.res === 'Configuracion Activada...') {
+        await this.initEdit(this.gateway.idCGW);
+        this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
+        this.gatewayForm = this.initForm();
+        this.checkFormChanges();
+        await this.historicService.updateCfg(121, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} CPU 0`).toPromise();
+        await this.alertService.successMessage(``, result.res);
         this.showSpinner = false;
         return;
       }
+    }
 
-      if (gtwFieldCpu0.code === 'ETIMEDOUT' && gtwFieldCpu1.code === 'ETIMEDOUT') {
-        await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error timeout`).toPromise();
-        await this.alertService.errorMessage(``, `Error de timeout en la conexión a la pasarela`);
+    // Check CPU 1
+    const gtwFieldCpu1 = await this.gatewayFieldService.getGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb2).toPromise();
+    if (this.validateGtwFieldJson(gtwFieldCpu1)) {
+      const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
+      const result = await this.gatewayFieldService.updateGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb2, gtwActual).toPromise();
+
+      if (result.res && result.res === 'Configuracion Activada...') {
+        await this.initEdit(this.gateway.idCGW);
+        this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
+        this.gatewayForm = this.initForm();
+        this.checkFormChanges();
+        await this.historicService.updateCfg(121, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} CPU 1`).toPromise();
+        await this.alertService.successMessage(``, result.res);
         this.showSpinner = false;
         return;
       }
+    }
 
-      if (gtwFieldCpu0.code === 'EHOSTUNREACH' || gtwFieldCpu1.code === 'EHOSTUNREACH') {
-        await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error de conexión al host`).toPromise();
-        await this.alertService.errorMessage(``, `Error no es posible conectar con la pasarela`);
-        this.showSpinner = false;
-        return;
-      }
+    if (gtwFieldCpu0.code === 'ECONNREFUSED' || gtwFieldCpu1.code === 'ECONNREFUSED') {
+      await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error conexión a la pasarela`).toPromise();
+      await this.alertService.errorMessage(``, `Error de conexión a la pasarela`);
+      this.showSpinner = false;
+      return;
+    }
 
-      if (!this.validateGtwFieldJson(gtwFieldCpu0) && !this.validateGtwFieldJson(gtwFieldCpu1)) {
-        await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error de formato`).toPromise();
-        await this.alertService.errorMessage(``, `Error el formato del JSON recibido no es correcto`);
-        this.showSpinner = false;
-        return;
-      }
+    if (gtwFieldCpu0.code === 'ETIMEDOUT' && gtwFieldCpu1.code === 'ETIMEDOUT') {
+      await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error timeout`).toPromise();
+      await this.alertService.errorMessage(``, `Error de timeout en la conexión a la pasarela`);
+      this.showSpinner = false;
+      return;
+    }
+
+    if (gtwFieldCpu0.code === 'EHOSTUNREACH' || gtwFieldCpu1.code === 'EHOSTUNREACH') {
+      await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error de conexión al host`).toPromise();
+      await this.alertService.errorMessage(``, `Error no es posible conectar con la pasarela`);
+      this.showSpinner = false;
+      return;
+    }
+
+    if (!this.validateGtwFieldJson(gtwFieldCpu0) && !this.validateGtwFieldJson(gtwFieldCpu1)) {
+      await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error de formato`).toPromise();
+      await this.alertService.errorMessage(``, `Error el formato del JSON recibido no es correcto`);
+      this.showSpinner = false;
+      return;
     }
   }
 
@@ -591,32 +613,48 @@ export class GatewayHomeComponent implements OnInit {
 
     let result = await this.validateGateway();
     if (result) {
-      let gateway = Object.assign({}, this.gatewayForm.getRawValue());
-      delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
-      gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
-      gateway.pendiente_actualizar = 1;
-
-      const updatedGtw = await this.gatewayService.updateGtw(this.gateway.idCGW, gateway).toPromise();
-      if (updatedGtw.error) {
-        this.showSpinner = false;
-        await this.alertService.errorMessage(`Error`, updatedGtw.error);
-        return;
+      if (this.gatewayForm.value.traps.length === 0) {
+        const confirmTraps = await this.alertService.confirmationMessage(`No hay traps activados`, `¿Deseas continuar?`);
+        if (confirmTraps.value) {
+          this.saveGTW();
+        }
+        else {
+          this.showSpinner = false
+        }
       }
-
-      let title = this.dataService.getDataGatewayTitle();
-      this.validateFormDirty(title);
-      if (this.gatewayPost.nombre != this.gatewayForm.value.nombre)
-        this.gatewayPost.nombre = this.gatewayForm.value.nombre;
-      this.gatewayForm.patchValue({
-        pendiente_actualizar: true
-      });
-      this.initStatusGateway = { ...this.gatewayForm.value };
-      await this.siteChanges();
-      this.showSpinner = false;
-      await this.alertService.successMessage(``, `Pasarela ${updatedGtw.name} actualizada correctamente`);
-      this.gatewayForm.markAsPristine();
-      this.changes = false;
+      else {
+        this.saveGTW();
+      }
     }
+  }
+
+  async saveGTW() {
+    let gateway = Object.assign({}, this.gatewayForm.getRawValue());
+    delete gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
+    gateway.snmpv2 = gateway.snmpv2 ? 1 : 0;
+    gateway.pendiente_actualizar = 1;
+
+    const updatedGtw = await this.gatewayService.updateGtw(this.gateway.idCGW, gateway).toPromise();
+    if (updatedGtw.error) {
+      this.showSpinner = false;
+      await this.alertService.errorMessage(`Error`, updatedGtw.error);
+      return;
+    }
+
+    let title = this.dataService.getDataGatewayTitle();
+    this.validateFormDirty(title);
+    if (this.gatewayPost.nombre != this.gatewayForm.value.nombre)
+      this.gatewayPost.nombre = this.gatewayForm.value.nombre;
+    this.gatewayForm.patchValue({
+      pendiente_actualizar: true
+    });
+    this.initStatusGateway = { ...this.gatewayForm.value };
+    await this.siteChanges();
+    this.showSpinner = false;
+    await this.alertService.successMessage(``, `Pasarela ${updatedGtw.name} actualizada correctamente`);
+    this.gatewayForm.markAsPristine();
+    this.changes = false;
+    this.showSpinner = false;
   }
 
   copyGateway() {
@@ -685,10 +723,11 @@ export class GatewayHomeComponent implements OnInit {
       msb1: new FormControl({ value: this.gatewayPost.msb1, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.SUBNET_MASK)]),
       msb2: new FormControl({ value: this.gatewayPost.msb2, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.SUBNET_MASK)]),
       PuertoLocalSIP: new FormControl({ value: this.gatewayPost.PuertoLocalSIP, disabled: true }),
-//      periodo_supervision: new FormControl({ value: this.gatewayPost.periodo_supervision, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.ONLY_NUMBERS)]),
-      periodo_supervision: new FormControl({ 
-        value: this.gatewayPost.periodo_supervision, 
-        disabled: this.visualizationMode }, 
+      //      periodo_supervision: new FormControl({ value: this.gatewayPost.periodo_supervision, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.ONLY_NUMBERS)]),
+      periodo_supervision: new FormControl({
+        value: this.gatewayPost.periodo_supervision,
+        disabled: this.visualizationMode
+      },
         [Validators.pattern(AppSettings.ONLY_NUMBERS), Validators.min(90), Validators.max(1800)]),
       proxys: new FormControl(this.gatewayPost.proxys),
       registrars: new FormControl(this.gatewayPost.registrars),
@@ -706,6 +745,8 @@ export class GatewayHomeComponent implements OnInit {
       puerto_rtsp: new FormControl({ value: this.gatewayPost.puerto_rtsp, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.PORT)]),
       servidor_rtsp: new FormControl({ value: this.gatewayPost.servidor_rtsp, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
       servidor_rtspb: new FormControl({ value: this.gatewayPost.servidor_rtspb, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.IP_PATTERN)]),
+      supervisionTlf: new FormControl({ value: this.gatewayPost.supervisionTlf, disabled: this.visualizationMode }),
+      refresher: new FormControl({ value: this.gatewayPost.refresher, disabled: this.visualizationMode })
     }, { validators: ipEqualsValidator });
   }
 
@@ -802,6 +843,9 @@ export class GatewayHomeComponent implements OnInit {
             historic += `${element} - `
           }
         })
+      } if (value === 'refresher') {
+        const refresher = this.refresher.find((option: any) => option.value === this.gatewayForm.get(value)?.value)
+          historic += `${refresher.viewValue}`
       } else {
         this.gatewayForm.get(value)?.value.forEach((element: any) => {
           if (this.gatewayForm.get(value)?.value[this.gatewayForm.get(value)?.value.length - 1] === element) {
