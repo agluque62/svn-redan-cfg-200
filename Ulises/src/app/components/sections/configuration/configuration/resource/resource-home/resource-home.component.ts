@@ -19,6 +19,7 @@ import { TableBSSService } from 'src/app/_services/tableBss.service';
 
 
 import * as formsFields from '../../../../../../../assets/validateInfoFields.json';
+import { TranslateService } from '@ngx-translate/core';
 
 interface customValues {
   value: number;
@@ -38,6 +39,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
   showNumberRange = true;
 
+  date = new Date();
+
   gateway!: Gateway;
   gatewayResponse!: GatewayResponse;
 
@@ -48,6 +51,10 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   GATEWAY_ID!: number;
   COLUMN!: string;
   ROW!: string;
+
+  CFG_NAME!: string;
+  LOCAT_NAME!: string;
+  GTW_NAME!: string;
 
   resourceForm!: FormGroup;
   resource!: any;
@@ -79,101 +86,102 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   displayAGCAD: boolean = false;
   displayAGCDA: boolean = false;
   displayDeleteBtn: boolean = false;
+  displayExportBtn: boolean = false;
   displayAudioPrecision: boolean = false;
 
   // Common
   types: customValues[] = [
-    { value: 1, viewValue: 'Radio' },
-    { value: 2, viewValue: 'Telefónico' }
+    { value: 1, viewValue: 'resource.types_value_0' },
+    { value: 2, viewValue: 'resource.types_value_1' }
   ];
 
   indexAudio: customValues[] = [
-    { value: 1, viewValue: 'Normal' },
-    { value: 0, viewValue: 'Estricto' }
+    { value: 1, viewValue: 'resource.indexAudio_value_0' },
+    { value: 0, viewValue: 'resource.indexAudio_value_1' }
   ];
 
   codecs: customValues[] = [
-    { value: 0, viewValue: 'G711-A' }
+    { value: 0, viewValue: 'resource.codecs_value_0' }
   ];
 
   // Radio data
   radioAgents: customValues[] = [
-    { value: 0, viewValue: 'Local-Simple' },
-    { value: 1, viewValue: 'Local-P/R' },
-    { value: 2, viewValue: 'Local FD-Simple' },
-    { value: 3, viewValue: 'Local FD-P/R' },
-    { value: 4, viewValue: 'Remoto RxTx' },
-    { value: 5, viewValue: 'Remoto Tx' },
-    { value: 6, viewValue: 'Remoto Rx' }
+    { value: 0, viewValue: 'resource.radioAgents_value_0'},
+    { value: 1, viewValue: 'resource.radioAgents_value_1'},
+    { value: 2, viewValue: 'resource.radioAgents_value_2'},
+    { value: 3, viewValue: 'resource.radioAgents_value_3'},
+    { value: 4, viewValue: 'resource.radioAgents_value_4'},
+    { value: 5, viewValue: 'resource.radioAgents_value_5'},
+    { value: 6, viewValue: 'resource.radioAgents_value_6'}
   ];
 
   // Telephonic data
   telephonicInterfaces: customValues[] = [
-    { value: 0, viewValue: 'PP-BL' },
-    { value: 1, viewValue: 'PP-BC' },
-    { value: 2, viewValue: 'PP-AB' },
-    { value: 3, viewValue: 'ATS-R2' },
-    { value: 4, viewValue: 'ATS-N5' },
-    { value: 5, viewValue: 'LCEN' },
-    { value: 6, viewValue: 'ATS-QSIG' },
-    { value: 7, viewValue: 'TUNNEL 2H' }
+    { value: 0, viewValue: 'resource.telephonicIntefaces_value_0' },
+    { value: 1, viewValue: 'resource.telephonicIntefaces_value_1' },
+    { value: 2, viewValue: 'resource.telephonicIntefaces_value_2' },
+    { value: 3, viewValue: 'resource.telephonicIntefaces_value_3' },
+    { value: 4, viewValue: 'resource.telephonicIntefaces_value_4' },
+    { value: 5, viewValue: 'resource.telephonicIntefaces_value_5' },
+    { value: 6, viewValue: 'resource.telephonicIntefaces_value_6' },
+    { value: 7, viewValue: 'resource.telephonicIntefaces_value_7' }
   ];
 
   bssMethods: customValues[] = [
-    { value: 0, viewValue: 'Ninguno' },
-    { value: 1, viewValue: 'RSSI' },
-    { value: 2, viewValue: 'RSSI/NUCLEO' }
+    { value: 0, viewValue: 'resource.radio.bssMethods_value_0' },
+    { value: 1, viewValue: 'resource.radio.bssMethods_value_1' },
+    { value: 2, viewValue: 'resource.radio.bssMethods_value_2' }
   ];
 
   favBssMethods: customValues[] = [
-    { value: 0, viewValue: 'RSSI' },
-    { value: 1, viewValue: 'NUCLEO' },
-    { value: 2, viewValue: 'Ninguno' }
+    { value: 0, viewValue: 'resource.radio.bssMethodsPref_value_0' },
+    { value: 1, viewValue: 'resource.radio.bssMethodsPref_value_1' },
+    { value: 2, viewValue: 'resource.radio.bssMethodsPref_value_2' }
   ];
 
   pttPriority: customValues[] = [
-    { value: 0, viewValue: 'PTT Normal' },
-    { value: 1, viewValue: 'PTT Prioritario' },
-    { value: 2, viewValue: 'PTT Emergencia' },
+    { value: 0, viewValue: 'resource.radio.pttPriority_value_0' },
+    { value: 1, viewValue: 'resource.radio.pttPriority_value_1' },
+    { value: 2, viewValue: 'resource.radio.pttPriority_value_2' },
   ];
 
   climaxModes: customValues[] = [
-    { value: 0, viewValue: 'No' },
-    { value: 1, viewValue: 'ASAP' },
-    { value: 2, viewValue: 'Tiempo' }
+    { value: 0, viewValue: 'resource.radio.climaxModes_value_0' },
+    { value: 1, viewValue: 'resource.radio.climaxModes_value_1' },
+    { value: 2, viewValue: 'resource.radio.climaxModes_value_2' }
   ];
 
   calClimaxModes: customValues[] = [
-    { value: 0, viewValue: 'Modo relativo' },
-    { value: 1, viewValue: 'Modo absoluto' }
+    { value: 0, viewValue: 'resource.radio.calClimaxModes_value_0' },
+    { value: 1, viewValue: 'resource.radio.calClimaxModes_value_1' }
   ];
 
   prioritySessionsSIP: customValues[] = [
-    { value: 0, viewValue: 'Normal' },
-    { value: 1, viewValue: 'Emergencia' }
+    { value: 0, viewValue: 'resource.radio.prioritySessionSIP_value_0' },
+    { value: 1, viewValue: 'resource.radio.prioritySessionSIP_value_1' }
   ];
 
   iAudio: customValues[] = [
-    { value: 0, viewValue: 'Hardware' },
-    { value: 1, viewValue: 'VAD' },
-    { value: 2, viewValue: 'Forzado' },
+    { value: 0, viewValue: 'resource.radio.iAudio_value_0' },
+    { value: 1, viewValue: 'resource.radio.iAudio_value_1' },
+    { value: 2, viewValue: 'resource.radio.iAudio_value_2' },
   ];
 
   typeLists: customValues[] = [
-    { value: 0, viewValue: 'Ninguna' },
-    { value: 1, viewValue: 'Lista Negra' },
-    { value: 2, viewValue: 'Lista Blanca' }
+    { value: 0, viewValue: 'resource.tlf.typeList_value_0' },
+    { value: 1, viewValue: 'resource.tlf.typeList_value_1' },
+    { value: 2, viewValue: 'resource.tlf.typeList_value_2' }
   ];
 
   supCollateral: customValues[] = [
-    { value: 0, viewValue: 'No' },
-    { value: 1, viewValue: 'A Usuario' },
-    { value: 2, viewValue: 'A Dominio' }
+    { value: 0, viewValue: 'resource.radio.supCollateral_value_0' },
+    { value: 1, viewValue: 'resource.radio.supCollateral_value_1' },
+    { value: 2, viewValue: 'resource.radio.supCollateral_value_2' }
   ];
 
   timeOpts: customValues[] = [
-    { value: 0, viewValue: 'Normal' },
-    { value: 256, viewValue: 'Siempre Tránsito' }
+    { value: 0, viewValue: 'resource.tlf.timeOpts_value_0' },
+    { value: 256, viewValue: 'resource.tlf.timeOpts_value_1' }
   ];
 
   durations: customValues[] = [
@@ -208,6 +216,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     private readonly loginService: LoginService, private gatewayService: GatewayService, private readonly configService: ConfigService,
     private historicService: HistoricService,
     private readonly tableBssService: TableBSSService,
+    private readonly translate: TranslateService,
     private cdr: ChangeDetectorRef) { }
 
   async ngOnInit() {
@@ -220,9 +229,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     if (this.tablesBss !== null) {
       this.tablesBss.unshift({
         FechaCreacion: "",
-        description: "Ninguna",
+        description: `${this.translate.instant('resource.none')}`,
         idtabla_bss: 0,
-        name: 'Ninguna',
+        name: `${this.translate.instant('resource.none')}`,
         valor0: 0,
         valor1: 0,
         valor2: 0,
@@ -273,6 +282,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       this.resource.fila = this.ROW;
 
       this.displayDeleteBtn = true;
+      this.displayExportBtn = true;
       this.editMode = true;
     } else {
       this.initResource();
@@ -300,6 +310,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     this.gatewayResponse = await this.gatewayService.getGatewayById(+this.GATEWAY_ID).toPromise();
     if (this.gatewayResponse && this.gatewayResponse.result) {
       this.gateway = [...this.gatewayResponse.result][0];
+      this.GTW_NAME = this.gateway.conf_name;
+      this.LOCAT_NAME = this.gateway.emplazamiento;
+      this.GTW_NAME = this.gateway.name;
     }
   }
 
@@ -355,7 +368,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   }
 
   async onDelete() {
-    const userInteraction = await this.alertService.confirmationMessage(``, `¿Desea borrar el recurso ${this.resourceForm.value.nombre}?`);
+    const userInteraction = await this.alertService.confirmationMessage(``, `${this.translate.instant('resource.alert.conf_delete_res', { value: this.resourceForm.value.nombre })}`);
     let res;
     if (userInteraction.value) {
       if (this.selectedResource == 1) {
@@ -367,11 +380,11 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         let title = this.dataService.getDataGatewayTitle();
         title = title + " - Tipo: " + (this.selectedResource == 1 ? "Radio" : "Teléfono")
         await this.historicService.updateCfg(114, this.resourceForm.value.nombre, title).toPromise();
-        await this.alertService.successMessage(``, `El recurso ${this.resourceForm.value.nombre} ha sido eliminado`);
+        await this.alertService.successMessage(``, `${this.translate.instant('resource.alert.succ_delete_res', { value: this.resourceForm.value.nombre })}`);
         this.dataService.updateDataGatewayPreviousUrl('RESOURCE');
         this.router.navigate(['/home/gateway/' + this.resource.pasarela_id]);
       } else {
-        await this.alertService.errorMessage(``, `Error al borrar el recurso`);
+        await this.alertService.errorMessage(``, `${this.translate.instant('resource.alert.err_delete_res')}`);
       }
     }
 
@@ -380,7 +393,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   async back() {
     let confirm;
     if (this.editMode && this.changes) {
-      confirm = await this.alertService.confirmationMessage("", `Existen cambios en el recurso sin guardar. ¿Desea continuar?`);
+      confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('resource.alert.conf_back_no_changes')}`);
 
     }
     if (confirm?.isConfirmed == true || confirm === undefined) {
@@ -476,9 +489,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       llamada_automatica: new FormControl({ value: this.resource.llamada_automatica, disabled: this.visualizationMode }),
       iControlTmLlam: new FormControl({ value: this.resource.iControlTmLlam, disabled: this.visualizationMode }),
       iTmMaxConversacion: new FormControl({ value: this.resource.iTmMaxConversacion, disabled: this.visualizationMode }, [Validators.min(0), Validators.max(600)]),
-      RespuestaSIP_ATSR2: new FormControl({value: this.resource.RespuestaSIP_ATSR2, disabled: this.visualizationMode}),
-      TmTonoBloqueo: new FormControl({ value: this.resource.TmTonoBloqueo, disabled: this.visualizationMode}, [Validators.min(1), Validators.max(100)]),
-      TmBloqueoLib: new FormControl({ value: this.resource.TmBloqueoLib, disabled: this.visualizationMode}, [Validators.min(100), Validators.max(1000)]),
+      RespuestaSIP_ATSR2: new FormControl({ value: this.resource.RespuestaSIP_ATSR2, disabled: this.visualizationMode }),
+      TmTonoBloqueo: new FormControl({ value: this.resource.TmTonoBloqueo, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.TM_TONO_BLOQ)]),
+      TmBloqueoLib: new FormControl({ value: this.resource.TmBloqueoLib, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.TM_BLOQ_LIB)]),
     });
     this.resourceForm.valueChanges
       .subscribe(value => {
@@ -498,7 +511,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         this.resourceForm.get('origen_test')?.value !== '' &&
         this.resourceForm.get('destino_test')?.value !== '') {
 
-        const message = `Origen llamadas salientes de test no puede ser igual que Destino llamadas salientes de test`;
+        const message = `${this.translate.instant('resource.alert.err_same_start_end_call')}`;
         await this.alertService.errorMessage(`Error`, message);
         result = true;
       }
@@ -541,7 +554,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     } else {
       this.displayTbMessage = false;
     }
-    if (this.displayTbMessage) confirm = await this.alertService.confirmationMessage("", `No se ha escogido tabla de calificación de audio. ¿Desea continuar?`);
+    if (this.displayTbMessage) confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('resource.alert.conf_no_table_continue')}`);
 
     if (this.resourceForm.value.indicacion_entrada_audio !== 1) {
       this.resourceForm.get('umbral_vad')?.clearValidators();
@@ -598,10 +611,10 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         this.showSpinner = true;
         if (this.editMode) {
           res = await this.resourceService.updateResource(this.selectedResource, this.resourceForm.value).toPromise();
-          message = `El recurso ${this.resourceForm.value.nombre} ha sido editado correctamente`;
+          message = `${this.translate.instant('resource.alert.succ_edit_res', { value: this.resourceForm.value.nombre })}`;
         } else {
           res = await this.resourceService.createResource(this.selectedResource, this.resourceForm.value).toPromise();
-          message = `El recurso ${this.resourceForm.value.nombre} ha sido creado correctamente`;
+          message = `${this.translate.instant('resource.alert.succ_create_res', { value: this.resourceForm.value.nombre })}`;
         }
         this.showSpinner = false;
 
@@ -676,7 +689,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         showMessage = true;
       }
 
-      if (showMessage) confirm = await this.alertService.confirmationMessage("", `El índice de carga al añadir este tipo de recurso es de: ${total}. ¿Desea continuar?`);
+      if (showMessage) confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('resource.alert.conf_index_res', { value: total })}`);
     }
     return { 'response': confirm, 'loadIndex': total };
   }
@@ -685,19 +698,19 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     switch (errorType) {
       case "create":
         if (this.editMode) {
-          await this.alertService.errorMessage(``, AppSettings.RES_EDIT_ERROR);
+          await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.RES_EDIT_ERROR')}`);
         } else {
-          await this.alertService.errorMessage(``, AppSettings.RES_CREATE_ERROR);
+          await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.RES_CREATE_ERROR')}`);
         }
         break;
       case "form":
-        await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+        await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
         break;
       case "resourceName":
-        await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.RES_NAME_DUP);
+        await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.RES_NAME_DUP')}`);
         break;
       case "ranks":
-        await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.WRONG_RANKS);
+        await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.WRONG_RANKS')}`);
         break;
     }
 
@@ -801,6 +814,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         break;
 
     }
+
     this.loadCollateralsTab(displayOnlyFirstCollateral);
     this.resourceForm.value.tipo_interfaz_tel !== 7 ? this.loadRangeNumberTab(displayDest) : '';
     this.resourceForm.value.tipo_interfaz_tel !== 6 ? this.secondTabRef.instance.resourceForm = this.resourceForm : '';
@@ -1439,4 +1453,23 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     }
   }
 
+  async export() {
+    let result
+    this.showSpinner = true
+    if (this.selectedResource == 1) {
+      result = await this.resourceService.getRadioResourceById(this.resourceId).toPromise();
+    } else {
+      result = await this.resourceService.getTlfResourceById(this.resourceId).toPromise();
+    }
+    this.showSpinner = false
+    const fileName = `${this.resource.nombre}_${`${('00' + new Date().getDate()).slice(-2)}/${('00' + (new Date().getMonth() + 1)).slice(-2)}/${new Date().getFullYear()}`}.json`;
+    this.saveText(JSON.stringify(result, undefined, 2), fileName);
+  }
+
+  saveText(text: string, filename: string) {
+    var a = document.createElement('a');
+    a.setAttribute('href', 'data:text/json;charset=utf-u,' + encodeURIComponent(text));
+    a.setAttribute('download', filename);
+    a.click()
+  }
 }

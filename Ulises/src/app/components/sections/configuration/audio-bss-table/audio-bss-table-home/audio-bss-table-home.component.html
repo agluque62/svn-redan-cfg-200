@@ -1,11 +1,11 @@
 <div class="audio-bss-table">
 
     <div class="title">
-        {{ 'Tabla calificación audio - BSS' }}
+        {{ 'audiobss.tableBSS' | translate }}
     </div>
 
     <div class="btn" *ngIf="!visualizationMode">
-        <button mat-raised-button class="create-btn local-btn" (click)="createTableAudioBSS()">{{'Nueva tabla'}}</button>
+        <button mat-raised-button class="create-btn local-btn" (click)="createTableAudioBSS()">{{ 'button.new_table' | translate }}</button>
     </div>
 
     <spinner *ngIf="showSpinner"></spinner>
@@ -13,12 +13,12 @@
     <div class="mat-elevation-z8" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
         <mat-table [dataSource]="dataSource" class="table">
             <ng-container matColumnDef="id">
-                <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>{{ 'audiobss.ID' | translate }}</mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="description">
-                <mat-header-cell *matHeaderCellDef> Descripción </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef> {{ 'audiobss.description' | translate }}</mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
             </ng-container>
 
@@ -26,9 +26,9 @@
                 <mat-header-cell *matHeaderCellDef></mat-header-cell>
                 <mat-cell *matCellDef="let row">
                     <button mat-raised-button class="modify-btn"
-                        (click)="modifyTableBss(row)" *ngIf="!visualizationMode">{{'Modificar'}}</button>
+                        (click)="modifyTableBss(row)" *ngIf="!visualizationMode">{{ 'button.modify' | translate }}</button>
                         <button mat-raised-button class="modify-btn"
-                        (click)="visualizeTableBss(row)" *ngIf="visualizationMode">{{'Ver'}}</button>
+                        (click)="visualizeTableBss(row)" *ngIf="visualizationMode">{{ 'button.see' | translate }}</button>
                 </mat-cell>
             </ng-container>
 

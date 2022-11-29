@@ -1,12 +1,12 @@
 <div class="resource-home" *ngIf="ready">
     <div class="title">
-        <mat-label>{{ gatewayTitle }}</mat-label>
+        <mat-label>{{ 'resource.title' | translate: {value1: GTW_NAME, value2: LOCAT_NAME, value3: GTW_NAME} }}</mat-label>
         <mat-label class="subtitle">
             <div class="slot">
-                SLOT:{{this.resource.columna}} Interfaz: {{this.resource.fila}}
+                {{ 'resource.slot_title' | translate: {value1: this.resource.columna, value2: this.resource.fila } }}
             </div>
             <div class="uri">
-                URI - Sip: {{ title }}
+                {{ 'resource.uri_title' | translate: {value: title} }}
             </div>
         </mat-label>
     </div>
@@ -17,112 +17,113 @@
         <div class="main">
             <div class="main-resource">
                 <mat-form-field appearance="legacy">
-                    <mat-label>Nombre</mat-label>
+                    <mat-label>{{ 'resource.name' | translate }}</mat-label>
                     <input matInput required formControlName="nombre" (change)="saveTmpName($event)">
                     <mat-error *ngIf="resourceForm.controls['nombre'].hasError('required')">
-                        {{ appset.FIELD_REQUIRED }}
+                        {{ appset.FIELD_REQUIRED | translate }}
                     </mat-error>
                     <mat-error *ngIf="resourceForm.controls['nombre'].hasError('pattern')">
-                        {{ appset.INVALID_NAME }}
+                        {{ appset.INVALID_NAME | translate }}
                     </mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">
-                    <mat-label>Codec</mat-label>
+                    <mat-label>{{ '' | translate }}</mat-label>
                     <mat-select formControlName="codec" name="codec">
                         <mat-option *ngFor="let opt of codecs" [value]="opt.value">
-                            {{opt.viewValue}}
+                            {{ opt.viewValue | translate}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
 
                 <mat-form-field appearance="fill">
-                    <mat-label>Tipo de recurso</mat-label>
+                    <mat-label>{{ 'resource.res_type' | translate }}</mat-label>
                     <mat-select [disabled]="editMode" (selectionChange)="checkResourceType(true)" name="types"
                         [(value)]="selectedResource">
                         <mat-option *ngFor="let type of types" [value]="type.value">
-                            {{type.viewValue}}
+                            {{ type.viewValue | translate}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
 
                 <mat-checkbox [disabled]="visualizationMode" [checked]="registerKeyExists"
-                    (change)="enableRegistryKey($event.checked)">Habilitar registro</mat-checkbox>
+                    (change)="enableRegistryKey($event.checked)">{{ 'resource.hab_register' | translate }}</mat-checkbox>
 
                 <mat-form-field appearance="legacy" *ngIf="displayRegKey">
-                    <mat-label>Clave</mat-label>
+                    <mat-label>{{ 'resource.key' | translate }}</mat-label>
                     <input matInput formControlName="clave_registro">
                 </mat-form-field>
 
                 <mat-form-field appearance="legacy" *ngIf="displayRadioTab">
-                    <mat-label>Frecuencia</mat-label>
+                    <mat-label>{{ 'resource.frec' | translate }}</mat-label>
                     <input matInput formControlName="frecuencia">
                     <mat-error *ngIf="resourceForm.controls['frecuencia'].hasError('pattern')">
-                        {{ appset.INVALID_RANGE_FREC }}
+                        {{ appset.INVALID_RANGE_FREC | translate }}
                     </mat-error>
                 </mat-form-field>
 
                 <div class="actions">
                     <div class="common-actions">
                         <button mat-raised-button color="basic" *ngIf="!visualizationMode"
-                            (click)="onSubmit()">Confirmar</button>
-                        <button mat-raised-button color="basic" (click)="back()">Cancelar</button>
+                            (click)="onSubmit()">{{ 'button.confirm' | translate }}</button>
+                        <button mat-raised-button color="basic" (click)="back()">{{ 'button.cancel' | translate }}</button>
                     </div>
+                    <button mat-raised-button color="basic" *ngIf="displayExportBtn && !visualizationMode"
+                        (click)="export()">{{ 'button.export_res' | translate }}</button>
                     <button mat-raised-button color="basic" *ngIf="displayDeleteBtn && !visualizationMode"
-                        (click)="onDelete()">Eliminar
-                        Recurso</button>
+                        (click)="onDelete()">{{ 'button.delete_res' | translate }}</button>
                 </div>
             </div>
             <div class="settings-resource">
                 <mat-tab-group mat-align-tabs="start">
-                    <mat-tab label="Audio">
+                    <mat-tab label="{{ 'resource.audio' | translate }}">
                         <div [ngStyle]="{'margin': '10px'}">
                             <div class="title">
-                                <mat-label>Parámetros hardware</mat-label>
+                                <mat-label>{{ 'resource.hardware_params' | translate }}</mat-label>
                             </div>
                             <div class="audio-settings">
                                 <div class="agc">
                                     <mat-checkbox class="agc-checkbox" [disabled]="visualizationMode"
                                         [checked]="displayAGCAD" (change)="checkControlsAudioAD($event.checked)">
-                                        AGC en A/D
+                                        {{ 'resource.AGC_DA' | translate }}
                                     </mat-checkbox>
                                     <mat-form-field *ngIf="!displayAGCAD" appearance="legacy">
-                                        <mat-label>Ajuste Cero digital en A/D (dB)</mat-label>
+                                        <mat-label>{{ 'resource.sett_ad' | translate }}</mat-label>
                                         <input matInput formControlName="ajuste_ad">
                                         <mat-error
                                             *ngIf="resourceForm.get('ajuste_ad')?.hasError('min') || resourceForm.get('ajuste_ad')?.hasError('max')">
-                                            {{ appset.INVALID_RANGE_AD }}
+                                            {{ appset.INVALID_RANGE_AD | translate }}
                                         </mat-error>
                                         <mat-error *ngIf="resourceForm.get('ajuste_ad')?.hasError('pattern')">
-                                            {{ appset.NUMBERS_FORMAT_INVALID }}
+                                            {{ appset.NUMBERS_FORMAT_INVALID | translate }}
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
                                 <div class="agc">
                                     <mat-checkbox class="agc-checkbox" [disabled]="visualizationMode"
                                         [checked]="displayAGCDA" (change)="checkControlsAudioDA($event.checked)">
-                                        AGC en D/A
+                                        {{ 'resource.AGC_DA' | translate }}
                                     </mat-checkbox>
                                     <mat-form-field *ngIf="!displayAGCDA" appearance="legacy">
-                                        <mat-label>Ajuste Cero digital en D/A (dB)</mat-label>
+                                        <mat-label>{{ 'resource.sett_da' | translate }}</mat-label>
                                         <input matInput formControlName="ajuste_da">
                                         <mat-error
                                             *ngIf="resourceForm.get('ajuste_da')?.hasError('min') || resourceForm.get('ajuste_da')?.hasError('max')">
-                                            {{ appset.INVALID_RANGE_DA }}
+                                            {{ appset.INVALID_RANGE_DA | translate }}
                                         </mat-error>
                                         <mat-error *ngIf="resourceForm.get('ajuste_da')?.hasError('pattern')">
-                                            {{ appset.NUMBERS_FORMAT_INVALID }}
+                                            {{ appset.NUMBERS_FORMAT_INVALID | translate }}
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
 
                                 <div class="agc" *ngIf="selectedResource === 1">
                                     <mat-form-field appearance="fill">
-                                        <mat-label>Precisión Audio</mat-label>
+                                        <mat-label>{{ 'resource.prec_audio' | translate }}</mat-label>
                                         <mat-select [disabled]="precAudioIsDisable" formControlName="precision_audio"
                                             name="indexAudio">
                                             <mat-option *ngFor="let type of indexAudio" [value]="type.value">
-                                                {{type.viewValue}}
+                                                {{ type.viewValue | translate}}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
@@ -132,31 +133,31 @@
                     </mat-tab>
                     <mat-tab>
                         <ng-template mat-tab-label>
-                            <span [ngClass]="{'no-display': displayRadioTab==false }">Radio</span>
-                            <span [ngClass]="{'no-display': displayTelephonicTab==false }">Telefónico</span>
+                            <span [ngClass]="{'no-display': displayRadioTab==false }">{{ 'resource.rad' | translate }}</span>
+                            <span [ngClass]="{'no-display': displayTelephonicTab==false }">{{ 'resource.tlf' | translate }}</span>
                         </ng-template>
                         <div [ngStyle]="{'margin': '10px'}">
                             <div class="title">
-                                <mat-label [ngClass]="{'no-display': displayRadioTab==false }">Parámetros radio
+                                <mat-label [ngClass]="{'no-display': displayRadioTab==false }">{{ 'resource.tlf_params' | translate }}
                                 </mat-label>
-                                <mat-label [ngClass]="{'no-display': displayTelephonicTab==false }">Parámetros telefonía
+                                <mat-label [ngClass]="{'no-display': displayTelephonicTab==false }">{{ 'resource.tlf_params' | translate }}
                                 </mat-label>
                             </div>
                             <mat-form-field *ngIf="displayRadioTab" id="formSelector" appearance="fill">
-                                <mat-label>Tipo de Agente de Radio</mat-label>
+                                <mat-label>{{ 'resource.rad_type' | translate }}</mat-label>
                                 <mat-select formControlName="tipo_agente" (selectionChange)="checkResourceType()"
                                     name="rdAgent">
                                     <mat-option *ngFor="let rdAgent of radioAgents" [value]="rdAgent.value">
-                                        {{rdAgent.viewValue}}
+                                        {{ rdAgent.viewValue | translate}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
                             <mat-form-field *ngIf="displayTelephonicTab" id="formSelector" appearance="fill">
-                                <mat-label>Tipo de Interfaz Telefónico</mat-label>
+                                <mat-label>{{ 'resource.tlf_type' | translate }}</mat-label>
                                 <mat-select formControlName="tipo_interfaz_tel" (selectionChange)="checkResourceType()"
                                     name="telInt">
                                     <mat-option *ngFor="let telInt of telephonicInterfaces" [value]="telInt.value">
-                                        {{telInt.viewValue}}
+                                        {{ telInt.viewValue | translate}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
@@ -167,9 +168,9 @@
                     <div *ngIf="this.resourceForm.value.tipo_interfaz_tel !== 7">
                         <mat-tab>
                             <ng-template mat-tab-label>
-                                <span [ngClass]="{'no-display': displayComnsTab==false }">Comunicaciones</span>
-                                <span [ngClass]="{'no-display': displayListsTab==false }">Listas B/N</span>
-                                <span [ngClass]="{'no-display': displayNumberRange==false }">Rango número ATS</span>
+                                <span [ngClass]="{'no-display': displayComnsTab==false }">{{ 'resource.comunications' | translate }}</span>
+                                <span [ngClass]="{'no-display': displayListsTab==false }">{{ 'resource.listsBN' | translate }}</span>
+                                <span [ngClass]="{'no-display': displayNumberRange==false }">{{ 'resource.numberATS' | translate }}</span>
                             </ng-template>
                             <div [ngStyle]="{'margin': '10px'}">
                                 <template #thirdTabTemplate></template>
@@ -178,7 +179,7 @@
                     </div>
                     <mat-tab [disabled]='!displayCollaterals' label="Colaterales">
                         <ng-template mat-tab-label>
-                            <span [ngClass]="{'no-display': displayCollaterals==false }">Colaterales</span>
+                            <span [ngClass]="{'no-display': displayCollaterals==false }">{{ 'resource.colateral' | translate }}</span>
                         </ng-template>
                         <div [ngStyle]="{'margin': '10px'}">
                             <template #collateralsTabTemplate></template>

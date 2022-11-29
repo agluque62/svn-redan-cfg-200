@@ -1,0 +1,13 @@
+.container{
+    .container-buttons{
+        display: flex;
+        gap: 1rem;
+
+        img{
+            &:hover{
+                cursor: pointer;
+            }
+        }
+        
+    }
+}

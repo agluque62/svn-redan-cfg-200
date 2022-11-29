@@ -1,11 +1,11 @@
 <div class="main">
     <div class="title">
-        {{ 'REDAN - Configuración Servidor' }}
+        {{ 'maintenance.server_conf' | translate }}
     </div>
 
     <div class="content" *ngIf="ready">
         <div class="config-parameters">
-            {{ 'Parámetros configurables' }}
+            {{ 'maintenance.config_params' | translate }}
         </div>
 
         <form class="form" [formGroup]="serverConfigForm">
@@ -15,26 +15,27 @@
             <div class="col">
 
                 <mat-form-field appearance="fill">
-                    <mat-label>{{'Región / Zona'}}</mat-label>
+                    <mat-label>{{'maintenance.region' | translate }}</mat-label>
                     <input matInput formControlName="Region">
                 </mat-form-field>
 
                 <mat-form-field class="select" appearance="fill">
-                    <mat-label>{{'Días de histórico'}}</mat-label>
+                    <mat-label>{{ 'maintenance.historics' | translate }}</mat-label>
                     <mat-select formControlName="HistoricsDeep">
-                        <mat-option [value]="historicsDeepValue" *ngFor="let historicsDeepValue of historicsDeepOptions">
+                        <mat-option [value]="historicsDeepValue"
+                            *ngFor="let historicsDeepValue of historicsDeepOptions">
                             {{ historicsDeepValue }}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-    
+
                 <!-- <mat-form-field appearance="fill">
                     <mat-label>{{'Tiempo de Refresco en ms'}}</mat-label>
                     <input matInput type="number" formControlName="refreshTime">
                 </mat-form-field> -->
 
                 <mat-form-field class="select" appearance="fill">
-                    <mat-label>{{'Tracear a consola'}}</mat-label>
+                    <mat-label>{{'maintenance.log_to_con' | translate}}</mat-label>
                     <mat-select formControlName="log2con">
                         <mat-option [value]="log2con" *ngFor="let log2con of logOptions">
                             {{ log2con }}
@@ -42,13 +43,13 @@
                     </mat-select>
                 </mat-form-field>
 
-                <div class="form-item">                    
-                    <mat-label>{{'Gestionar Indice de Carga'}}</mat-label>
+                <div class="form-item">
+                    <mat-label>{{ 'maintenance.load_index_control' | translate }}</mat-label>
                     <mat-checkbox class="checkbox" formControlName="LoadIndexControlEnabled"></mat-checkbox>
                 </div>
 
                 <mat-form-field appearance="fill">
-                    <mat-label>{{'Request Web Timeout (ms)'}}</mat-label>
+                    <mat-label>{{ 'maintenance.timeout' | translate }}</mat-label>
                     <input matInput type="number" formControlName="timeout">
                 </mat-form-field>
             </div>
@@ -56,12 +57,12 @@
             <div class="col">
 
                 <mat-form-field appearance="fill">
-                    <mat-label>{{'Localización Servicio de Backup'}}</mat-label>
+                    <mat-label>{{ 'maintenance.location' | translate }}</mat-label>
                     <input matInput formControlName="BackupServiceDomain">
                 </mat-form-field>
-    
+
                 <mat-form-field class="select" appearance="fill">
-                    <mat-label>{{'Duración de sesión en minutos'}}</mat-label>
+                    <mat-label>{{ 'maintenance.login_timeout' | translate }}</mat-label>
                     <mat-select formControlName="LoginTimeOut">
                         <mat-option [value]="loginTimeOutValue" *ngFor="let loginTimeOutValue of loginTimeOutOptions">
                             {{ loginTimeOutValue }}
@@ -74,23 +75,23 @@
                     <mat-label>{{'Tiempo Ciclo en ms'}}</mat-label>
                     <input matInput type="number" formControlName="maxCycleTime">
                 </mat-form-field> -->
-    
+
                 <mat-form-field class="select" appearance="fill">
-                    <mat-label>{{'Tracear a fichero'}}</mat-label>
+                    <mat-label>{{'maintenance.log_to_file' | translate }}</mat-label>
                     <mat-select formControlName="log2file">
                         <mat-option [value]="log2file" *ngFor="let log2file of logOptions">
                             {{ log2file }}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-            
+
                 <!-- <div class="form-item">                    
                     <mat-label>{{'Tracear el Control de Acceso'}}</mat-label>
                     <mat-checkbox class="checkbox" formControlName="LoginSystemTrace"></mat-checkbox>
                 </div> -->
 
-                <div class="form-item">                    
-                    <mat-label>{{'Modo 16 Recursos Radio'}}</mat-label>
+                <div class="form-item">
+                    <mat-label>{{'maintenance.r16_mode' | translate }}</mat-label>
                     <mat-checkbox class="checkbox" formControlName="R16Mode"></mat-checkbox>
                 </div>
 
@@ -99,7 +100,7 @@
         </form>
 
         <div class="btns">
-            <button mat-raised-button class="save" (click)="saveServerConfig()">{{'Guardar'}}</button>
+            <button mat-raised-button class="save" (click)="saveServerConfig()">{{ 'button.save' | translate }}</button>
         </div>
     </div>
 </div>

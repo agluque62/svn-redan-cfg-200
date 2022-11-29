@@ -14,6 +14,11 @@ import { GatewayHardwareTableComponent } from './gateway-hardware-table/gateway-
 import { GatewayCopyFormComponent } from './gateway-copy-form/gateway-copy-form.component';
 import { SpinnerModule } from 'src/app/components/common/spinner/spinner.module';
 
+//Translation
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+
 @NgModule({
   declarations: [
     GatewayHomeComponent,
@@ -29,7 +34,17 @@ import { SpinnerModule } from 'src/app/components/common/spinner/spinner.module'
     ReactiveFormsModule,
     CustomMaterialModule,
     GridsterModule,
-    SpinnerModule
+    SpinnerModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (http: HttpClient) => {
+          return new TranslateHttpLoader(http);
+        },
+        deps: [ HttpClient ]
+      }
+    }),
+    HttpClientModule,
   ],
   exports: [
     GatewayHomeComponent

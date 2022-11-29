@@ -3,23 +3,23 @@
     <bkp-info (ServiceActive)="onServiceActive($event)" (ServiceInactive)="onServiceInactive()"></bkp-info>
 
     <div class="title">
-        {{ 'Parámetros' }}
+        {{ 'backup.parameters' | translate }}
     </div>
 
     <div *ngIf="ServiceDomainAvailable">
 
         <div class="path">
             <mat-form-field appearance="fill">
-                <mat-label>{{'Path'}}</mat-label>
+                <mat-label>{{ 'backup.path' | translate }}</mat-label>
                 <input matInput [(ngModel)]="path">
             </mat-form-field>
 
             <div class="label">
-                <mat-label>{{'Conservación de backup'}}</mat-label>
+                <mat-label>{{ 'backup.keep_backup' | translate }}</mat-label>
             </div>
 
             <mat-form-field class="select" appearance="fill">
-                <mat-label>{{ 'Días' }}</mat-label>
+                <mat-label>{{ 'backup.days' | translate }}</mat-label>
                 <mat-select [(ngModel)]="days">
                     <mat-option [value]="day" *ngFor="let day of daysOptions">
                         {{ day }}
@@ -30,12 +30,12 @@
 
         <div class="time">
             <div class="label">
-                <mat-label>{{'Inicio de backup'}}</mat-label>
+                <mat-label>{{ 'backup.backup_start' | translate }}</mat-label>
             </div>
 
             <div class="selectors">
                 <mat-form-field class="select" appearance="fill">
-                    <mat-label>{{'Hora'}}</mat-label>
+                    <mat-label>{{ 'backup.hour' | translate }}</mat-label>
                     <mat-select [(ngModel)]="hours">
                         <mat-option [value]="hour" *ngFor="let hour of hoursOptions">
                             {{ hour }}
@@ -44,7 +44,7 @@
                 </mat-form-field>
 
                 <mat-form-field class="select" appearance="fill">
-                    <mat-label>{{'Minutos'}}</mat-label>
+                    <mat-label>{{ 'backup.minutes' | translate }}</mat-label>
                     <mat-select [(ngModel)]="minutes">
                         <mat-option [value]="min" *ngFor="let min of minutesOptions">
                             {{ min }}
@@ -55,7 +55,7 @@
         </div>
 
         <div class="btn">
-            <button mat-raised-button class="create-btn custom-raised-btn" (click)="confirm()">{{'Confirmar'}}</button>
+            <button mat-raised-button class="create-btn custom-raised-btn" (click)="confirm()">{{ 'button.confirm' | translate }}</button>
         </div>
     </div>
 </div>

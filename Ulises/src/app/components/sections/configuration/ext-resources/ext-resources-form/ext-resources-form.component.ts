@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { AppSettings } from 'src/app/core/app.settings';
 import { ExternalResource } from 'src/app/_models/external-resource/ExternalResource';
 import { AlertService } from 'src/app/_services/alert.service';
@@ -22,7 +23,8 @@ export class ExtResourcesFormComponent implements OnInit {
   appset: any;
 
   constructor(public dialogRef: MatDialogRef<ExtResourcesFormComponent>, @Inject(MAT_DIALOG_DATA) public data: ExternalResource,
-    private readonly alertService: AlertService, private readonly externalResourceService: ExternalResourceService) { }
+    private readonly alertService: AlertService, private readonly externalResourceService: ExternalResourceService,
+    private readonly translate: TranslateService) { }
 
   ngOnInit(): void {
 
@@ -43,17 +45,17 @@ export class ExtResourcesFormComponent implements OnInit {
 
   initTypesMap() {
     return [
-      { value: 0, viewValue: 'Radio Tx' },
-      { value: 1, viewValue: 'Radio TxRx' },
-      { value: 2, viewValue: 'Radio Rx' },
-      { value: 3, viewValue: 'Teléfono' }
+      { value: 0, viewValue: 'ext_res.radio_tx' },
+      { value: 1, viewValue: 'ext_res.radio_tx_rx' },
+      { value: 2, viewValue: 'ext_res.radio_rx' },
+      { value: 3, viewValue: 'ext_res.telephone' }
     ];
   }
 
   async deleteExtResource() {
 
     if (this.extResourceFrom.valid) {
-      const confirmed = await this.alertService.confirmationMessage(``, `¿Desea eliminar el recurso ${this.data.alias}?`);
+      const confirmed = await this.alertService.confirmationMessage(``, `${this.translate.instant('ext_res.alert.conf_delete_res', {value: this.data.alias})}`);
 
       if (confirmed.value) {
         this.showSpinner = true;
@@ -63,13 +65,13 @@ export class ExtResourcesFormComponent implements OnInit {
         if (deleteResult && deleteResult.error) {
           await this.alertService.errorMessage(`Error`, deleteResult.error);
         } else {
-          await this.alertService.successMessage(`Éxito`, `Recurso ${this.data.alias} externo eliminado correctamente correctamente`);
+          await this.alertService.successMessage(`Éxito`, `${this.translate.instant('ext_res.alert.succ_delete_res', {value: this.data.alias})}`);
           this.dialogRef.close();
         }
 
       }
     } else {
-      await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
     }
   }
 
@@ -84,12 +86,12 @@ export class ExtResourcesFormComponent implements OnInit {
         await this.alertService.errorMessage(`Error`, createResult.error);
       } else {
 
-        const msg = this.type == 'CREATE' ? `Recurso externo creado correctamente` : `Recurso externo guardado correctamente`;
+        const msg = this.type == 'CREATE' ? `${this.translate.instant('ext_res.alert.succ_create_res')}` : `${this.translate.instant('ext_res.alert.succ_save_res')}`;
         await this.alertService.successMessage(`Éxito`, msg);
         this.dialogRef.close();
       }
     } else {
-      await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
     }
   }
 }

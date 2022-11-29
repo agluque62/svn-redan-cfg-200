@@ -1,0 +1,38 @@
+<div class="main">
+
+    <div class="title" *ngIf="mode === 'IMPORT'">
+        {{ 'resource.alert.choo_new_import' | translate }}
+    </div>
+
+    <div class="title" *ngIf="mode === 'NAME_CONFLICT'">
+        {{ 'resource.edit_import' | translate }}
+    </div>
+
+    <form class="form" [formGroup]="siteForm" *ngIf="mode === 'NAME_CONFLICT'">
+        <mat-form-field appearance="fill">
+            <mat-label>{{ 'resource.name' | translate }}</mat-label>
+            <input matInput required formControlName="name">
+        </mat-form-field>
+    </form>
+
+    <div class="btns" *ngIf="mode === 'IMPORT'">
+        <div class="site-btns" *ngIf="!visualizationMode">
+            <button mat-raised-button (click)="createResource()">{{ 'button.create_res' | translate }}</button>
+            <input type="file" accept="application/JSON" style="display: none;" #importGW
+                (change)="importResource($event)">
+            <button mat-raised-button (click)="importGW.click()">{{ 'button.import_res' | translate }}</button>
+            <button mat-raised-button (click)="dialogRef.close()" cdkFocusInitial>{{ 'button.cancel' | translate }}</button>
+        </div>
+    </div>
+
+
+    <div class="btns" *ngIf="mode === 'NAME_CONFLICT'">
+        <div class="site-btns">
+            <button mat-raised-button *ngIf="!visualizationMode"
+                (click)="importModifiedResources()">{{ 'button.save' | translate }}</button>
+            <button mat-raised-button class="cancel-btns" (click)="dialogRef.close()"
+                *ngIf="!visualizationMode">{{ 'button.cancel' | translate }}</button>
+        </div>
+    </div>
+
+</div>

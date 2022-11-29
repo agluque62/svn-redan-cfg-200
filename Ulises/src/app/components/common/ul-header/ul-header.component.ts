@@ -12,7 +12,7 @@ export class UlHeaderComponent implements OnInit {
     public localConfig!: LocalConfig;
     public date: Date = new Date();
     public weekDay: string = '';
-    public weekDays: string[] = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+    public weekDays: string[] = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
     ready: boolean = false;
 
     constructor(private readonly configService: ConfigService) {

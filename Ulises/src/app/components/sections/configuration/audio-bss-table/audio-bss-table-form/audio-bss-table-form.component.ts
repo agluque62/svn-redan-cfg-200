@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { AppSettings } from 'src/app/core/app.settings';
 import { TableBss } from 'src/app/_models/table-bss/TableBss';
 import { AlertService } from 'src/app/_services/alert.service';
@@ -26,7 +27,8 @@ export class AudioBssTableFormComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<AudioBssTableFormComponent>, @Inject(MAT_DIALOG_DATA) public data: TableBss,
     private readonly alertService: AlertService, private readonly tableBssService: TableBSSService,
-    private readonly gatewayService: GatewayService, private readonly userService: UserService) { }
+    private readonly gatewayService: GatewayService, private readonly userService: UserService,
+    private readonly translate: TranslateService) { }
 
   ngOnInit(): void {
     this.appset = AppSettings;
@@ -73,14 +75,14 @@ export class AudioBssTableFormComponent implements OnInit {
 
       if (createResult && createResult.error) {
         (createResult.error.includes('ER_DUP_ENTRY')) ?
-          await this.alertService.errorMessage(`Error`, `Identificador de tabla duplicado`)
+          await this.alertService.errorMessage(`Error`, `${this.translate.instant('audiobss.alert.err_duplicated_id')}`)
           : await this.alertService.errorMessage(`Error`, createResult.error);
       } else {
-        await this.alertService.successMessage(`Éxito`, `Tabla audio BSS creada correctamente`);
+        await this.alertService.successMessage(`Éxito`, `${this.translate.instant('audiobss.alert.succ_create_table')}`);
         this.dialogRef.close();
       }
     } else {
-      await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
     }
   }
 
@@ -94,24 +96,24 @@ export class AudioBssTableFormComponent implements OnInit {
       if (editResult && editResult.error) {
         await this.alertService.errorMessage(`Error`, editResult.error);
       } else {
-        await this.alertService.successMessage(`Éxito`, `Tabla audio BSS guardada correctamente`);
+        await this.alertService.successMessage(`Éxito`, `${this.translate.instant('audiobss.alert.succ_save_table')}`);
 
         const gatewaysResult = await this.gatewayService.updateTableBss(this.tableBssForm.value.idtabla_bss).toPromise();
         if (gatewaysResult && gatewaysResult.error) {
           await this.alertService.errorMessage(`Error`, gatewaysResult.error);
         } else {
-          await this.alertService.successMessage(`Éxito`, `Pasarelas actualizadas`);
+          await this.alertService.successMessage(`Éxito`, `${this.translate.instant('audiobss.alert.succ_update_gtw')}`);
         }
         this.dialogRef.close();
       }
     } else {
-      await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
     }
   }
 
   async deleteTableBss() {
 
-    const confirmed = await this.alertService.confirmationMessage(``, `¿Desea eliminar la tabla ${this.data.name}?`);
+    const confirmed = await this.alertService.confirmationMessage(``, `${this.translate.instant('audiobss.alert.conf_delete_table', {value: this.data.name})}`);
 
     if (confirmed.value) {
       const deleteResult = await this.tableBssService.deleteTableAudioBss(this.data).toPromise();
@@ -120,11 +122,11 @@ export class AudioBssTableFormComponent implements OnInit {
         let msg = deleteResult.error;
         
         if (deleteResult.error === 'CANT_DELETE') {
-          msg = `No se puede eliminar una tabla asignada a un recurso. La tabla esta asignada al recurso: ${deleteResult.ResourceName}.`;
+          msg = `${this.translate.instant('audiobss.alert.err_delete_table'), {value:deleteResult.ResourceName}}`;
         }
         await this.alertService.errorMessage(`Error`, msg);
       } else {
-        await this.alertService.successMessage(`Éxito`, `Tabla ${this.data.name} externo eliminada correctamente correctamente`);
+        await this.alertService.successMessage(`Éxito`, `${this.translate.instant('audiobss.alert.succ_delete_table',{value: this.data.name})}`);
         this.dialogRef.close();
       }
 

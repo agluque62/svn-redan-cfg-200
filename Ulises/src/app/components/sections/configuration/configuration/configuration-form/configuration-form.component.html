@@ -1,35 +1,35 @@
 <div class="main">
     <div class="title">
-        {{'Crear nueva configuración'}}
+        {{ 'config.create_conf' | translate }}
     </div>
     
     <form class="form" [formGroup]="configForm">
 
         <mat-form-field appearance="fill" [ngClass]="{'error': configForm.controls['name'].hasError('pattern')}">
-            <mat-label>{{'Id. Configuración'}}</mat-label>
+            <mat-label>{{ 'config.id_conf' | translate }}</mat-label>
             <input matInput required formControlName="name">
             <mat-error *ngIf="configForm.controls['name'].hasError('required')">
-                {{ appset.FIELD_REQUIRED }}
+                {{ appset.FIELD_REQUIRED | translate }}
             </mat-error>
             <mat-error *ngIf="configForm.controls['name'].hasError('pattern')">
-                {{ appset.INVALID_NAME }}
+                {{ appset.INVALID_NAME | translate }}
             </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-            <mat-label>{{'Descripción'}}</mat-label>
+            <mat-label>{{ 'config.description' | translate }}</mat-label>
             <input matInput formControlName="description">
         </mat-form-field>
 
         <div class="form-item" *ngIf="supervisedConfigPermission()">                    
-            <mat-label>{{'Configuración Supervisada'}}</mat-label>
+            <mat-label>{{ 'config.supervised_conf' | translate }}</mat-label>
             <mat-checkbox class="checkbox" formControlName="activa"></mat-checkbox>
         </div>
 
     </form>
 
     <div class="btns">
-        <button mat-raised-button (click)="createConfiguration()">{{'Guardar'}}</button>
-        <button mat-raised-button (click)="dialogRef.close()" cdkFocusInitial>{{'Cancelar'}}</button>
+        <button mat-raised-button (click)="createConfiguration()">{{ 'button.save' | translate }}</button>
+        <button mat-raised-button (click)="dialogRef.close()" cdkFocusInitial>{{ 'button.cancel' | translate }}</button>
     </div>
 </div>

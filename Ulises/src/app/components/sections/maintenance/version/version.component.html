@@ -1,21 +1,21 @@
 <div class="main">
     <div class="download-btns" *ngIf="ready">
-        <button mat-raised-button (click)="downloadPDF()">{{'PDF'}}</button>
-        <button mat-raised-button (click)="downloadExcel()">{{'CSV'}}</button>
+        <button mat-raised-button (click)="downloadPDF()">{{ 'button.pdf' | translate }}</button>
+        <button mat-raised-button (click)="downloadExcel()">{{ 'button.csv' | translate }}</button>
     </div>
 
     <div class="title">
-        {{ 'Versión' }}
+        {{ 'maintenance.version' | translate }}
     </div>
-    
+
     <spinner *ngIf="!ready"></spinner>
 
     <div class="mat-elevation-z8" *ngIf="ready">
-        
+
         <div class="table-row">
             <div class="table-column">
                 <div class="label">
-                    {{ 'Versión' }}
+                    {{ 'maintenance.version' | translate }}
                 </div>
             </div>
             <div class="table-column">
@@ -28,7 +28,7 @@
         <div class="table-row">
             <div class="table-column">
                 <div class="label">
-                    {{ 'Node JS'}}
+                    {{ 'maintenance.nodeJS' | translate }}
                 </div>
             </div>
             <div class="table-column">
@@ -41,7 +41,7 @@
         <div class="table-row">
             <div class="table-column">
                 <div class="label">
-                    {{ 'MySQL'}}
+                    {{ 'maintenance.MySQL' | translate }}
                 </div>
             </div>
             <div class="table-column">
@@ -53,7 +53,7 @@
     </div>
 
     <div class="title files" *ngIf="ready">
-        {{ 'Archivos' }}
+        {{ 'maintenance.files' | translate }}
     </div>
     <div class="mat-elevation-z8" *ngIf="ready">
         <div class="table-row" *ngFor="let file of version.file">

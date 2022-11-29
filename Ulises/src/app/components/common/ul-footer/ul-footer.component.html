@@ -1,13 +1,13 @@
 <div class="footer">
     <div class="version">
         <div class="number" *ngIf="version && version.version && version.subversion ">
-            Version {{ version.version }}.{{ version.subversion }}
+            {{ 'footer.version' | translate }} {{ version.version }}.{{ version.subversion }}
         </div>
         <div class="r16" *ngIf="version && version.R16Mode">
             {{ 'R16' }}
         </div>
     </div>
     <div class="copy">
-        Grupo Amper Copyright ©2018..2022 Todos los Derechos Reservados. Powered by Exceltic.
+        {{ 'footer.copyright' | translate }}
     </div>
 </div>

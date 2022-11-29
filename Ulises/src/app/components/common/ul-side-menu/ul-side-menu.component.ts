@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { UtilsService } from 'src/app/_services/utils.service';
 import { UserService } from 'src/app/_services/user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AboutComponent } from '../about/about.component';
+import { TranslateService } from '@ngx-translate/core';
 
 interface Node {
     name: string;
@@ -27,7 +28,7 @@ interface NavigationNode {
     templateUrl: './ul-side-menu.component.html',
     styleUrls: ['./ul-side-menu.component.scss']
 })
-export class UlSideMenuComponent implements OnInit {
+export class UlSideMenuComponent implements OnInit, OnChanges {
 
     user!: LoginUser;
     selected!: NavigationNode;
@@ -51,11 +52,18 @@ export class UlSideMenuComponent implements OnInit {
 
     disableMenu: boolean = false;
 
-    constructor(private readonly router: Router, private readonly route: ActivatedRoute, private readonly loginService: LoginService,
-        private readonly app: AppComponent, private readonly utilsService: UtilsService, private readonly userService: UserService,
+    constructor(private readonly router: Router, private readonly route: ActivatedRoute, 
+        private readonly loginService: LoginService,
+        private readonly app: AppComponent, 
+        private readonly utilsService: UtilsService, 
+        private readonly userService: UserService,
+        private readonly translate: TranslateService,
         public dialog: MatDialog) {
         this.initTreeData();
         this.dataSource.data = this.TREE_DATA;
+    }
+    ngOnChanges(changes: SimpleChanges): void {
+        this.initTreeData()
     }
 
     hasChild = (_: number, node: NavigationNode) => node.expandable;
@@ -70,11 +78,11 @@ export class UlSideMenuComponent implements OnInit {
     checkUserPermission() {
         if (!this.userService.isRole('ADMIN') && !this.userService.isRole('USER_MANAGEMENT')) {
             this.TREE_DATA.forEach(item => {
-                if (item.name === 'Configuraciones') {
+                if (item.name === `${this.translate.instant('ul-side.configuration')}`) {
 
                     if (item.children) {
                         item.children.forEach((child, idx) => {
-                            if (child.name === 'Usuarios' && item.children) {
+                            if (child.name === 'ul-side.users' && item.children) {
                                 item.children.splice(idx, 1);
                             }
                         });    
@@ -89,12 +97,12 @@ export class UlSideMenuComponent implements OnInit {
         if (this.userService.isRole('ADMIN')) {
             this.TREE_DATA.push(
                 {
-                    name: 'Configuraciones',
+                    name: `ul-side.configuration`,
                     children: [
-                        { name: 'Configuraciones', route: 'config' },
-                        { name: 'Tabla de calificación audio - BSS', route: 'config/audio-bss-table' },
-                        { name: 'Usuarios', route: 'config/users' },
-                        { name: 'Recursos Externos', route: 'config/ext-resources' }
+                        { name: 'ul-side.configuration', route: 'config' },
+                        { name: 'ul-side.table_audio', route: 'config/audio-bss-table' },
+                        { name: 'ul-side.users', route: 'config/users' },
+                        { name: 'ul-side.ext_resources', route: 'config/ext-resources' }
                     ]
                 }
             );
@@ -103,11 +111,11 @@ export class UlSideMenuComponent implements OnInit {
         if (!this.userService.isRole('ADMIN') && this.userService.isRole('CONFIGURATION')) {
             this.TREE_DATA.push(
                 {
-                    name: 'Configuraciones',
+                    name: 'ul-side.configuration',
                     children: [
-                        { name: 'Configuraciones', route: 'config' },
-                        { name: 'Tabla de calificación audio - BSS', route: 'config/audio-bss-table' },
-                        { name: 'Recursos Externos', route: 'config/ext-resources' }
+                        { name: 'ul-side.configuration', route: 'config' },
+                        { name: 'ul-side.table_audio', route: 'config/audio-bss-table' },
+                        { name: 'ul-side.ext_resources', route: 'config/ext-resources' }
                     ]
                 }
             );
@@ -117,9 +125,9 @@ export class UlSideMenuComponent implements OnInit {
             && this.userService.isRole('USER_MANAGEMENT')) {
             this.TREE_DATA.push(
                 {
-                    name: 'Configuraciones',
+                    name: 'ul-side.configuration',
                     children: [
-                        { name: 'Usuarios', route: 'config/users' }
+                        { name: 'ul-side.users', route: 'config/users' }
                     ]
                 }
             );
@@ -129,10 +137,10 @@ export class UlSideMenuComponent implements OnInit {
             && this.userService.isRole('VISUALIZATION')) {
             this.TREE_DATA.push(
                 {
-                    name: 'Configuraciones',
+                    name: 'ul-side.configuration',
                     children: [
-                        { name: 'Configuraciones', route: 'config' },
-                        { name: 'Tabla de calificación audio - BSS', route: 'config/audio-bss-table' }
+                        { name: 'ul-side.configuration', route: 'config' },
+                        { name: 'ul-side.table_audio', route: 'config/audio-bss-table' }
                     ]
                 }
             );
@@ -142,10 +150,10 @@ export class UlSideMenuComponent implements OnInit {
             && !this.userService.isRole('VISUALIZATION') && this.userService.isRole('SUPERVISED_CONFIGURATION')) {
             this.TREE_DATA.push(
                 {
-                    name: 'Configuraciones',
+                    name: 'ul-side.configuration',
                     children: [
-                        { name: 'Configuraciones', route: 'config' },
-                        { name: 'Tabla de calificación audio - BSS', route: 'config/audio-bss-table' }
+                        { name: 'ul-side.configuration', route: 'config' },
+                        { name: 'ul-side.table_audio', route: 'config/audio-bss-table' }
                     ]
                 }
             );
@@ -157,11 +165,11 @@ export class UlSideMenuComponent implements OnInit {
         if (this.userService.isRole('ADMIN')) {
             this.TREE_DATA.push(
                 {
-                    name: 'Mantenimiento',
+                    name: 'ul-side.maintance',
                     children: [
-                        { name: 'Histórico', route: 'maintenance/historic' },
-                        { name: 'Conf. Servidor', route: 'maintenance/server-conf' },
-                        { name: 'Versión', route: 'maintenance/version' }
+                        { name: 'ul-side.historic', route: 'maintenance/historic' },
+                        { name: 'ul-side.server_conf', route: 'maintenance/server-conf' },
+                        { name: 'ul-side.version', route: 'maintenance/version' }
                     ]
                 }
             );
@@ -170,10 +178,10 @@ export class UlSideMenuComponent implements OnInit {
         if (!this.userService.isRole('ADMIN') && this.userService.isRole('HISTORICS')) {
             this.TREE_DATA.push(
                 {
-                    name: 'Mantenimiento',
+                    name: 'ul-side.maintance',
                     children: [
-                        { name: 'Histórico', route: 'maintenance/historic' },
-                        { name: 'Versión', route: 'maintenance/version' }
+                        { name: 'ul-side.historic', route: 'maintenance/historic' },
+                        { name: 'ul-side.version', route: 'maintenance/version' }
                     ]
                 }
             );
@@ -184,12 +192,12 @@ export class UlSideMenuComponent implements OnInit {
         if (this.userService.isRole('ADMIN') || this.userService.isRole('BACKUP')) {
             this.TREE_DATA.push(
                 {
-                    name: 'Back up',
+                    name: 'ul-side.back_up',
                     children: [
-                        { name: 'Parámetros', route: 'backupbd/params' },
-                        { name: 'Hist. de Backup', route: 'backupbd/historic' },
-                        { name: 'Backup manual', route: 'backupbd/manual' },
-                        { name: 'Restaurar', route: 'backupbd/restore' }
+                        { name: 'ul-side.parameters', route: 'backupbd/params' },
+                        { name: 'ul-side.historic_backup', route: 'backupbd/historic' },
+                        { name: 'ul-side.manual_backup', route: 'backupbd/manual' },
+                        { name: 'ul-side.restore', route: 'backupbd/restore' }
                     ]
                 }
             );
@@ -241,15 +249,15 @@ export class UlSideMenuComponent implements OnInit {
         if (url === '/home/config' || /^\/home\/config\/.*?\d+$/.test(url) || url === '/home/gateway/new' || /^\/home\/gateway\/.*?\d+$/.test(url)
             || url === '/home/resource/new' || /^\/home\/resource\/.*?\d+$/.test(url) || url === '/home/config/audio-bss-table'
             || url === '/home/config/users' || url === '/home/config/ext-resources') {
-            return 'Configuraciones';
+            return 'ul-side.configuration';
         }
 
         if (url === '/home/maintenance/historic' || url === '/home/maintenance/server-conf' || url === '/home/maintenance/version') {
-            return 'Mantenimiento';
+            return 'ul-side.maintance';
         }
 
         if (url === '/home/backupbd/params' || url === '/home/backupbd/historic' || url === '/home/backupbd/manual' || url === '/home/backupbd/restore') {
-            return 'Back up';
+            return 'ul-side.back_up';
         }
 
         return '';
@@ -259,47 +267,47 @@ export class UlSideMenuComponent implements OnInit {
 
         if (url === '/home/config' || /^\/home\/config\/.*?\d+$/.test(url) || url === '/home/gateway/new'
             || /^\/home\/gateway\/.*?\d+$/.test(url) || url === '/home/resource/new' || /^\/home\/resource\/.*?\d+$/.test(url)) {
-            return 'Configuraciones';
+            return this.translate.instant('ul-side.configuration');
         }
 
         if (url === '/home/config/audio-bss-table') {
-            return 'Tabla de calificación audio - BSS';
+            return 'ul-side.table_audio';
         }
 
         if (url === '/home/config/users') {
-            return 'Usuarios';
+            return 'ul-side.users';
         }
 
         if (url === '/home/config/ext-resources') {
-            return 'Recursos Externos';
+            return 'ul-side.ext_resources';
         }
 
         if (url === '/home/maintenance/historic') {
-            return 'Histórico';
+            return 'ul-side.historic';
         }
 
         if (url === '/home/maintenance/server-conf') {
-            return 'Conf. Servidor';
+            return 'ul-side.server_conf';
         }
 
         if (url === '/home/maintenance/version') {
-            return 'Versión';
+            return 'ul-side.version';
         }
 
         if (url === '/home/backupbd/params') {
-            return 'Parámetros'
+            return 'ul-side.parameters'
         }
 
         if (url === '/home/backupbd/historic') {
-            return 'Hist. de Backup';
+            return 'ul-side.historic_backup';
         }
 
         if (url === '/home/backupbd/manual') {
-            return 'Backup manual';
+            return 'ul-side.manual_backup';
         }
 
         if (url === '/home/backupbd/restore') {
-            return 'Restaurar';
+            return 'ul-side.restore';
         }
 
         return '';

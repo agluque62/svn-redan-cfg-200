@@ -26,41 +26,41 @@ export class LocalFormComponent implements OnInit {
   displayBSSWindow: boolean = false;
 
   iAudio: customValues[] = [
-    { value: 0, viewValue: 'Hardware' },
-    { value: 1, viewValue: 'VAD' },
-    { value: 2, viewValue: 'Forzado' },
+    { value: 0, viewValue: 'resource.radio.iAudio_value_0' },
+    { value: 1, viewValue: 'resource.radio.iAudio_value_1' },
+    { value: 2, viewValue: 'resource.radio.iAudio_value_2' },
   ];
 
   oAudio: customValues[] = [
-    { value: 0, viewValue: 'Hardware' }
+    { value: 0, viewValue: 'resource.radio.oAudio_value_0' }
   ];
 
   bssMethods: customValues[] = [
-    { value: 0, viewValue: 'Ninguno' },
-    { value: 1, viewValue: 'RSSI' },
-    { value: 2, viewValue: 'RSSI/NUCLEO' },
+    { value: 0, viewValue: 'resource.radio.bssMethods_value_0' },
+    { value: 1, viewValue: 'resource.radio.bssMethods_value_1' },
+    { value: 2, viewValue: 'resource.radio.bssMethods_value_2' },
   ];
 
   pttPriority: customValues[] = [
-    { value: 0, viewValue: 'PTT Normal' },
-    { value: 1, viewValue: 'PTT Prioritario' },
-    { value: 2, viewValue: 'PTT Emergencia' },
+    { value: 0, viewValue: 'resource.radio.pttPriority_value_0' },
+    { value: 1, viewValue: 'resource.radio.pttPriority_value_1' },
+    { value: 2, viewValue: 'resource.radio.pttPriority_value_2' },
   ];
 
   climaxModes: customValues[] = [
-    { value: 0, viewValue: 'No' },
-    { value: 1, viewValue: 'ASAP' },
-    { value: 2, viewValue: 'Tiempo' }
+    { value: 0, viewValue: 'resource.radio.climaxModes_value_0' },
+    { value: 1, viewValue: 'resource.radio.climaxModes_value_1' },
+    { value: 2, viewValue: 'resource.radio.climaxModes_value_2' }
   ];
 
   calClimaxModes: customValues[] = [
-    { value: 0, viewValue: 'Modo relativo' },
-    { value: 1, viewValue: 'Modo absoluto' }
+    { value: 0, viewValue: 'resource.radio.calClimaxModes_value_0' },
+    { value: 1, viewValue: 'resource.radio.calClimaxModes_value_1' }
   ];
 
   prioritySessionsSIP: customValues[] = [
-    { value: 0, viewValue: 'Normal' },
-    { value: 1, viewValue: 'Emergencia' }
+    { value: 0, viewValue: 'resource.radio.prioritySessionSIP_value_0' },
+    { value: 1, viewValue: 'resource.radio.prioritySessionSIP_value_1' }
   ];
   appset: any;
 

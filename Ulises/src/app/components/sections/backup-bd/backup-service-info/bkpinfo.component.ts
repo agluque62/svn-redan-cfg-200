@@ -1,5 +1,6 @@
 import { Component, OnInit,  EventEmitter, Input, Output} from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
 import { AlertService } from 'src/app/_services/alert.service';
@@ -19,14 +20,14 @@ export class BkpinfoComponent implements OnInit {
   @Output() ServiceInactive = new EventEmitter();
 
   bkpHost = {
-    dominio: "", estado:"desconectado", error: ""
+    dominio: "", estado:`${this.translate.instant('backup.alert.disconnected')}`, error: ""
   };
   localConfig!: LocalConfig;
 
   constructor(private readonly loginService: LoginService, private readonly app: AppComponent,
     private readonly userService: UserService, private readonly router: Router,
     private readonly backupService: BackupService, private readonly configService: ConfigService,
-    private readonly alertService: AlertService) { }
+    private readonly alertService: AlertService, private readonly translate: TranslateService) { }
 
   async ngOnInit() {
     
@@ -62,7 +63,7 @@ export class BkpinfoComponent implements OnInit {
     }
     else{
       this.ServiceActive.emit(this.localConfig.BackupServiceDomain);
-      this.bkpHost.estado="Conectado";
+      this.bkpHost.estado=`${this.translate.instant('backup.alert.connected')}`;
       this.bkpHost.error = ``;
     }
 

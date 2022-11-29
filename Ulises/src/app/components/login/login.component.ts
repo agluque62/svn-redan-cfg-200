@@ -39,11 +39,11 @@ export class LoginComponent implements OnInit {
             const loginUser = await this.loginService.login(this.credentials.username, this.credentials.password).toPromise();
             localStorage.setItem('user', JSON.stringify(loginUser));
             this.navigate();
-        } catch (error) {
+        } catch (error: any) {
             if (error.error) {
                 this.errorMessage = error.error.message;
             } else {
-                this.errorMessage = 'Ha ocurrido un error';
+                this.errorMessage = 'err.ERROR_HAS_OCURRED';
             }
 
             this.dangerAlert = true;

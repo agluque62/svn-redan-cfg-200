@@ -1,32 +1,32 @@
 <div class="configuration">
 
     <div class="title">
-        {{ 'Configuraciones' }}
+        {{ 'config.confs' | translate }}
     </div>
 
     <div class="btn" *ngIf="!visualizationMode">
-        <button mat-raised-button class="create-btn local-btn" (click)="createConfiguration()">{{'Nueva configuración'}}</button>
+        <button mat-raised-button class="create-btn local-btn" (click)="createConfiguration()">{{ 'button.new_conf' | translate }}</button>
     </div>
 
     <div class="mat-elevation-z8" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
         <mat-table [dataSource]="dataSource" class="table">
             <ng-container matColumnDef="name">
-                <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef> {{ 'config.name' | translate }}</mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="description">
-                <mat-header-cell *matHeaderCellDef> Descripción </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef> {{ 'config.desc' | translate }} </mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="lastUpdated">
-                <mat-header-cell *matHeaderCellDef> Última modificación </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef> {{ 'config.last_modif' | translate }} </mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{ row.fecha_activacion }} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="supervised">
-                <mat-header-cell *matHeaderCellDef [ngClass]="'w-100'"> Supervisada </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef [ngClass]="'w-100'"> {{ 'config.supervised' | translate }} </mat-header-cell>
                 <mat-cell *matCellDef="let row" [ngClass]="'w-100'">            
                     <mat-checkbox class="checkbox" [checked]="row.activa === 1" [disabled]="true"></mat-checkbox>
                 </mat-cell>

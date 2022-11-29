@@ -1,26 +1,26 @@
 <div class="external-resources">
 
   <div class="title">
-    {{'Recursos externos'}}
+    {{ 'ext_res.ext_res' | translate }}
   </div>
 
   <div class="filter">
     <mat-form-field class="type-selector" appearance="fill">
-      <mat-label>{{'Filtrar recursos'}}</mat-label>
+      <mat-label>{{ 'ext_res.filter_res' | translate }}</mat-label>
       <mat-select [(value)]="selectedType" (selectionChange)="changeType()">
         <mat-option [value]="type" *ngFor="let type of types">
-          {{type.viewValue}}
+          {{type.viewValue | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>{{'Filtro'}}</mat-label>
+      <mat-label>{{ 'ext_res.filter' | translate }}</mat-label>
       <input matInput formControlName="Filtro" (keyup)="filtrar($event)">
     </mat-form-field>
 
     <div class="btn">
-      <button mat-raised-button class="create-btn local-btn" (click)="createExternalResource()">{{'Nuevo recurso'}}</button>
+      <button mat-raised-button class="create-btn local-btn" (click)="createExternalResource()">{{ 'button.new_res' | translate }}</button>
     </div>
   </div>
   
@@ -29,24 +29,24 @@
   <div class="mat-elevation-z8" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
     <mat-table [dataSource]="dataSource" class="table">
       <ng-container matColumnDef="uri">
-        <mat-header-cell *matHeaderCellDef>URI</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef>{{ 'ext_res.uri' | translate }}</mat-header-cell>
         <mat-cell *matCellDef="let row"> {{row.uri}} </mat-cell>
       </ng-container>
   
       <ng-container matColumnDef="alias">
-        <mat-header-cell *matHeaderCellDef> Alias </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef> {{ 'ext_res.alias' | translate }} </mat-header-cell>
         <mat-cell *matCellDef="let row"> {{row.alias}} </mat-cell>
       </ng-container>
   
       <ng-container matColumnDef="tipo">
-        <mat-header-cell *matHeaderCellDef> Tipo </mat-header-cell>
-        <mat-cell *matCellDef="let row"> {{getType(row.tipo)}} </mat-cell>
+        <mat-header-cell *matHeaderCellDef> {{ 'ext_res.type' | translate }} </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{ getType(row.tipo) | translate }} </mat-cell>
       </ng-container>
   
       <ng-container matColumnDef="actions">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let row">
-          <button mat-raised-button class="modify-btn" (click)="modifyExternalResource(row)">{{'Modificar'}}</button>
+          <button mat-raised-button class="modify-btn" (click)="modifyExternalResource(row)">{{ 'button.modify' | translate }}</button>
         </mat-cell>
       </ng-container>
   

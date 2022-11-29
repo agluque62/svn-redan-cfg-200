@@ -1,109 +1,107 @@
 <form class="form" [formGroup]="resourceForm">
   <div class="radio-form" id="this.formID">
     <mat-form-field appearance="fill">
-      <mat-label>Indicación entrada audio</mat-label>
+      <mat-label>{{ 'resource.radio.audio_input' | translate }}</mat-label>
       <mat-select formControlName="indicacion_entrada_audio" (selectionChange)="displayUmbralVAD($event.value)"
         name="iAudio">
         <mat-option *ngFor="let type of iAudio" [value]="type.value">
-          {{type.viewValue}}
+          {{ type.viewValue | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field *ngIf="vadIsSelected" appearance="fill">
-      <mat-label>Umbral VAD (dB)</mat-label>
+      <mat-label>{{ 'resource.radio.umbral_vad' | translate }}</mat-label>
       <input matInput formControlName="umbral_vad">
       <mat-error
         *ngIf="resourceForm.get('umbral_vad')?.hasError('min') || resourceForm.get('umbral_vad')?.hasError('max')">
-        {{ appset.INVALID_RANGE_VAD }}
+        {{ appset.INVALID_RANGE_VAD | translate }}
       </mat-error>
       <mat-error *ngIf="resourceForm.get('umbral_vad')?.hasError('pattern')">
-        {{ appset.NUMBERS_FORMAT_INVALID }}
+        {{ appset.NUMBERS_FORMAT_INVALID | translate }}
       </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>Indicación salida audio</mat-label>
+      <mat-label>{{ 'resource.radio.audio_output' | translate }}</mat-label>
       <mat-select formControlName="indicacion_salida_audio" name="oAudio">
           <mat-option *ngFor="let type of oAudio" [value]="type.value">
-              {{type.viewValue}}
+              {{ type.viewValue | translate }}
           </mat-option>
       </mat-select>
   </mat-form-field>
 
     <mat-checkbox formControlName="climax_bss" [checked]="checkClimaxBSS" *ngIf="displayBSSClimax"
-      (change)="ngOnCheckBssClimax($event.checked)">
-      BSS/CLIMAX
-    </mat-checkbox>
+      (change)="ngOnCheckBssClimax($event.checked)">{{ 'resource.radio.bss_climax' | translate }}</mat-checkbox>
   
     <div class="climaxElements" *ngIf="climaxModeActive">
       <mat-form-field appearance="fill">
-        <mat-label>Métodos BSS disponibles</mat-label>
+        <mat-label>{{ 'resource.radio.bss_available' | translate }}</mat-label>
         <mat-select formControlName="metodo_bss" name="bssMethods" (selectionChange)="checkBssType()">
           <mat-option *ngFor="let type of bssMethods" [value]="type.value">
-            {{type.viewValue}}
+            {{ type.viewValue | translate }}
           </mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="fill" *ngIf="displayBSSWindow">
-        <mat-label>Ventana BSS (ms)</mat-label>
+        <mat-label>{{ 'resource.radio.bss_windows' | translate }}</mat-label>
         <input matInput formControlName="ventana_bss" >
         <mat-error
         *ngIf="resourceForm.get('ventana_bss')?.hasError('min') || resourceForm.get('ventana_bss')?.hasError('max')">
-        {{ appset.controlRanges.ventana_bss.msg }}
+        {{ appset.controlRanges.ventana_bss.msg | translate }}
       </mat-error>
-      <mat-error *ngIf="resourceForm.get('ventana_bss')?.hasError('pattern')">{{ appset.NUMBERS_FORMAT_INVALID }}</mat-error>
-      <mat-error *ngIf="resourceForm.get('ventana_bss')?.hasError('required')">{{ appset.FIELD_REQUIRED }}</mat-error>
+      <mat-error *ngIf="resourceForm.get('ventana_bss')?.hasError('pattern')">{{ appset.NUMBERS_FORMAT_INVALID | translate }}</mat-error>
+      <mat-error *ngIf="resourceForm.get('ventana_bss')?.hasError('required')">{{ appset.FIELD_REQUIRED | translate }}</mat-error>
     </mat-form-field>  
     </div>
 
     <div class="climaxElements" *ngIf="climaxModeActive">
       <mat-form-field appearance="fill">
-        <mat-label>Modo Climax</mat-label>
+        <mat-label>{{ 'resource.radio.climax_mode' | translate }}</mat-label>
         <mat-select formControlName="tipo_climax" (selectionChange)="checkClimaxType()" name="climaxModes">
           <mat-option *ngFor="let mode of climaxModes" [value]="mode.value">
-            {{mode.viewValue}}
+            {{ mode.viewValue | translate }}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="fill" *ngIf="displayClimaxMethod">
-        <mat-label>Modo cálculo climax</mat-label>
+        <mat-label>{{ 'resource.radio.mode_calc_climax' | translate }}</mat-label>
         <mat-select formControlName="metodo_climax" name="calClimaxModes">
           <mat-option *ngFor="let mode of calClimaxModes" [value]="mode.value">
-            {{mode.viewValue}}
+            {{ mode.viewValue | translate }}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="fill" *ngIf="displayClimaxTime">
-        <mat-label>Tiempo (ms)</mat-label>
+        <mat-label>{{ 'resource.radio.time' | translate }}</mat-label>
         <input matInput formControlName="retardo_fijo_climax">
         <mat-error
         *ngIf="resourceForm.get('retardo_fijo_climax')?.hasError('min') || resourceForm.get('retardo_fijo_climax')?.hasError('max')">
-        {{ appset.controlRanges.retardo_fijo_climax.msg }}
+        {{ appset.controlRanges.retardo_fijo_climax.msg | translate }}
       </mat-error>
-      <mat-error *ngIf="resourceForm.get('retardo_fijo_climax')?.hasError('pattern')">{{ appset.NUMBERS_FORMAT_INVALID }}</mat-error>
-      <mat-error *ngIf="resourceForm.get('retardo_fijo_climax')?.hasError('required')">{{ appset.FIELD_REQUIRED }}</mat-error>
+      <mat-error *ngIf="resourceForm.get('retardo_fijo_climax')?.hasError('pattern')">{{ appset.NUMBERS_FORMAT_INVALID | translate }}</mat-error>
+      <mat-error *ngIf="resourceForm.get('retardo_fijo_climax')?.hasError('required')">{{ appset.FIELD_REQUIRED | translate }}</mat-error>
       </mat-form-field>
     </div>
 
-    <mat-checkbox formControlName="evento_ptt_squelch">Eventos PTT/Squelch</mat-checkbox>
+    <mat-checkbox formControlName="evento_ptt_squelch">{{ 'resource.radio.ptt_event' | translate }}</mat-checkbox>
 
     <mat-form-field appearance="fill">
-      <mat-label>Prioridad PTT</mat-label>
+      <mat-label>{{ 'resource.radio.ptt_priority' | translate}}</mat-label>
       <mat-select formControlName="prioridad_ptt" name="pttPriority">
         <mat-option *ngFor="let type of pttPriority" [value]="type.value">
-          {{type.viewValue}}
+          {{ type.viewValue | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>Prioridad Sesion SIP</mat-label>
+      <mat-label>{{ 'resource.radio.sip_priority' | translate }}</mat-label>
       <mat-select formControlName="prioridad_sesion_sip" name="prioritySessionsSIP">
         <mat-option *ngFor="let type of prioritySessionsSIP" [value]="type.value">
-          {{type.viewValue}}
+          {{ type.viewValue | translate }}
         </mat-option>
       </mat-select>
     </mat-form-field>

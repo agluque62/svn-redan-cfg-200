@@ -2,23 +2,23 @@
     <bkp-info (ServiceActive)="onServiceActive($event)" (ServiceInactive)="onServiceInactive()"></bkp-info>
 
     <div class="title">
-        {{ 'Histórico de Backup' }}
+        {{ 'backup.historic' | translate }}
     </div>
 
     <div class="mat-elevation-z8" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
         <mat-table [dataSource]="dataSource" class="table">
             <ng-container matColumnDef="date">
-                <mat-header-cell *matHeaderCellDef [ngClass]="'w-250'">Fecha-Hora</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef [ngClass]="'w-250'">{{ 'backup.date' | translate }}</mat-header-cell>
                 <mat-cell *matCellDef="let row" [ngClass]="'w-250'"> {{row.date}} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="level">
-                <mat-header-cell *matHeaderCellDef [ngClass]="'w-250'"> Nivel </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef [ngClass]="'w-250'"> {{ 'backup.level' | translate }} </mat-header-cell>
                 <mat-cell *matCellDef="let row" [ngClass]="'w-250'"> {{row.level}} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="description">
-                <mat-header-cell *matHeaderCellDef> Descripción </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef> {{ 'backup.description' | translate }} </mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
             </ng-container>
 
@@ -31,6 +31,6 @@
     </div>
 
     <div class="btns" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
-        <button mat-raised-button (click)="deleteLog()">{{'Eliminar log'}}</button>
+        <button mat-raised-button (click)="deleteLog()">{{ 'button.delete_log' | translate }}</button>
     </div>
 </div>

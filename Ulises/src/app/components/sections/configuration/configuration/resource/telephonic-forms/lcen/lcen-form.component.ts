@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { AppSettings } from 'src/app/core/app.settings';
 import { AlertService } from 'src/app/_services/alert.service';
 
@@ -19,7 +20,8 @@ export class LCENFormComponent implements OnInit {
   appset: any;
   automaticResponse: boolean = false;
 
-  constructor(private readonly alertService: AlertService) { }
+  constructor(private readonly alertService: AlertService,
+    private readonly translate: TranslateService) { }
 
   ngOnInit(): void {
     this.appset = AppSettings;
@@ -32,7 +34,7 @@ export class LCENFormComponent implements OnInit {
 
   async checkAGVNName(event: any) {
     if (event.target.value.match(AppSettings.AGVN_PATTERN) == undefined && event.target.value != '') {
-      await this.alertService.errorMessage(``, `Campo AGVN no válido`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err.AVGN_no_valid')}`);
       event.target.value = '';
       this.resourceForm.patchValue({ ats_user: '' });
     }

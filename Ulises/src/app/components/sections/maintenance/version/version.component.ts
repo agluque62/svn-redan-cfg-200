@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { AppComponent } from 'src/app/app.component';
@@ -17,8 +18,9 @@ export class VersionComponent implements OnInit {
   version!: Version;
   ready: boolean = false;
 
-  constructor(private readonly loginService: LoginService, private readonly app: AppComponent, 
-    private readonly userService: UserService, private readonly router: Router) { }
+  constructor(private readonly loginService: LoginService, private readonly app: AppComponent,
+    private readonly userService: UserService, private readonly router: Router,
+    private readonly translate: TranslateService) { }
 
   async ngOnInit() {
     try {
@@ -43,7 +45,15 @@ export class VersionComponent implements OnInit {
   }
 
   downloadPDF() {
-    const header = [["Versión", 'NodeJS', 'MySQL', 'Archivos', 'Fecha', 'Tamaño', 'MD5']];
+    const header = [[
+      `${this.translate.instant('maintenance.version')}`,
+      `${this.translate.instant('maintenance.nodeJS')}`,
+      `${this.translate.instant('maintenance.MySQL')}`,
+      `${this.translate.instant('maintenance.files')}`,
+      `${this.translate.instant('maintenance.date')}`,
+      `${this.translate.instant('maintenance.size')}`,
+      `${this.translate.instant('maintenance.MD5')}`]];
+
     let body: any = [];
     this.version.file.forEach(archivos => {
       body.push([`${this.version.version}.${this.version.subversion}`, this.version.nodejsversion, this.version.mysqlversion, archivos.Name, archivos.date, archivos.fileSizeInBytes, archivos.md5])
@@ -51,49 +61,57 @@ export class VersionComponent implements OnInit {
     const doc = new jsPDF('l');
     doc.setFontSize(11);
 
-        autoTable(doc, {
-            head: header,
-            body: body,
-            startY: 30,
-            margin: { horizontal: 20 },
-            bodyStyles: { valign: 'top' },
-            headStyles: { fillColor: [255, 50, 40] },
-            columnStyles: {
-                0: { cellWidth: 30, overflow: 'linebreak' },
-                1: { cellWidth: 30, overflow: 'linebreak' },
-                2: { cellWidth: 30, overflow: 'linebreak' },
-                3: { cellWidth: 45, overflow: 'linebreak' },
-                4: { cellWidth: 25, overflow: 'linebreak' },
-                5: { cellWidth: 25, overflow: 'linebreak' },
-                6: { cellWidth: 65, overflow: 'linebreak' },
-                7: { cellWidth: 30, overflow: 'linebreak' }
-            }
-        });
+    autoTable(doc, {
+      head: header,
+      body: body,
+      startY: 30,
+      margin: { horizontal: 20 },
+      bodyStyles: { valign: 'top' },
+      headStyles: { fillColor: [255, 50, 40] },
+      columnStyles: {
+        0: { cellWidth: 30, overflow: 'linebreak' },
+        1: { cellWidth: 30, overflow: 'linebreak' },
+        2: { cellWidth: 30, overflow: 'linebreak' },
+        3: { cellWidth: 45, overflow: 'linebreak' },
+        4: { cellWidth: 25, overflow: 'linebreak' },
+        5: { cellWidth: 25, overflow: 'linebreak' },
+        6: { cellWidth: 65, overflow: 'linebreak' },
+        7: { cellWidth: 30, overflow: 'linebreak' }
+      }
+    });
 
-        const pageCount = doc.getNumberOfPages();
-        for (var i = 1; i <= pageCount; i++) {
-          doc.setPage(i);
-          doc.text('REDAN-CFG 2.x.x. Informe de Versión', 125, 20);
-        }
+    const pageCount = doc.getNumberOfPages();
+    for (var i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.text(`${this.translate.instant('maintenance.version_report')}`, 125, 20);
+    }
 
-        doc.save("Version.pdf");
-  
-    
+    doc.save("Version.pdf");
+
+
   }
 
   downloadExcel() {
-      let data = "";
-      const header = ["Versión", 'NodeJS', 'MySQL', 'Archivos', 'Fecha', 'Tamaño', 'MD5'];
-      data += header.join(';');
-      data += "\n";      
-      this.version.file.forEach(archivos => {
-        data += [`${this.version.version}.${this.version.subversion}`, this.version.nodejsversion, this.version.mysqlversion, archivos.Name, archivos.date, archivos.fileSizeInBytes, archivos.md5].join(';');
-        data += "\n";
-      
-      });
-      var myLink = document.createElement('a');
-      myLink.download = 'Version.csv';
-      myLink.href = "data:application/csv," + escape(data);
-      myLink.click();
+    let data = "";
+    const header = [[
+      `${this.translate.instant('maintenance.version')}`,
+      `${this.translate.instant('maintenance.nodeJS')}`,
+      `${this.translate.instant('maintenance.MySQL')}`,
+      `${this.translate.instant('maintenance.files')}`,
+      `${this.translate.instant('maintenance.date')}`,
+      `${this.translate.instant('maintenance.size')}`,
+      `${this.translate.instant('maintenance.MD5')}`]];
+
+    data += header.join(';');
+    data += "\n";
+    this.version.file.forEach(archivos => {
+      data += [`${this.version.version}.${this.version.subversion}`, this.version.nodejsversion, this.version.mysqlversion, archivos.Name, archivos.date, archivos.fileSizeInBytes, archivos.md5].join(';');
+      data += "\n";
+
+    });
+    var myLink = document.createElement('a');
+    myLink.download = 'Version.csv';
+    myLink.href = "data:application/csv," + escape(data);
+    myLink.click();
   }
 }

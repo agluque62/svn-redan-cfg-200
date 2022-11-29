@@ -28,6 +28,7 @@ import { ConfigurationIp } from 'src/app/_models/configs/configuration/Configura
 import { ConfigurationById } from 'src/app/_models/configs/configuration/ConfigurationById';
 import { ConfigurationByIdResponse } from 'src/app/_models/configs/configuration/response/ConfigurationByIdRespose';
 import { SiteService } from 'src/app/_services/site.service';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'gateway-home',
   templateUrl: './gateway-home.component.html',
@@ -72,14 +73,18 @@ export class GatewayHomeComponent implements OnInit {
   LoadIndexControlEnabled: boolean = false;
   changes: boolean = false;
 
+  CFG_NAME!: string;
+  LOCAT_NAME!: string;
+  GTW_NAME!: string;
+
   msg !: string[];
 
   siteOptions!: any[];
 
   refresher: any = [
-    { value: 0, viewValue: 'No propone refresher' },
-    { value: 1, viewValue: 'Propone refresher UAC' },
-    { value: 2, viewValue: 'Propone refresher UAS' },
+    { value: 0, viewValue: 'gateway.refresh_value0' },
+    { value: 1, viewValue: 'gateway.refresh_value1' },
+    { value: 2, viewValue: 'gateway.refresh_value2' },
   ]
 
   dirtyCaseOnlyValue: any[] = [
@@ -129,8 +134,8 @@ export class GatewayHomeComponent implements OnInit {
   constructor(private readonly utilService: UtilsService, private readonly route: ActivatedRoute, private readonly router: Router, private readonly app: AppComponent, public dialog: MatDialog,
     private readonly gatewayService: GatewayService, private readonly alertService: AlertService, private historicService: HistoricService,
     private readonly dataService: DataService, private readonly userService: UserService, private readonly loginService: LoginService,
-    private readonly gatewayFieldService: GatewayFieldService, private readonly configService: ConfigService, private readonly siteService: SiteService) {
-  }
+    private readonly gatewayFieldService: GatewayFieldService, private readonly configService: ConfigService,
+    private readonly siteService: SiteService, private readonly translate: TranslateService) { }
 
   async ngOnInit() {
 
@@ -156,7 +161,7 @@ export class GatewayHomeComponent implements OnInit {
 
         this.type = 'EDIT';
         await this.initEdit(gatewayId);
-        this.title = `${await this.getGatewayTitle()} - Pasarela: ${this.gateway.name}`;
+        this.title = `${await this.getGatewayTitle()} - ${this.translate.instant('gateway.gateway')} : ${this.gateway.name}`;
         this.dataService.updateDataGatewayTitle(this.title);
       } else {
         this.type = 'CREATE';
@@ -186,7 +191,7 @@ export class GatewayHomeComponent implements OnInit {
 
   async getGatewayTitle() {
     this.config = await this.configService.getConfigurationById(this.configId).toPromise();
-    const title = `Configuración: ${this.config.result[0].NAME} - Emplazamiento: ${this.gateway.emplazamiento}`;
+    const title = `${this.translate.instant('gateway.configuration')}: ${this.config.result[0].NAME} - ${this.translate.instant('gateway.location')}: ${this.gateway.emplazamiento}`;
     this.dataService.updateDataGatewayTitle(title);
     return title;
   }
@@ -222,14 +227,14 @@ export class GatewayHomeComponent implements OnInit {
     let siteName = this.siteOptions.filter((site: any) => { return site.idEMPLAZAMIENTO === this.siteId })[0]?.name;
 
     if (this.changes || this.gatewayForm.dirty || JSON.stringify(this.gatewayForm.value) !== JSON.stringify(this.initStatusGateway)) {
-      await this.alertService.errorMessage(``, `No ha guardado los cambios de la pasarela`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.info_no_save')}`);
       return;
     }
 
-    const confirm = await this.alertService.confirmationMessage(``, `¿Seguro que quieres activar esta pasarela en campo?`);
+    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_active_conf')}`);
     if (confirm.value) {
       if (this.gatewayForm.value.traps.length === 0) {
-        const confirmTraps = await this.alertService.confirmationMessage(`No hay traps activados`, `¿Deseas continuar?`);
+        const confirmTraps = await this.alertService.confirmationMessage(`${this.translate.instant('gateway.alert.no_traps')}`, `${this.translate.instant('gateway.alert.continue')}`);
         if (confirmTraps.value) {
           this.activateGTW(confName, siteName)
         }
@@ -283,28 +288,28 @@ export class GatewayHomeComponent implements OnInit {
 
     if (gtwFieldCpu0.code === 'ECONNREFUSED' || gtwFieldCpu1.code === 'ECONNREFUSED') {
       await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error conexión a la pasarela`).toPromise();
-      await this.alertService.errorMessage(``, `Error de conexión a la pasarela`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('err.ECONNREFUSED')}`);
       this.showSpinner = false;
       return;
     }
 
     if (gtwFieldCpu0.code === 'ETIMEDOUT' && gtwFieldCpu1.code === 'ETIMEDOUT') {
       await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error timeout`).toPromise();
-      await this.alertService.errorMessage(``, `Error de timeout en la conexión a la pasarela`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('err.ETIMEDOUT')}`);
       this.showSpinner = false;
       return;
     }
 
     if (gtwFieldCpu0.code === 'EHOSTUNREACH' || gtwFieldCpu1.code === 'EHOSTUNREACH') {
       await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error de conexión al host`).toPromise();
-      await this.alertService.errorMessage(``, `Error no es posible conectar con la pasarela`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('err.EHOSTUNREACH')}`);
       this.showSpinner = false;
       return;
     }
 
     if (!this.validateGtwFieldJson(gtwFieldCpu0) && !this.validateGtwFieldJson(gtwFieldCpu1)) {
       await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error de formato`).toPromise();
-      await this.alertService.errorMessage(``, `Error el formato del JSON recibido no es correcto`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('err.EFORMAT')}`);
       this.showSpinner = false;
       return;
     }
@@ -316,6 +321,9 @@ export class GatewayHomeComponent implements OnInit {
       if (this.gatewayResponse && this.gatewayResponse.result) {
         this.gateway = [...this.gatewayResponse.result][0];
         this.siteId = this.gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
+        this.GTW_NAME = this.gateway.conf_name;
+        this.LOCAT_NAME = this.gateway.emplazamiento;
+        this.GTW_NAME = this.gateway.name;
       }
       this.gatewayIps = [];
       this.gatewayIps = [...await this.gatewayService.getGatewayIpList(gatewayId).toPromise()];
@@ -327,7 +335,7 @@ export class GatewayHomeComponent implements OnInit {
   async back() {
     let confirm;
     if (this.type === 'EDIT' && (this.changes || this.gatewayForm.dirty)) {
-      confirm = await this.alertService.confirmationMessage("", `Existen cambios en la pasarela sin guardar. ¿Desea continuar?`);
+      confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('gateway.alert.conf_back')}`);
     }
     if (confirm?.isConfirmed == true || confirm === undefined) {
       await this.router.navigate(['/home/config/' + this.configId]);
@@ -386,27 +394,27 @@ export class GatewayHomeComponent implements OnInit {
           this.configurationIp = [...this.configurationIpResponse.result];
           if (this.configurationIp.length != 0) {
             this.msg = this.configurationIp.map((index) => {
-              return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+              return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
             })
-            await this.alertService.errorMessage(``, `La IP virtual ${gateway.ipv} esta duplicada en ${this.msg}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPV', { value1: gateway.ipv, value2: this.msg })}`);
             return;
           }
           this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipb1, 0).toPromise();
           this.configurationIp = [...this.configurationIpResponse.result];
           if (this.configurationIp.length != 0) {
             this.msg = this.configurationIp.map((index) => {
-              return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+              return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
             })
-            await this.alertService.errorMessage(``, `La IP cpu0 ${gateway.ipb1} esta duplicada en ${this.msg}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU0', { value1: gateway.ipb1, value2: this.msg })}`);
             return;
           }
           this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipb2, 0).toPromise();
           this.configurationIp = [...this.configurationIpResponse.result];
           if (this.configurationIp.length != 0) {
             this.msg = this.configurationIp.map((index) => {
-              return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+              return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
             })
-            await this.alertService.errorMessage(``, `La IP cpu1 ${gateway.ipb2} esta duplicada en ${this.msg}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU1', { value1: gateway.ipb2, value2: this.msg })}`);
             return;
           }
         }
@@ -425,7 +433,7 @@ export class GatewayHomeComponent implements OnInit {
         title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
         await this.historicService.updateCfg(107, this.gatewayForm.value.nombre, title).toPromise();
         this.showSpinner = false;
-        await this.alertService.successMessage(``, `Pasarela ${newGtw.name} creada correctamente`);
+        await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_new_gtw', { value: newGtw.name })}`);
         this.dataService.updateDataConfigId(this.configId);
         this.dataService.updateDataGatewayPreviousUrl('NEW');
         this.router.navigate(['/home/gateway/' + newGtw.insertId]);
@@ -439,7 +447,7 @@ export class GatewayHomeComponent implements OnInit {
   async checkGatewayNameError(name: string): Promise<boolean> {
     const result = await this.gatewayService.checkName(name, this.configId, this.gateway.idCGW).toPromise();
     if (result !== 'NO_ERROR') {
-      const message = (result === 'NAME_DUP') ? `El identificador de pasarela ${name} ya se encuentra dada de alta en esta configuración` : result;
+      const message = (result === 'NAME_DUP') ? `${this.translate.instant('err.DUPLICATED_ID_GTW', { value: name })}` : result;
       await this.alertService.errorMessage(`Error`, message);
       return true;
     }
@@ -449,7 +457,7 @@ export class GatewayHomeComponent implements OnInit {
   async checkIpError(ip: string): Promise<boolean> {
     const result = await this.gatewayService.checkIpAddress(ip, this.configId, this.gateway.idCGW).toPromise();
     if (result !== 'NO_ERROR') {
-      const message = (result === 'IP_DUP') ? `La dirección ${ip} ya se encuentra dada de alta en esta configuración` : result;
+      const message = (result === 'IP_DUP') ? `${this.translate.instant('err.DUPLICATED_NAME_CFG', { value: ip })}` : result;
       await this.alertService.errorMessage(`Error`, message);
       return true;
     }
@@ -460,11 +468,11 @@ export class GatewayHomeComponent implements OnInit {
     if (this.gatewayForm.value.servidor_rtsp === this.gatewayForm.value.servidor_rtspb &&
       this.gatewayForm.value.servidor_rtsp !== '' &&
       this.gatewayForm.value.servidor_rtspb !== '') {
-      const message = `La dirección IP RTSP (A) no puede ser igual que la RTSP (B)`;
+      const message = `${this.translate.instant('err_same_ip_rtsp')}`;
       await this.alertService.errorMessage(`Error`, message);
       return true;
     } else if (this.gatewayForm.value.servidor_rtsp === '' && this.gatewayForm.value.servidor_rtspb !== '') {
-      const message = `El campo de dirección IP RTSP (A) no puede estar vacío`;
+      const message = `${this.translate.instant('gateway.alert.err_empty_ip_RSTP_A')}`;
       await this.alertService.errorMessage(`Error`, message);
       return true;
     }
@@ -478,102 +486,102 @@ export class GatewayHomeComponent implements OnInit {
       let message = ``;
 
       if (this.gatewayForm.controls['nombre'].hasError('required')) {
-        message = `El identificador de la pasarela es obligatorio`;
+        message = `${this.translate.instant('gateway.alert.err_mandatory_id')}`
       }
 
       if (this.gatewayForm.controls['nombre'].hasError('pattern')) {
-        message = `El identificador de la pasarela no cumple con el patrón permitido`;
+        message = `${this.translate.instant('gateway.alert.err_id_pattern')}`
       }
 
       if (this.gatewayForm.hasError('ipEqualsValidator')) {
-        message = `La dirección IP Virtual y las IPs de las CPUs deben ser diferentes`;
+        message = `${this.translate.instant('gateway.alert.err_same_ips')}`
       }
 
       if (this.gatewayForm.controls['ipv'].hasError('pattern')) {
-        message = `La IP Virtual no es una IP válida`;
+        message = `${this.translate.instant('gateway.alert.err_ip_virtual')}`
       }
 
       if (this.gatewayForm.controls['ipv'].hasError('required')) {
-        message = `La IP Virtual es obligatoria`;
+        message = `${this.translate.instant('gateway.alert.err_mandatory_ip_virtual')}`
       }
 
       if (this.gatewayForm.controls['ipb1'].hasError('pattern')) {
-        message = `La IP de la CPU 0 no es una IP válida`;
+        message = `${this.translate.instant('gateway.alert.err_ip_cpu0')}`
       }
 
       if (this.gatewayForm.controls['ipb1'].hasError('required')) {
-        message = `La IP de la CPU 0 es obligatoria`;
+        message = `${this.translate.instant('gateway.alert.err_mandatory_cpu0')}`
       }
 
       if (this.gatewayForm.controls['ipb2'].hasError('pattern')) {
-        message = `La IP de la CPU 1 no es una IP válida`;
+        message = `${this.translate.instant('gateway.alert.err_ip_cpu1')}`
       }
 
       if (this.gatewayForm.controls['ipb2'].hasError('required')) {
-        message = `La IP de la CPU 1 es obligatoria`;
+        message = `${this.translate.instant('gateway.alert.err_mandatory_cpu1')}`
       }
 
       if (this.gatewayForm.controls['ipg1'].hasError('pattern')) {
-        message = `La IP gateway de la CPU 0 no es una IP válida`;
+        message = `${this.translate.instant('gateway.alert.err_ipgtw0')}`
       }
 
       if (this.gatewayForm.controls['ipg1'].hasError('required')) {
-        message = `La IP gateway de la CPU 0 es obligatoria`;
+        message = `${this.translate.instant('gateway.alert.err_mandatory_ip_gtw0')}`
       }
 
       if (this.gatewayForm.controls['ipg2'].hasError('pattern')) {
-        message = `La IP gateway de la CPU 1 no es una IP válida`;
+        message = `${this.translate.instant('gateway.alert.err_ip_gtw1')}`
       }
 
       if (this.gatewayForm.controls['ipg2'].hasError('required')) {
-        message = `La IP gateway de la CPU 1 es obligatoria`;
+        message = `${this.translate.instant('gateway.alert.err_mandatory_ip_gtw1')}`
       }
 
       if (this.gatewayForm.controls['msb1'].hasError('pattern')) {
-        message = `La máscara de la CPU 0 no es una IP válida`;
+        message = `${this.translate.instant('gateway.alert.err_mask_ip_cpu0')}`
       }
 
       if (this.gatewayForm.controls['msb1'].hasError('required')) {
-        message = `La máscara de la CPU 0 es obligatoria`;
+        message = `${this.translate.instant('gateway.alert.err_mandatpry_cpu0')}`
       }
 
       if (this.gatewayForm.controls['msb2'].hasError('pattern')) {
-        message = `La máscara CPU 1 no es una IP válida`;
+        message = `${this.translate.instant('gateway.alert.err_mask_ip_cpu1')}`
       }
 
       if (this.gatewayForm.controls['msb2'].hasError('required')) {
-        message = `La máscara de la CPU 1 es obligatoria`;
+        message = `${this.translate.instant('gateway.alert.err_mandatpry_cpu1')}`
       }
 
       if (this.gatewayForm.controls['servidor_rtsp'].hasError('pattern')) {
-        message = `La IP del servidor RSTP (A) no es una IP válida`;
+        message = `${this.translate.instant('gateway.alert.err_ip_RSTP_A')}`
       }
 
       if (this.gatewayForm.controls['servidor_rtspb'].hasError('pattern')) {
-        message = `La IP del servidor RSTP (B) no es una IP válida`;
+        message = `${this.translate.instant('gateway.alert.err_ip_RSTP_B')}`
       }
 
       if (this.gatewayForm.controls['periodo_supervision'].hasError('pattern')) {
-        message = `El valor periodo de supervisión es inválido`;
+        message = `${this.translate.instant('gateway.alert.err_supervision_period')}`
       }
 
       if (this.gatewayForm.controls['tiempo_sesion'].hasError('pattern')) {
-        message = `El valor tiempo de sesión es inválido`;
+        message = `${this.translate.instant('gateway.alert.err_timoeut_sesion')}`
       }
 
       if (this.gatewayForm.controls['puerto_rtsp'].hasError('pattern')) {
-        message = `Puerto RTSP inválido`;
+        message = `${this.translate.instant('gateway.alert.err_rtsp_port')}`
       }
 
       if (this.gatewayForm.controls['puerto_servicio_web'].hasError('pattern')) {
-        message = `Puerto de servicio web inválido`;
+        message = `${this.translate.instant('gateway.alert.err_service_port')}`
       }
 
       if (this.gatewayForm.controls['puerto_snmp'].hasError('pattern')) {
-        message = `Puerto SNMP inválido`;
+        message = `${this.translate.instant('gateway.alert.err_snmp_port')}`
       }
 
-      await this.alertService.errorMessage(`Formulario inválido`, message);
+      await this.alertService.errorMessage(`${this.translate.instant('err.INVALID_FORM')}`, message);
       return true;
     }
 
@@ -614,7 +622,7 @@ export class GatewayHomeComponent implements OnInit {
     let result = await this.validateGateway();
     if (result) {
       if (this.gatewayForm.value.traps.length === 0) {
-        const confirmTraps = await this.alertService.confirmationMessage(`No hay traps activados`, `¿Deseas continuar?`);
+        const confirmTraps = await this.alertService.confirmationMessage(`${this.translate.instant('gateway.alert.no_traps')}`, `${this.translate.instant('gateway.alert.continue')}`);
         if (confirmTraps.value) {
           this.saveGTW();
         }
@@ -651,7 +659,7 @@ export class GatewayHomeComponent implements OnInit {
     this.initStatusGateway = { ...this.gatewayForm.value };
     await this.siteChanges();
     this.showSpinner = false;
-    await this.alertService.successMessage(``, `Pasarela ${updatedGtw.name} actualizada correctamente`);
+    await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_upt_gtw', { value: updatedGtw.name })}`);
     this.gatewayForm.markAsPristine();
     this.changes = false;
     this.showSpinner = false;
@@ -672,7 +680,7 @@ export class GatewayHomeComponent implements OnInit {
 
   async deleteGateway() {
 
-    const confirm = await this.alertService.confirmationMessage(``, `¿Desea eliminar la gateway ${this.gateway.name}?`);
+    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_del_gtw', { value: this.gateway.name })}`);
     if (confirm.value) {
 
       this.showSpinner = true;
@@ -682,7 +690,7 @@ export class GatewayHomeComponent implements OnInit {
       title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length); await this.historicService.updateCfg(108, this.gateway.name, title).toPromise();
       this.showSpinner = false;
 
-      await this.alertService.successMessage(``, `Pasarela ${this.gateway.name} eliminada correctamente`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_del_gtw', { value: this.gateway.name })}`);
       this.router.navigate(['/home/config/' + this.configId]);
     }
   }
@@ -796,7 +804,7 @@ export class GatewayHomeComponent implements OnInit {
 
     if (loadIndex > 16) {
       this.selectedClass = "indexOverload"
-      this.loadIndex = `${loadIndex} - Indice máximo sobrepasado.`
+      this.loadIndex = `${this.translate.instant('gateway.max_index', { value: loadIndex })}`
     } else {
       this.selectedClass = "indexLoad";
       this.loadIndex = loadIndex.toString();
@@ -845,7 +853,7 @@ export class GatewayHomeComponent implements OnInit {
         })
       } if (value === 'refresher') {
         const refresher = this.refresher.find((option: any) => option.value === this.gatewayForm.get(value)?.value)
-          historic += `${refresher.viewValue}`
+        historic += `${refresher.viewValue}`
       } else {
         this.gatewayForm.get(value)?.value.forEach((element: any) => {
           if (this.gatewayForm.get(value)?.value[this.gatewayForm.get(value)?.value.length - 1] === element) {

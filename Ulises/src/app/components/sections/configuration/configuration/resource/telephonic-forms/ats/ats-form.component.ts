@@ -25,16 +25,16 @@ export class ATSFormComponent implements OnInit {
   RespuestaSIP_ATSR2 !: number;
 
   SIPResponseConversion: customValues[] = [
-    { value: 0, viewValue: 'Modo ED137'},
-    { value: 1, viewValue: 'Modo SDC91'}
+    { value: 0, viewValue: 'resource.tlf.SIPResponse_value_0'},
+    { value: 1, viewValue: 'resource.tlf.SIPResponse_value_1'}
   ]
 
   timeOpt!: number;
   duration!: number;
 
   timeOpts: customValues[] = [
-    { value: 0, viewValue: 'Normal' },
-    { value: 256, viewValue: 'Siempre Tránsito' }
+    { value: 0, viewValue: 'resource.tlf.timeOpts_value_0' },
+    { value: 256, viewValue: 'resource.tlf.timeOpts_value_1' }
   ];
 
   durations: customValues[] = [
@@ -117,6 +117,9 @@ export class ATSFormComponent implements OnInit {
     this.automaticResponse = opt;
     if (this.automaticResponse) {
       this.resourceForm.patchValue({ respuesta_automatica: 1 });
+      this.resourceForm.patchValue({ RespuestaSIP_ATSR2: 0})
+      this.resourceForm.patchValue({ TmTonoBloqueo : 0})
+      this.resourceForm.patchValue({ TmBloqueoLib : 0})
     }else{
       this.resourceForm.patchValue({ respuesta_automatica: 0 });
       this.resourceForm.patchValue({ periodo_tonos: 5 });

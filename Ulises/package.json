@@ -25,17 +25,22 @@
     "@angular/platform-browser": "~11.1.0",
     "@angular/platform-browser-dynamic": "~11.1.0",
     "@angular/router": "~11.1.0",
+    "@ngx-translate/core": "^13.0.0",
+    "@ngx-translate/http-loader": "^6.0.0",
     "@types/file-saver": "^2.0.1",
     "angular-gridster2": "^11.1.5",
     "file-saver": "^2.0.5",
-    "jspdf": "^2.3.0",
+    "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.23",
     "material-design-icons": "^3.0.1",
     "moment": "^2.29.1",
+    "pdfmake": "^0.2.6",
+    "roboto-font": "^0.1.0",
     "rxjs": "~6.6.0",
     "sweetalert2": "^10.13.0",
     "tslib": "^2.3.1",
     "typeface-roboto": "^1.1.13",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
@@ -44,7 +49,8 @@
     "@angular/compiler-cli": "~11.1.0",
     "@types/jasmine": "^3.6.11",
     "@types/jspdf": "^1.3.3",
-    "@types/node": "^12.20.47",
+    "@types/node": "^12.20.55",
+    "@types/pdfmake": "^0.2.2",
     "codelyzer": "^6.0.2",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
@@ -56,6 +62,6 @@
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
-    "typescript": "^4.0.8"
+    "typescript": "^4.1.5"
   }
 }

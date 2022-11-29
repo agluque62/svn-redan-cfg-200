@@ -1,44 +1,43 @@
 <form class="form" [formGroup]="resourceForm">
     <div class="title">
-        <mat-label>Colaterales</mat-label>
+        <mat-label>{{ 'resource.radio.collaterals' | translate }}</mat-label>
     </div>
     <div class="main-collaterals">
         <div class="uris">
 
             <div class="uri-row">
                 <mat-form-field appearance="legacy">
-                    <mat-label>NombreRecurso@IP:Puerto</mat-label>
+                    <mat-label>{{ 'resource.radio.uri_pattern' | translate }}</mat-label>
                     <input matInput formControlName="uri_telefonica">
                 </mat-form-field>
 
                 <button mat-raised-button [disabled]="visualizationMode" (click)="makeURI()"> {{arrows}} </button>
             </div>
             <mat-error *ngIf="resourceForm.get('uri_telefonica')?.hasError('pattern')">
-                {{ appset.INVALID_URI }}
+                {{ appset.INVALID_URI | translate }}
             </mat-error>
 
 
             <div class="supCollSelect">
                 <mat-form-field appearance="fill">
-                    <mat-label>Supervisa Colateral</mat-label>
+                    <mat-label>{{ 'resource.radio.colateral_super' | translate }}</mat-label>
                     <mat-select name="supCollateral" formControlName="supervisa_colateral"
                         (selectionChange)="displaySupSelect()">
                         <mat-option *ngFor="let opt of supCollateral" [value]="opt.value">
-                            {{opt.viewValue}}
+                            {{ opt.viewValue | translate }}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
 
-            <mat-checkbox *ngIf="displayOptResponse1" class="checkbox" formControlName="itiporespuesta">Cualquier
-                respuesta es válida</mat-checkbox>
+            <mat-checkbox *ngIf="displayOptResponse1" class="checkbox" formControlName="itiporespuesta">{{ 'resource.radio.any_resp_is_valid' | translate }}</mat-checkbox>
 
 
             <span *ngIf="!showOnlyFirst">
                 <hr class="hr">
                 <div class="uri-row">
                     <mat-form-field appearance="legacy">
-                        <mat-label>NombreRecurso@IP:Puerto</mat-label>
+                        <mat-label>{{ 'resource.radio.uri_pattern' | translate }}</mat-label>
                         <input matInput formControlName="additional_uri_remota">
                     </mat-form-field>
 
@@ -46,30 +45,29 @@
                     </button>
                 </div>
                 <mat-error *ngIf="resourceForm.get('additional_uri_remota')?.hasError('pattern')">
-                    {{ appset.INVALID_URI }}
+                    {{ appset.INVALID_URI | translate }}
                 </mat-error>
                 <div class="supCollSelect">
                     <mat-form-field appearance="fill">
-                        <mat-label>
-                            Supervisa Colateral</mat-label>
+                        <mat-label>{{ 'resource.radio.colateral_super' | translate }}</mat-label>
                         <mat-select name="supCollateral" formControlName="additional_superv_options"
                             (selectionChange)="displaySupSelect()">
                             <mat-option *ngFor="let opt of supCollateral" [value]="opt.value">
-                                {{opt.viewValue}}
+                                {{ opt.viewValue | translate }}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
 
                 <mat-checkbox *ngIf="displayOptResponse2" class="checkbox add-iti"
-                    formControlName="additional_itiporespuesta">Cualquier respuesta es válida</mat-checkbox>
+                    formControlName="additional_itiporespuesta">{{ 'resource.radio.any_resp_is_valid' | translate }}</mat-checkbox>
 
             </span>
             <mat-form-field appearance="fill" *ngIf="displayTimeSelect">
-                <mat-label>Tiempo supervisión (sg.)</mat-label>
+                <mat-label>{{ 'resource.radio.supervision_time' | translate }}</mat-label>
                 <mat-select name="timeSup" [disabled]="visualizationMode" formControlName="tiempo_supervision">
                     <mat-option *ngFor="let sec of time" [value]="sec.value">
-                        {{sec.viewValue}}
+                        {{ sec.viewValue | translate }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -79,11 +77,11 @@
 
         <div class="telephonic-resources">
             <mat-form-field appearance="fill">
-                <mat-label>Seleccione tipo de recurso</mat-label>
+                <mat-label>{{ 'resource.radio.select_type_resource' | translate }}</mat-label>
                 <mat-select (selectionChange)="checkResourceTypeSelected()" [(value)]="selectedTypeResource"
                     name="resourceTypes">
                     <mat-option *ngFor="let resource of resourceTypes" [value]="resource.value">
-                        {{resource.viewValue}}
+                        {{ resource.viewValue | translate }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -92,19 +90,19 @@
                 <mat-select name="optionsFilter" [(value)]="selectedOptFilter"
                     (selectionChange)="checkExtOptSelected()">
                     <mat-option *ngFor="let filter of optionsFilter" [value]="filter.value">
-                        {{filter.viewValue}}
+                        {{ filter.viewValue | translate }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
             <div class="filter" *ngIf="(selectedOptFilter == 4 || selectedOptFilter == 5) && displaySelectFilter">
                 <mat-form-field appearance="legacy">
-                    <mat-label>Carácteres a buscar</mat-label>
+                    <mat-label>{{ 'resource.radio.search_characters' | translate }}</mat-label>
                     <input matInput (change)="getFilterValue($event)">
                 </mat-form-field>
-                <button mat-raised-button (click)="checkExtOptSelected()"> Buscar recursos </button>
+                <button mat-raised-button (click)="checkExtOptSelected()"> {{ 'button.search_res' | translate }} </button>
             </div>
             <mat-form-field appearance="fill" *ngIf="displaySites">
-                <mat-label>Seleccione emplazamiento</mat-label>
+                <mat-label>{{ 'resource.radio.select_location' | translate }}</mat-label>
                 <mat-select name="sites" [(value)]="selectedSite" (selectionChange)="getGateways()">
                     <mat-option *ngFor="let site of sites.data" [value]="site.idemplazamiento">
                         {{site.eName}}
@@ -112,7 +110,7 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="fill" *ngIf="displayGateways">
-                <mat-label>Seleccione pasarela</mat-label>
+                <mat-label>{{ 'resource.radio.select_gateway' | translate }}</mat-label>
                 <mat-select name="gateways" [(value)]="selectedGateway" (selectionChange)="getConfResources()">
                     <mat-option *ngFor="let gateway of gateways" [value]="gateway.idpasarela">
                         {{gateway.gName}}
@@ -120,7 +118,7 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="fill" *ngIf="displayConfResource">
-                <mat-label>Seleccione recurso</mat-label>
+                <mat-label>{{ 'resource.radio.select_resource' | translate }}</mat-label>
                 <mat-select name="resources" [(value)]="selectedResource" (selectionChange)="checkIfAGVNNameExist()">
                     <mat-option *ngFor="let resource of resources; index as i" [value]="i">
                         {{resource.rName}}
@@ -128,7 +126,7 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="fill" *ngIf="displayExtResource">
-                <mat-label>Seleccione recurso</mat-label>
+                <mat-label>{{ 'resource.radio.select_resource' | translate }}</mat-label>
                 <mat-select name="resources" [(value)]="selectedResource" (selectionChange)="checkIfAGVNNameExist()">
                     <mat-option *ngFor="let resource of resources; index as i" [value]="i">
                         {{resource.rName}}

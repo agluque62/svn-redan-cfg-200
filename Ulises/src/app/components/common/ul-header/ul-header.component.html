@@ -8,9 +8,10 @@
     </div>
 </div>
 <div class="datetime">
+    <app-translate></app-translate>
     <div class="section">
         <div class="date">
-            {{ date | date: 'dd/MM/yyyy' }} ({{ weekDay }})
+            {{ date | date: 'dd/MM/yyyy' }} ({{ weekDay | translate }})
         </div>
         <div class="hour">
             {{ date | date: 'HH:mm:ss' }}

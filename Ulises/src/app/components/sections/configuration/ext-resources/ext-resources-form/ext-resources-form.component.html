@@ -1,7 +1,7 @@
 <div class="main">
     <div class="title">
-        <div *ngIf="type == 'CREATE'">{{'Crear nuevo recurso'}}</div>
-        <div *ngIf="type == 'EDIT'">{{'Modificar recurso'}}</div>
+        <div *ngIf="type == 'CREATE'">{{ 'ext_res.create' | translate }}</div>
+        <div *ngIf="type == 'EDIT'">{{ 'ext_res.modify' | translate }}</div>
     </div>
 
     <form class="form" [formGroup]="extResourceFrom">
@@ -9,34 +9,34 @@
         <spinner *ngIf="showSpinner"></spinner>
         
         <mat-form-field appearance="fill">
-            <mat-label>{{'URI'}}</mat-label>
+            <mat-label>{{ 'ext_res.uri' | translate }}</mat-label>
             <input matInput formControlName="uri">
             <mat-error *ngIf="extResourceFrom.controls['uri'].hasError('pattern')">
-                {{ appset.INVALID_URI }}
+                {{ appset.INVALID_URI | translate }}
             </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill" [ngClass]="{'error': extResourceFrom.controls['alias'].hasError('pattern')}">
-            <mat-label>{{'Alias'}}</mat-label>
+            <mat-label>{{ 'ext_res.alias' | translate }}</mat-label>
             <input matInput formControlName="alias">
             <mat-error *ngIf="extResourceFrom.controls['alias'].hasError('pattern')">
-                {{ appset.INVALID_NAME }}
+                {{ appset.INVALID_NAME | translate }}
             </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-            <mat-label>{{'Tipo de recurso'}}</mat-label>
+            <mat-label>{{ 'ext_res.resource_type' | translate }}</mat-label>
             <mat-select formControlName="tipo">
                 <mat-option [value]="type.value" *ngFor="let type of typesMap">
-                    {{type.viewValue}}
+                    {{ type.viewValue | translate }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
     </form>
 
     <div class="btns">
-        <button mat-raised-button (click)="createOrEditExternalResource()">{{'Guardar'}}</button>
-        <button mat-raised-button *ngIf="type == 'EDIT'" (click)="deleteExtResource()">{{'Eliminar'}}</button>
-        <button mat-raised-button (click)="dialogRef.close()" cdkFocusInitial>{{'Cancelar'}}</button>
+        <button mat-raised-button (click)="createOrEditExternalResource()">{{ 'button.save' | translate }}</button>
+        <button mat-raised-button *ngIf="type == 'EDIT'" (click)="deleteExtResource()">{{ 'button.delete' | translate }}</button>
+        <button mat-raised-button (click)="dialogRef.close()" cdkFocusInitial>{{ 'button.cancel' | translate }}</button>
     </div>
 </div>

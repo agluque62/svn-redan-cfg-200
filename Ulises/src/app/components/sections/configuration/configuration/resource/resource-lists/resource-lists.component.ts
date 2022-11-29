@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { AppSettings } from 'src/app/core/app.settings';
 import { AlertService } from 'src/app/_services/alert.service';
 import { UserService } from 'src/app/_services/user.service';
@@ -17,9 +18,9 @@ interface customValues {
 export class ResourceListsComponent implements OnInit {
 
     typeLists: customValues[] = [
-        { value: 0, viewValue: 'Ninguna' },
-        { value: 1, viewValue: 'Lista Negra' },
-        { value: 2, viewValue: 'Lista Blanca' }
+        { value: 0, viewValue: 'resource.tlf.typeList_value_0' },
+        { value: 1, viewValue: 'resource.tlf.typeList_value_1' },
+        { value: 2, viewValue: 'resource.tlf.typeList_value_2' }
     ];
 
     selectedTypeList!: number;
@@ -32,7 +33,8 @@ export class ResourceListsComponent implements OnInit {
 
     visualizationMode: boolean = false;
 
-    constructor(private readonly alertService: AlertService, private readonly userService: UserService) { }
+    constructor(private readonly alertService: AlertService, private readonly userService: UserService,
+        private readonly translate: TranslateService) { }
 
     ngOnInit(): void {
         this.visualizationMode = (this.visualizationPermission()) ? true : false;
@@ -88,7 +90,7 @@ export class ResourceListsComponent implements OnInit {
             this.uriListToDisplay[tipo][pos]['modified'] = true;
             this.resourceForm.get('listaUris')?.markAsDirty();
         } else if (event.target.value.match(AppSettings.URI_PATTERN) == undefined && event.target.value != '') {
-            await this.alertService.errorMessage(``, AppSettings.INVALID_URI);
+            await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.INVALID_URI')}`);
             event.target.value = '';
         }
     }

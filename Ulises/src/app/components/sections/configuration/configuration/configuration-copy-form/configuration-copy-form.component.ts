@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 import { AppSettings } from 'src/app/core/app.settings';
 import { Configuration } from 'src/app/_models/configs/configuration/Configuration';
@@ -26,7 +27,7 @@ export class ConfigurationCopyFormComponent implements OnInit {
   
   constructor(public dialogRef: MatDialogRef<ConfigurationCopyFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Configuration,
     private readonly alertService: AlertService, private readonly configurationService: ConfigService, @Inject(AppComponent) private readonly app: AppComponent
-    ,private readonly historicService: HistoricService) { }
+    ,private readonly historicService: HistoricService, private readonly translate: TranslateService) { }
 
   ngOnInit(): void {
     this.appset = AppSettings;
@@ -62,7 +63,7 @@ export class ConfigurationCopyFormComponent implements OnInit {
   async confirm() {
     try {
       if (await this.existDuplicateConfigurationName()) {
-        await this.alertService.errorMessage(``, `Ya existe una configuración con ese nombre`);
+        await this.alertService.errorMessage(``, `${this.translate.instant('config.alert.err_exists_cfg')}`);
         return;
       }
 
@@ -78,12 +79,12 @@ export class ConfigurationCopyFormComponent implements OnInit {
 
         //await this.historicService.updateCfg(101, this.copyForm.value.name).toPromise();
 
-        await this.alertService.successMessage(``, `La configuración ha sido copiada`);
+        await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_copy_cfg')}`);
         this.dialogRef.close(true);
       } else {
-        this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+        this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }

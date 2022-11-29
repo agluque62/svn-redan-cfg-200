@@ -1,16 +1,16 @@
 <div class="main-nrange">
     <div class="title">
-        <mat-label>Rango número ATS</mat-label>
+        <mat-label>{{ 'resource.tlf.ATS_range' | translate }}</mat-label>
     </div>
     <mat-tab-group mat-align-tabs="start" *ngIf="ready">
         <mat-tab label="Origen">
             <div class="custom-table mat-elevation-z8">
                 <div class="header-row">
                     <div class="header-column">
-                        Inicio
+                        {{ 'resource.tlf.start' | translate }}
                     </div>
                     <div class="header-column">
-                        Final
+                        {{ 'resource.tlf.end' | translate }}
                     </div>
                 </div>
                 <div class="table-row" *ngFor="let rank of originRanks; index as i">
@@ -31,10 +31,10 @@
             <div class="custom-table mat-elevation-z8">
                 <div class="header-row">
                     <div class="header-column">
-                        Inicio
+                        {{ 'resource.tlf.start' | translate }}
                     </div>
                     <div class="header-column">
-                        Final
+                        {{ 'resource.tlf.end' | translate }}
                     </div>
                 </div>
                 <div class="table-row" *ngFor="let rank of destinationRanks; index as i">

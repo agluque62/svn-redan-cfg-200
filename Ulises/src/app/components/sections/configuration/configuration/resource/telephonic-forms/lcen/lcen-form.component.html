@@ -1,24 +1,25 @@
 <form class="main-form" [formGroup]="resourceForm">
     <mat-form-field appearance="legacy">
-        <mat-label>AGVN User Name</mat-label>
+        <mat-label>{{ 'resource.tlf.AVGNUser' | translate }}</mat-label>
         <input matInput formControlName="ats_user" (change)="checkAGVNName($event)" [maxLength]="6">
         <mat-error *ngIf="resourceForm.get('ats_user')?.hasError('pattern')">
-            {{ appset.INVALID_AGV_NUMBER }}
+            {{ appset.INVALID_AGV_NUMBER | translate }}
         </mat-error>
     </mat-form-field>
-    <mat-checkbox formControlName="respuesta_automatica" (change)="automaticResponseIsChecked($event.checked)">Respuesta automática</mat-checkbox>
+    <mat-checkbox formControlName="respuesta_automatica" (change)="automaticResponseIsChecked($event.checked)">
+        {{ 'resource.tlf.automatic_resp' | translate }}</mat-checkbox>
     <mat-form-field appearance="legacy" *ngIf="automaticResponse">
-        <mat-label>Periodo tonos resp. estado (sg.)</mat-label>
+        <mat-label>{{ 'resource.tlf.period_shades' | translate }}</mat-label>
         <input matInput formControlName="periodo_tonos" [maxLength]="2">
         <mat-error *ngIf="resourceForm.get('periodo_tonos')?.hasError('pattern')">
-            {{ appset.NUMBERS_FORMAT_INVALID }}
+            {{ appset.NUMBERS_FORMAT_INVALID | translate }}
         </mat-error>
         <mat-error
             *ngIf="resourceForm.get('periodo_tonos')?.hasError('min') || resourceForm.get('periodo_tonos')?.hasError('max')">
-            {{ appset.WRONG_RANGE }}
+            {{ appset.WRONG_RANGE | translate }}
         </mat-error>
         <mat-error *ngIf="resourceForm.get('periodo_tonos')?.hasError('required')">
-            {{ appset.FIELD_REQUIRED }}
+            {{ appset.FIELD_REQUIRED | translate }}
         </mat-error>
     </mat-form-field>
 </form>

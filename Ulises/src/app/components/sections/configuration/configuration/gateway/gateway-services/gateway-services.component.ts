@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 import { AppSettings } from 'src/app/core/app.settings';
 import { Gateway } from 'src/app/_models/configs/gateway/Gateway';
@@ -51,9 +52,9 @@ export class GatewayServicesComponent implements OnInit {
   MAX_TRAPS: number = 4;
 
   refresher: any = [
-    { value: 0, viewValue: 'No propone refresher'},
-    { value: 1, viewValue: 'Propone refresher UAC'},
-    { value: 2, viewValue: 'Propone refresher UAS'},
+    { value: 0, viewValue: 'gateway.refresh_value0'},
+    { value: 1, viewValue: 'gateway.refresh_value1'},
+    { value: 2, viewValue: 'gateway.refresh_value2'},
   ]
 
   visualizationMode: boolean = false;
@@ -62,7 +63,7 @@ export class GatewayServicesComponent implements OnInit {
   appset: any;
 
   constructor(private readonly gatewayService: GatewayService, private readonly app: AppComponent, private readonly alertService: AlertService,
-    private readonly userService: UserService) { }
+    private readonly userService: UserService, private readonly translate: TranslateService) { }
 
   async ngOnInit() {
     this.appset = AppSettings;
@@ -234,12 +235,12 @@ export class GatewayServicesComponent implements OnInit {
 
   async deleteProxy() {
     if (this.selectedProxy == null) {
-      await this.alertService.errorMessage(``, `Selecciona un item para eliminar`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.warn_select_item')}`);
       this.resetErrors();
       return;
     }
 
-    const result = await this.alertService.confirmationMessage(``, `¿Seguro que quiere eliminar este proxy?`);
+    const result = await this.alertService.confirmationMessage(``, `${this.translate.instant(('gateway.alert.conf_delete_proxy'))}`);
     if (result.value) {
       this.form.value.proxys.forEach((server: Server, idx: number) => {
         if (server.selected) {
@@ -258,19 +259,19 @@ export class GatewayServicesComponent implements OnInit {
       this.serversFormControl.reset();
       this.resetErrors();
       this.form.get("proxys")?.markAsDirty();
-      await this.alertService.successMessage(``, `Proxy borrado correctamente`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_delete_proxy')}`);
     }
   }
 
   async addProxy() {
     if (this.proxyFormControl.value === null || this.proxyFormControl.value === '') {
-      await this.alertService.errorMessage('', 'No se puede introducir un proxy vacio');
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_empty_proxy')}`);
       this.resetErrors();
       return;
     }
 
     if (this.form.value.proxys.length === this.MAX_PROXIES) {
-      await this.alertService.errorMessage('', 'Número máximo de proxies alcanzado');
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_max_proxy')}`);
       this.proxyFormControl.reset();
       this.resetErrors();
       return;
@@ -279,7 +280,7 @@ export class GatewayServicesComponent implements OnInit {
     if (this.proxyFormControl.valid) {
 
       if (this.checkDuplicateProxy(this.proxyFormControl.value)) {
-        await this.alertService.errorMessage('', 'Proxy duplicado');
+        await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_duply_proxy')}`);
         this.resetErrors();
         return;
       }
@@ -288,7 +289,7 @@ export class GatewayServicesComponent implements OnInit {
       this.form.value.proxys.push({ 'ip': this.proxyFormControl.value, 'selected': selected });
       this.form.markAsDirty();
       this.form.get("proxys")?.markAsDirty();
-      await this.alertService.successMessage(``, `Proxy ${this.proxyFormControl.value} añadido correctamente`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_add_proxy', {value: this.proxyFormControl.value})}`);
 
       this.proxies = [];
       this.proxies = [...this.form.value.proxys];
@@ -296,7 +297,7 @@ export class GatewayServicesComponent implements OnInit {
       this.proxyFormControl.reset();
       this.resetErrors();
     } else {
-      await this.alertService.errorMessage('', 'Compruebe el valor introducido del proxy');
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.info_proxy_value')}`);
       this.proxyFormControl.reset();
       this.resetErrors();
     }
@@ -304,12 +305,12 @@ export class GatewayServicesComponent implements OnInit {
 
   async deleteRegistrar() {
     if (this.selectedRegistrar == null) {
-      await this.alertService.errorMessage(``, `Selecciona un item para eliminar`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.warn_select_item')}`);
       this.resetErrors();
       return;
     }
 
-    const result = await this.alertService.confirmationMessage(``, `¿Seguro que quiere eliminar este registrar?`);
+    const result = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_delete_registrar')}`);
     if (result.value) {
       this.form.value.registrars.forEach((server: Server, idx: number) => {
         if (server.selected) {
@@ -328,19 +329,19 @@ export class GatewayServicesComponent implements OnInit {
       this.serversFormControl.reset();
       this.resetErrors();
       this.form.get("registrars")?.markAsDirty();
-      await this.alertService.successMessage(``, `Registrar borrado correctamente`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_delete_registrar')}`);
     }
   }
 
   async addRegistrar() {
     if (this.registrarsFormControl.value === null || this.registrarsFormControl.value === '') {
-      await this.alertService.errorMessage('', 'No se puede un introducir un registrar vacio');
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_empty_registrar')}`);
       this.resetErrors();
       return;
     }
 
     if (this.form.value.registrars.length === this.MAX_REGISTRARS) {
-      await this.alertService.errorMessage('', 'Número máximo de registrars alcanzado');
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_max_registrar')}`);
       this.registrarsFormControl.reset();
       this.resetErrors();
       return;
@@ -349,7 +350,7 @@ export class GatewayServicesComponent implements OnInit {
     if (this.registrarsFormControl.valid) {
 
       if (this.checkDuplicateRegistrar(this.registrarsFormControl.value)) {
-        await this.alertService.errorMessage('', 'Registrar duplicado');
+        await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_duply_registrar')}`);
         this.resetErrors();
         return;
       }
@@ -358,7 +359,7 @@ export class GatewayServicesComponent implements OnInit {
       this.form.value.registrars.push({ 'ip': this.registrarsFormControl.value, 'selected': selected });
       this.form.markAsDirty();
       this.form.get("registrars")?.markAsDirty();
-      await this.alertService.successMessage(``, `Registrar ${this.registrarsFormControl.value} añadido correctamente`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_add_registrar', {value: this.registrarsFormControl.value})}`);
 
       this.registrars = [];
       this.registrars = [...this.form.value.registrars];
@@ -366,7 +367,7 @@ export class GatewayServicesComponent implements OnInit {
       this.registrarsFormControl.reset();
       this.resetErrors();
     } else {
-      await this.alertService.errorMessage('', 'Compruebe el valor introducido del registrar');
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.info_registrar_value')}`);
       this.registrarsFormControl.reset();
       this.resetErrors();
     }
@@ -374,12 +375,12 @@ export class GatewayServicesComponent implements OnInit {
 
   async deleteNTP() {
     if (this.selectedServer == null) {
-      await this.alertService.errorMessage(``, `Selecciona un item para eliminar`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.warn_select_item')}`);
       this.resetErrors();
       return;
     }
 
-    const result = await this.alertService.confirmationMessage(``, `¿Seguro que quiere eliminar este servidor?`);
+    const result = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_delete_NTP')}`);
     if (result.value) {
       this.form.value.listServers.forEach((server: Server, idx: number) => {
         if (server.selected) {
@@ -398,19 +399,19 @@ export class GatewayServicesComponent implements OnInit {
       this.serversFormControl.reset();
       this.resetErrors();
       this.form.get("listServers")?.markAsDirty();
-      await this.alertService.successMessage(``, `Servidor borrado correctamente`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_delete_NTP')}`);
     }
   }
 
   async addNTP() {
     if (this.serversFormControl.value === null || this.serversFormControl.value === '') {
-      await this.alertService.errorMessage('', 'No se puede introducir un servidor NTP vacio');
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_empty_NTP')}`);
       this.resetErrors();
       return;
     }
     
     if (this.form.value.listServers.length === this.MAX_SERVERS) {
-      await this.alertService.errorMessage('', 'Número máximo de servidores alcanzado');
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_max_NTP')}`);
       this.serversFormControl.reset();
       this.resetErrors();
       return;
@@ -419,7 +420,7 @@ export class GatewayServicesComponent implements OnInit {
     if (this.serversFormControl.valid) {
 
       if (this.checkDuplicateServer(this.serversFormControl.value)) {
-        await this.alertService.errorMessage('', 'Servidor NTP duplicado');
+        await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_duply_NTP')}`);
         this.resetErrors();
         return;
       }
@@ -428,7 +429,7 @@ export class GatewayServicesComponent implements OnInit {
       this.form.value.listServers.push({ 'ip': this.serversFormControl.value, 'selected': selected });
       this.form.markAsDirty();
       this.form.get("listServers")?.markAsDirty();
-      await this.alertService.successMessage(``, `Servidor NTP ${this.serversFormControl.value} añadido correctamente`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_add_NTP', {value: this.serversFormControl.value})} `);
 
       this.servers = [];
       this.servers = [...this.form.value.listServers];
@@ -436,7 +437,7 @@ export class GatewayServicesComponent implements OnInit {
       this.serversFormControl.reset();
       this.resetErrors();
     } else {
-      await this.alertService.errorMessage('', 'Compruebe el valor introducido del servidor');
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.info_NTP_value')}`);
       this.proxyFormControl.reset();
       this.resetErrors();
     }
@@ -444,12 +445,12 @@ export class GatewayServicesComponent implements OnInit {
 
   async deleteTrap() {
     if (this.selectedTrap == null) {
-      await this.alertService.errorMessage(``, `Selecciona un item para eliminar`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.warn_select_item')}`);
       this.resetErrors();
       return;
     }
 
-    const result = await this.alertService.confirmationMessage(``, `¿Eliminar trap "${this.selectedTrap}"?`);
+    const result = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_delete_trap', {value: this.selectedTrap})}`);
     if (result.value) {
       const index: number = this.form.value.traps.indexOf(this.selectedTrap);
       this.form.value.traps.splice(index, 1);
@@ -474,7 +475,7 @@ export class GatewayServicesComponent implements OnInit {
     }
 
     if (this.form.value.traps.length === this.MAX_TRAPS) {
-      await this.alertService.errorMessage('', 'Número máximo de traps alcanzado');
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_max_trap')}`);
       this.trapFormControl.reset();
       this.trapPortFormControl.reset();
       this.trapServerFormControl.reset();
@@ -487,13 +488,13 @@ export class GatewayServicesComponent implements OnInit {
       const trap = `${this.trapServerFormControl.value},${this.trapFormControl.value}/${this.trapPortFormControl.value}`;
 
       if (this.checkDuplicateTrap(trap)) {
-        await this.alertService.errorMessage('', 'Trap duplicado');
+        await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_duply_trap')}`);
         this.resetErrors();
         return;
       }
 
       if (trap.match(AppSettings.TRAP_PATTERN) == undefined) {
-        await this.alertService.errorMessage(``, `Formato de trap no válido`);
+        await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.err_empty_trap')}`);
         this.resetErrors();
         return;
       }
@@ -507,7 +508,7 @@ export class GatewayServicesComponent implements OnInit {
       this.trapServerFormControl.reset();
       this.resetErrors();
     } else {
-      await this.alertService.errorMessage('', 'Compruebe los valores introducidos');
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.info_trap_value')}`);
       this.trapFormControl.reset();
       this.trapPortFormControl.reset();
       this.trapServerFormControl.reset();

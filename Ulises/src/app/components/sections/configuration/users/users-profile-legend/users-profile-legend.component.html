@@ -1,37 +1,37 @@
 <div class="title">
-    {{'Leyenda de perfiles'}}
+    {{ 'users.profile_legend' | translate }}
 </div>
 
 <div class="mat-elevation-z8" *ngIf="dataSource && dataSource.data && dataSource.data.length > 0">
     <mat-table [dataSource]="dataSource" class="table">
         <ng-container matColumnDef="rol">
-            <mat-header-cell *matHeaderCellDef>Roles</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.rol}} </mat-cell>
+            <mat-header-cell *matHeaderCellDef>{{ 'users.role' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.rol | translate }} </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="CFG">
-            <mat-header-cell *matHeaderCellDef>CFG</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.CFG}}</mat-cell>
+            <mat-header-cell *matHeaderCellDef>{{ 'users.CFG' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.CFG | translate }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="RCS">
-            <mat-header-cell *matHeaderCellDef>RCS</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.RCS}}</mat-cell>
+            <mat-header-cell *matHeaderCellDef>{{ 'users.RCS' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.RCS | translate }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="GW">
-            <mat-header-cell *matHeaderCellDef>GW</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.GW}}</mat-cell>
+            <mat-header-cell *matHeaderCellDef>{{ 'users.GW' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.GW | translate }}</mat-cell>
         </ng-container>
 
-        <ng-container matColumnDef="Funciones_asociadas">
-            <mat-header-cell *matHeaderCellDef>Funciones Asociadas</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.Funciones_asociadas}}</mat-cell>
+        <ng-container matColumnDef="associated_functions">
+            <mat-header-cell *matHeaderCellDef>{{ 'users.associated_functions' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.associated_functions | translate }}</mat-cell>
         </ng-container>
 
         <!-- Header and Row Declarations -->
-        <mat-header-row *matHeaderRowDef="['rol','CFG','RCS','GW','Funciones_asociadas']"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: ['rol','CFG','RCS','GW','Funciones_asociadas']"></mat-row>
+        <mat-header-row *matHeaderRowDef="['rol','CFG','RCS','GW','associated_functions']"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: ['rol','CFG','RCS','GW','associated_functions']"></mat-row>
     </mat-table>
 
     <!-- <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator> -->

@@ -1,4 +1,4 @@
-﻿var express = require('express');
+var express = require('express');
 var router = express.Router();
 
 var bodyParser = require('body-parser');
@@ -14,334 +14,29 @@ var myLibUsuarios = require('../../lib/users.js');
 var logging = require('../../lib/nu-log.js');
 var moment = require('moment');
 
+var XLSX = require('xlsx')
 
 // Nesting routers by attaching them as middleware:
 var gatewaysRouter = express.Router({ mergeParams: true });
 
 var PdfPrinter = require('pdfmake');
+const { timeout } = require('async');
 // const { response } = require('../../app.js');
-var fonts = {
-    Roboto: {
-        normal: 'fonts/Roboto-Regular.ttf',
-        bold: 'fonts/Roboto-Medium.ttf',
-        italics: 'fonts/Roboto-Italic.ttf',
-        bolditalics: 'fonts/Roboto-MediumItalic.ttf'
-    }
-};
 
-function getPdfDocDefinition(data, cfgName) {
-    return {
-        pageSize: 'A4',
-        pageOrientation: 'landscape',
-        //pageMargins: [10,10,10,10],
-        styles: {
-            header: {
-                fontSize: 16,
-                bold: true,
-                color: 'green', alignment: 'center',
-                margin: [0, 20, 0, 10]
-            },
-            footer: {
-                fontSize: 9, color: 'green',
-                margin: [10, 10, 10, 20]
-            },
-            level0: {
-                fontSize: 14,
-                bold: true,
-                alignment: 'center',
-                margin: [0, 20, 0, 10]
-            },
-            level1: {
-                fontSize: 12,
-                bold: true, color: 'blue',
-                alignment: 'left',
-                margin: [20, 20, 0, 0]
-            },
-            level2: {
-                fontSize: 12,
-                bold: true,
-                alignment: 'left',
-                margin: [40, 10, 0, 0]
-            },
-            level3_header: {
-                fontSize: 10,
-                bold: true,
-                alignment: 'left',
-                color: 'blue',
-                margin: [50, 2, 0, 0]
-            },
-            level3: {
-                fontSize: 9,
-                alignment: 'left',
-                margin: [50, 2, 0, 0]
-            },
-            level4: {
-                fontSize: 10,
-                bold: true,
-                alignment: 'left',
-                margin: [60, 0, 0, 0]
-            },
-            level5: {
-                fontSize: 9,
-                bold: true,
-                alignment: 'left',
-                margin: [90, 0, 0, 0]
-            },
-            defaultStyle: {
-                fontSize: 12,
-                color: 'black',
-                alignment: 'justify'
-            }
-        },
-        header: {
-            margin: [10, 10, 10, 10],
-            text: "Ulises G 5000. Informe de Configuracion de Recursos: " + cfgName, style: 'header'
-        },
-        footer: function (currentPage, pageCount) {
-            return {
-                margin: [10, 10, 10, 10],
-                columns: [
-                    { text: (new Date()).toLocaleString(), style: 'footer', alignment: 'left' },
-                    { text: "Grupo Amper. 2017-2022. All rights reserved.", style: 'footer', alignment: 'center' },
-                    { text: 'Pg ' + currentPage.toString() + ' de ' + pageCount, style: 'footer', alignment: 'right' }
-                ]
-            };
-        },
-        content: PdfPrintGws(data)
-    };
-}
-
-function generatesRandomName(name) {
-    var myDate = new Date();
-    var hashArray = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-        'U', 'V', 'W', 'X', 'Y', 'Z', '0'];
-
-    var monthNumber = myDate.getMonth() + 1;
-    var dayNumber = myDate.getDay() + 1;
-    var hourNumber = myDate.getHours() + 1;
-    var minNumber = myDate.getMinutes() + 1;
-    var secNumber = myDate.getSeconds() + 1;
-
-    return (name + '#' + hashArray[monthNumber] + hashArray[dayNumber] + hashArray[hourNumber] +
-        hashArray[minNumber] + hashArray[secNumber]);
-}
-
-function PdfPrintGws(gws) {
-
-    var content = [];
-    content.push({ text: gws.length.toString() + ' Pasarelas en la configuracion', style: 'level0' });
-    for (igw = 0; igw < gws.length; igw++) {
-        var gw = gws[igw];
-        PdfPrintGw(content, gw);
-        if (igw < (gws.length - 1))
-            content.push({ text: "", pageBreak: 'after' });
-    }
-    return content;
-}
-
-function PdfPrintGw(content, gw) {
-
-    content.push({ text: 'Pasarela ' + gw.gw + ', en ' + gw.site, style: 'level1' });
-    content.push({ text: 'Configuracion Radio. ' + gw.radios.length + ' Recursos.', style: 'level2' });
-    if (gw.radios.length > 0) {
-        content.push({
-            columns: [
-                { text: 'Recurso', width: 250 },
-                { text: 'Frecuencia', width: 80 },
-                { text: 'Tipo', width: 80 },
-                { text: 'Colaterales', width: 120 }
-            ], style: 'level3_header'
-        });
-        for (ir = 0; ir < gw.radios.length; ir++) {
-            var rr = gw.radios[ir];
-            PdfPrintRadioRs(content, rr);
-        }
-    }
-
-    content.push({ text: 'Configuracion Telefonia. ' + gw.telef.length + ' Recursos.', style: 'level2' });
-    if (gw.telef.length > 0) {
-        content.push({
-            columns: [
-                { text: 'Recurso', width: 330 },
-                { text: 'Tipo', width: 80 },
-                { text: 'Colateral', width: 120 }
-            ], style: 'level3_header'
-        });
-        for (it = 0; it < gw.telef.length; it++) {
-            var rt = gw.telef[it];
-            PdfPrintPhoneRs(content, rt);
-        }
-    }
-}
-
-function PdfPrintRadioRs(content, rd) {
-    var RdTypes = [
-        "Local Simple", "Local P/R", "Local FD Simple", "Local FD P/R",
-        "Remoto TxRx", "Remoto Tx", "Remoto Rx"
-    ];
-
-    var rdInfo1 = ('(' + (rd.columna.toString() + '/' + rd.fila) + ')');
-    rdInfo1 += (': ' + rd.nombre);
-    var rdInfo2 = (rd.frecuencia.toFixed(3) + ' MHz.');
-    var rdInfo3 = (RdTypes[rd.tipo_agente]);
-    var colInfo = "";
-    if (rd.tipo_agente < 4) {
-        colInfo += (rd.col.length.toString() + ' Colaterales');
-        for (ic = 0; ic < rd.col.length; ic++) {
-            var col = rd.col[ic];
-            colInfo += ('\r\n.    EMPL ' + Math.round(col.nivel_colateral / 2) + ', ' + col.tipo + ': ' + col.uri);
-        }
-    }
-    content.push({
-        columns: [
-            { text: rdInfo1, width: 250 },
-            { text: rdInfo2, width: 80 },
-            { text: rdInfo3, width: 80 },
-            { text: colInfo, width: 250 }
-        ], style: 'level3'
-    });
-}
-
-function PdfPrintPhoneRs(content, ph) {
-
-    var PhTypes = [
-        "BL", "BC", "AB", "ATS-R2", "ATS-N5", "LCEN", "ATS-QSIG"
-    ];
-
-    var phInfo1 = ('(' + (ph.columna.toString() + '/' + ph.fila) + ')');
-    phInfo1 += (': ' + ph.nombre);
-    var phInfo2 = (PhTypes[ph.tipo_interfaz_tel]);
-    var phInfo3 = (ph.uri_telefonica);
-    content.push({
-        columns: [
-            { text: phInfo1, width: 330 },
-            { text: phInfo2, width: 80 },
-            { text: phInfo3, width: 250 }
-        ], style: 'level3'
-    });
-}
-
-function generatePDF(data, callback) {
-
-    const cfgName = data.length == 0 ? "NO-GW" : data[0].cfg;
-    const printer = new PdfPrinter(fonts);
-    var pdfDoc = printer.createPdfKitDocument(getPdfDocDefinition(data, cfgName));
-
-    let chunks = [];
-
-    pdfDoc.on('data', (chunk) => {
-        chunks.push(chunk);
-    });
-
-    pdfDoc.on('end', () => {
-        const result = Buffer.concat(chunks);
-        const date = new Date();
-        callback({
-            'file_name': nameOfFile(cfgName, 'pdf'),
-            // 'file_name': 'Cfg_' + getDate() + '_InformeCfg.pdf',
-            'file_data': result.toString('base64')
-        });
-    });
-
-    pdfDoc.end();
-}
 
 function getDate() {
-    
-    const weekday = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][new Date().getDay()]  
+
+    const weekday = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][new Date().getDay()]
     var date = new Date();
 
-    return `${date.getDay()}_${date.getMonth()+1}_${date.getFullYear()} (${weekday})`; 
+    return `${date.getDay()}_${date.getMonth() + 1}_${date.getFullYear()} (${weekday})`;
 }
 
-function nameOfFile(cfg, ext){
+function nameOfFile(cfg, ext) {
     return moment().format('YYYYMMDD-HHmm ') + 'Cfg_(' + cfg + ')_InformeCfg.' + ext;
 }
 
 
-function generateExcel(gws) {
-    var RdTypes = [
-        "Local Simple", "Local P/R", "Local FD Simple", "Local FD P/R",
-        "Remoto TxRx", "Remoto Tx", "Remoto Rx"
-    ];
-    var PhTypes = [
-        "BL", "BC", "AB", "ATS-R2", "ATS-N5", "LCEN", "ATS-QSIG"
-    ];
-
-    var cfgName = gws.length == 0 ? "NO-GW" : gws[0].cfg;
-
-    var strData = 'Config' +
-        ';Emplazamiento' +
-        ';Pasarela' +
-        ';P-R-T-C' +
-        ';Recurso' +
-        ';Frecuencia (MHz)' +
-        ';Tipo' +
-        ';Colateral' + '\r\n';
-    for (igw = 0; igw < gws.length; igw++) {
-        var gw = gws[igw];
-        // Registro de la Pasarela.
-        strData += (gw.cfg + ';' +
-            gw.site + ';' +
-            gw.gw + ';' +
-            '0' + ';' +
-            '---' + ';' +
-            '---' + ';' +
-            '---' + ';' +
-            '---' + '\r\n');
-        // Registro Recursos RD
-        for (ir = 0; ir < gw.radios.length; ir++) {
-            var rr = gw.radios[ir];
-            // Registro del Recurso
-            strData += (gw.cfg + ';' +
-                gw.site + ';' +
-                gw.gw + ';' +
-                '1' + ';' +
-                rr.nombre + ';' +
-                rr.frecuencia.toFixed(3) + ';' +
-                RdTypes[rr.tipo_agente] + ';' +
-                '---' + '\r\n');
-            if (rr.tipo_agente <= 4) {
-                for (ic = 0; ic < rr.col.length; ic++) {
-                    var col = rr.col[ic];
-                    var clInfo = 'EMPL ' + Math.round(col.nivel_colateral / 2);
-                    clInfo += (', ' + col.tipo);
-                    clInfo += (': ' + col.uri);          // Registro del Colateral
-                    strData += (gw.cfg + ';' +
-                        gw.site + ';' +
-                        gw.gw + ';' +
-                        '3' + ';' +
-                        rr.nombre + ';' +
-                        rr.frecuencia.toFixed(3) + ';' +
-                        RdTypes[rr.tipo_agente] + ';' +
-                        clInfo + '\r\n');
-                }
-            }
-        }
-        // Registro Recursos TF
-        for (it = 0; it < gw.telef.length; it++) {
-            var rt = gw.telef[it];
-            // Registro del Recurso
-            strData += (gw.cfg + ';' +
-                gw.site + ';' +
-                gw.gw + ';' +
-                '2' + ';' +
-                rt.nombre + ';' +
-                '---' + ';' +
-                PhTypes[rt.tipo_interfaz_tel] + ';' +
-                rt.uri_telefonica + '\r\n');
-        }
-    }
-
-    var document = {
-        'file_name': nameOfFile(cfgName, 'csv'),
-        // 'file_name': 'Cfg_' + cfgName + '-' + getDate() + '_InformeCfg.csv',
-        'file_data': strData
-    };
-
-    return document;
-}
 
 router.use('/:configuration/gateways', gatewaysRouter);
 
@@ -372,13 +67,13 @@ router.route('/checkConfigIp/:ip/:idCFG')
         logging.Info(req.method, req.originalUrl);
         myLibConfigurations.checkIps(req.params.ip, req.params.idCFG, res);
 
-});
+    });
 
 router.route('/checkConf/:idGTW')
-.get(function (req, res) {
-    logging.Info(req.method, req.originalUrl);
-    myLibConfigurations.getConfigurationsByGtW(req.params.idGTW, res);
-});
+    .get(function (req, res) {
+        logging.Info(req.method, req.originalUrl);
+        myLibConfigurations.getConfigurationsByGtW(req.params.idGTW, res);
+    });
 
 
 router.route('/active')
@@ -411,15 +106,15 @@ router.route('/:configuration/gatewaysHasResources')
         });
     });
 
-    //////////////////
+//////////////////
 //Otra nueva para obtener el id de la Configuración a partir de la Gtw
 router.route('/checkConf/:idGTW')
-.put(function (req, res) {
-    logging.Info(req.method, req.originalUrl);
-    myLibGateways.getConfigurationByGtw(req.params.idGTW, function (result) {
-        res.json(result);
+    .put(function (req, res) {
+        logging.Info(req.method, req.originalUrl);
+        myLibGateways.getConfigurationByGtw(req.params.idGTW, function (result) {
+            res.json(result);
+        });
     });
-});
 router.route('/:configuration/gatewaysOut')
     .get(function (req, res) {
         logging.Info(req.method, req.originalUrl);
@@ -437,28 +132,16 @@ router.route('/SP_cfg/:cfg')
         });
     });
 
-router.route('/SP_cfg/:cfg/pdf')
+router.route('/SP_cfg/:cfg')
     .get(function (req, res) {
         logging.Info(req.method, req.originalUrl);
         myLibConfigurations.SP_cfg(req.params.cfg, function (data) {
             if (data != null) {
-                generatePDF(data, (response) => {
-                    res.status(200).json({'data': response.file_data, 'file_name': response.file_name})
-                });
+                res.status(200).json({ 'data': data })
             }
         });
     });
 
-router.route('/SP_cfg/:cfg/excel')
-    .get(function (req, res) {
-        logging.Info(req.method, req.originalUrl);
-        myLibConfigurations.SP_cfg(req.params.cfg, function (data) {
-            if (data != null) {
-                const excelData = generateExcel(data);
-                res.status(200).json({'data': excelData.file_data, 'file_name': excelData.file_name});
-            }
-        });
-    });
 
 router.route('/listOfGateways')
     .get(function (req, res) {

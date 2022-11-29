@@ -1,22 +1,22 @@
 <div class="about" *ngIf="ready">
     <div class="title">
-        {{ 'REDAN. Aplicación de configuración' }}
+        {{ 'about.title' | translate }}
     </div>
     <div class="body">
         <h2 class="redan-title">
-            {{ 'REDAN CFGR'}}
+            {{ 'about.redan_title' | translate }}
         </h2>
         <p class="version">
             {{localConfig.Version}}.{{localConfig.SubVersion}}, {{localConfig.Date}}
         </p>
         <div class="copyright"> 
-            {{ 'Grupo Amper © Copyright 2018-2022. Todos los Derechos Reservados.'}}
+            {{ 'about.copyright' | translate }}
         </div>
         <div class="licence">
-            <p style="text-align: right"><a [href]="licenseEndpoint" target="_blank">Acuerdo de Licencia</a></p>
+            <p style="text-align: right"><a [href]="licenseEndpoint" target="_blank">{{ 'about.licence' | translate }}</a></p>
         </div>
     </div>
     <div class="btn">
-        <button class="custom-raised-btn" mat-raised-button (click)="dialogRef.close()" cdkFocusInitial>{{'Aceptar'}}</button>
+        <button class="custom-raised-btn" mat-raised-button (click)="dialogRef.close()" cdkFocusInitial>{{ 'button.accept' | translate }}</button>
     </div>
 </div>

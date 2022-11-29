@@ -1,25 +1,25 @@
 <form class="form" [formGroup]="resourceForm">
     <div class="title">
-        <mat-label>Listas B/N</mat-label>
+        <mat-label>{{ 'resource.tlf.lists' | translate }}</mat-label>
     </div>
     <div class="main-lists">
         <mat-form-field appearance="fill">
-            <mat-label>Tipo de restricción</mat-label>
+            <mat-label>{{ 'resource.tlf.type_restr' | translate }}</mat-label>
             <mat-select formControlName="restriccion_entrantes" (selectionChange)="checkSelectedTypeList()"
                 name="typeLists">
                 <mat-option *ngFor="let list of typeLists" [value]="list.value">
-                    {{list.viewValue}}
+                    {{ list.viewValue | translate }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <div class="title" *ngIf="resourceForm.value.restriccion_entrantes != 0">
-            <mat-label [ngClass]="{'no-display': displayBLlabel==false }">Listas Negra</mat-label>
-            <mat-label [ngClass]="{'no-display': displayWLlabel==false }">Listas Blanca</mat-label>
+            <mat-label [ngClass]="{'no-display': displayBLlabel==false }">{{ 'resource.tlf.blacklist' | translate }}</mat-label>
+            <mat-label [ngClass]="{'no-display': displayWLlabel==false }">{{ 'resource.tlf.whitelist' | translate }}</mat-label>
         </div>
         <div class="uri-group" *ngIf="displayBLlabel">
             <div class="uri-row" *ngFor="let row of uriListToDisplay.LSN; let i = index">
                 <mat-form-field appearance="legacy">
-                    <mat-label>NombreRecurso@IP:Puerto</mat-label>
+                    <mat-label>{{ 'resource.tlf.uri_pattern' | translate }}</mat-label>
                     <input matInput [disabled]="visualizationMode" (change)="saveUri($event, i, 'LSN')" [value]="row.uri">
                 </mat-form-field>
             </div>
@@ -27,7 +27,7 @@
         <div class="uri-group" *ngIf="displayWLlabel">
             <div class="uri-row" *ngFor="let row of uriListToDisplay.LSB; let i = index">
                 <mat-form-field appearance="legacy">
-                    <mat-label>NombreRecurso@IP:Puerto</mat-label>
+                    <mat-label>{{ 'resource.tlf.uri_pattern' | translate }}</mat-label>
                     <input matInput [disabled]="visualizationMode" (change)="saveUri($event, i, 'LSB')" [value]="row.uri">
                 </mat-form-field>
             </div>

@@ -132,16 +132,10 @@ export class ConfigService extends BaseService {
         return this.http.post<LocalConfig>(url, localConfig, this.buildOptions())
             .pipe(catchError(this.handleError));
     }
+    
 
-    getConfigPDF(id: number): Observable<any> {
-        const url = `/configurations/SP_cfg/${id}/pdf`;
-
-        return this.http.get<Blob>(url, this.buildOptions())
-            .pipe(catchError(this.handleError));
-    }
-
-    getConfigExcel(id: number): Observable<any> {
-        const url = `/configurations/SP_cfg/${id}/excel`;
+    getConfig(id: number): Observable<any> {
+        const url = `/configurations/SP_cfg/${id}`;
 
         return this.http.get<Blob>(url, this.buildOptions())
             .pipe(catchError(this.handleError));

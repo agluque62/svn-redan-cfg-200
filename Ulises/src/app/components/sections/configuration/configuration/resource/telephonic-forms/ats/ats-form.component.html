@@ -1,81 +1,80 @@
 <form class="main-form" [formGroup]="resourceForm" *ngIf="isReady">
-    <mat-checkbox formControlName="iEnableNoED137">Permite Llamadas No ED137</mat-checkbox>
-    <mat-checkbox formControlName="respuesta_automatica" (change)="automaticResponseIsChecked($event.checked)">Respuesta
-        automática</mat-checkbox>
+    <mat-checkbox formControlName="iEnableNoED137">{{ 'resource.tlf.iEnableED137' | translate }}</mat-checkbox>
+    <mat-checkbox formControlName="respuesta_automatica" (change)="automaticResponseIsChecked($event.checked)">{{ 'resource.tlf.automatic_resp' | translate }}</mat-checkbox>
     <mat-form-field appearance="legacy" *ngIf="automaticResponse">
-        <mat-label>Periodo tonos resp. estado (sg.)</mat-label>
+        <mat-label>{{ 'resource.tlf.period_shades' | translate }}</mat-label>
         <input matInput formControlName="periodo_tonos" [maxLength]="2">
         <mat-error *ngIf="resourceForm.get('periodo_tonos')?.hasError('pattern')">
-            {{ appset.NUMBERS_FORMAT_INVALID }}
+            {{ appset.NUMBERS_FORMAT_INVALID | translate }}
         </mat-error>
         <mat-error
             *ngIf="resourceForm.get('periodo_tonos')?.hasError('min') || resourceForm.get('periodo_tonos')?.hasError('max')">
-            {{ appset.WRONG_RANGE }}
+            {{ appset.WRONG_RANGE | translate }}
         </mat-error>
         <mat-error *ngIf="resourceForm.get('periodo_tonos')?.hasError('required')">
-            {{ appset.FIELD_REQUIRED }}
+            {{ appset.FIELD_REQUIRED | translate }}
         </mat-error>
     </mat-form-field>
     <mat-form-field appearance="fill" *ngIf="isR2 && !automaticResponse">
-        <mat-label>Conversion de respuestas SIP - R2</mat-label>
+        <mat-label>{{ 'resource.tlf.SIP_R2_resp' | translate }}</mat-label>
         <mat-select [(value)]="this.resourceForm.value.RespuestaSIP_ATSR2" formControlName="RespuestaSIP_ATSR2" name="timeoutSel" (selectionChange)="changeSIPOpt($event)">
             <mat-option *ngFor="let sip of SIPResponseConversion" [value]="sip.value">
-                {{sip.viewValue}}
+                {{sip.viewValue | translate}}
             </mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field appearance="legacy" *ngIf="isR2 && this.resourceForm.value.RespuestaSIP_ATSR2 === 1">
-        <mat-label>Duración de tono de bloqueo (s)</mat-label>
+        <mat-label>{{ 'resource.tlf.TmTonoBloqueo' | translate }}</mat-label>
         <input matInput formControlName="TmTonoBloqueo" [maxLength]="6">
         <mat-error
-            *ngIf="resourceForm.get('TmTonoBloqueo')?.hasError('min') || resourceForm.get('TmTonoBloqueo')?.hasError('max')">
-            {{ appset.INVALID_RANGE_TONE }}
+            *ngIf="resourceForm.get('TmTonoBloqueo')?.hasError('pattern')">
+            {{ appset.INVALID_RANGE_TONE | translate }}
         </mat-error>
     </mat-form-field>
     <mat-form-field appearance="legacy" *ngIf="isR2 && this.resourceForm.value.RespuestaSIP_ATSR2 === 1">
-        <mat-label>Tiempo entre Bloqueo y Liberación (ms)</mat-label>
+        <mat-label>{{ 'resource.tlf.RMBloqueoLib' | translate }}</mat-label>
         <input matInput formControlName="TmBloqueoLib" [maxLength]="6">
         <mat-error
-            *ngIf="resourceForm.get('TmBloqueoLib')?.hasError('min') || resourceForm.get('TmBloqueoLib')?.hasError('max')">
-            {{ appset.INVALID_RANGE_BLOQ }}
+            *ngIf="resourceForm.get('TmBloqueoLib')?.hasError('pattern')">
+            {{ appset.INVALID_RANGE_BLOQ | translate }}
         </mat-error>
     </mat-form-field>
     <mat-form-field appearance="fill">
-        <mat-label>Lado</mat-label>
+        <mat-label> {{ 'resource.tlf.side' | translate }} </mat-label>
         <mat-select formControlName="lado" ([value])="this.resourceForm.value.lado" name="side">
             <mat-option *ngFor="let side of sides" [value]="side.value">
-                {{side.viewValue}}
+                {{side.viewValue | translate}}
             </mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field appearance="fill">
-        <mat-label>Time Out respuesta llamada</mat-label>
+        <mat-label>{{ 'resource.tlf.timeOpts' | translate }}</mat-label>
         <mat-select [(value)]="timeOpt" name="timeoutSel" (selectionChange)="changeTimeOpt($event)">
             <mat-option *ngFor="let opt of timeOpts" [value]="opt.value">
-                {{opt.viewValue}}
+                {{opt.viewValue | translate}}
             </mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field appearance="legacy">
-        <mat-label>Origen llamadas salientes de test</mat-label>
+        <mat-label>{{ 'resource.tlf.origen_test' | translate }}</mat-label>
         <input matInput formControlName="origen_test" [maxLength]="6">
         <mat-error *ngIf="resourceForm.get('origen_test')?.hasError('pattern')">
-            {{ appset.INVALID_AGV_NUMBER }}
+            {{ appset.INVALID_AGV_NUMBER | translate }}
         </mat-error>
     </mat-form-field>
     <mat-form-field appearance="legacy">
-        <mat-label>Destino llamadas salientes de test</mat-label>
+        <mat-label>{{ 'resource.tlf.destino_test' | translate }}</mat-label>
         <input matInput formControlName="destino_test" [maxLength]="6">
         <mat-error *ngIf="resourceForm.get('destino_test')?.hasError('pattern')">
-            {{ appset.INVALID_AGV_NUMBER }}
+            {{ appset.INVALID_AGV_NUMBER | translate }}
         </mat-error>
     </mat-form-field>
     <mat-form-field appearance="fill">
-        <mat-label>Duración tono interrupción (sg.)</mat-label>
+        <mat-label>{{ 'resource.tlf.duration_shades' | translate }}</mat-label>
         <mat-select [disabled]="visualizationMode" [(value)]="duration" name="duration"
             (selectionChange)="this.resourceForm.get('duracion_tono_interrup')?.markAsDirty();">
             <mat-option *ngFor="let duration of durations" [value]="duration.value">
-                {{duration.viewValue}}
+                {{duration.viewValue | translate}}
             </mat-option>
         </mat-select>
     </mat-form-field>

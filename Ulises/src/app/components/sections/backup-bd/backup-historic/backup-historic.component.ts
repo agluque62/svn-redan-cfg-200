@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
 import { AlertService } from 'src/app/_services/alert.service';
@@ -27,7 +28,8 @@ export class BackupHistoricComponent implements OnInit {
 
   constructor(private readonly loginService: LoginService, private readonly app: AppComponent, 
     private readonly userService: UserService, private readonly router: Router, private readonly alertService: AlertService,
-    private readonly backupService: BackupService, private readonly configService: ConfigService) { }
+    private readonly backupService: BackupService, private readonly configService: ConfigService,
+    private readonly translate: TranslateService) { }
 
   ngOnInit(): void {
     this.checkPermissions();
@@ -78,14 +80,14 @@ export class BackupHistoricComponent implements OnInit {
 
   async deleteLog() {
 
-    const confirm = await this.alertService.confirmationMessage(``, `¿Eliminar definitivamente el archivo log?`);
+    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('backup.alert.delete_log')}`);
 
     if (confirm.value) {
       // this.localConfig = await this.configService.getLocalConfig().toPromise();
       const deleteLogResponse = await this.backupService.deleteBackupLog(this.ServiceDomainLocation).toPromise();
   
       if (deleteLogResponse && deleteLogResponse.resultado === 'OK') {
-        await this.alertService.successMessage(``, `Log borrado correctamente`);    
+        await this.alertService.successMessage(``, `${this.translate.instant('backup.alert.delete_success')}`);    
         this.dataSource.data=[];
         this.retrieveBackupLog();
         return;
@@ -97,14 +99,14 @@ export class BackupHistoricComponent implements OnInit {
     this.ServiceDomainLocation=domain;
     this.ServiceDomainAvailable=true;
     this.retrieveBackupLog();
-    console.log('Backup Service active on ', domain);
+    console.log(`${this.translate.instant('backup.alert.backup_active')}`, domain);
   }
 
   onServiceInactive(){
     this.ServiceDomainLocation='';
     this.ServiceDomainAvailable=false;
-    this.dataSource.data=[];
-    console.log('Backup Service inactive');
+    this.dataSource ? this.dataSource.data=[] : '';
+    console.log(`${this.translate.instant('backup.alert.backup_no_con')}`);
   }
 }
 

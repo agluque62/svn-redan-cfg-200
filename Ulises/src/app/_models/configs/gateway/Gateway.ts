@@ -1,5 +1,6 @@
 export class Gateway {
 
+    conf_name!: string;
     EMPLAZAMIENTO_idEMPLAZAMIENTO!: number;
     comunidad_snmp!: string;
     contacto_snmp!: string;

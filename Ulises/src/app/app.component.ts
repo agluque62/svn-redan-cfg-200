@@ -28,7 +28,7 @@ export class AppComponent {
     this.subscription = this.interval.subscribe(async () => {
       try {
         await this.loginService.alive().toPromise();
-      } catch (error) {
+      } catch (error: any) {
         this.catchError(error);
       }
     });

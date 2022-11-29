@@ -92,7 +92,7 @@ passport.use(new Strategy(
         logging.Info('LocalSession =>', ctrlSesiones.localSession);
         if (ctrlSesiones.localSession) {
             insertHistoric(ACCESS_SYSTEM_FAIL, username, 'Existe una sesion activa.');
-            return cb(null, false, { message: 'Existe una sesion activa.' });
+            return cb(null, false, { message: 'err.ACTIVE_SESSION_EXISTS' });
         }
         // var pwdB64 = new Buffer(password).toString('base64');
         var pwdB64 = Buffer.from(password).toString('base64');
@@ -103,15 +103,15 @@ passport.use(new Strategy(
             }
             if (!user) {
                 insertHistoric(ACCESS_SYSTEM_FAIL, username, 'No existe el usuario');
-                return cb(null, false, { message: 'No existe el usuario' });
+                return cb(null, false, { message: 'err.USER_NOT_EXISTS' });
             }
             if (checkPerfil(user.perfil) == false) {
                 insertHistoric(ACCESS_SYSTEM_FAIL, username, 'Perfil de usuario no adecuado');
-                return cb(null, false, { message: 'Perfil de usuario no adecuado' });
+                return cb(null, false, { message: 'err.UNSUITABLE_USER' });
             }
             if (user.clave != pwdB64) {
                 insertHistoric(ACCESS_SYSTEM_FAIL, username, 'Password incorrecta.');
-                return cb(null, false, { message: 'Password incorrecta.' });
+                return cb(null, false, { message: 'err.INCORRECT_PASSWORD' });
             }
             insertHistoric(ACCESS_SYSTEM_OK, user.name, '');
             return cb(null, user);
@@ -456,8 +456,8 @@ app.get('/logout',
         logging.Info(req.method, req.originalUrl);
         insertHistoric(USER_LOGOUT_SYSTEM, ctrlSesiones.user.name, '');
         ctrlSesiones.localSession = null;
-        req.logout(null, (err)=>{});
-        res.json(null);
+        req.logout();
+        res.json();
     });
 
 /** 20170808 AGL. TICK de Sesion Activa */
@@ -482,13 +482,13 @@ app.get('/alive',
                 // RM4970. Se cierra la sesión en el servidor cuando se ha cerrando antes en el cliente.
                 ctrlSesiones.localSession = null;
                 logging.Info("La Session ha expirado en el cliente...");
-                res.status(401).json({ 'error': 'La sesión ha expirado. Identifiquese de nuevo.' })
+                res.status(401).json({ 'error': 'err.EXPIRED_SESSION' })
             }
         }
         else {
             // La sesión ha expirado en el Servidor...
             logging.Info("La Session ha expirado en el servidor...");
-            res.status(401).json({ 'error': 'La sesión ha expirado. Identifiquese de nuevo.' })
+            res.status(401).json({ 'error': 'err.EXPIRED_SESSION' })
         }
     });
 

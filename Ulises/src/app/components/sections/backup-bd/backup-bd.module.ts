@@ -9,6 +9,10 @@ import { BackupHistoricComponent } from './backup-historic/backup-historic.compo
 import { BackupManualComponent } from './backup-manual/backup-manual.component';
 import { CustomMaterialModule } from 'src/app/core/material.module';
 
+//Translation
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 // Components
 
 @NgModule({
@@ -23,7 +27,17 @@ import { CustomMaterialModule } from 'src/app/core/material.module';
     imports: [
         CommonModule,
         FormsModule,
-        CustomMaterialModule
+        CustomMaterialModule,
+        TranslateModule.forRoot({
+            loader: {
+              provide: TranslateLoader,
+              useFactory: (http: HttpClient) => {
+                return new TranslateHttpLoader(http);
+              },
+              deps: [ HttpClient ]
+            }
+          }),
+          HttpClientModule,
     ],
     exports: [
     ]

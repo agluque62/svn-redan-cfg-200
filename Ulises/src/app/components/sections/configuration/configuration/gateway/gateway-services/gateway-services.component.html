@@ -4,7 +4,7 @@
 
     <div class="gateway-select" *ngIf="!visualizationMode">
         <mat-form-field class="copy-form-field" appearance="fill">
-            <mat-label>{{'Copiar datos de...'}}</mat-label>
+            <mat-label>{{ 'gateway.copy_from' | translate }}</mat-label>
             <mat-select appearance="fill" (selectionChange)="copyFrom($event.value)">
                 <mat-option [value]="serviceItem" *ngFor="let serviceItem of gatewayAvaibleServicesItem">
                     {{ serviceItem.nombre }}
@@ -14,36 +14,36 @@
     </div>
 
     <mat-tab-group class="tabs" selectedIndex="0" (selectedTabChange)="onTabChanged();">
-        <mat-tab label="SIP">
+        <mat-tab label="{{ 'gateway.hardware_title_SIP' | translate }}">
             <ng-template matTabContent>
                 <div class="sip-form">
                     <mat-form-field appearance="fill">
-                        <mat-label>{{'Puerto'}}</mat-label>
+                        <mat-label>{{ 'gateway.port' | translate }}</mat-label>
                         <input matInput formControlName="PuertoLocalSIP">
                     </mat-form-field>
                     <mat-checkbox formControlName="supervisionTlf" [disabled]="false"
-                        (change)="resetSupervisionTlf($event.checked)">Supervisión sesiones telefónicas</mat-checkbox>
+                        (change)="resetSupervisionTlf($event.checked)">{{ 'gateway.telf_supervision' | translate}}</mat-checkbox>
 
                     <mat-form-field appearance="fill" *ngIf="supervisionSelected">
-                        <mat-label>{{'Periodo de supervisión (sg.)'}}</mat-label>
+                        <mat-label>{{ 'gateway.supervision_period' | translate }}</mat-label>
                         <input matInput required formControlName="periodo_supervision">
                         <mat-error *ngIf="form.controls['periodo_supervision'].hasError('required')">
-                            {{ appset.FIELD_REQUIRED }}
+                            {{ appset.FIELD_REQUIRED | translate }}
                         </mat-error>
                         <mat-error
                             *ngIf="form.controls['periodo_supervision'].hasError('min') || form.controls['periodo_supervision'].hasError('max')">
-                            {{ 'El campo debe estar en el rango 90 ... 1800' }}
+                            {{ 'gateway.alert.err.range_90_180' | translate }}
                         </mat-error>
                         <mat-error *ngIf="form.controls['periodo_supervision'].hasError('pattern')">
-                            {{ appset.NUMBERS_FORMAT_INVALID }}
+                            {{ appset.NUMBERS_FORMAT_INVALID | translate }}
                         </mat-error>
                     </mat-form-field>
 
                     <mat-form-field appearance="fill" *ngIf="supervisionSelected">
-                        <mat-label>Refresher</mat-label>
+                        <mat-label>{{ 'gateway.refresher' | translate }}</mat-label>
                         <mat-select [(value)]="this.form.value.refresher" formControlName="refresher" (selectionChange)="changeRefresher($event)">
                             <mat-option *ngFor="let rfs of refresher" [value]="rfs.value">
-                                {{rfs.viewValue}}
+                                {{rfs.viewValue | translate}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -59,13 +59,13 @@
                             </div>
 
                             <mat-form-field appearance="fill" *ngIf="!visualizationMode">
-                                <mat-label>{{'Nuevo proxy'}}</mat-label>
+                                <mat-label>{{ 'gateway.new_proxy' | translate }}</mat-label>
                                 <input matInput [formControl]="proxyFormControl">
                                 <mat-error *ngIf="proxyFormControl.hasError('required')">
-                                    {{ appset.FIELD_REQUIRED }}
+                                    {{ appset.FIELD_REQUIRED | translate }}
                                 </mat-error>
                                 <mat-error *ngIf="proxyFormControl.hasError('pattern')">
-                                    {{ appset.INVALID_IP }}
+                                    {{ appset.INVALID_IP | translate }}
                                 </mat-error>
                             </mat-form-field>
 
@@ -73,10 +73,10 @@
 
                         <div class="btns" *ngIf="!visualizationMode">
                             <button class="items" mat-raised-button (click)="deleteProxy()">
-                                {{'Eliminar proxy'}}
+                                {{ 'button.del_proxy' | translate }}
                             </button>
                             <button class="items" mat-raised-button (click)="addProxy()">
-                                {{'Añadir proxy'}}
+                                {{ 'button.add_proxy' | translate }}
                             </button>
                         </div>
                     </div>
@@ -92,22 +92,22 @@
                             </div>
 
                             <mat-form-field appearance="fill" *ngIf="!visualizationMode">
-                                <mat-label>{{'Nuevo registrars'}}</mat-label>
+                                <mat-label>{{ 'gateway.new_registrars' | translate }}</mat-label>
                                 <input matInput [formControl]="registrarsFormControl">
                                 <mat-error *ngIf="registrarsFormControl.hasError('required')">
-                                    {{ appset.FIELD_REQUIRED }}
+                                    {{ appset.FIELD_REQUIRED | translate }}
                                 </mat-error>
                                 <mat-error *ngIf="registrarsFormControl.hasError('pattern')">
-                                    {{ appset.INVALID_IP }}
+                                    {{ appset.INVALID_IP | translate }}
                                 </mat-error>
                             </mat-form-field>
                         </div>
                         <div class="btns" *ngIf="!visualizationMode">
                             <button class="items" mat-raised-button (click)="deleteRegistrar()">
-                                {{'Eliminar registrar'}}
+                                {{ 'button.del_regis' | translate }}
                             </button>
                             <button class="items" mat-raised-button (click)="addRegistrar()">
-                                {{'Añadir registrar'}}
+                                {{ 'button.add_regis' | translate }}
                             </button>
                         </div>
                     </div>
@@ -115,7 +115,7 @@
             </ng-template>
         </mat-tab>
 
-        <mat-tab label="Sincronización">
+        <mat-tab label="{{ 'gateway.hardware_title_Sync' | translate }}">
             <ng-template matTabContent>
                 <div class="sinc-form">
                     <div class="sinc">
@@ -129,22 +129,22 @@
                             </div>
 
                             <mat-form-field appearance="fill" *ngIf="!visualizationMode">
-                                <mat-label>{{'Nuevo servidor NTP'}}</mat-label>
+                                <mat-label>{{ 'gateway.new_NTP_serv' | translate }}</mat-label>
                                 <input matInput [formControl]="serversFormControl">
                                 <mat-error *ngIf="serversFormControl.hasError('required')">
-                                    {{ appset.FIELD_REQUIRED }}
+                                    {{ appset.FIELD_REQUIRED | translate }}
                                 </mat-error>
                                 <mat-error *ngIf="serversFormControl.hasError('pattern')">
-                                    {{ appset.INVALID_IP }}
+                                    {{ appset.INVALID_IP | translate }}
                                 </mat-error>
                             </mat-form-field>
                         </div>
                         <div class="btns" *ngIf="!visualizationMode">
                             <button class="items" mat-raised-button (click)="deleteNTP()">
-                                {{'Eliminar servidor NTP'}}
+                                {{ 'button.del_NTP' | translate }}
                             </button>
                             <button class="items" mat-raised-button (click)="addNTP()">
-                                {{'Añadir servidor NTP'}}
+                                {{ 'button.add_NTP' | translate }}
                             </button>
                         </div>
                     </div>
@@ -152,7 +152,7 @@
             </ng-template>
         </mat-tab>
 
-        <mat-tab label="SNMP">
+        <mat-tab label="{{ 'gateway.hardware_title_SNMP' | translate }}">
             <ng-template matTabContent>
                 <div class="snpm-form">
                     <div class="snpm">
@@ -160,81 +160,81 @@
                         <div class="fields">
                             <div class="col">
                                 <mat-form-field appearance="fill">
-                                    <mat-label>{{'Puerto del servicio'}}</mat-label>
+                                    <mat-label>{{ 'gateway.service_port' | translate }}</mat-label>
                                     <input matInput formControlName="puerto_servicio_snmp">
                                 </mat-form-field>
 
                                 <div class="form-item">
-                                    <mat-label>{{'SNMP V2'}}</mat-label>
+                                    <mat-label>{{ 'gateway.snmp_v2' | translate }}</mat-label>
                                     <mat-checkbox class="checkbox" formControlName="snmpv2" (click)="changeSNMPV2()">
                                     </mat-checkbox>
                                 </div>
 
                                 <mat-form-field appearance="fill">
-                                    <mat-label>{{'Comunidad SNMP-V2'}}</mat-label>
+                                    <mat-label>{{ 'gateway.snmp_community' | translate }}</mat-label>
                                     <input matInput formControlName="comunidad_snmp">
                                 </mat-form-field>
                             </div>
                             <div class="col">
                                 <mat-form-field appearance="fill">
-                                    <mat-label>{{'Puerto SNMP'}}</mat-label>
+                                    <mat-label>{{ 'gateway.snmp_port' | translate }}</mat-label>
                                     <input matInput formControlName="puerto_snmp">
                                     <mat-error *ngIf="form.controls['puerto_snmp'].hasError('pattern')">
-                                        {{ appset.INVALID_RANGE_PORT }}
+                                        {{ appset.INVALID_RANGE_PORT | translate }}
                                     </mat-error>
                                 </mat-form-field>
 
                                 <mat-form-field appearance="fill">
-                                    <mat-label>{{'Nombre SNMP'}}</mat-label>
+                                    <mat-label>{{ 'gateway.snmp_name' | translate }}</mat-label>
                                     <input matInput formControlName="nombre_snmp">
                                 </mat-form-field>
 
                                 <mat-form-field appearance="fill">
-                                    <mat-label>{{'Ubicación SNMP'}}</mat-label>
+                                    <mat-label>{{ 'gateway.snmp_location' | translate }}</mat-label>
                                     <input matInput formControlName="localizacion_snmp">
                                 </mat-form-field>
 
                                 <mat-form-field appearance="fill">
-                                    <mat-label>{{'Contacto SNMP'}}</mat-label>
+                                    <mat-label>{{ 'gateway.snmp_contact' | translate }}</mat-label>
                                     <input matInput formControlName="contacto_snmp">
                                 </mat-form-field>
                             </div>
                         </div>
 
-                        <mat-label>Configuracion de Traps</mat-label>
+                        <mat-label>{{ 'gateway.traps_conf' | translate }}</mat-label>
                         <div class="traps traps-group">
                             <div class="col" *ngIf="!visualizationMode">
                                 <mat-form-field class="select" appearance="fill">
-                                    <mat-label>{{'Versión'}}</mat-label>
+                                    <mat-label>{{ 'gateway.version' | translate }}</mat-label>
                                     <mat-select [formControl]="trapServerFormControl">
                                         <mat-option [value]="serverNTP" *ngFor="let serverNTP of ['1', '2']">
                                             {{ serverNTP }}
                                         </mat-option>
                                     </mat-select>
                                     <mat-error *ngIf="trapServerFormControl.hasError('required')">
-                                        {{ appset.FIELD_REQUIRED }}
+                                        {{ appset.FIELD_REQUIRED | translate }}
                                     </mat-error>
                                 </mat-form-field>
 
                                 <mat-form-field appearance="fill">
-                                    <mat-label>{{'Dirección IP'}}</mat-label>
+                                    <mat-label>{{ 'gateway.ip_adress' | translate }}</mat-label>
                                     <input matInput [formControl]="trapFormControl">
                                     <mat-error *ngIf="trapFormControl.hasError('required')">
-                                        {{ appset.FIELD_REQUIRED }}
+                                        {{ appset.FIELD_REQUIRED | translate }}
                                     </mat-error>
                                     <mat-error *ngIf="trapFormControl.hasError('pattern')">
-                                        {{ appset.INVALID_IP }}
+                                        {{ appset.INVALID_IP | translate }}
                                     </mat-error>
                                 </mat-form-field>
 
                                 <mat-form-field appearance="fill">
-                                    <mat-label>{{'Puerto'}}</mat-label>
+                                    <mat-label>{{ 'gateway.port' | translate }}</mat-label>
                                     <input matInput [formControl]="trapPortFormControl">
                                     <mat-error *ngIf="trapPortFormControl.hasError('required')">
-                                        {{ appset.FIELD_REQUIRED }}
+                                        {{ appset.FIELD_REQUIRED | translate }}
                                     </mat-error>
                                     <mat-error *ngIf="trapPortFormControl.hasError('pattern')">
-                                        {{ appset.INVALID_RANGE_PORT }}
+                                        {{ appset.INVALID_RANGE_PORT | translate }}
                                     </mat-error>
                                 </mat-form-field>
                             </div>
@@ -250,10 +250,10 @@
 
                                 <div class="btns" *ngIf="!visualizationMode">
                                     <button class="items" mat-raised-button (click)="deleteTrap()">
-                                        {{'Eliminar trap'}}
+                                        {{ 'button.del_trap' | translate }}
                                     </button>
                                     <button class="items" mat-raised-button (click)="addTrap()">
-                                        {{'Añadir trap'}}
+                                        {{ 'button.add_trap' | translate }}
                                     </button>
                                 </div>
                             </div>
@@ -264,52 +264,52 @@
             </ng-template>
         </mat-tab>
 
-        <mat-tab label="Web">
+        <mat-tab label="{{ 'gateway.hardware_title_Web' | translate }}">
             <ng-template matTabContent>
                 <div class="web-form">
                     <mat-form-field appearance="fill">
-                        <mat-label>{{'Puerto servicio'}}</mat-label>
+                        <mat-label>{{ 'gateway.service_port_' | translate }}</mat-label>
                         <input matInput formControlName="puerto_servicio_web">
                         <mat-error *ngIf="form.controls['puerto_servicio_web'].hasError('pattern')">
-                            {{ appset.INVALID_RANGE_PORT }}
+                            {{ appset.INVALID_RANGE_PORT | translate }}
                         </mat-error>
                     </mat-form-field>
 
                     <mat-form-field appearance="fill">
-                        <mat-label>{{'Tiempo de sesión (seg.)'}}</mat-label>
+                        <mat-label>{{ 'gateway.session_time' | translate }}</mat-label>
                         <input matInput formControlName="tiempo_sesion">
                         <mat-error *ngIf="form.controls['tiempo_sesion'].hasError('pattern')">
-                            {{ appset.NUMBERS_FORMAT_INVALID }}
+                            {{ appset.NUMBERS_FORMAT_INVALID | translate }}
                         </mat-error>
                     </mat-form-field>
                 </div>
             </ng-template>
         </mat-tab>
 
-        <mat-tab label="Grabación">
+        <mat-tab label="{{ 'gateway.hardware_title_record' | translate }}">
             <ng-template matTabContent>
                 <div class="recording-form">
                     <mat-form-field appearance="fill">
-                        <mat-label>{{'Puerto servidor RTSP'}}</mat-label>
+                        <mat-label>{{ 'gateway.rstp_server_port' | translate }}</mat-label>
                         <input matInput formControlName="puerto_rtsp">
                         <mat-error *ngIf="form.controls['puerto_rtsp'].hasError('pattern')">
-                            {{ appset.INVALID_RANGE_PORT }}
+                            {{ appset.INVALID_RANGE_PORT | translate }}
                         </mat-error>
                     </mat-form-field>
 
                     <mat-form-field appearance="fill">
-                        <mat-label>{{'IP Servidor RTSP (A)'}}</mat-label>
+                        <mat-label>{{ 'gateway.rstp_a_ip_server' | translate }}</mat-label>
                         <input matInput formControlName="servidor_rtsp">
                         <mat-error *ngIf="form.controls['servidor_rtsp'].hasError('pattern')">
-                            {{ appset.INVALID_IP }}
+                            {{ appset.INVALID_IP | translate }}
                         </mat-error>
                     </mat-form-field>
 
                     <mat-form-field appearance="fill">
-                        <mat-label>{{'IP Servidor RTSP (B)'}}</mat-label>
+                        <mat-label>{{ 'gateway.rstp_b_ip_server' | translate }}</mat-label>
                         <input matInput formControlName="servidor_rtspb">
                         <mat-error *ngIf="form.controls['servidor_rtspb'].hasError('pattern')">
-                            {{ appset.INVALID_IP }}
+                            {{ appset.INVALID_IP | translate }}
                         </mat-error>
                     </mat-form-field>
                 </div>

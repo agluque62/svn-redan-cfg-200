@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 // import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
 import { AlertService } from 'src/app/_services/alert.service';
@@ -32,7 +33,7 @@ export class ParamsComponent implements OnInit {
   constructor(private readonly loginService: LoginService, private readonly app: AppComponent,
     private readonly userService: UserService, private readonly router: Router,
     private readonly backupService: BackupService, private readonly configService: ConfigService,
-    private readonly alertService: AlertService) { }
+    private readonly alertService: AlertService, private readonly translate: TranslateService) { }
 
   async ngOnInit() {
     
@@ -58,7 +59,7 @@ export class ParamsComponent implements OnInit {
   }
 
   async confirm() {
-    const confirm = await this.alertService.confirmationMessage(``, `¿Confirma la actualización de parámetros?`);
+    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('backup.alert.update_params')}`);
     if (confirm.value){
       const data = {
         'path': this.path,
@@ -73,8 +74,7 @@ export class ParamsComponent implements OnInit {
         await this.alertService.errorMessage(``, `${result.resultado}`);
       }
       else{
-
-        await this.alertService.successMessage(``, `Configuración actualizada`);
+        await this.alertService.successMessage(``, `${this.translate.instant('backup.alert.update_sucess')}`);
       }
     }
   }
@@ -96,13 +96,13 @@ export class ParamsComponent implements OnInit {
     this.ServiceDomainLocation=domain;
     this.ServiceDomainAvailable=true;
     this.loadParameters();
-    console.log('Backup Service active on ', domain);
+    console.log(`${this.translate.instant('backup.alert.backup_active')}`, domain);
   }
 
   onServiceInactive(){
     this.ServiceDomainLocation='';
     this.ServiceDomainAvailable=false;
-    console.log('Backup Service inactive');
+    console.log(`${this.translate.instant('backup.alert.backup_no_con')}`);
   }
 }
 

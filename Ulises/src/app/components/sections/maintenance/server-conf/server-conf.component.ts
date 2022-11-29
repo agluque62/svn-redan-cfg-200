@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 import { AppSettings } from 'src/app/core/app.settings';
 import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
@@ -26,7 +27,8 @@ export class ServerConfComponent implements OnInit {
   showSpinner: boolean = false;
 
   constructor(private readonly configService: ConfigService, private readonly app: AppComponent, private readonly alertService: AlertService,
-    private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router) { }
+    private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router,
+    private readonly translate: TranslateService) { }
 
   async ngOnInit() {
     try {
@@ -34,7 +36,7 @@ export class ServerConfComponent implements OnInit {
       this.localConfig = await this.configService.getLocalConfig().toPromise();
       this.initForm();
       this.ready = true;
-    } catch (error) {
+    } catch (error: any) {
       this.app.catchError(error);
     }
   }
@@ -86,7 +88,7 @@ export class ServerConfComponent implements OnInit {
   async saveServerConfig() {
     if (this.serverConfigForm.valid) {
 
-      const confirmed = await this.alertService.confirmationMessage(``, `¿Desea guardar los cambios?`);
+      const confirmed = await this.alertService.confirmationMessage(``, `${this.translate.instant('maintenance.alert.save_changes')}` );
 
       if (confirmed.value) {
         this.showSpinner = true;
@@ -101,14 +103,14 @@ export class ServerConfComponent implements OnInit {
         const res = await this.configService.updateLocalConfig(this.serverConfigForm.value).toPromise();
         this.showSpinner = false;
         if (res.res) {
-          await this.alertService.successMessage(`Configuración actualizada`, `Los cambios se activarán en el siguiente reinicio del servicio`);
+          await this.alertService.successMessage(`${this.translate.instant('maintenance.alert.updated_conf')}`, `${this.translate.instant('maintenance.alert.save_changes')}`);
         } else {
           await this.alertService.errorMessage(``, res.txt);
         }
       }
 
     } else {
-      await this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
     }
   }
 }

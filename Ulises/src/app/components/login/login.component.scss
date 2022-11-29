@@ -1,5 +1,4 @@
 :host {
-
     background: linear-gradient(#a4c542, #48803e); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     position: absolute;
     top: 0;
@@ -8,7 +7,6 @@
     left: 0;
 
     .login-container {
-
         display: flex;
         justify-content: center;
         background: #ffffff;
@@ -20,18 +18,22 @@
         padding: 25px 80px;
         padding-top: 0;
 
-        @media screen and (min-width:320px) and (max-width:600px){
+        @media screen and (min-width: 320px) and (max-width: 600px) {
             padding: 12px 40px;
         }
 
         .login-form {
-
             min-width: 150px;
             max-width: 500px;
             width: 100%;
 
+            .translate {
+                margin: 1rem;
+                display: flex;
+                justify-content: center;
+            }
+
             .logo {
-        
                 height: 160px;
                 width: 215px;
                 background-image: url("/assets/images/corporativo.png");
@@ -40,17 +42,16 @@
                 background-position: center center;
                 margin: auto;
                 margin-top: 10px;
-                
-                @media screen and (min-width:320px) and (max-width:600px){
+
+                @media screen and (min-width: 320px) and (max-width: 600px) {
                     height: 96px;
                     width: 123px;
                 }
             }
 
             .error {
-
-                color: #D8000C;
-                background-color: #FFD2D2;
+                color: #d8000c;
+                background-color: #ffd2d2;
                 margin-bottom: 10px;
                 padding: 5px 15px;
                 display: flex;
@@ -61,48 +62,41 @@
                 }
 
                 .message {
-                    
                     margin: auto;
                 }
 
                 &.show-alert {
-
-                    visibility: visible!important;
-                    opacity: 1!important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
                 }
 
                 &.alert-danger {
-
                     visibility: hidden;
                     opacity: 0;
                     transition: visibility 0s, opacity 0.2s linear;
-                
-                    @media screen and (max-width: 575px){
-                
+
+                    @media screen and (max-width: 575px) {
                         max-height: 50px;
                         padding: 0;
                     }
-                
-                }                
+                }
             }
 
             .example-form {
                 min-width: 150px;
                 max-width: 500px;
                 width: 100%;
-              }
-              
+            }
+
             .example-full-width {
                 width: 100%;
             }
-            
+
             .login-full-width {
-                
                 width: 100%;
             }
 
             .submmit-btn {
-
                 margin-top: 20px;
                 display: flex;
                 justify-content: center;
@@ -112,6 +106,6 @@
                     background-color: #48803e;
                 }
             }
-        }    
+        }
     }
 }

@@ -1,8 +1,8 @@
 <div class="title" *ngIf="type === 'EDIT'">
-    {{'Editar usuario: '}} {{ user.name }}
+    {{ 'users.edit' | translate }} {{ user.name }}
 </div>
 <div class="title" *ngIf="type === 'CREATE'">
-    {{'Crear Usuario'}}
+    {{ 'users.create' | translate }}
 </div>
 
 <form class="form" [formGroup]="userForm" *ngIf="ready">
@@ -11,28 +11,26 @@
     
     <div class="inputs">
         <mat-form-field appearance="fill" [ngClass]="{'error': userForm.controls['name'].hasError('pattern')}">
-            <mat-label>{{'Id. Operador'}}</mat-label>
+            <mat-label>{{ 'users.operator_id' | translate }}</mat-label>
             <input matInput required formControlName="name">
             <mat-error *ngIf="userForm.controls['name'].hasError('required')">
-                {{ appset.FIELD_REQUIRED }}
+                {{ appset.FIELD_REQUIRED | translate }}
             </mat-error>
             <mat-error *ngIf="userForm.controls['name'].hasError('pattern')">
-                {{ appset.INVALID_NAME }}
+                {{ appset.INVALID_NAME | translate }}
             </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-            <mat-label>{{'Clave'}}</mat-label>
+            <mat-label>{{ 'users.key' | translate }}</mat-label>
             <input matInput type="password" required formControlName="clave">
             <mat-error *ngIf="userForm.controls['clave'].hasError('required')">
-                {{ appset.FIELD_REQUIRED }}
+                {{ appset.FIELD_REQUIRED | translate }}
             </mat-error>
         </mat-form-field>
     </div>
 
-    <div class="perfiles">
-        Perfiles Asociados
-        <br/>
+    <div class="perfiles"> {{ 'users.associated_profiles' | translate }}<br/>
     </div>
 
     <div class="checkboxes" formArrayName="permissions">
@@ -40,7 +38,7 @@
             <div *ngFor="let permission of permissions().controls; let i=index">
                 <div [formGroupName]="i">
                     <div class="form-item" *ngIf="permission.value.id <= MAX_COLUMN_ITEMS">
-                        <mat-checkbox class="checkbox" formControlName="selected">{{permission.value.name}}</mat-checkbox>
+                        <mat-checkbox class="checkbox" formControlName="selected">{{ permission.value.name | translate}}</mat-checkbox>
                         <!-- <mat-label>
                             {{permission.value.name}}
                         </mat-label> -->
@@ -53,7 +51,7 @@
             <div *ngFor="let permission of permissions().controls; let i=index">
                 <div [formGroupName]="i">
                     <div class="form-item" *ngIf="permission.value.id > MAX_COLUMN_ITEMS">
-                        <mat-checkbox class="checkbox" formControlName="selected">{{permission.value.name}}</mat-checkbox>
+                        <mat-checkbox class="checkbox" formControlName="selected">{{ permission.value.name | translate }}</mat-checkbox>
                         <!-- <mat-label>
                             {{permission.value.name}}
                         </mat-label> -->
@@ -66,7 +64,7 @@
 </form>
 
 <div class="btns">
-    <button mat-raised-button (click)="saveUser()">{{'Guardar'}}</button>
-    <button mat-raised-button (click)="deleteUser()" *ngIf="type === 'EDIT'">{{'Eliminar'}}</button>
-    <button mat-raised-button class="cancel-btns" (click)="dialogRef.close()" cdkFocusInitial>{{'Cancelar'}}</button>
+    <button mat-raised-button (click)="saveUser()">{{ 'button.save' | translate }}</button>
+    <button mat-raised-button (click)="deleteUser()" *ngIf="type === 'EDIT'">{{ 'button.delete' | translate }}</button>
+    <button mat-raised-button class="cancel-btns" (click)="dialogRef.close()" cdkFocusInitial>{{ 'button.cancel' | translate }}</button>
 </div>

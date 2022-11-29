@@ -19,14 +19,14 @@ import { BaseService } from "./base.service";
 })
 export class ResourceService extends BaseService {
 
-    constructor(private readonly http: HttpClient) { 
+    constructor(private readonly http: HttpClient) {
         super();
     }
 
-    getResource(idResource: number, type: number): Observable<RadioResource|TelephoneResource> {
+    getResource(idResource: number, type: number): Observable<RadioResource | TelephoneResource> {
         const url = `/gateways/getResource/${type}/${idResource}`;
 
-        return this.http.get<RadioResource|TelephoneResource>(url, this.buildOptions())
+        return this.http.get<RadioResource | TelephoneResource>(url, this.buildOptions())
             .pipe(catchError(this.handleError));
     }
 
@@ -69,7 +69,7 @@ export class ResourceService extends BaseService {
                     'telephone': resource
                 }
             };
-        } 
+        }
 
         return this.http.post<ResourceUpdateResponse>(url, data, this.buildOptions())
             .pipe(catchError(this.handleError));
@@ -77,7 +77,7 @@ export class ResourceService extends BaseService {
 
     updateResource(type: number, resource: any): Observable<ResourceUpdateResponse> {
         const url = `/gateways/updateResource/:resource2Insert/:resourceType/:resourceId`;
-        
+
         const RADIO_TYPE = 1;
         const TELEPHONE_TYPE = 2;
         let data = {};
@@ -114,7 +114,7 @@ export class ResourceService extends BaseService {
         return this.http.delete<DataActiveResponse>(url, this.buildOptions())
             .pipe(catchError(this.handleError));
     }
-    
+
     deleteTelResource(idResource: number): Observable<DataActiveResponse> {
         const url = `/resources/deletePhoneResource/${idResource}`;
 
@@ -149,7 +149,7 @@ export class ResourceService extends BaseService {
         return this.http.get<GenericResponse>(url, this.buildOptions())
             .pipe(catchError(this.handleError));
     }
-    
+
     getCommunicationsExtTelResources(opt: number): Observable<GenericResponse> {
         const url = `/externalResources/${opt}`;
 
@@ -182,17 +182,57 @@ export class ResourceService extends BaseService {
         return this.http.get<GenericResponse>(url, this.buildOptions())
             .pipe(catchError(this.handleError));
     }
-    getTelResources(configName: string, idSite: number,gatewayId: number, opt: number): Observable<GenericResponse> {
+    getTelResources(configName: string, idSite: number, gatewayId: number, opt: number): Observable<GenericResponse> {
         //http://localhost:5051/resources/tel/Prueba/4/19/2
         const url = `/resources/tel/${configName}/${idSite}/${gatewayId}/${opt}`;
         return this.http.get<GenericResponse>(url, this.buildOptions())
             .pipe(catchError(this.handleError));
     }
 
-    checkIfNameIsValid(name:string, gatewayId: number, opt: number){
+    checkIfNameIsValid(name: string, gatewayId: number, opt: number) {
         // /hardware/checkresname/test1/20/0 => NO_ERROR || NAME_DUP
         const url = `/hardware/checkresname/${name}/${gatewayId}/${opt}`;
         return this.http.get<GenericResponse>(url, this.buildOptions())
             .pipe(catchError(this.handleError));
+    }
+
+    getTlfResourceById(id: number) {
+        const url = `/resources/${id}/getTlfResource`
+        return this.http.get<any>(url, this.buildOptions())
+            .pipe(catchError(this.handleError))
+    }
+
+    getRadioResourceById(id: number) {
+        const url = `/resources/${id}/getRadioResource`
+        return this.http.get<any>(url, this.buildOptions())
+            .pipe(catchError(this.handleError))
+    }
+
+    importTlfResource(file: any, gtwId: number, column: number, row: number) {
+        const url = `/resources/import/Tlf`        
+
+        const data: any = {
+            'resource': file,
+            'gtwId':gtwId,
+            'column':column,
+            'row':row
+        }
+
+        return this.http.post<any>(url, data, this.buildOptions())
+            .pipe(catchError(this.handleError))
+    }
+
+    importRadioResource(file: any, gtwId: number, column: number, row: number) {
+        const url = `/resources/import/Radio`        
+
+        const data: any = {
+            'resource': file,
+            'gtwId':gtwId,
+            'column':column,
+            'row':row
+        }
+
+        return this.http.post<any>(url, data, this.buildOptions())
+            .pipe(catchError(this.handleError))
     }
 }

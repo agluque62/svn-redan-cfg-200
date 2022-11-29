@@ -13,9 +13,9 @@ import { GatewayService } from 'src/app/_services/gateway.service';
 export class UtilsService extends BaseService {
     configurationIpResponse!: ConfigurationIpResponse;
     configurationIp!: ConfigurationIp[];
-    
-    constructor(private readonly alertService: AlertService,private readonly configService: ConfigService,private readonly gatewayService: GatewayService) {
-        super();   
+
+    constructor(private readonly alertService: AlertService, private readonly configService: ConfigService, private readonly gatewayService: GatewayService) {
+        super();
     }
 
     getProfileLabel(profile: number) {
@@ -37,8 +37,8 @@ export class UtilsService extends BaseService {
         return profileText;
     }
 
-    async checkIps(ip: any, configId: any){
-      this.configurationIpResponse = await this.configService.checkConfigIp(ip, configId).toPromise();
-      return this.configurationIp = [...this.configurationIpResponse.result];
+    async checkIps(ip: any, configId: any) {
+        this.configurationIpResponse = await this.configService.checkConfigIp(ip, configId).toPromise();
+        return this.configurationIp = [...this.configurationIpResponse.result];
     }
-    }
+}

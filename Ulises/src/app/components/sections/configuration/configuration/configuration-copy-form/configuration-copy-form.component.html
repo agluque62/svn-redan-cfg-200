@@ -1,6 +1,6 @@
 <div class="main">
     <div class="title">
-        {{'Copiar configuración: '}} {{ configuration.name }}
+        {{ 'config.copy_conf' | translate }} {{ configuration.name }}
     </div>
 
     <form class="form" [formGroup]="copyForm">
@@ -8,25 +8,25 @@
         <spinner *ngIf="showSpinner"></spinner>
 
         <mat-form-field appearance="fill" [ngClass]="{'error': copyForm.controls['name'].hasError('pattern')}">
-            <mat-label>{{'Id. Configuración'}}</mat-label>
+            <mat-label>{{ 'config.id_conf' | translate }}</mat-label>
             <input matInput required formControlName="name">
             <mat-error *ngIf="copyForm.controls['name'].hasError('required')">
-                {{ appset.FIELD_REQUIRED }}
+                {{ appset.FIELD_REQUIRED | translate }}
             </mat-error>
             <mat-error *ngIf="copyForm.controls['name'].hasError('pattern')">
-                {{ appset.INVALID_NAME }}
+                {{ appset.INVALID_NAME | translate }}
             </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-            <mat-label>{{'Descripción'}}</mat-label>
+            <mat-label>{{ 'config.description' | translate }}</mat-label>
             <input matInput formControlName="description">
         </mat-form-field>
 
     </form>
 
     <div class="btns">
-        <button mat-raised-button (click)="confirm()">{{'Confirmar'}}</button>
-        <button mat-raised-button (click)="dialogRef.close()">{{'Cancelar'}}</button>
+        <button mat-raised-button (click)="confirm()">{{ 'button.confirm' | translate }}</button>
+        <button mat-raised-button (click)="dialogRef.close()">{{ 'button.cancel' | translate }}</button>
     </div>
 </div>

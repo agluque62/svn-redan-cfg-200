@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { AppSettings } from 'src/app/core/app.settings';
 import { AlertService } from 'src/app/_services/alert.service';
 import { UserService } from 'src/app/_services/user.service';
@@ -31,7 +32,8 @@ export class ResourceNRangeComponent implements OnInit {
 
   visualizationMode: boolean = false;
 
-  constructor(private readonly alertService: AlertService, private readonly userService: UserService) { }
+  constructor(private readonly alertService: AlertService, private readonly userService: UserService,
+    private readonly translate: TranslateService) { }
 
   ngOnInit(): void {
     this.visualizationMode = (this.visualizationPermission()) ? true : false;
@@ -68,7 +70,7 @@ export class ResourceNRangeComponent implements OnInit {
       if (type == 0) { // Origin
         if (key === 'inicial') {
           if (this.originRanks[pos]['final'] !== '' && event.target.value > this.originRanks[pos]['final']) {
-            await this.alertService.errorMessage(``, `El numero de inicio no puede ser mayor que el final`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_start_bigger')}`);
             event.target.value = "";
           } else {
             this.resourceForm.get('ranks')?.markAsDirty();
@@ -77,7 +79,7 @@ export class ResourceNRangeComponent implements OnInit {
           }
         } else if (key === 'final') {
           if (this.originRanks[pos]['inicial'] !== '' && event.target.value < this.originRanks[pos]['inicial']) {
-            await this.alertService.errorMessage(``, `El numero final no puede ser menor que el inicial`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_final_smaller')}`);
             event.target.value = "";
           } else {
             this.resourceForm.get('ranks')?.markAsDirty();
@@ -88,7 +90,7 @@ export class ResourceNRangeComponent implements OnInit {
       } else if (type == 1) { // Destination
         if (key === 'inicial') {
           if (this.destinationRanks[pos]['final'] !== '' && event.target.value > this.destinationRanks[pos]['final']) {
-            await this.alertService.errorMessage(``, `El numero de inicio no puede ser mayor que el final`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_start_bigger')}`);
             event.target.value = "";
           } else {
             this.resourceForm.get('ranks')?.markAsDirty();
@@ -97,7 +99,7 @@ export class ResourceNRangeComponent implements OnInit {
           }
         } else if (key === 'final') {
           if (this.destinationRanks[pos]['inicial'] !== '' && event.target.value < this.destinationRanks[pos]['inicial']) {
-            await this.alertService.errorMessage(``, `El numero final no puede ser menor que el inicial`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_final_smaller')}`);
             event.target.value = "";
           } else {
             this.resourceForm.get('ranks')?.markAsDirty();
@@ -117,7 +119,7 @@ export class ResourceNRangeComponent implements OnInit {
       
       this.resourceForm.get('ranks')?.markAsDirty();
     } else if (event.target.value.match(AppSettings.AGVN_PATTERN) == undefined && event.target.value != '') {
-      await this.alertService.errorMessage(``, `Número no válido. El valor debe estar entre 200000 y 399999. Y debe ser de longitud 6`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.AVGN_PATTERN_ERROR')}`);
       event.target.value = "";
     }
     this.ranks = this.originRanks.concat(this.destinationRanks);

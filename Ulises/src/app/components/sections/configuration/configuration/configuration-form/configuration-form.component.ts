@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { AppSettings } from 'src/app/core/app.settings';
 import { Configuration } from 'src/app/_models/configs/configuration/Configuration';
 import { AlertService } from 'src/app/_services/alert.service';
@@ -21,7 +22,8 @@ export class ConfigurationFormComponent implements OnInit {
   appset: any;
 
   constructor(public dialogRef: MatDialogRef<ConfigurationFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Configuration,
-    private readonly alertService: AlertService, private readonly configService: ConfigService, private readonly userService: UserService, private readonly historicService: HistoricService) { }
+    private readonly alertService: AlertService, private readonly configService: ConfigService, private readonly userService: UserService, 
+    private readonly historicService: HistoricService, private readonly translate: TranslateService) { }
 
   ngOnInit() {
     this.appset = AppSettings;
@@ -55,7 +57,7 @@ export class ConfigurationFormComponent implements OnInit {
         await this.alertService.errorMessage(`Error `, result.error);
       } else {
         await this.historicService.updateCfg(101, this.configForm.value.name).toPromise();
-        const msg = `Configuración creada correctamente`;
+        const msg = `${this.translate.instant('config.alert.succ_created_cfg')}`;
         await this.alertService.successMessage(`Éxito`, msg);
         this.dialogRef.close();
       }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { AppSettings } from 'src/app/core/app.settings';
 import { AlertService } from 'src/app/_services/alert.service';
 import { DataService } from 'src/app/_services/data.service';
@@ -20,17 +21,17 @@ export class ResourceComnsComponent implements OnInit {
 
   arrow: string = "<";
   resourceTypes: customValues[] = [
-    { value: 0, viewValue: 'Recursos configurados' },
-    { value: 1, viewValue: 'Recursos externos' }
+    { value: 0, viewValue: 'resource.radio.resourceTypes_value_0' },
+    { value: 1, viewValue: 'resource.radio.resourceTypes_value_1' }
   ];
 
   optionsFilter: customValues[] = [
-    { value: 4, viewValue: 'Buscar por Alias' },
-    { value: 5, viewValue: 'Buscar por URI' },
-    { value: -1, viewValue: 'Todos (Radio)' },
-    { value: 0, viewValue: 'Radio Tx' },
-    { value: 1, viewValue: 'Radio Tx Rx' },
-    { value: 2, viewValue: 'Radio Rx' }
+    { value: 4, viewValue: 'resource.radio.optionsFilter_value_4'},
+    { value: 5, viewValue: 'resource.radio.optionsFilter_value_5'},
+    { value: -1, viewValue: 'resource.radio.optionsFilter_value_-1'},
+    { value: 0, viewValue: 'resource.radio.optionsFilter_value_0'},
+    { value: 1, viewValue: 'resource.radio.optionsFilter_value_1'},
+    { value: 2, viewValue: 'resource.radio.optionsFilter_value_2'}
   ];
 
   subURILabels: string[] = ["A", "B"]
@@ -68,7 +69,11 @@ export class ResourceComnsComponent implements OnInit {
   readonly CONFIGURATION_RESOURCE_TYPE = 0;
   readonly EXTERNAL_RESOURCE_TYPE = 1;
 
-  constructor(private readonly resourceService: ResourceService, private readonly dataService: DataService, private readonly userService: UserService, private readonly alertService: AlertService) { }
+  constructor(private readonly resourceService: ResourceService, 
+    private readonly dataService: DataService, 
+    private readonly userService: UserService, 
+    private readonly alertService: AlertService,
+    private readonly translate: TranslateService) { }
 
   ngOnInit(): void {
 
@@ -82,21 +87,21 @@ export class ResourceComnsComponent implements OnInit {
   checkNumberUriFieldsToDisplay() {
     switch (this.resourceForm.value.tipo_agente) {
       case 0:
-        this.uriList = [{ name: 'EMPLAZAMIENTO 1', fields: { tx: this.initUriArray("TX", 1), rx: this.initUriArray("RX", 1) } }];
+        this.uriList = [{ name: `${this.translate.instant('resource.radio.emplz_1')}`, fields: { tx: this.initUriArray("TX", 1), rx: this.initUriArray("RX", 1) } }];
         break;
       case 1:
-        this.uriList = [{ name: 'EMPLAZAMIENTO 1', fields: { tx: this.initUriArray("TX", 1, true), rx: this.initUriArray("RX", 1, true) } }];
+        this.uriList = [{ name: `${this.translate.instant('resource.radio.emplz_1')}`, fields: { tx: this.initUriArray("TX", 1, true), rx: this.initUriArray("RX", 1, true) } }];
         break;
       case 2:
-        this.uriList = [{ name: 'EMPLAZAMIENTO 1', fields: { tx: this.initUriArray("TX", 1), rx: this.initUriArray("RX", 1) } },
-        { name: 'EMPLAZAMIENTO 2', fields: { tx: this.initUriArray("TX", 3), rx: this.initUriArray("RX", 3) } },
-        { name: 'EMPLAZAMIENTO 3', fields: { tx: this.initUriArray("TX", 5), rx: this.initUriArray("RX", 5) } }];
+        this.uriList = [{ name: `${this.translate.instant('resource.radio.emplz_1')}`, fields: { tx: this.initUriArray("TX", 1), rx: this.initUriArray("RX", 1) } },
+        { name: `${this.translate.instant('resource.radio.emplz_2')}`, fields: { tx: this.initUriArray("TX", 3), rx: this.initUriArray("RX", 3) } },
+        { name: `${this.translate.instant('resource.radio.emplz_3')}`, fields: { tx: this.initUriArray("TX", 5), rx: this.initUriArray("RX", 5) } }];
 
         break;
       case 3:
-        this.uriList = [{ name: 'EMPLAZAMIENTO 1', fields: { tx: this.initUriArray("TX", 1, true), rx: this.initUriArray("RX", 1, true) } },
-        { name: 'EMPLAZAMIENTO 2', fields: { tx: this.initUriArray("TX", 3, true), rx: this.initUriArray("RX", 3, true) } },
-        { name: 'EMPLAZAMIENTO 3', fields: { tx: this.initUriArray("TX", 5, true), rx: this.initUriArray("RX", 5, true) } }];
+        this.uriList = [{ name: `${this.translate.instant('resource.radio.emplz_1')}`, fields: { tx: this.initUriArray("TX", 1, true), rx: this.initUriArray("RX", 1, true) } },
+        { name: `${this.translate.instant('resource.radio.emplz_2')}`, fields: { tx: this.initUriArray("TX", 3, true), rx: this.initUriArray("RX", 3, true) } },
+        { name: `${this.translate.instant('resource.radio.emplz_3')}`, fields: { tx: this.initUriArray("TX", 5, true), rx: this.initUriArray("RX", 5, true) } }];
         break;
     }
   }
@@ -159,7 +164,7 @@ export class ResourceComnsComponent implements OnInit {
 
   async checkUri(event: any, collateralLevel: string, type: string) {
     if (event.target.value.match(AppSettings.URI_PATTERN) == undefined && event.target.value != '') {
-      await this.alertService.errorMessage(``, AppSettings.INVALID_URI);
+      await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.INVALID_URI')}`);
       event.target.value = '';
     } else {
       this.resourceForm.get('listaUris')?.markAsDirty();

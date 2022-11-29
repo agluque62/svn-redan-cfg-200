@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { AppSettings } from 'src/app/core/app.settings';
 import { TableBss } from 'src/app/_models/table-bss/TableBss';
 import { TableBSSService } from 'src/app/_services/tableBss.service';
@@ -20,19 +21,19 @@ export class RemoteFormComponent implements OnInit {
   resourceForm!: FormGroup;
 
   iAudio: customValues[] = [
-    { value: 0, viewValue: 'Hardware' },
-    { value: 1, viewValue: 'VAD' },
-    { value: 2, viewValue: 'Forzado' },
+    { value: 0, viewValue: 'resource.radio.iAudio_value_0' },
+    { value: 1, viewValue: 'resource.radio.iAudio_value_1' },
+    { value: 2, viewValue: 'resource.radio.iAudio_value_2' },
   ];
 
   oAudio: customValues[] = [
-    { value: 0, viewValue: 'Hardware' }
+    { value: 0, viewValue: 'resource.radio.oAudio_value_0' }
   ];
 
   bssMethods: customValues[] = [
-    { value: 0, viewValue: 'RSSI' },
-    { value: 1, viewValue: 'NUCLEO' },
-    { value: 2, viewValue: 'Ninguno' }
+    { value: 0, viewValue: 'resource.radio.bssMethodsPref_value_0' },
+    { value: 1, viewValue: 'resource.radio.bssMethodsPref_value_1' },
+    { value: 2, viewValue: 'resource.radio.bssMethodsPref_value_2' }
   ];
 
   tablesBss: TableBss[] = [];
@@ -49,16 +50,17 @@ export class RemoteFormComponent implements OnInit {
 
   disableTableSelector: boolean = false;
 
-  constructor(private readonly tableBssService: TableBSSService) { }
+  constructor(private readonly tableBssService: TableBSSService,
+    private readonly translate: TranslateService) { }
 
   async ngOnInit() {
     this.appset = AppSettings;
     this.tablesBss = (await this.tableBssService.getTableAudioBss().toPromise()).tables;
     this.tablesBss.unshift({
       FechaCreacion: "", 
-      description: "Ninguna", 
+      description: `${this.translate.instant('resource.radio.none')}`, 
       idtabla_bss: 0, 
-      name: 'Ninguna', 
+      name: `${this.translate.instant('resource.radio.none')}`, 
       valor0: 0,
       valor1: 0,
       valor2: 0,

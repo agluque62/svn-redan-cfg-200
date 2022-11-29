@@ -1,12 +1,12 @@
 <div class="main" *ngIf="ready">
     <div class="title">
-        {{'Configuración: '}} {{configuration.name}}
+        {{ 'config.configuration' | translate }} {{configuration.name}}
     </div>
 
     <div class="back">
         <button mat-icon-button (click)="back()" aria-label="Volver a configuración">
             <mat-icon>keyboard_backspace</mat-icon>
-            {{'Volver'}}
+            {{ 'button.back' | translate }}
         </button>
     </div>
 
@@ -19,33 +19,33 @@
             <form class="form" [formGroup]="configForm">
     
                 <mat-form-field appearance="fill" [ngClass]="{'error': configForm.controls['name'].hasError('pattern')}">
-                    <mat-label>{{'Id. Configuración'}}</mat-label>
+                    <mat-label>{{ 'config.id_conf' | translate }}</mat-label>
                     <input matInput required formControlName="name">
                     <mat-error *ngIf="configForm.controls['name'].hasError('required')">
-                        {{ appset.FIELD_REQUIRED }}
+                        {{ appset.FIELD_REQUIRED | translate }}
                     </mat-error>
                     <mat-error *ngIf="configForm.controls['name'].hasError('pattern')">
-                        {{ appset.INVALID_NAME }}
+                        {{ appset.INVALID_NAME | translate }}
                     </mat-error>
                 </mat-form-field>
         
                 <mat-form-field appearance="fill">
-                    <mat-label>{{'Descripción'}}</mat-label>
+                    <mat-label>{{ 'config.description' | translate }}</mat-label>
                     <input matInput formControlName="description">
                 </mat-form-field>
         
                 <div class="form-item" *ngIf="!supervisionMode">                    
-                    <mat-label>{{'Configuración Supervisada'}}</mat-label>
+                    <mat-label>{{ 'config.supervised_conf' | translate }}</mat-label>
                     <mat-checkbox class="checkbox" formControlName="activa" (click)="isSupervisedcb()"></mat-checkbox>
                 </div>
 
                 <div class="form-item" *ngIf="supervisionMode">                    
-                    <mat-label>{{'Configuración Supervisada'}}</mat-label>
+                    <mat-label>{{ 'config.supervised_conf' | translate }}</mat-label>
                     <mat-checkbox class="checkbox" [(ngModel)]="supervised" (click)="isSupervisedcb()" [ngModelOptions]="{standalone: true}"></mat-checkbox>
                 </div>
         
                 <mat-form-field appearance="fill">
-                    <mat-label>{{'Ultima Modificacion (UTC)'}}</mat-label>
+                    <mat-label>{{ 'config.last_modif_UTC' | translate }}</mat-label>
                     <input matInput formControlName="fecha_activacion">
                 </mat-form-field>
         
@@ -54,18 +54,18 @@
         </div>
 
         <div class="btns" *ngIf="supervisionMode">
-            <button class="col" mat-raised-button (click)="saveSupervisedConfig()">{{'Guardar'}}</button>
+            <button class="col" mat-raised-button (click)="saveSupervisedConfig()">{{ 'button.save' | translate}}</button>
         </div>
         <div class="btns" *ngIf="!visualizationMode">
             <div class="col first">
-                <button mat-raised-button (click)="applyChanges()">{{'Activar en campo'}}</button>
+                <button mat-raised-button (click)="applyChanges()">{{ 'button.activate' | translate }}</button>
             </div>
             <div class="col last">
-                <button mat-raised-button (click)="saveConfig()">{{'Guardar'}}</button>
-                <button mat-raised-button (click)="deleteConfig()">{{'Eliminar'}}</button>
-                <button mat-raised-button (click)="copyConfig()">{{'Copiar'}}</button>    
-                <button mat-raised-button (click)="downloadPDF()">{{'PDF'}}</button>
-                <button mat-raised-button (click)="downloadExcel()">{{'Excel'}}</button>
+                <button mat-raised-button (click)="saveConfig()">{{ 'button.save' | translate }}</button>
+                <button mat-raised-button (click)="deleteConfig()">{{ 'button.delete' | translate }}</button>
+                <button mat-raised-button (click)="copyConfig()">{{ 'button.copy' | translate }}</button>    
+                <button mat-raised-button (click)="downloadPDF()">{{ 'button.pdf' | translate }}</button>
+                <button mat-raised-button (click)="downloadExcel()">{{ 'button.csv' | translate }}</button>
             </div>
         </div>
     
@@ -73,13 +73,13 @@
 
     <div class="sites">
         <div class="title">
-            {{ 'Emplazamientos' }}
+            {{ 'location.locations' | translate }}
         </div>
         <div class="btn">
             <div class="no-sites" *ngIf="getValidSites().length === 0">
-                {{ 'No hay emplazamientos asignados a esta configuración'}}
+                {{ 'location.no_locations' | translate }}
             </div>
-            <button mat-raised-button class="create-btn local-btn" *ngIf="!visualizationMode" (click)="createSite()">{{'Nuevo emplazamiento'}}</button>
+            <button mat-raised-button class="create-btn local-btn" *ngIf="!visualizationMode" (click)="createSite()">{{ 'button.new_location' | translate }}</button>
         </div>
 
         <mat-accordion *ngIf="getValidSites().length > 0">
@@ -89,8 +89,8 @@
                         <div class="name">
                             {{ site.nameSite }}
                         </div>
-                        <button mat-raised-button class="modify-btn local-btn" *ngIf="!visualizationMode" (click)="modifySite(site)">{{'Modificar'}}</button>
-                        <button mat-raised-button class="modify-btn local-btn" *ngIf="visualizationMode" (click)="modifySite(site)">{{'Ver'}}</button>                        
+                        <button mat-raised-button class="modify-btn local-btn" *ngIf="!visualizationMode" (click)="modifySite(site)">{{ 'button.modify' | translate}}</button>
+                        <button mat-raised-button class="modify-btn local-btn" *ngIf="visualizationMode" (click)="modifySite(site)">{{ 'button.see' }}</button>                        
                     </div>
                 </mat-expansion-panel-header>
                 <mat-panel-description class="site-panel-content">
@@ -113,11 +113,11 @@
 
     <div class="gateways">
         <div class="title">
-            {{ 'Pasarelas' }}
+            {{ 'gateway.gateways' | translate }}
         </div>
         <div class="no-gtw">
             <div class="no-gateways" *ngIf="configurationGateways.length === 0">
-                {{ 'No hay pasarelas asignadas a esta configuración'}}
+                {{ 'gateway.nogateways' | translate }}
             </div>    
         </div>
         <div class="gateway-panel mat-elevation-z8" *ngIf="configurationGateways.length > 0">

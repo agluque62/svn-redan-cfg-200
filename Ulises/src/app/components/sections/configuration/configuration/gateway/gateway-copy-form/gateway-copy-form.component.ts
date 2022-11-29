@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 import { AppSettings } from 'src/app/core/app.settings';
 import { ConfigurationGateway } from 'src/app/_models/configs/configuration/ConfigurationGateway';
@@ -44,7 +45,8 @@ export class GatewayCopyFormComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<GatewayCopyFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Gateway,
     private readonly alertService: AlertService, @Inject(AppComponent) private readonly app: AppComponent, private readonly utilService: UtilsService,
-    private readonly gatewayService: GatewayService, private readonly dataService: DataService, private readonly configService: ConfigService, private historicService: HistoricService) { }
+    private readonly gatewayService: GatewayService, private readonly dataService: DataService, private readonly configService: ConfigService, 
+    private historicService: HistoricService, private translate: TranslateService) { }
 
   ngOnInit() {
     this.appset = AppSettings;
@@ -91,7 +93,7 @@ export class GatewayCopyFormComponent implements OnInit {
   async checkGatewayNameError(name: string): Promise<boolean> {
     const result = await this.gatewayService.checkName(name, this.configId, this.gateway.idCGW).toPromise();
     if (result !== 'NO_ERROR') {
-      const message = (result === 'NAME_DUP') ? `El identificador de pasarela ${name} ya se encuentra dada de alta en esta configuración` : result;
+      const message = (result === 'NAME_DUP') ? `${this.translate.instant('gateway.alert.dup_name_gtw', {value: name})}` : result;
       await this.alertService.errorMessage(`Error`, message);
       return true;
     }
@@ -101,7 +103,7 @@ export class GatewayCopyFormComponent implements OnInit {
   async checkIpError(ip: string): Promise<boolean> {
 
     if (this.configurationIps.includes(ip)) {
-      await this.alertService.errorMessage(`Error`, `La ip ${ip} ya se encuentra en la configuración.`);
+      await this.alertService.errorMessage(`Error`, `${this.translate.instant('gateway.alert.dup_ip_gtw', {value: ip})}`);
       return true;
     }
 
@@ -134,15 +136,15 @@ export class GatewayCopyFormComponent implements OnInit {
                   let title = this.dataService.getDataGatewayTitle();
                   title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
                   await this.historicService.updateCfg(107, this.copyForm.value.name, title).toPromise();
-                  await this.alertService.successMessage(``, `La pasarela ${this.gateway.name} ha sido copiada`);
+                  await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_copy_gtw', {value: this.gateway.name})}`);
                   this.dialogRef.close(true);
                 } else {
                   if (result.error && result.error === 'ER_DUP_ENTRY') {
-                    await this.alertService.errorMessage(``, `El nombre ${this.copyForm.value.name} ya existe en esta configuración.`);
+                    await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_NAME_CFG',{value:this.copyForm.value.name})}`);
                   } else if (result.error && result.error === 'ER_DUP_IP0_ENTRY') {
-                    await this.alertService.errorMessage(``, `La ip ${this.copyForm.value.ipCpu0} ya existe en esta configuración.`);
+                    await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IP_CPU0_CFG',{value: this.copyForm.value.ipCpu0})}`);
                   } else if (result.error && result.error === "ER_DUP_IP1_ENTRY") {
-                    await this.alertService.errorMessage(``, `La ip ${this.copyForm.value.ipCpu1} ya existe en esta configuración.`);
+                    await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IP_CPU1_CFG',{value: this.copyForm.value.ipCpu1})}`);
                   }
                 }
           } else {
@@ -150,9 +152,9 @@ export class GatewayCopyFormComponent implements OnInit {
               this.configurationIp = [...this.configurationIpResponse.result];
               if (this.configurationIp.length!=0){
                 this.nEmplazamiento = this.configurationIp.map((index) => {
-                  return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+                  return `${this.translate.instant('err.DUPLICATED_BODY', {value1: index.nombre_conf, value2: index.nombre})}`;
                 })      
-                await this.alertService.errorMessage(``,`La IP virtual ${this.copyForm.value.ipv} esta duplicada en ${this.nEmplazamiento}`);
+                await this.alertService.errorMessage(``,`${this.translate.instant('err.DUPLICATED_IPV',{value1: this.copyForm.value.ipv, value2: this.nEmplazamiento})}`);
                 return;        
               }
 
@@ -160,9 +162,9 @@ export class GatewayCopyFormComponent implements OnInit {
               this.configurationIp = [...this.configurationIpResponse.result];
               if (this.configurationIp.length!=0){
                 this.nEmplazamiento = this.configurationIp.map((index) => {
-                  return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+                  return `${this.translate.instant('err.DUPLICATED_BODY', {value1: index.nombre_conf, value2: index.nombre})}`;
                 })      
-                await this.alertService.errorMessage(``,`La IP cpu0 ${this.copyForm.value.ipCpu0} esta duplicada en ${this.nEmplazamiento}`);
+                await this.alertService.errorMessage(``,`${this.translate.instant('err.DUPLICATED_IPCPU0',{value1: this.copyForm.value.ipCpu0, value2: this.nEmplazamiento})}`);
                 return;        
               }
 
@@ -170,16 +172,16 @@ export class GatewayCopyFormComponent implements OnInit {
               this.configurationIp = [...this.configurationIpResponse.result];
               if (this.configurationIp.length!=0){
                 this.nEmplazamiento = this.configurationIp.map((index) => {
-                  return `la configuración ${index.nombre_conf} de la pasarela ${index.nombre}`;
+                  return `${this.translate.instant('err.DUPLICATED_BODY', {value1: index.nombre_conf, value2: index.nombre})}`;
                 })      
-                await this.alertService.errorMessage(``,`La IP cpu1 ${this.copyForm.value.ipCpu1} esta duplicada en ${this.nEmplazamiento}`);
+                await this.alertService.errorMessage(``,`${this.translate.instant('err.DUPLICATED_IPCPU1',{value1: this.copyForm.value.ipCpu1, value2: this.nEmplazamiento})}`);
                 return;        
               }
           }
         }
         
       } else {
-        this.alertService.errorMessage(AppSettings.ERROR_FORM, AppSettings.INVALID_FORM);
+        this.alertService.errorMessage(this.translate.instant('appsetting.ERROR_FORM'), this.translate.instant('appsetting.INVALID_FORM'));
       }
     } catch (error: any) {
       this.app.catchError(error);

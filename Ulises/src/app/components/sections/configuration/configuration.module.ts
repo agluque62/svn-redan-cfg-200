@@ -34,6 +34,14 @@ import localeES from '@angular/common/locales/es';
 import { SpinnerModule } from '../../common/spinner/spinner.module';
 import { UsersProfileLegendComponent } from './users/users-profile-legend/users-profile-legend.component';
 import { TunnelFormComponent } from './configuration/resource/telephonic-forms/tunnel/tunnel-form.component';
+import { ResourceImportComponent } from './configuration/resource/resource-import/resource-import.component';
+
+//Translation
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatPaginatorI18nService } from 'src/app/_services/mat-paginator-i18n.service';
 
 registerLocaleData(localeES, 'es');
 
@@ -63,7 +71,8 @@ registerLocaleData(localeES, 'es');
     ResourceNRangeComponent,
     ResourceCollateralsComponent,
     UsersProfileLegendComponent,
-    TunnelFormComponent
+    TunnelFormComponent,
+    ResourceImportComponent,
   ],
   imports: [
     CommonModule,
@@ -71,7 +80,17 @@ registerLocaleData(localeES, 'es');
     ReactiveFormsModule,
     CustomMaterialModule,
     GatewayModule,
-    SpinnerModule
+    SpinnerModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (http: HttpClient) => {
+          return new TranslateHttpLoader(http);
+        },
+        deps: [ HttpClient ]
+      }
+    }),
+    HttpClientModule,
   ],
   exports: [
     ConfigurationHomeComponent,
@@ -82,6 +101,10 @@ registerLocaleData(localeES, 'es');
   providers: [
     DatePipe,
     { provide: LOCALE_ID, useValue: 'es-ES' },
+    {
+      provide: MatPaginatorIntl,
+      useClass: MatPaginatorI18nService,
+    }
   ]
 })
 

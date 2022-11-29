@@ -1,20 +1,20 @@
 <div class="main" *ngIf="ready">
     <div class="title" *ngIf="type=='EDIT'">
-        {{ title }}
+        {{ 'gateway.title' | translate: {value1: GTW_NAME, value2: LOCAT_NAME, value3: GTW_NAME} }}
     </div>
     <div class="title" *ngIf="type=='CREATE'">
-        {{'Crear nueva pasarela'}}
+        {{ 'gateway.create_gtw' | translate }}
     </div>
 
     <div class="back">
         <button mat-icon-button (click)="back()" aria-label="Volver a configuración">
             <mat-icon>keyboard_backspace</mat-icon>
-            {{'Volver'}}
+            {{ 'button.back' | translate }}
         </button>
     </div>
     
     <div class="pending-to-update">
-        <mat-label>{{'Pendiente activar'}}</mat-label>  
+        <mat-label>{{ 'gateway.pending_act' | translate }}</mat-label>  
         <mat-checkbox class="checkbox" [checked]="gateway.pendiente_actualizar === 1" [disabled]="true"></mat-checkbox>
     </div>
 
@@ -23,22 +23,22 @@
         <spinner *ngIf="showSpinner"></spinner>
 
         <mat-tab-group class="tabs" [selectedIndex]="tabIdx">
-            <mat-tab label="General">
+            <mat-tab label="{{ 'gateway.title_general' | translate }}">
                 <ng-template matTabContent>
                     <gateway-general [gateway]="gateway" [type]="type" [form]="gatewayForm"></gateway-general>
                 </ng-template>
             </mat-tab>
-            <mat-tab label="Servicios">
+            <mat-tab label=" {{ 'gateway.title_services' | translate }}">
                 <ng-template matTabContent>
                     <gateway-services [gateway]="gateway" [gatewayIps]="gatewayIps" [form]="gatewayForm">
                     </gateway-services>
                 </ng-template>
             </mat-tab>
-            <mat-tab label="Hardware" *ngIf="type=='EDIT'">
+            <mat-tab label="{{ 'gateway.title_hardware' | translate }}" *ngIf="type=='EDIT'">
                 <ng-template matTabContent>
                     <gateway-hardware [gateway]="gateway"></gateway-hardware>
                     <div class="indexControlContainer">
-                        <span *ngIf="LoadIndexControlEnabled" [ngClass]="selectedClass">Indice de carga: {{loadIndex}}</span>
+                        <span *ngIf="LoadIndexControlEnabled" [ngClass]="selectedClass">{{ 'gateway.load_index' | translate }} {{loadIndex}}</span>
                     </div>
                 </ng-template>
                 
@@ -47,11 +47,11 @@
     </form>
     
     <div class="btns" *ngIf="!visualizationMode">
-        <button mat-raised-button (click)="activateInField()" *ngIf="type == 'EDIT'">{{'Activar en campo'}}</button>
-        <button mat-raised-button (click)="createGateway()" *ngIf="type == 'CREATE'">{{'Guardar'}}</button>
-        <button mat-raised-button (click)="updateGateway()" *ngIf="type == 'EDIT'">{{'Guardar'}}</button>
-        <button mat-raised-button (click)="copyGateway()" *ngIf="type == 'EDIT'">{{'Copiar'}}</button>
-        <button mat-raised-button (click)="deleteGateway()" *ngIf="type == 'EDIT'">{{'Eliminar'}}</button>
-        <button mat-raised-button (click)="exportGateway()" *ngIf="type == 'EDIT'">{{'Exportar'}}</button>
+        <button mat-raised-button (click)="activateInField()" *ngIf="type == 'EDIT'">{{ 'button.activate' | translate }}</button>
+        <button mat-raised-button (click)="createGateway()" *ngIf="type == 'CREATE'">{{ 'button.save' | translate }}</button>
+        <button mat-raised-button (click)="updateGateway()" *ngIf="type == 'EDIT'">{{ 'button.save' | translate }}</button>
+        <button mat-raised-button (click)="copyGateway()" *ngIf="type == 'EDIT'">{{ 'button.copy' | translate }}</button>
+        <button mat-raised-button (click)="deleteGateway()" *ngIf="type == 'EDIT'">{{ 'button.delete' | translate }}</button>
+        <button mat-raised-button (click)="exportGateway()" *ngIf="type == 'EDIT'">{{ 'button.export' | translate }}</button>
     </div>
 </div>

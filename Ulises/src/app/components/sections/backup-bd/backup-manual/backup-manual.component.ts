@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 // import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
 import { AlertService } from 'src/app/_services/alert.service';
@@ -21,7 +22,7 @@ export class BackupManualComponent implements OnInit {
   constructor(private readonly loginService: LoginService, private readonly app: AppComponent,
     private readonly userService: UserService, private readonly router: Router,
     private readonly backupService: BackupService, private readonly configService: ConfigService,
-    private readonly alertService: AlertService) { }
+    private readonly alertService: AlertService, private readonly translate: TranslateService) { }
 
   ngOnInit(): void {
     this.checkPermissions();
@@ -41,7 +42,7 @@ export class BackupManualComponent implements OnInit {
 
   async backup() {
 
-    const confirm = await this.alertService.confirmationMessage(``, `¿Hacer backup de la base de datos ahora?`);
+    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('backup.alert.backup_now')}`);
 
     if (confirm.value) {
       // this.localConfig = await this.configService.getLocalConfig().toPromise();
@@ -57,12 +58,12 @@ export class BackupManualComponent implements OnInit {
   onServiceActive(domain: string){
     this.ServiceDomainLocation = domain;
     this.ServiceDomainAvailable=true;
-    console.log('Servicio Activo en ', domain);
+    console.log(`${this.translate.instant('backup.alert.backup_active')}`, domain);
   }
 
   onServiceInactive(){
     this.ServiceDomainLocation = '';
     this.ServiceDomainAvailable=false;
-    console.log('Servicio no conectado o en error');
+    console.log(`${this.translate.instant('backup.alert.backup_no_con')}`);
   }
 }

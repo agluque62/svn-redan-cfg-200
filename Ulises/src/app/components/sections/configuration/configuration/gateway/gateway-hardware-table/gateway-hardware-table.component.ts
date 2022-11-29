@@ -1,19 +1,23 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DisplayGrid, GridsterConfig, GridsterItem, GridsterItemComponentInterface, GridType } from 'angular-gridster2';
 import { Subject } from 'rxjs';
 import { Gateway } from 'src/app/_models/configs/gateway/Gateway';
+import { AlertService } from 'src/app/_services/alert.service';
 import { DataService } from 'src/app/_services/data.service';
 import { HardwareService } from 'src/app/_services/hardware.service';
 import { HistoricService } from 'src/app/_services/historic.service';
 import { UserService } from 'src/app/_services/user.service';
+import { ResourceImportComponent } from '../../resource/resource-import/resource-import.component';
+import { SiteFormComponent } from '../../site-form/site-form.component';
 
 @Component({
     selector: 'gateway-hardware-table',
     templateUrl: './gateway-hardware-table.component.html',
     styleUrls: ['./gateway-hardware-table.component.scss']
 })
-export class GatewayHardwareTableComponent implements OnInit {
+export class GatewayHardwareTableComponent implements OnInit, OnChanges {
 
     options!: GridsterConfig;
     dashboard!: Array<GridsterItem>;
@@ -26,7 +30,9 @@ export class GatewayHardwareTableComponent implements OnInit {
 
     ready: boolean = false;
     @Input('gateway') gateway!: Gateway;
-    @Input('items') items: any[] = [];
+    @Input('items') items!: any;
+    @Output() update = new EventEmitter<any>();
+
 
     AGENT_TYPE_RADIO_IN_OUT: number = 4;
     AGENT_TYPE_RADIO_IN: number = 5;
@@ -47,9 +53,14 @@ export class GatewayHardwareTableComponent implements OnInit {
     visualizationMode: boolean = false;
 
     constructor(private readonly router: Router, private readonly hardwareService: HardwareService, private readonly dataService: DataService,
-        private readonly userService: UserService, private historicService: HistoricService) { }
+        private readonly userService: UserService, private historicService: HistoricService, public dialog: MatDialog) { }
 
     ngOnInit(): void {
+
+        this.init();
+    }
+
+    init() {
 
         this.visualizationMode = (this.visualizationPermission()) ? true : false;
 
@@ -71,11 +82,16 @@ export class GatewayHardwareTableComponent implements OnInit {
         this.initObservable();
         this.enabledSwap = true;
         this.ready = true;
+
     }
 
     visualizationPermission() {
         return (!this.userService.isRole('ADMIN') && !this.userService.isRole('CONFIGURATION') && this.userService.isRole('VISUALIZATION'))
             || (!this.userService.isRole('ADMIN') && !this.userService.isRole('CONFIGURATION') && this.userService.isRole('SUPERVISED_CONFIGURATION'));
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        this.init();
     }
 
     initObservable() {
@@ -86,7 +102,7 @@ export class GatewayHardwareTableComponent implements OnInit {
                 const sourceCol = itemsSwapped[0].x;
                 const targetCol = itemsSwapped[1].x;
 
-                this.items.forEach(async item => {
+                this.items.forEach(async (item: any) => {
                     let changed: boolean = false;
                     let sourceItem: any;
                     let targetItem: any;
@@ -130,8 +146,7 @@ export class GatewayHardwareTableComponent implements OnInit {
 
         this.dashboard = [];
         let cont: number = 0;
-
-        this.items.forEach((item, index) => {
+        this.items.forEach((item: any, index: any) => {
             this.parseFrecuencyField(item, index); // Issue 2747
             if (item !== undefined && item.nombre !== undefined) {
                 if (item.tipo_agente !== undefined && item.tipo_agente !== null) {
@@ -174,7 +189,7 @@ export class GatewayHardwareTableComponent implements OnInit {
             return;
         }
 
-        const selectedItem = this.items.find(element => { return element && element.nombre && element.nombre === item.label });
+        const selectedItem = this.items.find((element: any) => { return element && element.nombre && element.nombre === item.label });
         if (selectedItem) {
             const id = selectedItem.idrecurso_radio ? selectedItem.idrecurso_radio : selectedItem.idrecurso_telefono;
             const type = selectedItem.idrecurso_radio ? 1 : 2;
@@ -190,19 +205,27 @@ export class GatewayHardwareTableComponent implements OnInit {
         }
     }
 
-    emptyCellClick(item: any, itemComponent: any) {
+    async emptyCellClick(item: any, itemComponent: any) {
 
         if (this.isDragging) return;
 
-        this.dataService.updateDataSlot(
-            {
-                'gatewayId': this.gateway.idCGW,
-                'columna': itemComponent.x,
-                'fila': itemComponent.y
+        const dialogRef = this.dialog.open(ResourceImportComponent, {
+            autoFocus: false,
+            data: {
+                row: itemComponent.y,
+                column: itemComponent.x,
+                gatewayId: this.gateway.idCGW,
+                resources: this.items
             }
-        );
-        this.router.navigate(['/home/resource/new']);
+        })
+
+        dialogRef.afterClosed().subscribe(async () => {
+            this.update.emit();
+        });
+        this.init();
+
     }
+    
 
     changedOptions(): void {
         if (this.options.api && this.options.api.optionsChanged) {
@@ -212,7 +235,7 @@ export class GatewayHardwareTableComponent implements OnInit {
 
     itemChange(item: GridsterItem, itemComponent: GridsterItemComponentInterface) {
 
-        this.items.forEach(async element => {
+        this.items.forEach(async (element: any) => {
 
             if (element && element.nombre === item.label) {
 

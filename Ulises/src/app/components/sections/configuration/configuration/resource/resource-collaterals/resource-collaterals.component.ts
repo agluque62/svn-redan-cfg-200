@@ -28,14 +28,14 @@ export class ResourceCollateralsComponent implements OnInit {
   idGateway: any;
 
   resourceTypes: customValues[] = [
-    { value: 0, viewValue: 'Recursos configurados' },
-    { value: 1, viewValue: 'Recursos externos' }
+    { value: 0, viewValue: 'resource.radio.resourceTypes_value_0' },
+    { value: 1, viewValue: 'resource.radio.resourceTypes_value_1' }
   ];
 
   optionsFilter: customValues[] = [
-    { value: 4, viewValue: 'Buscar por Alias' },
-    { value: 5, viewValue: 'Buscar por URI' },
-    { value: 3, viewValue: 'Todos (Telefono)' }
+    { value: 4, viewValue: 'resource.radio.optionsFilter_value_4' },
+    { value: 5, viewValue: 'resource.radio.optionsFilter_value_5' },
+    { value: 3, viewValue: 'resource.radio.optionsFilter_value_3' }
   ];
 
   time: customValues[] = [
@@ -48,9 +48,9 @@ export class ResourceCollateralsComponent implements OnInit {
   ];
 
   supCollateral: customValues[] = [
-    { value: 0, viewValue: 'No' },
-    { value: 1, viewValue: 'A Usuario' },
-    { value: 2, viewValue: 'A Dominio' }
+    { value: 0, viewValue: 'resource.radio.supCollateral_value_0' },
+    { value: 1, viewValue: 'resource.radio.supCollateral_value_1' },
+    { value: 2, viewValue: 'resource.radio.supCollateral_value_2' }
   ];
 
   selectedTypeResource: number = this.resourceTypes[0].value;
@@ -173,7 +173,7 @@ export class ResourceCollateralsComponent implements OnInit {
         this.resources = resources.filter((resource: any) =>
           (resource.rName !== this.resourceName && resource.tipo_interfaz_tel === 7))
       } else {
-        this.resources = this.resources
+        this.resources = resources
       }
       this.displayConfResource = true;
     }

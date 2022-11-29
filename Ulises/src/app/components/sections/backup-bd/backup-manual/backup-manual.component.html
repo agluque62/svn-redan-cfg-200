@@ -1,10 +1,10 @@
 <div class="manual-backup">
     <bkp-info (ServiceActive)="onServiceActive($event)" (ServiceInactive)="onServiceInactive()"></bkp-info>
     <div class="title">
-        {{ 'Backup manual' }}
+        {{ 'backup.manual_backup' | translate }}
     </div>
 
     <div class="body">
-        <button mat-raised-button class="create-btn custom-raised-btn" (click)="backup()" disabled="{{!ServiceDomainAvailable}}">{{'Hacer backup ahora'}}</button>
+        <button mat-raised-button class="create-btn custom-raised-btn" (click)="backup()" disabled="{{!ServiceDomainAvailable}}">{{ 'button.make_backup' | translate }}</button>
     </div>
 </div>

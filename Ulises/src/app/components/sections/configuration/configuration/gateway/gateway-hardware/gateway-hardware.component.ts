@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Gateway } from 'src/app/_models/configs/gateway/Gateway';
 import { GatewayHardwareRadio } from 'src/app/_models/configs/gateway/hardware/GatewayHardwareRadio';
 import { GatewayHardwareResponse } from 'src/app/_models/configs/gateway/hardware/GatewayHardwareResponse';
@@ -12,7 +12,7 @@ import { GatewayService } from 'src/app/_services/gateway.service';
 })
 export class GatewayHardwareComponent implements OnInit {
 
-  @Input('gateway') gateway!: Gateway;
+  @Input('gateway')  gateway!: Gateway;
   gatewayHardwareResponse!: GatewayHardwareResponse;
   gatewayHardwareRadio!: GatewayHardwareRadio[];
   gatewayHardwareTelephone!: GatewayHardwareTelephone[];
@@ -24,9 +24,11 @@ export class GatewayHardwareComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.init()
+  }
 
+  async init(){
     this.gatewayHardwareResponse = await this.gatewayService.getGatewayHardware(this.gateway.idCGW).toPromise();
-
     if (this.gatewayHardwareResponse) {
       this.gatewayHardwareRadio = this.gatewayHardwareResponse.radio;
       this.gatewayHardwareTelephone = this.gatewayHardwareResponse.tfno;
@@ -34,9 +36,9 @@ export class GatewayHardwareComponent implements OnInit {
       this.ready = true;
     }
   }
-
   initItems() {
-  
+    
+    this.items = []
     for (let i=0; i<16; i++) {
       this.items.push(null);
     }

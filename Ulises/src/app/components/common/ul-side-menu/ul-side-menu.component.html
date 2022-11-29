@@ -1,23 +1,26 @@
 <mat-tree class="tree" [dataSource]="dataSource" [treeControl]="treeControl" *ngIf="ready">
 
     <div class="node-tree">
-        <mat-tree-node class="node" [ngClass]="{'selected': node == selected}" *matTreeNodeDef="let node" matTreeNodePadding matTreeNodePaddingIndent="20">
-            <button class="btn leaf" (click)="navigateTo(node)" mat-icon-button [ngClass]="{'selected': node == selected}" [disabled]="disableMenu">
+        <mat-tree-node class="node" [ngClass]="{'selected': node == selected}" *matTreeNodeDef="let node"
+            matTreeNodePadding matTreeNodePaddingIndent="20">
+            <button class="btn leaf" (click)="navigateTo(node)" mat-icon-button
+                [ngClass]="{'selected': node == selected}" [disabled]="disableMenu">
                 <div class="name">
-                    {{node.name}}
+                    {{ node.name | translate }}
                 </div>
             </button>
         </mat-tree-node>
     </div>
 
     <div class="node-tree">
-        <mat-tree-node class="node" *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding matTreeNodePaddingIndent="20">
+        <mat-tree-node class="node" *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding
+            matTreeNodePaddingIndent="20">
             <button class="btn" mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
                 <mat-icon class="mat-icon-rtl-mirror">
-                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                    {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                 </mat-icon>
                 <div class="name">
-                    {{node.name}}
+                    {{ node.name | translate }}
                 </div>
             </button>
         </mat-tree-node>
@@ -27,16 +30,16 @@
 <div class="user">
 
     <div class="about" (click)="aboutDialog()">
-        {{ 'Acerca de ...' }}
+        {{ 'ul-side.about' | translate }}
     </div>
 
     <div class="username">
-        {{'Usuario: ' }} {{ user.name }}
+        {{ 'ul-side.username' | translate }} {{ user.name }}
     </div>
     <div class="profile">
-        {{'Perfil: ' }} {{ userProfile }}
+        {{ 'ul-side.profile' | translate }} {{ userProfile }}
     </div>
     <div class="logout">
-        <button mat-raised-button class="custom-raised-btn" (click)="logout()">{{'Logout'}}</button>
+        <button mat-raised-button class="custom-raised-btn" (click)="logout()">{{ 'button.logout' | translate}}</button>
     </div>
 </div>

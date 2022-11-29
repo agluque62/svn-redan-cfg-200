@@ -1,17 +1,17 @@
 <div class="backup-info">
-    <div class="title">Localización Servicio de Backup</div>
+    <div class="title">{{ 'backup.location' | translate }}</div>
     <div class="domain">
         <div class="selectors">
             <mat-form-field class="readonly" appearance="fill">
-                <mat-label>{{'Dominio'}}</mat-label>
+                <mat-label>{{ 'backup.domain' | translate }}</mat-label>
                 <input matInput [(ngModel)]="bkpHost.dominio">
             </mat-form-field>
             <mat-form-field class="readonly" appearance="fill">
-                <mat-label>{{'Estado'}}</mat-label>
+                <mat-label>{{ 'backup.status' | translate }}</mat-label>
                 <input matInput [(ngModel)]="bkpHost.estado">
             </mat-form-field>
             <div class="btn">
-                <button mat-raised-button class="create-btn custom-raised-btn" (click)="loadParameters()">{{'Refrescar'}}</button>
+                <button mat-raised-button class="create-btn custom-raised-btn" (click)="loadParameters()">{{ 'button.refresh' | translate }}</button>
             </div>
         </div>
         <div class="error">{{bkpHost.error}}</div>

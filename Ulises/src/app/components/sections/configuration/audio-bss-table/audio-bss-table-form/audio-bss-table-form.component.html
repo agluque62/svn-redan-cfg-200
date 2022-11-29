@@ -1,8 +1,8 @@
 <div class="main">
     <div class="title">
-        <div *ngIf="type == 'CREATE' && !visualizationMode">{{'Crear nueva tabla'}}</div>
-        <div *ngIf="type == 'EDIT' && !visualizationMode">{{'Modificar tabla'}}</div>
-        <div *ngIf="visualizationMode">{{'Visualización tabla'}}</div>
+        <div *ngIf="type == 'CREATE' && !visualizationMode">{{ 'audiobss.create_table' | translate }}</div>
+        <div *ngIf="type == 'EDIT' && !visualizationMode">{{ 'audiobss.modify_table' | translate }}</div>
+        <div *ngIf="visualizationMode">{{ 'audiobss.view_table' | translate }}</div>
     </div>
 
     <form class="form" [formGroup]="tableBssForm">
@@ -11,23 +11,23 @@
 
         <div class="col">
             <mat-form-field appearance="fill" [ngClass]="{'error': tableBssForm.controls['name'].hasError('pattern')}">
-                <mat-label>{{'Id. Tabla'}}</mat-label>
+                <mat-label>{{ 'audiobss.id_table' | translate }}</mat-label>
                 <input matInput formControlName="name">
                 <mat-error *ngIf="tableBssForm.controls['name'].hasError('required')">
-                    {{ appset.FIELD_REQUIRED }}
+                    {{ appset.FIELD_REQUIRED | translate }}
                 </mat-error>
                 <mat-error *ngIf="tableBssForm.controls['name'].hasError('pattern')">
-                    {{ appset.INVALID_NAME }}
+                    {{ appset.INVALID_NAME | translate }}
                 </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
-                <mat-label>{{'Descripción'}}</mat-label>
+                <mat-label>{{ 'audiobss.description' | translate }}</mat-label>
                 <input matInput formControlName="description">
             </mat-form-field>
 
             <mat-form-field *ngIf="type == 'EDIT'" appearance="fill">
-                <mat-label>{{'Fecha de creación'}}</mat-label>
+                <mat-label>{{ 'audiobss.creation_date' | translate }}</mat-label>
                 <input matInput formControlName="FechaCreacion">
             </mat-form-field>
         </div>
@@ -37,10 +37,10 @@
             <div class="mat-elevation-z8">
                 <div class="header-row">
                     <div class="header-column">
-                        {{ 'NUCLEO' }}
+                        {{ 'audiobss.nucleo' | translate }}
                     </div>
                     <div class="header-column">
-                        {{ 'RSSI' }}
+                        {{ 'audiobss.rssi' | translate }}
                     </div>
                 </div>
 
@@ -140,12 +140,12 @@
     </form>
 
     <div class="btns">
-        <button mat-raised-button *ngIf="type == 'CREATE' && !visualizationMode"
-            (click)="createTableBss()">{{'Guardar'}}</button>
-        <button mat-raised-button *ngIf="type == 'EDIT' && !visualizationMode"
-            (click)="editTableBss()">{{'Guardar'}}</button>
-        <button mat-raised-button *ngIf="type == 'EDIT' && !visualizationMode"
-            (click)="deleteTableBss()">{{'Eliminar'}}</button>
-        <button mat-raised-button (click)="dialogRef.close()" cdkFocusInitial>{{'Cancelar'}}</button>
+        <button mat-raised-button *ngIf="type == 'CREATE' && !visualizationMode" (click)="createTableBss()">{{
+            'button.save' | translate }}</button>
+        <button mat-raised-button *ngIf="type == 'EDIT' && !visualizationMode" (click)="editTableBss()">{{ 'button.save'
+            | translate }}</button>
+        <button mat-raised-button *ngIf="type == 'EDIT' && !visualizationMode" (click)="deleteTableBss()">{{
+            'button.delete' | translate }}</button>
+        <button mat-raised-button (click)="dialogRef.close()" cdkFocusInitial>{{ 'button.cancel' | translate }}</button>
     </div>
 </div>

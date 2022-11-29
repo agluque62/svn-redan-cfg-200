@@ -1,47 +1,47 @@
 <form class="form" [formGroup]="resourceForm">
     <mat-form-field *ngIf="displayInputAudio" appearance="fill">
-        <mat-label>Indicación entrada audio</mat-label>
+        <mat-label>{{ 'resource.radio.audio_input' | translate }}</mat-label>
         <mat-select formControlName="indicacion_entrada_audio" (selectionChange)="displayUmbralVAD($event.value)"
             name="iAudio">
             <mat-option *ngFor="let type of iAudio" [value]="type.value">
-                {{type.viewValue}}
+                {{type.viewValue | translate  | translate }}
             </mat-option>
         </mat-select>
     </mat-form-field>
 
     <mat-form-field *ngIf="vadIsSelected" appearance="fill">
-        <mat-label>Umbral VAD (dB)</mat-label>
+        <mat-label>{{ 'resource.radio.umbral_vad' | translate }}</mat-label>
         <input matInput formControlName="umbral_vad">
         <mat-error
             *ngIf="resourceForm.get('umbral_vad')?.hasError('min') || resourceForm.get('umbral_vad')?.hasError('max')">
-            {{ appset.INVALID_RANGE_VAD }}
+            {{ appset.INVALID_RANGE_VAD | translate }}
         </mat-error>
         <mat-error *ngIf="resourceForm.get('umbral_vad')?.hasError('pattern')">
-            {{ appset.NUMBERS_FORMAT_INVALID }}
+            {{ appset.NUMBERS_FORMAT_INVALID | translate }}
         </mat-error>
     </mat-form-field>
 
     <mat-form-field *ngIf="displayOutputAudio" appearance="fill">
-        <mat-label>Indicación salida audio</mat-label>
+        <mat-label>{{ 'resource.radio.audio_output' | translate }}</mat-label>
         <mat-select formControlName="indicacion_salida_audio" name="oAudio">
             <mat-option *ngFor="let type of oAudio" [value]="type.value">
-                {{type.viewValue}}
+                {{type.viewValue | translate }}
             </mat-option>
         </mat-select>
     </mat-form-field>
 
     <div class="custom-row" *ngIf="displayPreferredBSSMethod">
         <mat-form-field appearance="fill">
-            <mat-label>Método BSS preferido</mat-label>
+            <mat-label>{{ 'resource.radio.metodo_BSS' | translate }}</mat-label>
             <mat-select formControlName="metodo_bss" name="bssMethods">
                 <mat-option *ngFor="let type of bssMethods" [value]="type.value">
-                    {{type.viewValue}}
+                    {{type.viewValue | translate }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="fill" *ngIf="displayTableBss">
-            <mat-label>Tabla calificación audio</mat-label>
+            <mat-label>{{ 'resource.radio.tableBSS' | translate }}</mat-label>
             <mat-select formControlName="tabla_bss_id" name="tablesBss">
                 <mat-option *ngFor="let type of tablesBss" [value]="type.idtabla_bss">
                     {{type.name}}
@@ -51,16 +51,16 @@
     </div>
 
     <mat-form-field *ngIf="displayGRSDelay" appearance="fill">
-        <mat-label>Retraso interno GRS (ms.)</mat-label>
+        <mat-label>{{ 'resource.radio.grs' | translate }}</mat-label>
         <input matInput type="number" formControlName="retraso_interno_grs">
         <mat-error *ngIf="resourceForm.controls['retraso_interno_grs'].hasError('required')">
-            {{ appset.FIELD_REQUIRED }}
+            {{ appset.FIELD_REQUIRED | translate }}
         </mat-error>
         <mat-error *ngIf="resourceForm.controls['retraso_interno_grs'].hasError('min') || resourceForm.controls['retraso_interno_grs'].hasError('max')">
-            {{ 'El campo debe estar en el rango 0 ... 250' }}
+            {{ appset.RANGE_0_250 | translate }}
         </mat-error>
 </mat-form-field>
 
-    <mat-checkbox formControlName="evento_ptt_squelch">Eventos PTT/Squelch</mat-checkbox>
-    <mat-checkbox formControlName="habilita_grabacion" *ngIf="displayRecordCheckbox">Habilita grabación</mat-checkbox>
+    <mat-checkbox formControlName="evento_ptt_squelch">{{ 'resource.radio.ptt_event' | translate }}</mat-checkbox>
+    <mat-checkbox formControlName="habilita_grabacion" *ngIf="displayRecordCheckbox">{{ 'resource.radio.enable_record' | translate }}</mat-checkbox>
 </form>

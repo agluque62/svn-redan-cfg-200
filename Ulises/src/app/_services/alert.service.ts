@@ -59,4 +59,5 @@ export class AlertService extends BaseService {
             confirmButtonText: 'Aceptar'
         });
     }
+
 }

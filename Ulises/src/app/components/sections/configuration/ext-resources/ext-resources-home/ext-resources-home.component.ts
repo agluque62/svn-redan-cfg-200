@@ -33,11 +33,11 @@ export class ExtResourcesHomeComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   types: ExternalResourceType[] = [
-    { value: -1, viewValue: 'Todos' },
-    { value: 0, viewValue: 'Radio Tx' },
-    { value: 1, viewValue: 'Radio TxRx' },
-    { value: 2, viewValue: 'Radio Rx' },
-    { value: 3, viewValue: 'Teléfono' }
+    { value: -1, viewValue: 'ext_res.all_res'},
+    { value: 0, viewValue: 'ext_res.radio_tx'},
+    { value: 1, viewValue: 'ext_res.radio_tx_rx'},
+    { value: 2, viewValue: 'ext_res.radio_rx'},
+    { value: 3, viewValue: 'ext_res.telephone'}
   ];
 
   selectedType: ExternalResourceType = this.types[0];
@@ -73,7 +73,7 @@ export class ExtResourcesHomeComponent implements OnInit {
       this.externalResources = await this.externalResourceService.getExternalResourcesByType(this.selectedType.value).toPromise();
       this.showSpinner = false;
       this.assignDataSource(this.externalResources.lista_recursos);  
-    } catch(error) {
+    } catch(error:any) {
       this.app.catchError(error);
     }
   }
