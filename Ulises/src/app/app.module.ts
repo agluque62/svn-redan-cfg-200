@@ -36,4 +36,3 @@ import { Http4debugInterceptor} from './interceptors/http4debug.interceptor';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
-export var Debugging = window.location.port == "4200";

@@ -6,7 +6,7 @@ import {
   HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Debugging } from '../app.module';
+import { Debugging } from '../globals';
 
 // var Debugging = window.location.port == "4200";
 
