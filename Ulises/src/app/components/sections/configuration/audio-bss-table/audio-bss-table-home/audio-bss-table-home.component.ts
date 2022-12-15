@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 import { TableBss } from 'src/app/_models/table-bss/TableBss';
 import { TableBssResponse } from 'src/app/_models/table-bss/TableBssResponse';
@@ -49,7 +50,7 @@ export class AudioBssTableHomeComponent implements OnInit {
 
   constructor(private readonly tableBssService: TableBSSService, private readonly alertService: AlertService, public dialog: MatDialog,
     private readonly userService: UserService, private readonly loginService: LoginService, private readonly app: AppComponent,
-    private readonly router: Router) { }
+    private readonly router: Router, private readonly translate: TranslateService) { }
 
   async ngOnInit() {
     this.checkPermissions();
@@ -121,7 +122,7 @@ export class AudioBssTableHomeComponent implements OnInit {
     this.tableBssResponse = await this.tableBssService.getTableAudioBss().toPromise();
 
     if (this.tableBssResponse.error != null) {
-      await this.alertService.errorMessage(`Error`, this.tableBssResponse.error);
+      await this.alertService.errorMessage(`Error`, this.tableBssResponse.error,this.translate.instant('button.accept'));
       return;
     }
 

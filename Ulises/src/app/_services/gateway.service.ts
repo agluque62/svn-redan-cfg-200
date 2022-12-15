@@ -113,8 +113,8 @@ export class GatewayService extends BaseService {
             .pipe(catchError(this.handleError));
     }
 
-    copyGtw(idGtw: number, newGtwName: string, ipv: string, ipCpu0: string, ipCpu1: string): Observable<any> {
-        const url = `/gateways/${idGtw}/${newGtwName}/${ipCpu0}/${ipCpu1}/${ipv}`;
+    copyGtw(idGtw: number, newGtwName: string, ipv: string, ipCpu0: string, ipCpu1: string, ipGTW: string): Observable<any> {
+        const url = `/gateways/${idGtw}/${newGtwName}/${ipCpu0}/${ipCpu1}/${ipv}/${ipGTW}`;
 
         return this.http.request<any>('COPY', url, this.buildOptions())
             .pipe(catchError(this.handleError));

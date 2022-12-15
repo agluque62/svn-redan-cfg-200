@@ -223,7 +223,7 @@ router.route('/iplist/:idGtw')
         });
     });
 
-router.route('/:sourceIdGateway/:targetNameGateway/:ip0TargetGateway/:ip1TargetGateway/:ipvTargetGateway')
+router.route('/:sourceIdGateway/:targetNameGateway/:ip0TargetGateway/:ip1TargetGateway/:ipvTargetGateway/:ipGateway')
     .copy(function (req, res) {
         logging.Info(req.method, req.originalUrl);
         var sourceIdGateway = req.params.sourceIdGateway;
@@ -231,6 +231,7 @@ router.route('/:sourceIdGateway/:targetNameGateway/:ip0TargetGateway/:ip1TargetG
         var ip0TargetGateway = req.params.ip0TargetGateway;
         var ip1TargetGateway = req.params.ip1TargetGateway;
         var ipvTargetGateway = req.params.ipvTargetGateway;
+        var ipGateway = req.params.ipGateway;
 
         myLibGateways.checkGatewayNameIp(sourceIdGateway, targetNameGateway, ip0TargetGateway, ip1TargetGateway,
             function (result) {
@@ -239,7 +240,7 @@ router.route('/:sourceIdGateway/:targetNameGateway/:ip0TargetGateway/:ip1TargetG
                 }
                 else {
                     myLibGateways.copyGateway(sourceIdGateway, targetNameGateway,
-                        ip0TargetGateway, ip1TargetGateway, ipvTargetGateway,
+                        ip0TargetGateway, ip1TargetGateway, ipvTargetGateway, ipGateway,
                         function (result) {
                             res.json(result);
                         });

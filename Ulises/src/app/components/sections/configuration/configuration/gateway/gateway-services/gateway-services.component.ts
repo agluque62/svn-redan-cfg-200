@@ -235,12 +235,12 @@ export class GatewayServicesComponent implements OnInit {
 
   async deleteProxy() {
     if (this.selectedProxy == null) {
-      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.warn_select_item')}`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.warn_select_item')},this.translate.instant('button.accept')`,this.translate.instant('button.accept'));
       this.resetErrors();
       return;
     }
 
-    const result = await this.alertService.confirmationMessage(``, `${this.translate.instant(('gateway.alert.conf_delete_proxy'))}`);
+    const result = await this.alertService.confirmationMessage(``, `${this.translate.instant(('gateway.alert.conf_delete_proxy'))}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
     if (result.value) {
       this.form.value.proxys.forEach((server: Server, idx: number) => {
         if (server.selected) {
@@ -259,19 +259,19 @@ export class GatewayServicesComponent implements OnInit {
       this.serversFormControl.reset();
       this.resetErrors();
       this.form.get("proxys")?.markAsDirty();
-      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_delete_proxy')}`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_delete_proxy')}`,this.translate.instant('button.accept'));
     }
   }
 
   async addProxy() {
     if (this.proxyFormControl.value === null || this.proxyFormControl.value === '') {
-      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_empty_proxy')}`);
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_empty_proxy')}`,this.translate.instant('button.accept'));
       this.resetErrors();
       return;
     }
 
     if (this.form.value.proxys.length === this.MAX_PROXIES) {
-      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_max_proxy')}`);
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_max_proxy')}`,this.translate.instant('button.accept'));
       this.proxyFormControl.reset();
       this.resetErrors();
       return;
@@ -280,7 +280,7 @@ export class GatewayServicesComponent implements OnInit {
     if (this.proxyFormControl.valid) {
 
       if (this.checkDuplicateProxy(this.proxyFormControl.value)) {
-        await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_duply_proxy')}`);
+        await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_duply_proxy')}`,this.translate.instant('button.accept'));
         this.resetErrors();
         return;
       }
@@ -289,7 +289,7 @@ export class GatewayServicesComponent implements OnInit {
       this.form.value.proxys.push({ 'ip': this.proxyFormControl.value, 'selected': selected });
       this.form.markAsDirty();
       this.form.get("proxys")?.markAsDirty();
-      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_add_proxy', {value: this.proxyFormControl.value})}`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_add_proxy', {value: this.proxyFormControl.value})}`,this.translate.instant('button.accept'));
 
       this.proxies = [];
       this.proxies = [...this.form.value.proxys];
@@ -297,7 +297,7 @@ export class GatewayServicesComponent implements OnInit {
       this.proxyFormControl.reset();
       this.resetErrors();
     } else {
-      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.info_proxy_value')}`);
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.info_proxy_value')}`,this.translate.instant('button.accept'));
       this.proxyFormControl.reset();
       this.resetErrors();
     }
@@ -305,12 +305,12 @@ export class GatewayServicesComponent implements OnInit {
 
   async deleteRegistrar() {
     if (this.selectedRegistrar == null) {
-      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.warn_select_item')}`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.warn_select_item')}`,this.translate.instant('button.accept'));
       this.resetErrors();
       return;
     }
 
-    const result = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_delete_registrar')}`);
+    const result = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_delete_registrar')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
     if (result.value) {
       this.form.value.registrars.forEach((server: Server, idx: number) => {
         if (server.selected) {
@@ -329,19 +329,19 @@ export class GatewayServicesComponent implements OnInit {
       this.serversFormControl.reset();
       this.resetErrors();
       this.form.get("registrars")?.markAsDirty();
-      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_delete_registrar')}`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_delete_registrar')}`,this.translate.instant('button.accept'));
     }
   }
 
   async addRegistrar() {
     if (this.registrarsFormControl.value === null || this.registrarsFormControl.value === '') {
-      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_empty_registrar')}`);
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_empty_registrar')}`,this.translate.instant('button.accept'));
       this.resetErrors();
       return;
     }
 
     if (this.form.value.registrars.length === this.MAX_REGISTRARS) {
-      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_max_registrar')}`);
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_max_registrar')}`,this.translate.instant('button.accept'));
       this.registrarsFormControl.reset();
       this.resetErrors();
       return;
@@ -350,7 +350,7 @@ export class GatewayServicesComponent implements OnInit {
     if (this.registrarsFormControl.valid) {
 
       if (this.checkDuplicateRegistrar(this.registrarsFormControl.value)) {
-        await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_duply_registrar')}`);
+        await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_duply_registrar')}`,this.translate.instant('button.accept'));
         this.resetErrors();
         return;
       }
@@ -359,7 +359,7 @@ export class GatewayServicesComponent implements OnInit {
       this.form.value.registrars.push({ 'ip': this.registrarsFormControl.value, 'selected': selected });
       this.form.markAsDirty();
       this.form.get("registrars")?.markAsDirty();
-      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_add_registrar', {value: this.registrarsFormControl.value})}`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_add_registrar', {value: this.registrarsFormControl.value})}`,this.translate.instant('button.accept'));
 
       this.registrars = [];
       this.registrars = [...this.form.value.registrars];
@@ -367,7 +367,7 @@ export class GatewayServicesComponent implements OnInit {
       this.registrarsFormControl.reset();
       this.resetErrors();
     } else {
-      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.info_registrar_value')}`);
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.info_registrar_value')}`,this.translate.instant('button.accept'));
       this.registrarsFormControl.reset();
       this.resetErrors();
     }
@@ -375,12 +375,12 @@ export class GatewayServicesComponent implements OnInit {
 
   async deleteNTP() {
     if (this.selectedServer == null) {
-      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.warn_select_item')}`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.warn_select_item')}`,this.translate.instant('button.accept'));
       this.resetErrors();
       return;
     }
 
-    const result = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_delete_NTP')}`);
+    const result = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_delete_NTP')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
     if (result.value) {
       this.form.value.listServers.forEach((server: Server, idx: number) => {
         if (server.selected) {
@@ -399,19 +399,19 @@ export class GatewayServicesComponent implements OnInit {
       this.serversFormControl.reset();
       this.resetErrors();
       this.form.get("listServers")?.markAsDirty();
-      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_delete_NTP')}`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_delete_NTP')}`,this.translate.instant('button.accept'));
     }
   }
 
   async addNTP() {
     if (this.serversFormControl.value === null || this.serversFormControl.value === '') {
-      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_empty_NTP')}`);
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_empty_NTP')}`,this.translate.instant('button.accept'));
       this.resetErrors();
       return;
     }
     
     if (this.form.value.listServers.length === this.MAX_SERVERS) {
-      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_max_NTP')}`);
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_max_NTP')}`,this.translate.instant('button.accept'));
       this.serversFormControl.reset();
       this.resetErrors();
       return;
@@ -420,7 +420,7 @@ export class GatewayServicesComponent implements OnInit {
     if (this.serversFormControl.valid) {
 
       if (this.checkDuplicateServer(this.serversFormControl.value)) {
-        await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_duply_NTP')}`);
+        await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_duply_NTP')}`,this.translate.instant('button.accept'));
         this.resetErrors();
         return;
       }
@@ -429,7 +429,7 @@ export class GatewayServicesComponent implements OnInit {
       this.form.value.listServers.push({ 'ip': this.serversFormControl.value, 'selected': selected });
       this.form.markAsDirty();
       this.form.get("listServers")?.markAsDirty();
-      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_add_NTP', {value: this.serversFormControl.value})} `);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_add_NTP', {value: this.serversFormControl.value})} `,this.translate.instant('button.accept'));
 
       this.servers = [];
       this.servers = [...this.form.value.listServers];
@@ -437,7 +437,7 @@ export class GatewayServicesComponent implements OnInit {
       this.serversFormControl.reset();
       this.resetErrors();
     } else {
-      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.info_NTP_value')}`);
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.info_NTP_value')}`,this.translate.instant('button.accept'));
       this.proxyFormControl.reset();
       this.resetErrors();
     }
@@ -445,12 +445,12 @@ export class GatewayServicesComponent implements OnInit {
 
   async deleteTrap() {
     if (this.selectedTrap == null) {
-      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.warn_select_item')}`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.warn_select_item')}`,this.translate.instant('button.accept'));
       this.resetErrors();
       return;
     }
 
-    const result = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_delete_trap', {value: this.selectedTrap})}`);
+    const result = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_delete_trap', {value: this.selectedTrap})}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
     if (result.value) {
       const index: number = this.form.value.traps.indexOf(this.selectedTrap);
       this.form.value.traps.splice(index, 1);
@@ -475,7 +475,7 @@ export class GatewayServicesComponent implements OnInit {
     }
 
     if (this.form.value.traps.length === this.MAX_TRAPS) {
-      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_max_trap')}`);
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_max_trap')}`,this.translate.instant('button.accept'));
       this.trapFormControl.reset();
       this.trapPortFormControl.reset();
       this.trapServerFormControl.reset();
@@ -488,13 +488,13 @@ export class GatewayServicesComponent implements OnInit {
       const trap = `${this.trapServerFormControl.value},${this.trapFormControl.value}/${this.trapPortFormControl.value}`;
 
       if (this.checkDuplicateTrap(trap)) {
-        await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_duply_trap')}`);
+        await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.err_duply_trap')}`,this.translate.instant('button.accept'));
         this.resetErrors();
         return;
       }
 
       if (trap.match(AppSettings.TRAP_PATTERN) == undefined) {
-        await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.err_empty_trap')}`);
+        await this.alertService.errorMessage(``, `${this.translate.instant('gateway.alert.err_empty_trap')}`,this.translate.instant('button.accept'));
         this.resetErrors();
         return;
       }
@@ -508,7 +508,7 @@ export class GatewayServicesComponent implements OnInit {
       this.trapServerFormControl.reset();
       this.resetErrors();
     } else {
-      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.info_trap_value')}`);
+      await this.alertService.errorMessage('', `${this.translate.instant('gateway.alert.info_trap_value')}`,this.translate.instant('button.accept'));
       this.trapFormControl.reset();
       this.trapPortFormControl.reset();
       this.trapServerFormControl.reset();

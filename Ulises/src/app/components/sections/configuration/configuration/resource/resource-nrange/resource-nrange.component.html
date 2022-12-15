@@ -3,7 +3,7 @@
         <mat-label>{{ 'resource.tlf.ATS_range' | translate }}</mat-label>
     </div>
     <mat-tab-group mat-align-tabs="start" *ngIf="ready">
-        <mat-tab label="Origen">
+        <mat-tab label="{{'util.start' | translate}}">
             <div class="custom-table mat-elevation-z8">
                 <div class="header-row">
                     <div class="header-column">
@@ -27,7 +27,7 @@
                 </div>
             </div>
         </mat-tab>
-        <mat-tab label="Destino" *ngIf="displayDestination">
+        <mat-tab label="{{ 'util.end' | translate }}" *ngIf="displayDestination">
             <div class="custom-table mat-elevation-z8">
                 <div class="header-row">
                     <div class="header-column">

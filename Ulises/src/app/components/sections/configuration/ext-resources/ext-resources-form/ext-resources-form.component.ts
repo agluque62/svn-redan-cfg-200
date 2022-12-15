@@ -55,7 +55,7 @@ export class ExtResourcesFormComponent implements OnInit {
   async deleteExtResource() {
 
     if (this.extResourceFrom.valid) {
-      const confirmed = await this.alertService.confirmationMessage(``, `${this.translate.instant('ext_res.alert.conf_delete_res', {value: this.data.alias})}`);
+      const confirmed = await this.alertService.confirmationMessage(``, `${this.translate.instant('ext_res.alert.conf_delete_res', {value: this.data.alias})}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
 
       if (confirmed.value) {
         this.showSpinner = true;
@@ -63,15 +63,15 @@ export class ExtResourcesFormComponent implements OnInit {
         this.showSpinner = false;
 
         if (deleteResult && deleteResult.error) {
-          await this.alertService.errorMessage(`Error`, deleteResult.error);
+          await this.alertService.errorMessage(`Error`, deleteResult.error,this.translate.instant('button.accept'));
         } else {
-          await this.alertService.successMessage(`Éxito`, `${this.translate.instant('ext_res.alert.succ_delete_res', {value: this.data.alias})}`);
+          await this.alertService.successMessage(`Éxito`, `${this.translate.instant('ext_res.alert.succ_delete_res', {value: this.data.alias})}`,this.translate.instant('button.accept'));
           this.dialogRef.close();
         }
 
       }
     } else {
-      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`,this.translate.instant('button.accept'));
     }
   }
 
@@ -83,15 +83,15 @@ export class ExtResourcesFormComponent implements OnInit {
       this.showSpinner = false;
 
       if (createResult && createResult.error) {
-        await this.alertService.errorMessage(`Error`, createResult.error);
+        await this.alertService.errorMessage(`Error`, createResult.error,this.translate.instant('button.accept'));
       } else {
 
         const msg = this.type == 'CREATE' ? `${this.translate.instant('ext_res.alert.succ_create_res')}` : `${this.translate.instant('ext_res.alert.succ_save_res')}`;
-        await this.alertService.successMessage(`Éxito`, msg);
+        await this.alertService.successMessage(`Éxito`, msg,this.translate.instant('button.accept'));
         this.dialogRef.close();
       }
     } else {
-      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`,this.translate.instant('button.accept'));
     }
   }
 }

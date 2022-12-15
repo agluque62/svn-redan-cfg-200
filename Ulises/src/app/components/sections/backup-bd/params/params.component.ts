@@ -59,7 +59,7 @@ export class ParamsComponent implements OnInit {
   }
 
   async confirm() {
-    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('backup.alert.update_params')}`);
+    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('backup.alert.update_params')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
     if (confirm.value){
       const data = {
         'path': this.path,
@@ -71,10 +71,10 @@ export class ParamsComponent implements OnInit {
       const result = await this.backupService.changeConfig(/*this.localConfig.BackupServiceDomain*/this.ServiceDomainLocation, data).toPromise();
   
       if (result.resultado !== 'OK') {
-        await this.alertService.errorMessage(``, `${result.resultado}`);
+        await this.alertService.errorMessage(``, `${result.resultado}`,this.translate.instant('button.accept'));
       }
       else{
-        await this.alertService.successMessage(``, `${this.translate.instant('backup.alert.update_sucess')}`);
+        await this.alertService.successMessage(``, `${this.translate.instant('backup.alert.update_sucess')}`,this.translate.instant('button.accept'));
       }
     }
   }
@@ -82,7 +82,7 @@ export class ParamsComponent implements OnInit {
   async loadParameters(){
     const result = await this.backupService.getConfig(this.ServiceDomainLocation).toPromise();
     if (!result.path || !result.profundidad || !result.hora || !result.minuto){
-      await this.alertService.errorMessage(``, `${result.resultado}`);
+      await this.alertService.errorMessage(``, `${result.resultado}`,this.translate.instant('button.accept'));
     }
     else{
       this.path = (result.path) ? result.path : `C:\\ProgramData\\MySQLBackup\\Backup\\`;

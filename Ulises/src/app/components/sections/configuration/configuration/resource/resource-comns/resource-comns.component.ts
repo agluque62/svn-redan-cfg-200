@@ -164,7 +164,7 @@ export class ResourceComnsComponent implements OnInit {
 
   async checkUri(event: any, collateralLevel: string, type: string) {
     if (event.target.value.match(AppSettings.URI_PATTERN) == undefined && event.target.value != '') {
-      await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.INVALID_URI')}`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.INVALID_URI')}`,this.translate.instant('button.accept'));
       event.target.value = '';
     } else {
       this.resourceForm.get('listaUris')?.markAsDirty();

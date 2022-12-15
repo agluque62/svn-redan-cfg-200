@@ -63,7 +63,7 @@ export class ConfigurationCopyFormComponent implements OnInit {
   async confirm() {
     try {
       if (await this.existDuplicateConfigurationName()) {
-        await this.alertService.errorMessage(``, `${this.translate.instant('config.alert.err_exists_cfg')}`);
+        await this.alertService.errorMessage(``, `${this.translate.instant('config.alert.err_exists_cfg')}`,this.translate.instant('button.accept'));
         return;
       }
 
@@ -73,16 +73,16 @@ export class ConfigurationCopyFormComponent implements OnInit {
         this.showSpinner = false;
 
         if (result.data !== 'OK') {
-          await this.alertService.errorMessage(``, result.data);
+          await this.alertService.errorMessage(``, result.data,this.translate.instant('button.accept'));
           return;
         }
 
         //await this.historicService.updateCfg(101, this.copyForm.value.name).toPromise();
 
-        await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_copy_cfg')}`);
+        await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_copy_cfg')}`,this.translate.instant('button.accept'));
         this.dialogRef.close(true);
       } else {
-        this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+        this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`,this.translate.instant('button.accept'));
       }
     } catch (error: any) {
       this.app.catchError(error);

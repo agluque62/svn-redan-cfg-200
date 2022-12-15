@@ -184,13 +184,13 @@ export class ConfReportPDFService {
       },
       header: {
         margin: [10, 10, 10, 10],
-        text: this.CONFIG_REPORT_VALUE+" " + cfgName + " - " + (new Date()).toLocaleString(), style: 'header'
+        text: this.CONFIG_REPORT_VALUE + " " + cfgName + " - " + (new Date()).toLocaleString(), style: 'header'
       },
       footer: (currentPage: any, pageCount: any) => {
         return {
           margin: [10, 10, 10, 10],
           columns: [
-            { text: "Amper. 2017-" + new Date().getFullYear() + ". "+this.RIGTHS_VALUE+".", style: 'footer', alignment: 'left' },
+            { text: "Amper. 2017-" + new Date().getFullYear() + ". " + this.RIGTHS_VALUE + ".", style: 'footer', alignment: 'left' },
             { text: 'Pg ' + currentPage.toString() + ' de ' + pageCount, style: 'footer', alignment: 'right' }
           ]
         };
@@ -278,18 +278,17 @@ export class ConfReportPDFService {
 
     emplz.gtws.forEach((gtw: any) => {
 
-      const supervision = gtw.supervision_puerta === 0 || !gtw.supervision_puerta ? this.NOT_VALUE : gtw.supervision_puerta + ' '+this.SECONDS_VALUE
+      console.log(this.refreserArray)
+      console.log(gtw.refresher)
+      const supervision = gtw.supervision_puerta === 0 || !gtw.supervision_puerta ? this.NOT_VALUE : gtw.supervision_puerta + ' ' + this.SECONDS_VALUE
       const ultima_carga = gtw.ultima_actualizacion.toLocaleString()
       const retardo = gtw.retardo / 1000 + " " + this.SECONDS_VALUE
       const supervisionTlf = gtw.supervisionTlf === 0 ? this.NOT_VALUE : this.YES_VALUE
       const per_supervision = gtw.supervisionTlf === 0 ? ' - ' : gtw.periodo_supervision
       const refreser = gtw.supervisionTlf === 0 ? ' - ' : this.refreserArray[gtw.refresher]
-      const snmpv = gtw.snmpv2 === 0 ? this.NOT_VALUE : this.YES_VALUE; 
-
-      console.log(gtw.nombre, gtw.ntp.length, gtw.ntp[0], gtw.ntp[1]);
-      var ntp0 = gtw.ntp.length > 0 ?  gtw.ntp[0].ip : ""; 
-      var ntp1 = gtw.ntp.length > 1 ?  gtw.ntp[1].ip : ""; 
-      console.log(gtw.nombre, ntp0, ntp1);
+      const snmpv = gtw.snmpv2 === 0 ? this.NOT_VALUE : this.YES_VALUE;
+      const NTP1 = gtw.ntp[0] ? gtw.ntp[0].ip : ' - '
+      const NTP2 = gtw.ntp[1] ? gtw.ntp[1].ip : ' - '
 
       content.push(
         {
@@ -297,9 +296,9 @@ export class ConfReportPDFService {
           table: {
             widths: ['*', '*'],
             body: [
-              [this.CONFIGURATION_VALUE, conf.nombre],
-              [this.LOCATION_VALUE, emplz.nombre],
-              [this.GATEWAY_VALUE, gtw.nombre]
+              [this.CONFIGURATION_VALUE, conf.nombre ?? ' - '],
+              [this.LOCATION_VALUE, emplz.nombre ?? ' - '],
+              [this.GATEWAY_VALUE, gtw.nombre ?? ' - ']
             ]
           }
         },
@@ -308,10 +307,10 @@ export class ConfReportPDFService {
           table: {
             widths: ['*', '*'],
             body: [
-              [this.IP_VIRTUAL_VALUE, gtw.ip_virtual],
-              [this.LAST_LOAD_VALUE, ultima_carga],
-              [this.GATEWAY_SUPERVISION_VALUE, supervision],
-              [this.ACTIVATION_DELAY_VALUE, retardo]
+              [this.IP_VIRTUAL_VALUE, gtw.ip_virtual ?? ' - '],
+              [this.LAST_LOAD_VALUE, ultima_carga ?? ' - '],
+              [this.GATEWAY_SUPERVISION_VALUE, supervision ?? ' - '],
+              [this.ACTIVATION_DELAY_VALUE, retardo ?? ' - ']
             ]
           }
         },
@@ -320,9 +319,9 @@ export class ConfReportPDFService {
           table: {
             widths: ['*', '*', '*', '*'],
             body: [
-              ['', 'IP', 'IP Gateway', this.MASK_VALUE],
-              ['CPU 0', gtw.ip_cpu0, gtw.ip_gtw0, gtw.mask_cpu0],
-              ['CPU 1', gtw.ip_cpu1, gtw.ip_gtw1, gtw.mask_cpu1]
+              ['', 'IP', 'IP Gateway', this.MASK_VALUE ?? ' - '],
+              ['CPU 0', gtw.ip_cpu0, gtw.ip_gtw0, gtw.mask_cpu0 ?? ' - '],
+              ['CPU 1', gtw.ip_cpu1, gtw.ip_gtw1, gtw.mask_cpu1 ?? ' - ']
             ]
           }
         },
@@ -331,24 +330,24 @@ export class ConfReportPDFService {
           table: {
             widths: ['*', '*'],
             body: [
-              [this.PORT_VALUE, gtw.puerto_sip],
-              [this.TLF_SUPERVISION_VALUE, supervisionTlf],
-              [this.SUPERVISION_PERIOD_VALUE, per_supervision],
-              [this.REFRESHER_VALUE, refreser],
-              [this.NTP_1_VALUE, ntp0/*gtw.ntp[0].ip*/],
-              [this.NTP_2_VALUE, ntp1/*gtw.ntp[1].ip*/],
-              [this.SERVICE_PORT_VALUE, gtw.puerto_servicio_snmp],
-              [this.SNMP_PORT_VALUE, gtw.puerto_snmp],
-              [this.SNMPV2_VALUE, snmpv],
-              [this.SNMP_NAME_VALUE, gtw.nombre_snmp],
-              [this.SNMP_COMMUNITY_VALUE, gtw.comunidad_snmp],
-              [this.SNMP_LOCATION_VALUE, gtw.localizacion_snmp],
-              [this.SNMP_CONTACT_VALUE, gtw.contacto_snmp],
-              [this.SERVICE_PORT_VALUE, gtw.puerto_servicio_web],
-              [this.SESSION_TIME_VALUE, gtw.tiempo_sesion],
-              [this.RSTP_PORT_VALUE, gtw.puerto_rtsp],
-              [this.RSTPA_VALUE, gtw.servidor_rtsp],
-              [this.RSTPB_VALUE, gtw.servidor_rtspb]
+              [this.PORT_VALUE, gtw.puerto_sip ?? ' - '],
+              [this.TLF_SUPERVISION_VALUE, supervisionTlf ?? ' - '],
+              [this.SUPERVISION_PERIOD_VALUE, per_supervision ?? ' - '],
+              [this.REFRESHER_VALUE, refreser ?? ' - '],
+              [this.NTP_1_VALUE, NTP1 ?? ' - '],
+              [this.NTP_2_VALUE, NTP2 ?? ' - '],
+              [this.SERVICE_PORT_VALUE, gtw.puerto_servicio_snmp ?? ' - '],
+              [this.SNMP_PORT_VALUE, gtw.puerto_snmp ?? ' - '],
+              [this.SNMPV2_VALUE, snmpv ?? ' - '],
+              [this.SNMP_NAME_VALUE, gtw.nombre_snmp ?? ' - '],
+              [this.SNMP_COMMUNITY_VALUE, gtw.comunidad_snmp ?? ' - '],
+              [this.SNMP_LOCATION_VALUE, gtw.localizacion_snmp ?? ' - '],
+              [this.SNMP_CONTACT_VALUE, gtw.contacto_snmp ?? ' - '],
+              [this.SERVICE_PORT_VALUE, gtw.puerto_servicio_web ?? ' - '],
+              [this.SESSION_TIME_VALUE, gtw.tiempo_sesion ?? ' - '],
+              [this.RSTP_PORT_VALUE, gtw.puerto_rtsp ?? ' - '],
+              [this.RSTPA_VALUE, gtw.servidor_rtsp ?? ' - '],
+              [this.RSTPB_VALUE, gtw.servidor_rtspb ?? ' - ']
             ]
           },
         },
@@ -382,7 +381,7 @@ export class ConfReportPDFService {
       const clave = !radio.clave_registro ? ' - ' : radio.clave_registro
       const ajusteAD = radio.ajuste_ad === null ? ' - ' : radio.ajuste_ad
       const ajusteDA = radio.ajuste_da === null ? ' - ' : radio.ajuste_da
-      const precision_audio = radio.precision_audio === 0 ? this.STRICT_VALUE : this.NORMAL_VALUE 
+      const precision_audio = radio.precision_audio === 0 ? this.STRICT_VALUE : this.NORMAL_VALUE
 
       content.push(
         {
@@ -390,10 +389,10 @@ export class ConfReportPDFService {
           table: {
             widths: ['*', '*'],
             body: [
-              [this.CONFIGURATION_VALUE, conf.nombre],
-              [this.LOCATION_VALUE, emplz.nombre],
-              [this.GATEWAY_VALUE, gtw.nombre],
-              [this.RESOURCE_VALUE, radio.nombre]
+              [this.CONFIGURATION_VALUE, conf.nombre ?? ' - '],
+              [this.LOCATION_VALUE, emplz.nombre ?? ' - '],
+              [this.GATEWAY_VALUE, gtw.nombre ?? ' - '],
+              [this.RESOURCE_VALUE, radio.nombre ?? ' - ']
             ]
           }
         },
@@ -402,10 +401,10 @@ export class ConfReportPDFService {
           table: {
             widths: ['*', '*'],
             body: [
-              [this.RESOURCE_TYPE_VALUE, this.RAD_VALUE],
-              [this.CODEC_VALUE, codec],
-              [this.KEY_VALUE, clave],
-              [this.FREC_VALUE, radio.frecuencia],
+              [this.RESOURCE_TYPE_VALUE, this.RAD_VALUE ?? ' - '],
+              [this.CODEC_VALUE, codec ?? ' - '],
+              [this.KEY_VALUE, clave ?? ' - '],
+              [this.FREC_VALUE, radio.frecuencia ?? ' - '],
             ]
           }
         },
@@ -414,9 +413,9 @@ export class ConfReportPDFService {
           table: {
             widths: ['*', '*'],
             body: [
-              [this.SETT_AD_VALUE, ajusteAD],
-              [this.SETT_DA_VALUE, ajusteDA],
-              [this.PREC_AUDIO_VALUE, precision_audio],
+              [this.SETT_AD_VALUE, ajusteAD ?? ' - '],
+              [this.SETT_DA_VALUE, ajusteDA ?? ' - '],
+              [this.PREC_AUDIO_VALUE, precision_audio ?? ' - '],
             ]
           }
         },
@@ -444,10 +443,10 @@ export class ConfReportPDFService {
           table: {
             widths: ['*', '*'],
             body: [
-              [this.CONFIGURATION_VALUE, conf.nombre],
-              [this.LOCATION_VALUE, emplz.nombre],
-              [this.GATEWAY_VALUE, gtw.nombre],
-              [this.RESOURCE_VALUE, tlf.nombre]
+              [this.CONFIGURATION_VALUE, conf.nombre ?? ' - '],
+              [this.LOCATION_VALUE, emplz.nombre ?? ' - '],
+              [this.GATEWAY_VALUE, gtw.nombre ?? ' - '],
+              [this.RESOURCE_VALUE, tlf.nombre ?? ' - ']
             ]
           }
         },
@@ -456,10 +455,10 @@ export class ConfReportPDFService {
           table: {
             widths: ['*', '*'],
             body: [
-              [this.RESOURCE_TYPE_VALUE, this.TLF_VALUE],
-              [this.CODEC_VALUE, codec],
-              [this.KEY_VALUE, clave],
-            ]
+              [this.RESOURCE_TYPE_VALUE, this.TLF_VALUE ?? ' - '],
+              [this.CODEC_VALUE, codec ?? ' - '],
+              [this.KEY_VALUE, clave ?? ' - '],
+              ]
           }
         },
         {
@@ -467,8 +466,8 @@ export class ConfReportPDFService {
           table: {
             widths: ['*', '*'],
             body: [
-              [this.SETT_AD_VALUE, ajusteAD],
-              [this.SETT_DA_VALUE, ajusteDA],
+              [this.SETT_AD_VALUE, ajusteAD ?? ' - '],
+              [this.SETT_DA_VALUE, ajusteDA ?? ' - '],
             ]
           }
         },
@@ -514,21 +513,21 @@ export class ConfReportPDFService {
     let body = []
 
     body.push(
-      [this.COLATERAL_VALUE, uri_remota],
-      [this.COLATERAL_SUPER_VALUE, supervisa_colateral],
-      [this.ANY_RESP_IS_VALID_VALUE, cualquier_respuesta],
+      [this.COLATERAL_VALUE, uri_remota ?? ' - '],
+      [this.COLATERAL_SUPER_VALUE, supervisa_colateral ?? ' - '],
+      [this.ANY_RESP_IS_VALID_VALUE, cualquier_respuesta ?? ' - '],
     )
 
     if (tlf.tipo_interfaz_tel !== 7) {
       body.push(
-        [this.COLATERAL_VALUE, uri_remota_add],
-        [this.ADD_COLATERAL_SUPER_VALUE, supervisa_colateral_add],
-        [this.ADD_ANY_RESP_IS_VALID_VALUE, cualquier_respuesta_add],
+        [this.COLATERAL_VALUE, uri_remota_add ?? ' - '],
+        [this.ADD_COLATERAL_SUPER_VALUE, supervisa_colateral_add ?? ' - '],
+        [this.ADD_ANY_RESP_IS_VALID_VALUE, cualquier_respuesta_add ?? ' - '],
       )
     }
 
     body.push(
-      [this.SUPERVISION_TIME_VALUE, tiempo_supervision]
+      [this.SUPERVISION_TIME_VALUE, tiempo_supervision ?? ' - ']
     )
 
     return body
@@ -570,11 +569,11 @@ export class ConfReportPDFService {
     const detect_fallo = tlf.iDetLineaAB === 0 ? this.NOT_VALUE : this.YES_VALUE
     const respuesta_automatica = tlf.respuesta_automatica === 0 ? this.NOT_VALUE : this.YES_VALUE
     const periodo_tono = tlf.respuesta_automatica === 0 ? ' - ' : tlf.periodo_tonos
-    const conv_SIP_R2 = tlf.respuesta_automatica === 0 ? this.respuestaSIP[tlf.RespuestaSIP_ATSR2] : ' - '
-    const duracion_tono = tlf.respuesta_automatica === 0 && tlf.RespuestaSIP_ATSR2 === 1 ? tlf.TmTonoBloqueo : ' - '
-    const tiempo_bloqueo = tlf.respuesta_automatica === 0 && tlf.RespuestaSIP_ATSR2 === 1 ? tlf.TmBloqueoLib : ' - '
+    const conv_SIP_R2 = tlf.respuesta_automatica === 0 ? (this.respuestaSIP[tlf.RespuestaSIP_ATSR2] ?? '-') : ' - '
+    const duracion_tono = tlf.respuesta_automatica === 0 && tlf.RespuestaSIP_ATSR2 === 1 ? (tlf.TmTonoBloqueo ?? ' - ') : ' - '
+    const tiempo_bloqueo = tlf.respuesta_automatica === 0 && tlf.RespuestaSIP_ATSR2 === 1 ? (tlf.TmBloqueoLib ?? ' - ') : ' - '
     const lado = this.ladoOptions[tlf.lado]
-    const llamada_automatica = tlf.llamada_automatica === 0 ? this.NOT_VALUE : this.YES_VALUE
+    const llamada_automatica = tlf.llamada_automatica ? (tlf.llamada_automatica === 0 ? this.NOT_VALUE : this.YES_VALUE) : ' - '
     const origen = tlf.origen_test === '' ? ' - ' : tlf.origen_test
     const destino = tlf.destino_test === '' ? ' - ' : tlf.destino_test
 
@@ -583,86 +582,86 @@ export class ConfReportPDFService {
     switch (tlf.tipo_interfaz_tel) {
       case 0:
         body.push(
-          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico],
-          [this.AVGNUSER_VALUE, tlf.ats_user],
-          [this.ED137_VALUE, permite_llamadas],
-          [this.DETECT_VOX_VALUE, deteccion_vox],
-          [this.UMBRAL_VOX_VALUE, umbral_vox],
-          [this.VOX_TAIL_VALUE, cola_vox],
-          [this.CALL_DUR_PER_TIME_VALUE, duracion_llamada],
+          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico ?? ' - '],
+          [this.AVGNUSER_VALUE, tlf.ats_user ?? ' - '],
+          [this.ED137_VALUE, permite_llamadas ?? ' - '],
+          [this.DETECT_VOX_VALUE, deteccion_vox ?? ' - '],
+          [this.UMBRAL_VOX_VALUE, umbral_vox ?? ' - '],
+          [this.VOX_TAIL_VALUE, cola_vox ?? ' - '],
+          [this.CALL_DUR_PER_TIME_VALUE, duracion_llamada ?? ' - '],
           [this.TIME_MAX_CALL_VALUE, tiempo_maximo]
         )
 
         break;
       case 1:
         body.push(
-          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico],
-          [this.AVGNUSER_VALUE, tlf.ats_user],
-          [this.ED137_VALUE, permite_llamadas],
+          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico ?? ' - '],
+          [this.AVGNUSER_VALUE, tlf.ats_user ?? ' - '],
+          [this.ED137_VALUE, permite_llamadas ?? ' - '],
 
         )
 
         break;
       case 2:
         body.push(
-          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico],
-          [this.AVGNUSER_VALUE, tlf.ats_user],
-          [this.ED137_VALUE, permite_llamadas],
-          [this.DET_INV_POL_VALUE, detect_inv],
-          [this.DET_LINEA_AB_VALUE, detect_fallo]
+          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico ?? ' - '],
+          [this.AVGNUSER_VALUE, tlf.ats_user ?? ' - '],
+          [this.ED137_VALUE, permite_llamadas ?? ' - '],
+          [this.DET_INV_POL_VALUE, detect_inv ?? ' - '],
+          [this.DET_LINEA_AB_VALUE, detect_fallo ?? ' - ']
         )
 
         break;
       case 3:
         body.push(
-          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico],
-          [this.AVGNUSER_VALUE, tlf.ats_user],
-          [this.ED137_VALUE, permite_llamadas],
-          [this.AUTOMATIC_RESP_VALUE, respuesta_automatica],
-          [this.PERIOD_SHADES_VALUE, periodo_tono],
-          [this.SIP_R2_RESP_VALUE, conv_SIP_R2],
-          [this.TONOBLOQUEO_VALUE, duracion_tono],
-          [this.RMBLOQUEO_VALUE, tiempo_bloqueo],
-          [this.SIDE_VALUE, lado],
-          [this.ORIGEN_TEST_VALUE, origen],
-          [this.DESTINO_TEST_VALUE, destino],
-          [this.DURATION_SHADES_VALUE, tlf.duracion_tono_interrup],
+          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico ?? ' - '],
+          [this.AVGNUSER_VALUE, tlf.ats_user ?? ' - '],
+          [this.ED137_VALUE, permite_llamadas ?? ' - '],
+          [this.AUTOMATIC_RESP_VALUE, respuesta_automatica ?? ' - '],
+          [this.PERIOD_SHADES_VALUE, periodo_tono ?? ' - '],
+          [this.SIP_R2_RESP_VALUE, conv_SIP_R2 ?? ' - '],
+          [this.TONOBLOQUEO_VALUE, duracion_tono ?? ' - '],
+          [this.RMBLOQUEO_VALUE, tiempo_bloqueo ?? ' - '],
+          [this.SIDE_VALUE, lado ?? ' - '],
+          [this.ORIGEN_TEST_VALUE, origen ?? ' - '],
+          [this.DESTINO_TEST_VALUE, destino ?? ' - '],
+          [this.DURATION_SHADES_VALUE, tlf.duracion_tono_interrup ?? ' - '],
         )
 
         break;
       case 4:
         body.push(
-          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico],
-          [this.ED137_VALUE, tlf.ats_user],
-          [this.AUTOMATIC_RESP_VALUE, respuesta_automatica],
-          [this.PERIOD_SHADES_VALUE, periodo_tono],
-          [this.SIDE_VALUE, lado],
-          [this.ORIGEN_TEST_VALUE, origen],
-          [this.DESTINO_TEST_VALUE, destino],
-          [this.DURATION_SHADES_VALUE, tlf.duracion_tono_interrup],
+          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico ?? ' - '],
+          [this.ED137_VALUE, tlf.ats_user ?? ' - '],
+          [this.AUTOMATIC_RESP_VALUE, respuesta_automatica ?? ' - '],
+          [this.PERIOD_SHADES_VALUE, periodo_tono ?? ' - '],
+          [this.SIDE_VALUE, lado ?? ' - '],
+          [this.ORIGEN_TEST_VALUE, origen ?? ' - '],
+          [this.DESTINO_TEST_VALUE, destino ?? ' - '],
+          [this.DURATION_SHADES_VALUE, tlf.duracion_tono_interrup ?? ' - '],
         )
 
         break;
 
       case 5:
         body.push(
-          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico],
-          [this.AVGNUSER_VALUE, tlf.ats_user],
-          [this.AUTOMATIC_RESP_VALUE, respuesta_automatica],
-          [this.PERIOD_SHADES_VALUE, periodo_tono],
+          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico ?? ' - '],
+          [this.AVGNUSER_VALUE, tlf.ats_user ?? ' - '],
+          [this.AUTOMATIC_RESP_VALUE, respuesta_automatica ?? ' - '],
+          [this.PERIOD_SHADES_VALUE, periodo_tono ?? ' - '],
         )
 
         break;
       case 6:
         body.push(
-          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico],
+          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico ?? ' - '],
         )
 
         break;
       case 7:
         body.push(
-          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico],
-          [this.AUTOMATIC_CALL_VALUE, llamada_automatica],
+          [this.TLF_TYPE_VALUE, tipo_interfaz_telefonico ?? ' - '],
+          [this.AUTOMATIC_CALL_VALUE, llamada_automatica ?? ' - '],
         )
 
         break;
@@ -678,7 +677,7 @@ export class ConfReportPDFService {
 
       const tipoRestriccionLista = this.tipoRestriccion[radio.restriccion_entrantes]
 
-      body.push([('resource.tlf.lists'), tipoRestriccionLista])
+      body.push([this.LISTAS_BN_VALUE, tipoRestriccionLista ?? ' - '])
 
       if (radio.restriccion_entrantes !== 0) {
         radio.uris.forEach((uri: any) => {
@@ -744,96 +743,96 @@ export class ConfReportPDFService {
 
     let body = []
 
-    body.push([this.RAD_TYPE_VALUE, tipo_agente_radio])
+    body.push([this.RAD_TYPE_VALUE, tipo_agente_radio ?? ' - '])
 
     switch (type) {
       case 0:
         body.push(
-          [this.AUDIO_INPUT_VALUE, indicacion_entrada_audio],
-          [this.AUDIO_OUTPUT_VALUE, indicacion_salida_audio],
-          [this.UMBRAL_VAD_VALUE, umbral_vad],
-          [this.PTT_EVENT_VALUE, eventosPTT],
-          [this.PTT_PRIORITY_VALUE, prioridadPtt],
-          [this.SIP_PRIORITY_VALUE, prioridadSesion],
+          [this.AUDIO_INPUT_VALUE, indicacion_entrada_audio ?? ' - '],
+          [this.AUDIO_OUTPUT_VALUE, indicacion_salida_audio ?? ' - '],
+          [this.UMBRAL_VAD_VALUE, umbral_vad ?? ' - '],
+          [this.PTT_EVENT_VALUE, eventosPTT ?? ' - '],
+          [this.PTT_PRIORITY_VALUE, prioridadPtt ?? ' - '],
+          [this.SIP_PRIORITY_VALUE, prioridadSesion ?? ' - '],
         )
         break;
 
       case 1:
         body.push(
-          [this.AUDIO_INPUT_VALUE, indicacion_entrada_audio],
-          [this.AUDIO_OUTPUT_VALUE, indicacion_salida_audio],
-          [this.UMBRAL_VAD_VALUE, umbral_vad],
-          [this.PTT_EVENT_VALUE, eventosPTT],
-          [this.PTT_PRIORITY_VALUE, prioridadPtt],
-          [this.SIP_PRIORITY_VALUE, prioridadSesion],
+          [this.AUDIO_INPUT_VALUE, indicacion_entrada_audio ?? ' - '],
+          [this.AUDIO_OUTPUT_VALUE, indicacion_salida_audio ?? ' - '],
+          [this.UMBRAL_VAD_VALUE, umbral_vad ?? ' - '],
+          [this.PTT_EVENT_VALUE, eventosPTT ?? ' - '],
+          [this.PTT_PRIORITY_VALUE, prioridadPtt ?? ' - '],
+          [this.SIP_PRIORITY_VALUE, prioridadSesion ?? ' - '],
         )
         break;
 
       case 2:
         body.push(
-          [this.AUDIO_INPUT_VALUE, indicacion_entrada_audio],
-          [this.AUDIO_OUTPUT_VALUE, indicacion_salida_audio],
-          [this.UMBRAL_VAD_VALUE, umbral_vad],
-          [this.PTT_EVENT_VALUE, eventosPTT],
-          [this.PTT_PRIORITY_VALUE, prioridadPtt],
-          [this.SIP_PRIORITY_VALUE, prioridadSesion],
-          [this.BSS_CLIMAX_VALUE, BSSClimax],
-          [this.BSS_AVAILABLE_VALUE, metodosBSS],
-          [this.BASS_WINDOWS_VALUE, ventanaBSS],
-          [this.CLIMAX_MODE_VALUE, modoclimax],
-          [this.MODE_CALC_CLIMAX_VALUE, calculoClimax],
-          [this.TIME_VALUE, tiempoClimax],
+          [this.AUDIO_INPUT_VALUE, indicacion_entrada_audio ?? ' - '],
+          [this.AUDIO_OUTPUT_VALUE, indicacion_salida_audio ?? ' - '],
+          [this.UMBRAL_VAD_VALUE, umbral_vad ?? ' - '],
+          [this.PTT_EVENT_VALUE, eventosPTT ?? ' - '],
+          [this.PTT_PRIORITY_VALUE, prioridadPtt ?? ' - '],
+          [this.SIP_PRIORITY_VALUE, prioridadSesion ?? ' - '],
+          [this.BSS_CLIMAX_VALUE, BSSClimax ?? ' - '],
+          [this.BSS_AVAILABLE_VALUE, metodosBSS ?? ' - '],
+          [this.BASS_WINDOWS_VALUE, ventanaBSS ?? ' - '],
+          [this.CLIMAX_MODE_VALUE, modoclimax ?? ' - '],
+          [this.MODE_CALC_CLIMAX_VALUE, calculoClimax ?? ' - '],
+          [this.TIME_VALUE, tiempoClimax ?? ' - '],
         )
         break;
 
       case 3:
         body.push(
-          [this.AUDIO_INPUT_VALUE, indicacion_entrada_audio],
-          [this.AUDIO_OUTPUT_VALUE, indicacion_salida_audio],
-          [this.UMBRAL_VAD_VALUE, umbral_vad],
-          [this.PTT_EVENT_VALUE, eventosPTT],
-          [this.PTT_PRIORITY_VALUE, prioridadPtt],
-          [this.SIP_PRIORITY_VALUE, prioridadSesion],
-          [this.BSS_CLIMAX_VALUE, BSSClimax],
-          [this.BSS_AVAILABLE_VALUE, metodosBSS],
-          [this.BASS_WINDOWS_VALUE, ventanaBSS],
-          [this.CLIMAX_MODE_VALUE, modoclimax],
-          [this.MODE_CALC_CLIMAX_VALUE, calculoClimax],
-          [this.TIME_VALUE, tiempoClimax],
+          [this.AUDIO_INPUT_VALUE, indicacion_entrada_audio ?? ' - '],
+          [this.AUDIO_OUTPUT_VALUE, indicacion_salida_audio ?? ' - '],
+          [this.UMBRAL_VAD_VALUE, umbral_vad ?? ' - '],
+          [this.PTT_EVENT_VALUE, eventosPTT ?? ' - '],
+          [this.PTT_PRIORITY_VALUE, prioridadPtt ?? ' - '],
+          [this.SIP_PRIORITY_VALUE, prioridadSesion ?? ' - '],
+          [this.BSS_CLIMAX_VALUE, BSSClimax ?? ' - '],
+          [this.BSS_AVAILABLE_VALUE, metodosBSS ?? ' - '],
+          [this.BASS_WINDOWS_VALUE, ventanaBSS ?? ' - '],
+          [this.CLIMAX_MODE_VALUE, modoclimax ?? ' - '],
+          [this.MODE_CALC_CLIMAX_VALUE, calculoClimax ?? ' - '],
+          [this.TIME_VALUE, tiempoClimax ?? ' - '],
         )
         break;
 
       case 4:
         body.push(
-          [this.AUDIO_INPUT_VALUE, indicacion_entrada_audio],
-          [this.AUDIO_OUTPUT_VALUE, indicacion_salida_audio],
-          [this.UMBRAL_VAD_VALUE, umbral_vad],
-          [this.PTT_EVENT_VALUE, eventosPTT],
-          [this.BSS_CLIMAX_VALUE, BSSClimax],
-          [this.METODO_BSS_VALUE, metodosBSSPref],
-          [this.TABLE_BSS_VALUE, tablaCalificacion],
-          [this.RADIO_GRS_VALUE, retrasoGRS],
-          [this.ENABLE_RECORD_VALUE, habilitaGrabacion],
+          [this.AUDIO_INPUT_VALUE, indicacion_entrada_audio ?? ' - '],
+          [this.AUDIO_OUTPUT_VALUE, indicacion_salida_audio ?? ' - '],
+          [this.UMBRAL_VAD_VALUE, umbral_vad ?? ' - '],
+          [this.PTT_EVENT_VALUE, eventosPTT ?? ' - '],
+          [this.BSS_CLIMAX_VALUE, BSSClimax ?? ' - '],
+          [this.METODO_BSS_VALUE, metodosBSSPref ?? ' - '],
+          [this.TABLE_BSS_VALUE, tablaCalificacion ?? ' - '],
+          [this.RADIO_GRS_VALUE, retrasoGRS ?? ' - '],
+          [this.ENABLE_RECORD_VALUE, habilitaGrabacion ?? ' - '],
         )
         break;
 
       case 5:
         body.push(
-          [this.AUDIO_OUTPUT_VALUE, indicacion_salida_audio],
-          [this.UMBRAL_VAD_VALUE, umbral_vad],
-          [this.PTT_EVENT_VALUE, eventosPTT],
-          [this.RADIO_GRS_VALUE, retrasoGRS],
+          [this.AUDIO_OUTPUT_VALUE, indicacion_salida_audio ?? ' - '],
+          [this.UMBRAL_VAD_VALUE, umbral_vad ?? ' - '],
+          [this.PTT_EVENT_VALUE, eventosPTT ?? ' - '],
+          [this.RADIO_GRS_VALUE, retrasoGRS ?? ' - '],
         )
         break;
 
       case 6:
         body.push(
-          [this.AUDIO_INPUT_VALUE, indicacion_entrada_audio],
-          [this.UMBRAL_VAD_VALUE, umbral_vad],
-          [this.PTT_EVENT_VALUE, eventosPTT],
-          [this.BSS_AVAILABLE_VALUE, metodosBSS],
-          [this.TABLE_BSS_VALUE, tablaCalificacion],
-          [this.ENABLE_RECORD_VALUE, habilitaGrabacion],
+          [this.AUDIO_INPUT_VALUE, indicacion_entrada_audio ?? ' - '],
+          [this.UMBRAL_VAD_VALUE, umbral_vad ?? ' - '],
+          [this.PTT_EVENT_VALUE, eventosPTT ?? ' - '],
+          [this.BSS_AVAILABLE_VALUE, metodosBSS ?? ' - '],
+          [this.TABLE_BSS_VALUE, tablaCalificacion ?? ' - '],
+          [this.ENABLE_RECORD_VALUE, habilitaGrabacion ?? ' - '],
         )
         break;
     }
@@ -849,12 +848,12 @@ export class ConfReportPDFService {
     body.push([this.RESOURCE_VALUE, this.RESOURCE_TYPE_VALUE])
 
     gtw.radio.forEach((radRs: any) => {
-      body.push([radRs.nombre, this.RAD_VALUE])
+      body.push([radRs.nombre, this.RAD_VALUE ?? ' - '])
     })
 
 
     gtw.tlf.forEach((tlfRs: any) => {
-      body.push([tlfRs.nombre, this.TLF_VALUE])
+      body.push([tlfRs.nombre, this.TLF_VALUE ?? ' - '])
     })
 
     return body
@@ -866,12 +865,11 @@ export class ConfReportPDFService {
     let body = []
 
     body.push([this.TRAP_VERSION_VALUE, this.TRAP_IP_ADRESS_VALUE, this.TRAP_PORT_VALUE]);
-
     gtw.traps.forEach((trap: any) => {
       const version = (trap.ip.split(","))[0]
       const ip = (((trap.ip.split(","))[1]).split('/'))[0]
       const puerto = (trap.ip.split("/"))[1]
-      body.push([version, ip, puerto])
+      body.push([version ?? ' - ', ip ?? ' - ', puerto ?? ' - '])
     })
 
     if (gtw.traps.length === 0) {
@@ -901,7 +899,7 @@ export class ConfReportPDFService {
     body.push([this.GATEWAY_VALUE, this.IP_VIRTUAL_VALUE, this.IP_CPU0_VALUE, this.IP_CPU0_VALUE])
 
     emplz.gtws.forEach((gtw: any) => {
-      body.push([gtw.nombre, gtw.ip_virtual, gtw.ip_cpu0, gtw.ip_cpu1])
+      body.push([gtw.nombre ?? ' - ', gtw.ip_virtual ?? ' - ', gtw.ip_cpu0 ?? ' - ', gtw.ip_cpu1 ?? ' - '])
     })
 
     return body
@@ -1044,9 +1042,9 @@ export class ConfReportPDFService {
     this.LAST_MODIF_VALUE = data.pdf_data['LAST_MODIF'];
     this.SUPERVISED_VALUE = data.pdf_data['SUPERVISED'];
     this.DESCRIPTION_VALUE = data.pdf_data['DESCRIPTION'];
-    this.TRAP_VERSION_VALUE = data.pdf_data['TRAP_VERSION']; 
-    this.TRAP_IP_ADRESS_VALUE = data.pdf_data['TRAP_IP_ADRESS']; 
-    this.TRAP_PORT_VALUE = data.pdf_data['TRAP_PORT']; 
+    this.TRAP_VERSION_VALUE = data.pdf_data['TRAP_VERSION'];
+    this.TRAP_IP_ADRESS_VALUE = data.pdf_data['TRAP_IP_ADRESS'];
+    this.TRAP_PORT_VALUE = data.pdf_data['TRAP_PORT'];
     this.RIGTHS_VALUE = data.pdf_data['RIGTHS'];
     this.CONFIG_REPORT_VALUE = data.pdf_data['CONFIG_REPORT']
   }

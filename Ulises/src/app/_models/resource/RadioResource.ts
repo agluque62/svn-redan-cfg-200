@@ -14,7 +14,6 @@ export class RadioResource {
     metodo_bss!: number;
     metodo_climax!: number;
     nombre!: string;
-    precision_audio!: number;
     prioridad_ptt!: number;
     prioridad_sesion_sip!: number;
     restriccion_entrantes!: number;
@@ -42,7 +41,6 @@ export class RadioResource {
         this.indicacion_salida_audio = 0;
         this.metodo_bss = 0;
         this.metodo_climax = 0;
-        this.precision_audio = 0;
         this.prioridad_ptt = 0;
         this.prioridad_sesion_sip = 0;
         this.restriccion_entrantes = 0;

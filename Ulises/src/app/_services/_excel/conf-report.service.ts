@@ -195,6 +195,8 @@ export class ConfReportExcelService {
     const per_supervision = gtw.supervisionTlf === 0 ? ' - ' : gtw.periodo_supervision
     const refreser = gtw.supervisionTlf === 0 ? ' - ' : (this.refreserArray[gtw.refresher])
     const snmpv2 = gtw.snmpv2 === 0 ? this.NOT_VALUE : this.YES_VALUE
+    const NTP1 = gtw.ntp[0] ?  gtw.ntp[0].ip : ' - '
+    const NTP2 = gtw.ntp[1] ?  gtw.ntp[1].ip : ' - '
 
     body.push({
       POS_1: this.LOCATION_VALUE,
@@ -239,11 +241,6 @@ export class ConfReportExcelService {
       POS_28: this.RSTPB_VALUE,
     })
 
-    console.log(gtw.nombre, gtw.ntp.length, gtw.ntp[0], gtw.ntp[1]);
-    var ntp0 = gtw.ntp.length > 0 ?  gtw.ntp[0].ip : ""; 
-    var ntp1 = gtw.ntp.length > 1 ?  gtw.ntp[1].ip : ""; 
-    console.log(gtw.nombre, ntp0, ntp1);
-
     body.push({
       POS_1: gtw.ip_virtual,
       POS_2: ultima_carga,
@@ -259,8 +256,8 @@ export class ConfReportExcelService {
       POS_12: supervisionTlf,
       POS_13: per_supervision,
       POS_14: refreser,
-      POS_15: ntp0, //gtw.ntp[0].ip,
-      POS_16: ntp1, //gtw.ntp[1].ip,
+      POS_15: NTP1,
+      POS_16: NTP2,
       POS_17: snmpv2,
       POS_18: gtw.puerto_servicio_snmp,
       POS_19: gtw.puerto_snmp,

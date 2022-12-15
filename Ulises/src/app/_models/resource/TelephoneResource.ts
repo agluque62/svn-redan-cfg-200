@@ -20,7 +20,6 @@ export class TelephoneResource {
     nombre!: string;
     origen_test!: string;
     periodo_tonos!: number;
-    precision_audio!: number;
     respuesta_automatica!: number;
     supervisa_colateral!: number;
     tiempo_supervision!: number;
@@ -32,7 +31,6 @@ export class TelephoneResource {
     pasarela_id!: number;
     ranks!: any;
     IT_int_Warning!: number;
-    llamada_automatica !: number;
     iControlTmLlam !: number;
     iTmMaxConversacion !: number;
     RespuestaSIP_ATSR2 !: number;
@@ -43,7 +41,6 @@ export class TelephoneResource {
         this.ajuste_ad = 0;
         this.ajuste_da = 0;
         this.codec = 0;
-        this.precision_audio = 0;
         this.DetInversionPol = 0;
         this.additional_itiporespuesta = 0;
         this.additional_superv_options = 0;
@@ -66,11 +63,10 @@ export class TelephoneResource {
         this.tipo_interfaz_tel = 0;
         this.umbral_vox = -35;
         this.uri_telefonica = "";
-        this.llamada_automatica = 0;
         this.iControlTmLlam = 0;
         this.iTmMaxConversacion = 0;
         this.RespuestaSIP_ATSR2 = 0;
-        this.TmTonoBloqueo = 1;
-        this.TmBloqueoLib = 100;
+        this.TmTonoBloqueo = 0;
+        this.TmBloqueoLib = 0;
     }
 }

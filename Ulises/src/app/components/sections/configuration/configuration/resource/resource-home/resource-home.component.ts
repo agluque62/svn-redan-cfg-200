@@ -106,13 +106,13 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
   // Radio data
   radioAgents: customValues[] = [
-    { value: 0, viewValue: 'resource.radioAgents_value_0'},
-    { value: 1, viewValue: 'resource.radioAgents_value_1'},
-    { value: 2, viewValue: 'resource.radioAgents_value_2'},
-    { value: 3, viewValue: 'resource.radioAgents_value_3'},
-    { value: 4, viewValue: 'resource.radioAgents_value_4'},
-    { value: 5, viewValue: 'resource.radioAgents_value_5'},
-    { value: 6, viewValue: 'resource.radioAgents_value_6'}
+    { value: 0, viewValue: 'resource.radioAgents_value_0' },
+    { value: 1, viewValue: 'resource.radioAgents_value_1' },
+    { value: 2, viewValue: 'resource.radioAgents_value_2' },
+    { value: 3, viewValue: 'resource.radioAgents_value_3' },
+    { value: 4, viewValue: 'resource.radioAgents_value_4' },
+    { value: 5, viewValue: 'resource.radioAgents_value_5' },
+    { value: 6, viewValue: 'resource.radioAgents_value_6' }
   ];
 
   // Telephonic data
@@ -368,7 +368,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   }
 
   async onDelete() {
-    const userInteraction = await this.alertService.confirmationMessage(``, `${this.translate.instant('resource.alert.conf_delete_res', { value: this.resourceForm.value.nombre })}`);
+    const userInteraction = await this.alertService.confirmationMessage(``, `${this.translate.instant('resource.alert.conf_delete_res', { value: this.resourceForm.value.nombre })}`, this.translate.instant('button.accept'), this.translate.instant('button.cancel'));
     let res;
     if (userInteraction.value) {
       if (this.selectedResource == 1) {
@@ -378,13 +378,13 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       }
       if (res) {
         let title = this.dataService.getDataGatewayTitle();
-        title = title + " - Tipo: " + (this.selectedResource == 1 ? "Radio" : "Teléfono")
+        title = title + " - {TYPE} : " + (this.selectedResource == 1 ? " {RADIO} " : " {TLF} ")
         await this.historicService.updateCfg(114, this.resourceForm.value.nombre, title).toPromise();
-        await this.alertService.successMessage(``, `${this.translate.instant('resource.alert.succ_delete_res', { value: this.resourceForm.value.nombre })}`);
+        await this.alertService.successMessage(``, `${this.translate.instant('resource.alert.succ_delete_res', { value: this.resourceForm.value.nombre })}`, this.translate.instant('button.accept'));
         this.dataService.updateDataGatewayPreviousUrl('RESOURCE');
         this.router.navigate(['/home/gateway/' + this.resource.pasarela_id]);
       } else {
-        await this.alertService.errorMessage(``, `${this.translate.instant('resource.alert.err_delete_res')}`);
+        await this.alertService.errorMessage(``, `${this.translate.instant('resource.alert.err_delete_res')}`, this.translate.instant('button.accept'));
       }
     }
 
@@ -393,7 +393,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   async back() {
     let confirm;
     if (this.editMode && this.changes) {
-      confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('resource.alert.conf_back_no_changes')}`);
+      confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('resource.alert.conf_back_no_changes')}`, this.translate.instant('button.accept'), this.translate.instant('button.cancel'));
 
     }
     if (confirm?.isConfirmed == true || confirm === undefined) {
@@ -512,7 +512,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         this.resourceForm.get('destino_test')?.value !== '') {
 
         const message = `${this.translate.instant('resource.alert.err_same_start_end_call')}`;
-        await this.alertService.errorMessage(`Error`, message);
+        await this.alertService.errorMessage(`Error`, message, this.translate.instant('button.accept'));
         result = true;
       }
     }
@@ -523,7 +523,6 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   async onSubmit() {
     let res;
     let message;
-
     if (this.thirdTabRef && this.thirdTabRef.instance.uriListToDisplay != undefined) {
       let blList = this.thirdTabRef.instance.uriListToDisplay['LSN'];
       let wList = this.thirdTabRef.instance.uriListToDisplay['LSB'];
@@ -542,6 +541,13 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       this.resourceForm.patchValue({ ranks: this.thirdTabRef.instance.ranks });
     }
 
+    if (this.selectedResource == 2 && this.resourceForm.value.tipo_interfaz_tel !== 3) {
+      if (this.resourceForm.get('TmTonoBloqueo')?.invalid)
+        this.resourceForm.patchValue({ 'TmTonoBloqueo': 0 });
+      if (this.resourceForm.get('TmBloqueoLib')?.invalid)
+        this.resourceForm.patchValue({ 'TmBloqueoLib': 0 });
+    }
+
     let nameIsValid = this.resourceForm.value.nombre !== undefined && this.resourceForm.value.nombre !== '' ?
       (await this.resourceService.checkIfNameIsValid(this.resourceForm.value.nombre, this.GATEWAY_ID, this.resourceId).toPromise()) : undefined;
 
@@ -554,7 +560,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     } else {
       this.displayTbMessage = false;
     }
-    if (this.displayTbMessage) confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('resource.alert.conf_no_table_continue')}`);
+    if (this.displayTbMessage) confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('resource.alert.conf_no_table_continue')}`, this.translate.instant('button.accept'), this.translate.instant('button.cancel'));
 
     if (this.resourceForm.value.indicacion_entrada_audio !== 1) {
       this.resourceForm.get('umbral_vad')?.clearValidators();
@@ -618,8 +624,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         }
         this.showSpinner = false;
 
-        let title = this.dataService.getDataGatewayTitle();
-        title = title + " - Tipo: " + (this.selectedResource == 1 ? "Radio" : "Teléfono")
+        let title = ` {CONFIGURATION} : ${this.GTW_NAME} - {LOCATION} : ${this.LOCAT_NAME} - {GATEWAY} : ${this.GTW_NAME} `
+        title = title + " - {TYPE} : " + (this.selectedResource == 1 ? " {RADIO} " : " {TLF} ")
 
         if (res && res.result == 'OK') {
           if (this.editMode) {
@@ -629,7 +635,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
           } else {
             this.validateFormDirty(title, 113);
           }
-          await this.alertService.successMessage(``, message);
+          await this.alertService.successMessage(``, message, this.translate.instant('button.accept'));
           this.dataService.updateDataGatewayPreviousUrl('RESOURCE');
           this.router.navigate(['/home/gateway/' + this.resource.pasarela_id]);
         } else {
@@ -689,7 +695,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         showMessage = true;
       }
 
-      if (showMessage) confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('resource.alert.conf_index_res', { value: total })}`);
+      if (showMessage) confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('resource.alert.conf_index_res', { value: total })}`, this.translate.instant('button.accept'), this.translate.instant('button.cancel'));
     }
     return { 'response': confirm, 'loadIndex': total };
   }
@@ -698,19 +704,19 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     switch (errorType) {
       case "create":
         if (this.editMode) {
-          await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.RES_EDIT_ERROR')}`);
+          await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.RES_EDIT_ERROR')}`, this.translate.instant('button.accept'));
         } else {
-          await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.RES_CREATE_ERROR')}`);
+          await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.RES_CREATE_ERROR')}`, this.translate.instant('button.accept'));
         }
         break;
       case "form":
-        await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+        await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`, this.translate.instant('button.accept'));
         break;
       case "resourceName":
-        await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.RES_NAME_DUP')}`);
+        await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.RES_NAME_DUP')}`, this.translate.instant('button.accept'));
         break;
       case "ranks":
-        await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.WRONG_RANKS')}`);
+        await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.WRONG_RANKS')}`, this.translate.instant('button.accept'));
         break;
     }
 
@@ -845,23 +851,15 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         this.initRadioForm();
         this.resourceForm.patchValue({ nombre: this.tmpNameResource });
       }
-
-      if (this.resourceForm.value.tipo_agente === 2 || this.resourceForm.value.tipo_agente === 3) { // issue 2867
-        this.precAudioIsDisable = true;
-        this.resourceForm.patchValue({ 'precision_audio': 1 });
-      } else {
-        this.precAudioIsDisable = false;
-        if (this.resourceForm.get('ventana_bss')?.invalid)
-          this.resourceForm.patchValue({ 'ventana_bss': 300 });
-        if (this.resourceForm.get('retardo_fijo_climax')?.invalid)
-          this.resourceForm.patchValue({ 'retardo_fijo_climax': 50 });
-      }
-
       this.displayRadioTab = true;
       this.displayTelephonicTab = false;
       this.displayNumberRange = false;
       this.displayCollaterals = false;
       this.selectRadioForm();
+      if (this.resourceForm.get('ventana_bss')?.invalid)
+        this.resourceForm.patchValue({ 'ventana_bss': 300 });
+      if (this.resourceForm.get('retardo_fijo_climax')?.invalid)
+        this.resourceForm.patchValue({ 'retardo_fijo_climax': 50 });
       if (this.resourceForm.value.tipo_agente >= 0 && this.resourceForm.value.tipo_agente <= 3) {
         this.displayComnsTab = true;
         this.displayListsTab = false;
@@ -1093,24 +1091,24 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   }
 
   async validateFormDirty(initTitle: string, code: number) {
-    let title = `${initTitle} - Parametro(s): `;
+    let title = `${initTitle} - {PARAMS} `;
     let arrayToCheckFields = this.selectedResource == 1 ? formsFields.common.concat(formsFields.radio) : formsFields.common.concat(formsFields.tel);
 
     if (this.isCheckedRegistryKey) {
       let keyCondition = (this.resourceForm.value.clave_registro !== null && this.resourceForm.value.clave_registro !== '' && this.isCheckedRegistryKey);
-      title += `Habilitado Clave registro: ${keyCondition ? 'Si' : 'No'}; `
+      title += ` {REGISTER_KEY_AVAILABLE} : ${keyCondition ? ' {YES} ' : ' {NO} '} `
       await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
     }
 
     if (this.isChangedAGCAD) {
-      title = `${initTitle} - Parametro(s): `;
-      title += `Habilitado AGC en A/D: ${this.displayAGCAD ? 'Si' : 'No'}; `
+      title = `${initTitle} - {PARAMS} `;
+      title += `{AD_AVAILABLE} : ${this.displayAGCAD ? ' {YES} ' : ' {NO} '} `
       await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
     }
 
     if (this.isChangedAGCDA) {
-      title = `${initTitle} - Parametro(s): `;
-      title += `Habilitado AGC en D/A: ${this.displayAGCDA ? 'Si' : 'No'}; `
+      title = `${initTitle} - {PARAMS} `;
+      title += `{DA_AVAILABLE} : ${this.displayAGCDA ? ' {YES} ' : ' {NO} '} `
       await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
     }
     if (this.resourceForm.dirty || this.isCheckedRegistryKey || this.isChangedAGCAD || this.isChangedAGCDA) {
@@ -1120,27 +1118,27 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         let msg: string = "";
         let indexFinded: number;
 
-        title = `${initTitle} - Parametro(s): `;
+        title = `${initTitle} - {PARAMS} `;
         if (this.resourceForm.get(data.field)?.dirty) {
           switch (data.field) {
             case "nombre":
-              msg = `${data.label} ${this.resourceForm.get(data.field)?.value}; `;
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value}`;
               break;
             case "tipo_agente":
               value = this.customFilter(this.radioAgents, data.field);
-              msg = `${data.label} ${value}; `;
+              msg = `${data.label} ${value}`;
               break;
             case "tipo_interfaz_tel":
               value = this.customFilter(this.telephonicInterfaces, data.field);
-              msg = `${data.label} ${value}; `;
+              msg = `${data.label} ${value}`;
               break;
             case "indicacion_entrada_audio":
               value = this.customFilter(this.iAudio, data.field);
               if (value === "VAD" && !this.resourceForm.get("umbral_vad")?.dirty) {
-                msg = `${data.label} ${value}; Umbral VAD (dB): ${this.resourceForm.value.umbral_vad};`;
+                msg = `${data.label} ${value} ; {UMBRAL_VAD} : ${this.resourceForm.value.umbral_vad}`;
                 arrayToCheckFields.splice(index, 1);
               } else {
-                msg = `${data.label} ${value}; `;
+                msg = `${data.label} ${value}`;
               }
               break;
             case "climax_bss":
@@ -1148,29 +1146,29 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
             case "metodo_climax":
               if (this.resourceForm.value.climax_bss === true || this.resourceForm.value.climax_bss === 1) {
                 if (this.resourceForm.value.tipo_climax === 0) {
-                  msg = `${data.label} Si; Ventana BSS (ms): ${this.resourceForm.value.ventana_bss};
-                  Modo Climax: No;`;
+                  msg = `${data.label} {YES} , {BSS_WD} : ${this.resourceForm.value.ventana_bss} ,
+                  {CLIMAX_MODE} : {NO}`;
                 } else if (this.resourceForm.value.tipo_climax === 1) {
                   value = this.customFilter(this.climaxModes, 'tipo_climax');
 
                   let calClimax = this.customFilter(this.calClimaxModes, 'metodo_climax');
-                  msg = `${data.label} Si; Ventana BSS (ms): ${this.resourceForm.value.ventana_bss};
-                  Modo Climax: ${value}; Modo cálculo climax: ${calClimax};`;
+                  msg = `${data.label} {YES} , {BSS_WD} : ${this.resourceForm.value.ventana_bss} ;
+                  {CLIMAX_MODE} : ${value}, {CALC_CLIMAX} : ${calClimax}`;
 
                   // DELETE ventana_bss on array
-                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                  indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                     return data.field == 'ventana_bss';
                   });
                   arrayToCheckFields.splice(indexFinded, 1);
 
                   // DELETE tipo_climax on array
-                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                  indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                     return data.field == 'tipo_climax';
                   });
                   arrayToCheckFields.splice(indexFinded, 1);
 
                   // DELETE metodo_climax on array
-                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                  indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                     return data.field == 'metodo_climax';
                   });
                   arrayToCheckFields.splice(indexFinded, 1);
@@ -1178,34 +1176,35 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
                   value = this.customFilter(this.climaxModes, 'tipo_climax');
 
                   let calClimax = this.customFilter(this.calClimaxModes, 'metodo_climax');
-                  msg = `${data.label} Si; Ventana BSS (ms): ${this.resourceForm.value.ventana_bss};
-                  Modo Climax: ${value}; Modo cálculo climax: ${calClimax}; Retraso fijo climax (ms): ${this.resourceForm.value.retardo_fijo_climax}; `;
+                  msg = `${data.label} {YES} ; {BSS_WD} : ${this.resourceForm.value.ventana_bss} ; 
+                  {CLIMAX_MODE} : ${value}; {CALC_CLIMAX} : ${calClimax}; 
+                  {DELAY_CLIMAX} : ${this.resourceForm.value.retardo_fijo_climax} ; `;
                   // DELETE ventana_bss on array
-                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                  indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                     return data.field == 'ventana_bss';
                   });
                   arrayToCheckFields.splice(indexFinded, 1);
 
                   // DELETE tipo_climax on array
-                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                  indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                     return data.field == 'tipo_climax';
                   });
                   arrayToCheckFields.splice(indexFinded, 1);
 
                   // DELETE metodo_climax on array
-                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                  indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                     return data.field == 'metodo_climax';
                   });
 
                   arrayToCheckFields.splice(indexFinded, 1);
                   // DELETE retardo_fijo_climax on array
-                  indexFinded = arrayToCheckFields.findIndex(function (data) {
+                  indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                     return data.field == 'retardo_fijo_climax';
                   });
                   arrayToCheckFields.splice(indexFinded, 1);
                 }
               } else if (this.resourceForm.value.climax_bss === false) {
-                msg = `${data.label} No;`;
+                msg = `${data.label} {NOT}`;
               }
               break;
             case "listaUris":
@@ -1215,9 +1214,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
                 this.rawLists.forEach(async (uri: any, index: number) => {
                   if (uri.hasOwnProperty("modified") && uri.modified === true) {
 
-                    title = `${initTitle} - Parametro(s): `;
+                    title = `${initTitle} - {PARAMS} `;
 
-                    title += `${data.label} ${uri.tipo}: ${uri.uri === '' ? "Vacio" : uri.uri}; URI Anterior: ${uri.previous};`;
+                    title += `${data.label} ${uri.tipo}: ${uri.uri === '' ? " {EMPTY} " : uri.uri}; {LAST_URI} : ${uri.previous};`;
 
                     await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
                   }
@@ -1226,7 +1225,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               } else {
                 this.resourceForm.get(data.field)?.value.forEach(async (uri: any, index: number) => {
                   if (uri.hasOwnProperty("modified") && uri.modified === true) {
-                    let emp = `Emplazamiento `;
+                    let emp = ` {LOCATION} `;
 
                     if (uri.nivel_colateral === 1 || uri.nivel_colateral === 2) {
                       emp += 1;
@@ -1237,9 +1236,9 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
                     } else {
                       emp = '';
                     }
-                    title = `${initTitle} - Parametro(s): `;
+                    title = `${initTitle} - {PARAMS} `;
 
-                    title += `${data.label} ${uri.tipo}: ${uri.uri === '' ? "Vacio" : uri.uri}; ${emp}; URI Anterior: ${uri.previous};`;
+                    title += `${data.label} ${uri.tipo}: ${uri.uri === '' ? " {EMPTY} " : uri.uri}, ${emp}, {LAST_URI} : ${uri.previous}`;
 
                     delete this.resourceForm.get(data.field)?.value[index].modified;
                     delete this.resourceForm.get(data.field)?.value[index].previous;
@@ -1252,15 +1251,15 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               break;
             case "restriccion_entrantes":
               value = this.customFilter(this.typeLists, data.field);
-              msg = `${data.label} ${value}; `;
+              msg = `${data.label} ${value}`;
               break;
             case "prioridad_sesion_sip":
               value = this.customFilter(this.prioritySessionsSIP, data.field);
-              msg = `${data.label} ${value}; `;
+              msg = `${data.label} ${value}`;
               break;
             case "prioridad_ptt":
               value = this.customFilter(this.pttPriority, data.field);
-              msg = `${data.label} ${value}; `;
+              msg = `${data.label} ${value}`;
               break;
             case "metodo_bss":
               if (this.resourceForm.value.tipo_agente < 3) {
@@ -1268,53 +1267,52 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               } else {
                 value = this.customFilter(this.favBssMethods, data.field);
               }
-              msg = `${data.label} ${value}; `;
+              msg = `${data.label} ${value} ; `;
               break;
             case "tabla_bss_id":
-              msg = `${data.label} ${this.tablesBss[this.tablesBss.findIndex((x: any) => x.idtabla_bss === this.resourceForm.value.tabla_bss_id)].name}; `;
+              msg = `${data.label} ${this.tablesBss[this.tablesBss.findIndex((x: any) => x.idtabla_bss === this.resourceForm.value.tabla_bss_id)].name} `;
               break;
             case "iEnableNoED137":
             case "DetInversionPol":
             case "evento_ptt_squelch":
             case "habilita_grabacion":
             case "iDetLineaAB":
-              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === true ? 'Si' : 'No'}; `;
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === true ? ' {YES} ' : ' {NO} '}`;
               break;
             case "deteccion_vox":
-              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === true ? 'Si' : 'No'}; 
-              Umbral VOX (dB): ${this.resourceForm.get('umbral_vox')?.value}; Cola VOX (sg.): ${this.resourceForm.get('cola_vox')?.value};`;
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === true ? ' {YES} ' : ' {NO} '}, 
+              {UMBRAL_VOX} : ${this.resourceForm.get('umbral_vox')?.value} , {VOX_QUEQUE} : ${this.resourceForm.get('cola_vox')?.value} `;
 
               // DELETE umbral_vox on array
-              indexFinded = arrayToCheckFields.findIndex(function (data) {
+              indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                 return data.field == 'umbral_vox';
               });
               arrayToCheckFields.splice(indexFinded, 1);
 
               // DELETE cola_vox on array
-              indexFinded = arrayToCheckFields.findIndex(function (data) {
+              indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                 return data.field == 'cola_vox';
               });
               arrayToCheckFields.splice(indexFinded, 1);
               break;
             case "respuesta_automatica":
-              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 1 || this.resourceForm.get(data.field)?.value === true ? 'Si' : 'No'}; 
-              Duración tonos resp. estado (sg.): ${this.resourceForm.get('periodo_tonos')?.value};`;
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 1 || this.resourceForm.get(data.field)?.value === true ? ' {YES} ' : ' {NO} '}, {TM_TONO_BLOQUEO} : ${this.resourceForm.get('periodo_tonos')?.value}`;
               // DELETE periodo_tonos on array
-              indexFinded = arrayToCheckFields.findIndex(function (data) {
+              indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                 return data.field == 'periodo_tonos';
               });
               arrayToCheckFields.splice(indexFinded, 1);
               break;
             case "lado":
-              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 0 ? 'A' : 'B'}; `
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 0 ? 'A' : 'B'} `
               break;
             case "ranks":
               msg = '';
               this.resourceForm.get(data.field)?.value.forEach(async (rank: any, index: number) => {
 
                 if (rank.hasOwnProperty("modified") && rank.modified === true) {
-                  title = `${initTitle} - Parametro(s): `;
-                  title += `${data.label} ${rank.tipo === 0 ? 'origen: ' : 'destino: '} ${rank.inicial} - ${rank.final} `
+                  title = `${initTitle} - {PARAMS} `;
+                  title += `${data.label} ${rank.tipo === 0 ? ' {START} : ' : ' {END} : '} ${rank.inicial} - ${rank.final} `
                   delete this.resourceForm.get(data.field)?.value[index].modified;
                   await this.historicService.updateCfg(code, this.resourceForm.value.nombre, title).toPromise();
                 }
@@ -1323,38 +1321,36 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
               break;
             case "supervisa_colateral":
               value = this.customFilter(this.supCollateral, data.field);
-              msg = `${data.label} ${value}; Option Response: ${this.resourceForm.value.itiporespuesta === 0 ? 'No' : 'Si'};
-              Tiempo Supervision (sg.): ${this.resourceForm.value.tiempo_supervision}`;
+              msg = `${data.label} ${value}, {OPTION_RESPONSE} : ${this.resourceForm.value.itiporespuesta === 0 ? ' {NO} ' : ' {YES} '}, {SUPERV_TIME} ${this.resourceForm.value.tiempo_supervision} `;
               // DELETE itiporespuesta on array
-              indexFinded = arrayToCheckFields.findIndex(function (data) {
+              indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                 return data.field == 'itiporespuesta';
               });
               arrayToCheckFields.splice(indexFinded, 1);
 
               // DELETE tiempo_supervision on array
-              indexFinded = arrayToCheckFields.findIndex(function (data) {
+              indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                 return data.field == 'tiempo_supervision';
               });
               arrayToCheckFields.splice(indexFinded, 1);
               break;
             case "additional_superv_options":
               value = this.customFilter(this.supCollateral, data.field);
-              msg = `${data.label} ${value}; Additional Options Response: ${this.resourceForm.value.additional_itiporespuesta === 0 ? 'No' : 'Si'};
-              Tiempo Supervision (sg.): ${this.resourceForm.value.tiempo_supervision};`;
+              msg = `${data.label} ${value} ; {ADD_OPT_RES} : ${this.resourceForm.value.additional_itiporespuesta === 0 ? ' {NO} ' : ' {YES} '}, {SUPERV_TIME} ${this.resourceForm.value.tiempo_supervision};`;
               // DELETE additional_itiporespuesta on array
-              indexFinded = arrayToCheckFields.findIndex(function (data) {
+              indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                 return data.field == 'additional_itiporespuesta';
               });
               arrayToCheckFields.splice(indexFinded, 1);
               // DELETE tiempo_supervision on array
-              indexFinded = arrayToCheckFields.findIndex(function (data) {
+              indexFinded = arrayToCheckFields.findIndex(function (data: any) {
                 return data.field == 'tiempo_supervision';
               });
               arrayToCheckFields.splice(indexFinded, 1);
               break;
             case "itiporespuesta":
             case "additional_itiporespuesta":
-              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 0 ? 'No' : 'Si'};`
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 0 ? ' {NO} ' : ' {YES} '}`
               break;
             case "duracion_tono_interrup":
               let result = this.timeOpts.filter((datarow: any) => {
@@ -1362,27 +1358,27 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
                   return datarow;
                 }
               })[0].viewValue;
-              msg = `Time Out respuesta llamada: ${result}; 
+              msg = `{TIMEOUT_CALL} : ${result}; 
               ${data.label} ${this.resourceForm.get(data.field)?.value > 256 ?
-                  (this.resourceForm.get(data.field)?.value - 256) : this.resourceForm.get(data.field)?.value}; `;
+                  (this.resourceForm.get(data.field)?.value - 256) : this.resourceForm.get(data.field)?.value} `;
               break;
             case "precision_audio":
               value = this.customFilter(this.indexAudio, data.field);
-              msg = `${data.label} ${value}; `;
+              msg = `${data.label} ${value}`;
               break;
             case "llamada_automatica":
-              value = `${this.resourceForm.value.llamada_automatica ? 'Si' : 'No'}`;
-              msg = `${data.label} ${value}; `;
+              value = `${this.resourceForm.value.llamada_automatica ? ' {YES} ' : ' {NO} '}`;
+              msg = `${data.label} ${value} `;
               break;
             case "iControlTmLlam":
-              value = `${this.resourceForm.value.iControlTmLlam ? 'Si' : 'No'}`;
-              msg = `${data.label} ${value};`;
+              value = `${this.resourceForm.value.iControlTmLlam ? ' {YES} ' : ' {NO} '}`;
+              msg = `${data.label} ${value}`;
               break;
             case "RespuestaSIP_ATSR2":
-              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 0 ? 'Modo ED137' : 'Modo SDC91'}; `
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value === 0 ? ' {ED137} ' : ' {SDC91} '}`
               break;
             default:
-              msg = `${data.label} ${this.resourceForm.get(data.field)?.value}; `;
+              msg = `${data.label} ${this.resourceForm.get(data.field)?.value} `;
               break;
           }
 

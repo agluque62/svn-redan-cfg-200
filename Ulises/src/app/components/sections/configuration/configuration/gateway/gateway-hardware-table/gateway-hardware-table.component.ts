@@ -251,8 +251,8 @@ export class GatewayHardwareTableComponent implements OnInit, OnChanges {
                 const type = (targetItem.idrecurso_radio) ? 1 : 2;
 
                 let title = this.dataService.getDataGatewayTitle();
-                title = `${title} - ${type === 1 ? "Radio" : "Teléfono"},`;
-                title = `${title} Movido a: Columna - ${element.columna}, Fila - ${element.fila}`;
+                title = `${title} - ${type === 1 ? " {RADIO} " : " {TLF} "},`;
+                title = `${title} {MOVED} : {COLUMN} - ${element.columna}, {ROW} - ${element.fila}`;
                 if (this.isEmptyCell(targetItem)) {
                     await this.hardwareService.updatePositions(this.gateway.idCGW, idResource, type, targetItem, sourceItem).toPromise();
                     const idx = this.freeCells.findIndex(object => object.columna === nextItem.columna && object.fila === nextItem.fila);

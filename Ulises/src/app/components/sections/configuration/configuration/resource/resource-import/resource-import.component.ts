@@ -95,10 +95,10 @@ export class ResourceImportComponent implements OnInit {
       context.importJson = JSON.parse(fileLoadedEvent.target?.result! as string);
       context.createImportJSON(context.importJson);
     }
-    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('resource.alert.conf_import_res')}`);
+    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('resource.alert.conf_import_res')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
     this.siteForm.patchValue({ name: this.importJson.IdRecurso })
     if (this.resourceIsIncluded(this.importJson.IdRecurso)) {
-      await this.alertService.errorMessage(`Error`, `${this.translate.instant('resource.alert.err_duply_name_res')}`);
+      await this.alertService.errorMessage(`Error`, `${this.translate.instant('resource.alert.err_duply_name_res')}`,this.translate.instant('button.accept'));
       this.mode = "NAME_CONFLICT";
       return;
     } else if (confirm.value && fileToUpload !== null) {
@@ -109,7 +109,7 @@ export class ResourceImportComponent implements OnInit {
         result = await this.resouceService.importTlfResource(this.importJson, this.data.gatewayId, this.data.column, this.data.row).toPromise();
       }
       if (result && result.data) {
-        await this.alertService.successMessage(``, `${this.translate.instant('resource.alert.succ_import_res', {value: this.importJson.IdRecurso})}`);
+        await this.alertService.successMessage(``, `${this.translate.instant('resource.alert.succ_import_res', {value: this.importJson.IdRecurso})}`,this.translate.instant('button.accept'));
       }
       console.log(result)
     }
@@ -129,7 +129,7 @@ export class ResourceImportComponent implements OnInit {
   async importModifiedResources() {
     let result;
     if (this.resourceIsIncluded(this.siteForm.value.name)) {
-      await this.alertService.errorMessage(`Error`, `${this.translate.instant('resource.alert.err_duply_name_res')}`);
+      await this.alertService.errorMessage(`Error`, `${this.translate.instant('resource.alert.err_duply_name_res')}`,this.translate.instant('button.accept'));
       return;
     }
     this.importJson.IdRecurso = this.siteForm.value.name;
@@ -140,7 +140,7 @@ export class ResourceImportComponent implements OnInit {
     }
 
     if (result && result.data) {
-      await this.alertService.successMessage(``, `${this.translate.instant('resource.alert.succ_import_res', {value: this.importJson.IdRecurso})}`);
+      await this.alertService.successMessage(``, `${this.translate.instant('resource.alert.succ_import_res', {value: this.importJson.IdRecurso})}`,this.translate.instant('button.accept'));
     }
 
     this.dialogRef.close()

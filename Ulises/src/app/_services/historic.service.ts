@@ -135,7 +135,6 @@ export class HistoricService extends BaseService {
     // IdIncidencia = 121; // SUCCESS GATEWAY FIELD ACTIVATION
     // IdIncidencia = 122; // ERROR GATEWAY FIELD ACTIVATION
 
-
     updateCfg(IdIncidencia: number, username: string, title?: string) {
 
         title = title ? ' (' + title + ')' : ' '

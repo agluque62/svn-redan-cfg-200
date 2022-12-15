@@ -120,8 +120,7 @@
                                 <div class="agc" *ngIf="selectedResource === 1">
                                     <mat-form-field appearance="fill">
                                         <mat-label>{{ 'resource.prec_audio' | translate }}</mat-label>
-                                        <mat-select [disabled]="precAudioIsDisable" formControlName="precision_audio"
-                                            name="indexAudio">
+                                        <mat-select formControlName="precision_audio" name="indexAudio">
                                             <mat-option *ngFor="let type of indexAudio" [value]="type.value">
                                                 {{ type.viewValue | translate}}
                                             </mat-option>
@@ -138,7 +137,7 @@
                         </ng-template>
                         <div [ngStyle]="{'margin': '10px'}">
                             <div class="title">
-                                <mat-label [ngClass]="{'no-display': displayRadioTab==false }">{{ 'resource.tlf_params' | translate }}
+                                <mat-label [ngClass]="{'no-display': displayRadioTab==false }">{{ 'resource.rad_params' | translate }}
                                 </mat-label>
                                 <mat-label [ngClass]="{'no-display': displayTelephonicTab==false }">{{ 'resource.tlf_params' | translate }}
                                 </mat-label>

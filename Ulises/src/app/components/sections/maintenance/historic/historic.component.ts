@@ -18,6 +18,7 @@ import { UserService } from 'src/app/_services/user.service';
 import { LoginService } from 'src/app/_services/login.service';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 
 const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     parse: {
@@ -42,7 +43,7 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
 })
 export class HistoricComponent implements OnInit {
 
-    filters: string[] = ['Tipo', 'Grupo', 'Componente', 'Tipo de registro', 'Descripción'];
+    filters: string[] = ['historics.type', 'historics.group', 'historics.component', 'historics.type_register', 'historics.description'];
     selectedFilter: string[] = [];
 
     selectedGroup: HistoricsGroup[] = [];
@@ -65,8 +66,8 @@ export class HistoricComponent implements OnInit {
     dataRaw: any = [];
     datatemp: any = [];
     typeOptions = [
-        { value: 1, viewValue: 'Eventos' },
-        { value: 2, viewValue: 'Alarmas' }
+        { value: 1, viewValue: 'historics.events' },
+        { value: 2, viewValue: 'historics.alarms' }
     ];
 
     selectedType: any = [];
@@ -86,7 +87,8 @@ export class HistoricComponent implements OnInit {
     filterValue!: string;
 
     constructor(private readonly historicService: HistoricService, private readonly alertService: AlertService, private readonly app: AppComponent,
-        private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router, private changeDetectorRefs: ChangeDetectorRef) {
+        private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router,
+        private changeDetectorRefs: ChangeDetectorRef, private readonly translate: TranslateService) {
         this.historicService.checkIfExistschangesOnFilters().subscribe(async (data: any) => {
             this.ready = false;
             if (data !== undefined && this.controlFlag) {
@@ -100,9 +102,9 @@ export class HistoricComponent implements OnInit {
                 this.selectedComponent = data.selectedComponent !== undefined ? data.selectedComponent : [];
                 this.selectedRegister = data.selectedRegister !== undefined ? data.selectedRegister : [];
                 this.filterValue = data.filterValue !== undefined ? data.filterValue : '';
-                
+
                 await this.updateData(true);
-                if(this.filterValue && this.filterValue !== ''){ // issue 2892
+                if (this.filterValue && this.filterValue !== '') { // issue 2892
                     this.dataSource.filter = this.filterValue ? this.filterValue.trim().toLowerCase() : '';
                 }
                 this.controlFlag = false;
@@ -163,7 +165,7 @@ export class HistoricComponent implements OnInit {
                 let includesCompFilter: boolean = true;
                 let includesRegFilter: boolean = true;
 
-                if (this.selectedFilter.includes('Tipo')) {
+                if (this.selectedFilter.includes('historics.type')) {
                     if (this.selectedType.includes(1) && !alarmsDataFilters.includes(0)) {
                         alarmsDataFilters.push(0);
                     }
@@ -174,26 +176,26 @@ export class HistoricComponent implements OnInit {
 
                 }
 
-                if (this.selectedFilter.includes('Grupo')) {
+                if (this.selectedFilter.includes('historics.group')) {
                     includesGroupFilter = this.selectedGroup.includes(row.TipoHw);
                 }
 
-                if (this.selectedFilter.includes('Componente')) {
+                if (this.selectedFilter.includes('historics.component')) {
                     includesCompFilter = this.selectedComponent.includes(row.IdHw);
                 }
 
-                if (this.selectedFilter.includes('Tipo de registro')) {
+                if (this.selectedFilter.includes('historics.type_register')) {
                     includesRegFilter = this.selectedRegister.includes(row.IdIncidencia);
                 }
 
                 return includesTypeFilter && includesGroupFilter && includesCompFilter && includesRegFilter;
             });
-            
+
             this.dataUsed = result;
         } else {
             this.dataUsed = this.dataRaw.historics;
         }
-        
+
         this.historicService.setFilters({
             'dateStart': this.dateStart,
             'dateEnd': this.dateEnd,
@@ -217,21 +219,30 @@ export class HistoricComponent implements OnInit {
     }
 
     downloadPDF() {
-        const header = [["Fecha-\nHora", 'Grupo', 'Componente', 'Descripción', 'Tipo', 'Reconocida', 'Tipo Alarma', 'Usuario']];
+        const header = [[
+            this.translate.instant('historics.date') + "\n" + this.translate.instant('historics.hour'),
+            this.translate.instant('historics.group'),
+            this.translate.instant('historics.component'),
+            this.translate.instant('historics.description'),
+            this.translate.instant('historics.type'),
+            this.translate.instant('historics.recognized'),
+            this.translate.instant('historics.type_alarm'),
+            this.translate.instant('historics.user')
+        ]];
         let body: any = [];
         this.dataSource.data.forEach(hist => {
-            body.push([hist.FechaHora, hist.TipoHw, hist.IdHw, hist.Descripcion, hist.Alarma && hist.Alarma === 1 ? 'Alarma' : 'Evento', hist.Reconocida, hist.TipoAlarma, hist.Usuario])
+            body.push([hist.FechaHora, this.translate.instant(hist.TipoHw), hist.IdHw, this.translateDescription(hist.Descripcion), hist.Alarma && hist.Alarma === 1 ? this.translate.instant('historics.alarm') : this.translate.instant('historics.event'), hist.Reconocida, hist.TipoAlarma, hist.Usuario])
         });
 
         const doc = new jsPDF('l');
         const histLabel = this.selectedFilter.length == 0 ?
-            ': TODOS' : this.selectedFilter.includes('Eventos') || this.selectedFilter.includes('Alarmas') ?
-                ': TODOS LOS EVENTOS' + this.selectedFilter.includes('Fecha') || this.selectedFilter.includes('Grupo')
-                    || this.selectedFilter.includes('Componente') || this.selectedFilter.includes('Tipo de registro') ?
-                    ' Fecha de inicio: ' + this.getISODate(this.dateStart) + ' Fecha de fin: ' + this.getISODate(this.dateEnd) : '' : this.selectedFilter.includes('Fecha') || this.selectedFilter.includes('Grupo')
-                        || this.selectedFilter.includes('Componente') || this.selectedFilter.includes('Tipo de registro') ?
-                    ' Fecha de inicio: ' + this.getISODate(this.dateStart) + ' Fecha de fin: ' + this.getISODate(this.dateEnd) : '';
-        doc.text("HISTÓRICOS" + histLabel, 7, 15);
+            `: ${this.translate.instant('historics.all')}` : this.selectedFilter.includes('historics.events') || this.selectedFilter.includes('historics.alarms') ?
+                ` : ${this.translate.instant('historics.allEvents')}` + this.selectedFilter.includes('historics.date') || this.selectedFilter.includes('historics.group')
+                    || this.selectedFilter.includes('historics.component') || this.selectedFilter.includes('historics.type_register') ?
+                    ` ${this.translate.instant('historics.start_date')}: ` + this.getISODate(this.dateStart) + ` ${this.translate.instant('historics.end_date')}: ` + this.getISODate(this.dateEnd) : '' : this.selectedFilter.includes('historics.date') || this.selectedFilter.includes('historics.group')
+                        || this.selectedFilter.includes('historics.component') || this.selectedFilter.includes('historics.type_register') ?
+                    ` ${this.translate.instant('historics.start_date')} ` + this.getISODate(this.dateStart) + ` ${this.translate.instant('historics.end_date')}: ` + this.getISODate(this.dateEnd) : '';
+        doc.text(`${this.translate.instant('historics.historics')}` + histLabel, 7, 15);
         doc.setFontSize(11);
         autoTable(doc, {
             head: header,
@@ -251,21 +262,30 @@ export class HistoricComponent implements OnInit {
                 7: { cellWidth: 30, overflow: 'linebreak' }
             }
         });
-        doc.save("Históricos.pdf");
+        doc.save(`${this.translate.instant('historics.historic')}.pdf`);
     }
 
     downloadExcel() {
         let data = "";
-        const header = ["Fecha-Hora", 'Grupo', 'Componente', 'Descripción', 'Tipo', 'Reconocida', 'Tipo Alarma', 'Usuario'];
+        const header = [
+            this.translate.instant('historics.date_hour'),
+            this.translate.instant('historics.group'),
+            this.translate.instant('historics.component'),
+            this.translate.instant('historics.description'),
+            this.translate.instant('historics.type'),
+            this.translate.instant('historics.recognized'),
+            this.translate.instant('historics.type_alarm'),
+            this.translate.instant('historics.user')
+        ];
         data += header.join(';');
         data += "\n";
         this.dataSource.data.forEach(hist => {
-            data += [hist.FechaHora, hist.TipoHw, hist.IdHw, hist.Descripcion, hist.Alarma && hist.Alarma === 1 ? 'Alarma' : 'Evento', hist.Reconocida, hist.TipoAlarma, hist.Usuario].join(';');
+            data += [hist.FechaHora, this.translate.instant(hist.TipoHw), hist.IdHw, this.translateDescription(hist.Descripcion), hist.Alarma && hist.Alarma === 1 ? this.translate.instant('historics.alarm') : this.translate.instant('historics.event'), hist.Reconocida, hist.TipoAlarma, hist.Usuario].join(';');
             data += "\n";
         });
 
         var myLink = document.createElement('a');
-        myLink.download = 'HistoricosRedan.csv';
+        myLink.download = `${this.translate.instant('historics.historic')}.csv`;
         myLink.href = "data:application/csv," + escape(data);
         myLink.click();
     }
@@ -274,12 +294,10 @@ export class HistoricComponent implements OnInit {
         try {
             this.dataRaw = await this.historicService.getHistoricsByDate(this.getISODate(this.dateStart),
                 this.getISODate(this.dateEnd), 0, this.selectedLimit).toPromise();
-
             if (this.dataUsed.error) {
-                await this.alertService.errorMessage(``, `${this.dataUsed.error}`);
+                await this.alertService.errorMessage(``, `${this.dataUsed.error}`,this.translate.instant('button.accept'));
                 return;
             }
-
         } catch (error: any) {
             this.ready = false;
             this.app.catchError(error);
@@ -290,9 +308,10 @@ export class HistoricComponent implements OnInit {
         try {
             const result = await this.historicService.getGroups().toPromise();
             if (result.error) {
-                this.alertService.errorMessage(``, result.error);
+                this.alertService.errorMessage(``, result.error,this.translate.instant('button.accept'));
             } else {
                 this.groupOptions = result.groups;
+                console.log(this.groupOptions)
             }
         } catch (error: any) {
             this.ready = true;
@@ -304,7 +323,7 @@ export class HistoricComponent implements OnInit {
         try {
             const result = await this.historicService.getComponents().toPromise();
             if (result.error) {
-                this.alertService.errorMessage(``, result.error);
+                this.alertService.errorMessage(``, result.error,this.translate.instant('button.accept'));
             } else {
                 this.componentOptions = result.components;
             }
@@ -319,7 +338,7 @@ export class HistoricComponent implements OnInit {
         try {
             const result = await this.historicService.getCodes().toPromise();
             if (result.error) {
-                this.alertService.errorMessage(``, result.error);
+                this.alertService.errorMessage(``, result.error,this.translate.instant('button.accept'));
             } else {
                 this.codeOptions = result.codes;
             }
@@ -400,6 +419,19 @@ export class HistoricComponent implements OnInit {
             'selectedRegister': [],
             'filterValue': ''
         });
+    }
+
+    translateDescription(text: any) {
+        let translateArr = text.split(' ')
+        let stringTranslate: string = "";
+        translateArr.forEach((word: any) => {
+
+            if (word != "" && word != " " && word != undefined) {
+                console.log()
+                stringTranslate += this.translate.instant(word) + " "
+            }
+        })
+        return stringTranslate
     }
 
 }

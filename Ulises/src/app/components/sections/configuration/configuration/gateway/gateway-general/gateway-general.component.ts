@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
 import { AppSettings } from 'src/app/core/app.settings';
 import { Gateway } from 'src/app/_models/configs/gateway/Gateway';
@@ -31,7 +32,8 @@ export class GatewayGeneralComponent implements OnInit {
   appset: any;
 
   constructor(private readonly route: ActivatedRoute, private readonly siteService: SiteService, private readonly app: AppComponent, 
-    private readonly alertService: AlertService, private readonly dataService: DataService) { }
+    private readonly alertService: AlertService, private readonly dataService: DataService,
+    private readonly translate: TranslateService) { }
 
   async ngOnInit() {
 
@@ -52,7 +54,7 @@ export class GatewayGeneralComponent implements OnInit {
       if (this.configId) {
         const result = await this.siteService.getSites(this.configId).toPromise();
         if (result.error) {
-          await this.alertService.errorMessage(``, result.error);
+          await this.alertService.errorMessage(``, result.error,this.translate.instant('button.accept'));
         }
   
         this.siteOptions = (result.data != 'NO_DATA') ? [...result.data] : [];  

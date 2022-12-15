@@ -22,7 +22,7 @@ export class ConfigurationFormComponent implements OnInit {
   appset: any;
 
   constructor(public dialogRef: MatDialogRef<ConfigurationFormComponent>, @Inject(MAT_DIALOG_DATA) public data: Configuration,
-    private readonly alertService: AlertService, private readonly configService: ConfigService, private readonly userService: UserService, 
+    private readonly alertService: AlertService, private readonly configService: ConfigService, private readonly userService: UserService,
     private readonly historicService: HistoricService, private readonly translate: TranslateService) { }
 
   ngOnInit() {
@@ -54,11 +54,11 @@ export class ConfigurationFormComponent implements OnInit {
         this.configForm.value.activa).toPromise();
 
       if (result && result.error) {
-        await this.alertService.errorMessage(`Error `, result.error);
+        await this.alertService.errorMessage(`Error `, result.error, this.translate.instant('button.accept'));
       } else {
         await this.historicService.updateCfg(101, this.configForm.value.name).toPromise();
         const msg = `${this.translate.instant('config.alert.succ_created_cfg')}`;
-        await this.alertService.successMessage(`Éxito`, msg);
+        await this.alertService.successMessage(`Éxito`, msg, this.translate.instant('button.accept'));
         this.dialogRef.close();
       }
     }

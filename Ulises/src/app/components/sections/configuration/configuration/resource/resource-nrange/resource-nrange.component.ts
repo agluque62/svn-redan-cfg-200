@@ -70,8 +70,9 @@ export class ResourceNRangeComponent implements OnInit {
       if (type == 0) { // Origin
         if (key === 'inicial') {
           if (this.originRanks[pos]['final'] !== '' && event.target.value > this.originRanks[pos]['final']) {
-            await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_start_bigger')}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_start_bigger')}`, this.translate.instant('button.accept'));
             event.target.value = "";
+            this.originRanks[pos][key] = event.target.value;
           } else {
             this.resourceForm.get('ranks')?.markAsDirty();
             this.originRanks[pos][key] = event.target.value;
@@ -79,8 +80,9 @@ export class ResourceNRangeComponent implements OnInit {
           }
         } else if (key === 'final') {
           if (this.originRanks[pos]['inicial'] !== '' && event.target.value < this.originRanks[pos]['inicial']) {
-            await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_final_smaller')}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_final_smaller')}`, this.translate.instant('button.accept'));
             event.target.value = "";
+            this.originRanks[pos][key] = event.target.value;
           } else {
             this.resourceForm.get('ranks')?.markAsDirty();
             this.originRanks[pos][key] = event.target.value;
@@ -90,8 +92,9 @@ export class ResourceNRangeComponent implements OnInit {
       } else if (type == 1) { // Destination
         if (key === 'inicial') {
           if (this.destinationRanks[pos]['final'] !== '' && event.target.value > this.destinationRanks[pos]['final']) {
-            await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_start_bigger')}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_start_bigger')}`, this.translate.instant('button.accept'));
             event.target.value = "";
+            this.originRanks[pos][key] = event.target.value;
           } else {
             this.resourceForm.get('ranks')?.markAsDirty();
             this.destinationRanks[pos][key] = event.target.value;
@@ -99,8 +102,9 @@ export class ResourceNRangeComponent implements OnInit {
           }
         } else if (key === 'final') {
           if (this.destinationRanks[pos]['inicial'] !== '' && event.target.value < this.destinationRanks[pos]['inicial']) {
-            await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_final_smaller')}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_final_smaller')}`, this.translate.instant('button.accept'));
             event.target.value = "";
+            this.originRanks[pos][key] = event.target.value;
           } else {
             this.resourceForm.get('ranks')?.markAsDirty();
             this.destinationRanks[pos][key] = event.target.value;
@@ -116,11 +120,18 @@ export class ResourceNRangeComponent implements OnInit {
         this.destinationRanks[pos][key] = event.target.value;
         this.destinationRanks[pos]['modified'] = true;
       }
-      
+
       this.resourceForm.get('ranks')?.markAsDirty();
     } else if (event.target.value.match(AppSettings.AGVN_PATTERN) == undefined && event.target.value != '') {
-      await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.AVGN_PATTERN_ERROR')}`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.AVGN_PATTERN_ERROR')}`, this.translate.instant('button.accept'));
       event.target.value = "";
+      if (type == 0) {
+        this.originRanks[pos][key] = event.target.value;
+        this.originRanks[pos]['modified'] = true;
+      } else if (type == 1) {
+        this.destinationRanks[pos][key] = event.target.value;
+        this.destinationRanks[pos]['modified'] = true;
+      }
     }
     this.ranks = this.originRanks.concat(this.destinationRanks);
   }

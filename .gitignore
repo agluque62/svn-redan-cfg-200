@@ -123,3 +123,5 @@ uploads/
 /Ulises/src/assets/images/corporativo-old.png
 /Ulises/src/assets/images/favicon-old.ico
 redan-gw-config*.exe
+frontend/
+/data_model/redan-220-bdt-scripts.zip

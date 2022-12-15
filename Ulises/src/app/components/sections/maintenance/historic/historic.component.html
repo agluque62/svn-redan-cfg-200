@@ -1,12 +1,12 @@
 <div class="historic">
     <div class="title">
-        {{ 'Históricos' }}
+        {{ 'historics.historic' | translate }}
     </div>
 
     <spinner *ngIf="!ready"></spinner>
     <div class="globalFilters">
         <mat-form-field appearance="fill">
-            <mat-label>{{'Fecha de inicio'}}</mat-label>
+            <mat-label>{{ 'historics.date_start' | translate }}</mat-label>
             <input matInput [ngxMatDatetimePicker]="pickerStartDate" [(ngModel)]="dateStart" [max]="dateEnd"
                 (dateChange)="cleanGlobalControls($event)">
             <mat-datepicker-toggle matSuffix [for]="$any(pickerStartDate)"></mat-datepicker-toggle>
@@ -14,7 +14,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-            <mat-label>{{'Fecha de fin'}}</mat-label>
+            <mat-label>{{ 'historics.date_end' | translate }}</mat-label>
             <input matInput [ngxMatDatetimePicker]="pickerEndDate" [(ngModel)]="dateEnd" [min]="dateStart"
                 (dateChange)="cleanGlobalControls($event)">
             <mat-datepicker-toggle matSuffix [for]="$any(pickerEndDate)"></mat-datepicker-toggle>
@@ -23,7 +23,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-            <mat-label> Límite </mat-label>
+            <mat-label> {{ 'historics.limit' | translate }} </mat-label>
             <mat-select [(value)]="selectedLimit" (selectionChange)="cleanGlobalControls($event)">
                 <mat-option [value]="limit" *ngFor="let limit of limitOptions">
                     {{ limit }}
@@ -33,32 +33,32 @@
     </div>
     <div class="filter">
         <mat-form-field class="type-selector" appearance="fill">
-            <mat-label>{{'Filtrar recursos'}}</mat-label>
+            <mat-label>{{ 'historics.filter_res' | translate }}</mat-label>
             <mat-select [(value)]="selectedFilter" multiple (selectionChange)="updateData(false)">
                 <mat-option [value]="filter" *ngFor="let filter of filters">
-                    {{ filter }}
+                    {{ filter | translate }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
 
         <div class="sub-filter">
 
-            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Tipo')">
-                <mat-label>{{'Tipo'}}</mat-label>
+            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('historics.type')">
+                <mat-label>{{ 'historics.filter_res' | translate }}</mat-label>
                 <mat-select [(value)]="selectedType" multiple (selectionChange)="updateData(false)">
                     <mat-option [value]="type.value" *ngFor="let type of typeOptions">
-                        {{ type.viewValue }}
+                        {{ type.viewValue | translate }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
 
-            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Descripción')">
-                <mat-label>Descripción</mat-label>
+            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('historics.description')">
+                <mat-label>{{ 'historics.description' | translate }}</mat-label>
                 <input matInput (keyup)="applyFilter($event)" [(ngModel)]="filterValue" #input>
             </mat-form-field>
 
-            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Grupo')">
-                <mat-label>{{'Grupo'}}</mat-label>
+            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('historics.group')">
+                <mat-label>{{ 'historics.group' | translate }}</mat-label>
                 <mat-select [(ngModel)]="selectedGroup" multiple (selectionChange)="updateData(false)">
                     <mat-option [value]="group.TipoHw" *ngFor="let group of groupOptions">
                         {{ group.TipoHw }}
@@ -66,8 +66,8 @@
                 </mat-select>
             </mat-form-field>
 
-            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Componente')">
-                <mat-label>{{'Componente'}}</mat-label>
+            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('historics.component')">
+                <mat-label>{{ 'historics.component' | translate }}</mat-label>
                 <mat-select [(ngModel)]="selectedComponent" multiple (selectionChange)="updateData(false)">
                     <mat-option [value]="component.IdHw" *ngFor="let component of componentOptions">
                         {{ component.IdHw }}
@@ -75,8 +75,8 @@
                 </mat-select>
             </mat-form-field>
 
-            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('Tipo de registro')">
-                <mat-label>{{'Tipo de registro'}}</mat-label>
+            <mat-form-field appearance="fill" *ngIf="selectedFilter.includes('historics.type_register')">
+                <mat-label>{{ 'historics.type_register' | translate }}</mat-label>
                 <mat-select [(ngModel)]="selectedRegister" multiple (selectionChange)="updateData(false)">
                     <mat-option [value]="register.IdIncidencia" *ngFor="let register of codeOptions">
                         {{ register.Incidencia }}
@@ -89,51 +89,51 @@
 
 
     <div *ngIf="ready && dataSource && dataSource.data && dataSource.data.length === 0">
-        {{ 'No hay resultados'}}
+        {{ 'historics.no_data' | translate }}
     </div>
 
     <div class="table" *ngIf="ready && dataSource && dataSource.data && dataSource.data.length > 0">
         <div class="mat-elevation-z8">
             <mat-table [dataSource]="dataSource" class="table">
                 <ng-container matColumnDef="date">
-                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-175'">Fecha</mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-175'">{{ 'Fecha' | translate }}</mat-header-cell>
                     <mat-cell *matCellDef="let row" [ngClass]="'w-175'"> {{row.FechaHora}} </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="group">
-                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-125'"> Grupo </mat-header-cell>
-                    <mat-cell *matCellDef="let row" [ngClass]="'w-125'"> {{row.TipoHw}} </mat-cell>
+                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-125'"> {{ 'historics.group' | translate }} </mat-header-cell>
+                    <mat-cell *matCellDef="let row" [ngClass]="'w-125'"> {{row.TipoHw | translate }} </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="component">
-                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-100'">Componente</mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-100'">{{ 'historics.component' | translate }}</mat-header-cell>
                     <mat-cell *matCellDef="let row" [ngClass]="'w-100'"> {{row.IdHw}} </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="description">
-                    <mat-header-cell *matHeaderCellDef> Descripción </mat-header-cell>
-                    <mat-cell *matCellDef="let row"> {{row.Descripcion}} </mat-cell>
+                    <mat-header-cell *matHeaderCellDef> {{ 'historics.description' | translate }} </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{ translateDescription(row.Descripcion) }} </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="type">
-                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-100'">Tipo</mat-header-cell>
-                    <mat-cell *matCellDef="let row" [ngClass]="'w-100'"> {{row.Alarma && row.Alarma === 1 ? 'Alarma' :
-                        'Evento'}} </mat-cell>
+                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-100'">{{ 'historics.type' | translate }}</mat-header-cell>
+                    <mat-cell *matCellDef="let row" [ngClass]="'w-100'"> {{ (row.Alarma && row.Alarma === 1 ? 'historics.alarms' :
+                        'historics.events') | translate }} </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="recognized">
-                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-100'"> Reconocida </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-100'"> {{ 'historics.recognized' | translate }} </mat-header-cell>
                     <mat-cell *matCellDef="let row" [ngClass]="'w-100'"> {{row.Reconocida}} </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="alarmType">
-                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-100'"> TipoAlarma </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-100'"> {{ 'historics.type_alarm' | translate }} </mat-header-cell>
                     <mat-cell *matCellDef="let row" [ngClass]="'w-100'"> {{ row.Alarma && row.Alarma === '1' ?
                         row.TipoAlarma : '' }} </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="user">
-                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-150'"> Usuario </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef [ngClass]="'w-150'"> {{ 'historics.user' | translate }} </mat-header-cell>
                     <mat-cell *matCellDef="let row" [ngClass]="'w-150'"> {{row.Usuario}} </mat-cell>
                 </ng-container>
 
@@ -151,12 +151,10 @@
     </div>
     <div class="action-btns">
         <div class="download-btns" *ngIf="ready && dataSource && dataSource.data && dataSource.data.length > 0">
-            <button mat-raised-button (click)="downloadPDF()">{{'PDF'}}</button>
-            <button mat-raised-button (click)="downloadExcel()">{{'Excel'}}</button>
+            <button mat-raised-button (click)="downloadPDF()">{{ 'button.pdf' | translate }}</button>
+            <button mat-raised-button (click)="downloadExcel()">{{ 'button.csv' | translate }}</button>
         </div>
-        <button mat-raised-button id="getBtn" (click)="updateData(true)">
-            {{'Obtener'}}
-        </button>
+        <button mat-raised-button id="getBtn" (click)="updateData(true)">{{ 'button.obtain' | translate }}</button>
     </div>
 
 </div>

@@ -96,17 +96,17 @@ export class SiteFormComponent implements OnInit {
       if (this.siteForm.valid) {
         const result = await this.siteService.createSite(this.configurationId, this.siteForm.value.name).toPromise();
         if (result.error && result.error === 'ER_DUP_ENTRY') {
-          await this.alertService.errorMessage(``, `${this.translate.instant('location.alert.err_create_loc', { value: this.siteForm.value.name })}`);
+          await this.alertService.errorMessage(``, `${this.translate.instant('location.alert.err_create_loc', { value: this.siteForm.value.name })}`,this.translate.instant('button.accept'));
           return;
         } else if (result.error) {
-          await this.alertService.errorMessage(``, result.error);
+          await this.alertService.errorMessage(``, result.error,this.translate.instant('button.accept'));
           return;
         } else {
-          await this.alertService.successMessage(``, `${this.translate.instant('location.alert.succ_create_loc', { value: this.siteForm.value.name })}`);
+          await this.alertService.successMessage(``, `${this.translate.instant('location.alert.succ_create_loc', { value: this.siteForm.value.name })}`,this.translate.instant('button.accept'));
           this.dialogRef.close(true);
         }
       } else {
-        this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+        this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`,this.translate.instant('button.accept'));
       }
     } catch (error: any) {
       this.app.catchError(error);
@@ -119,13 +119,13 @@ export class SiteFormComponent implements OnInit {
         const result = await this.siteService.updateSite(this.site.idEMPLAZAMIENTO, this.configurationId, this.siteForm.value.name).toPromise();
 
         if (result.error) {
-          await this.alertService.errorMessage(``, result.error);
+          await this.alertService.errorMessage(``, result.error,this.translate.instant('button.accept'));
           return;
         }
-        await this.alertService.successMessage(``, `${this.translate.instant('location.alert.succ_update_loc', { value: this.siteForm.value.name })}`);
+        await this.alertService.successMessage(``, `${this.translate.instant('location.alert.succ_update_loc', { value: this.siteForm.value.name })}`,this.translate.instant('button.accept'));
         this.dialogRef.close(true);
       } else {
-        this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+        this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`,this.translate.instant('button.accept'));
       }
     } catch (error: any) {
       this.app.catchError(error);
@@ -135,17 +135,17 @@ export class SiteFormComponent implements OnInit {
   async deleteSite() {
     try {
       const confirmed = await this.alertService.confirmationMessage(`${this.translate.instant('location.alert.conf_delete_loc')}`,
-        `${this.translate.instant('ocation.alert.conf_delete_info', {value: this.siteForm.value.name})}`);
+        `${this.translate.instant('location.alert.conf_delete_info', {value: this.siteForm.value.name})}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
 
       if (confirmed.value) {
         const result = await this.siteService.deleteSite(this.site.idEMPLAZAMIENTO).toPromise();
 
         if (result.data !== 'OK') {
-          this.alertService.errorMessage(``, `${this.translate.instant('location.alert.err_delete_loc', { value1: this.site.nameSite, value2: result.data })}`);
+          this.alertService.errorMessage(``, `${this.translate.instant('location.alert.err_delete_loc', { value1: this.site.nameSite, value2: result.data })}`,this.translate.instant('button.accept'));
           return;
         }
 
-        await this.alertService.successMessage(``, `${this.translate.instant('location.alert.succ_delete_loc', { value: this.site.nameSite })}`);
+        await this.alertService.successMessage(``, `${this.translate.instant('location.alert.succ_delete_loc', { value: this.site.nameSite })}`,this.translate.instant('button.accept'));
         this.dialogRef.close(true);
       }
     } catch (error: any) {
@@ -174,7 +174,7 @@ export class SiteFormComponent implements OnInit {
         context.importJson = JSON.parse(fileLoadedEvent.target?.result! as string);
         context.initImportForm();
       }
-      const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_import_gtw')}`);
+      const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_import_gtw')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
       if (confirm.value && fileToUpload !== null) {
         if (conf.result[0].activa == 1) {
           if ((await this.utilService.checkIps(this.importJson.general.ipv, null)).length == 0 &&
@@ -183,24 +183,24 @@ export class SiteFormComponent implements OnInit {
             result = await this.gatewayService.importGtw(fileToUpload, this.configurationId, this.site.idEMPLAZAMIENTO).toPromise();
             if (result && result.msg) {
               let title = this.dataService.getDataGatewayTitle();
-              title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+              title = title.substring(0, title.indexOf(" - {GATEWAY} ") >= 0 ? title.indexOf(" - {GATEWAY} ") : title.length);
               let beginIndexName = this.importJsonName.indexOf("_") > 0 ? this.importJsonName.indexOf("_") : 0;
               let finalIndexName = this.importJsonName.indexOf("_", beginIndexName + 1) > 0 ? this.importJsonName.indexOf("_", beginIndexName + 1) : this.importJsonName.length;
               let name = this.importJsonName.substring(beginIndexName + 1, finalIndexName - 2)
               await this.historicService.updateCfg(107, name, title).toPromise();
-              await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_import_cfg')}`);
+              await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_import_cfg')}`,this.translate.instant('button.accept'));
               this.importGW.nativeElement.value = '';
               this.dialogRef.close(true);
               return;
             } else {
-              await this.alertService.errorMessage(`Error`, `${result.err}.`);
+              await this.alertService.errorMessage(`Error`, `${result.err}.`,this.translate.instant('button.accept'));
               context.type = 'IMPORT';
               this.importGW.nativeElement.value = '';
               return;
             }
           }
           else {
-            await this.alertService.errorMessage(`Error`, `${this.translate.instant('config.alert.err_import_cfg', { value: this.importJson.general.name })}`);
+            await this.alertService.errorMessage(`Error`, `${this.translate.instant('config.alert.err_import_cfg', { value: this.importJson.general.name })}`,this.translate.instant('button.accept'));
             context.type = 'IMPORT';
             this.importGW.nativeElement.value = '';
             return;
@@ -209,17 +209,17 @@ export class SiteFormComponent implements OnInit {
           result = await this.gatewayService.importGtw(fileToUpload, this.configurationId, this.site.idEMPLAZAMIENTO).toPromise();
           if (result && result.msg) {
             let title = this.dataService.getDataGatewayTitle();
-            title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+            title = title.substring(0, title.indexOf(" - {GATEWAY} ") >= 0 ? title.indexOf(" - {GATEWAY} ") : title.length);
             let beginIndexName = this.importJsonName.indexOf("_") > 0 ? this.importJsonName.indexOf("_") : 0;
             let finalIndexName = this.importJsonName.indexOf("_", beginIndexName + 1) > 0 ? this.importJsonName.indexOf("_", beginIndexName + 1) : this.importJsonName.length;
             let name = this.importJsonName.substring(beginIndexName + 1, finalIndexName - 2)
             await this.historicService.updateCfg(107, name, title).toPromise();
-            await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_import_cfg')}`);
+            await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_import_cfg')}`,this.translate.instant('button.accept'));
             this.importGW.nativeElement.value = '';
             this.dialogRef.close(true);
             return;
           } else {
-            await this.alertService.errorMessage(`Error`, `${result.err}.`);
+            await this.alertService.errorMessage(`Error`, `${result.err}.`,this.translate.instant('button.accept'));
             context.type = 'IMPORT';
             this.importGW.nativeElement.value = '';
             return;
@@ -256,13 +256,13 @@ export class SiteFormComponent implements OnInit {
             result = await this.gatewayService.importGtw(file, this.configurationId, this.site.idEMPLAZAMIENTO).toPromise();
             if (result && result.msg) {
               let title = this.dataService.getDataGatewayTitle();
-              title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+              title = title.substring(0, title.indexOf(" - {GATEWAY} ") >= 0 ? title.indexOf(" - {GATEWAY} ") : title.length);
               await this.historicService.updateCfg(107, this.importForm.value.name, title).toPromise();
-              await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_import_cfg')}`);
+              await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_import_cfg')}`,this.translate.instant('button.accept'));
               this.dialogRef.close(true);
               return;
             } else {
-              await this.alertService.errorMessage(``, `${result.err}.`);
+              await this.alertService.errorMessage(``, `${result.err}.`,this.translate.instant('button.accept'));
             }
           } else {
 
@@ -271,7 +271,7 @@ export class SiteFormComponent implements OnInit {
                 this.nEmplazamiento = this.utilService.configurationIp.map((index) => {
                   return `${this.translate.instant('err.DUPLICATED_IP_BODY_GTW', {value: index.nombre})}`;
                 })
-                await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPV', {value1: this.importJson.general.ipv, value2: this.nEmplazamiento })}`);
+                await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPV', {value1: this.importJson.general.ipv, value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
                 return;
               }
             }
@@ -280,7 +280,7 @@ export class SiteFormComponent implements OnInit {
                 this.nEmplazamiento = this.utilService.configurationIp.map((index) => {
                   return `${this.translate.instant('err.DUPLICATED_IP_BODY_GTW', {value: index.nombre})}`;
                 })
-                await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU0', {value1: this.importJson.general.cpus[0].ipb, value2: this.nEmplazamiento })}`);
+                await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU0', {value1: this.importJson.general.cpus[0].ipb, value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
                 return;
               }
             }
@@ -289,7 +289,7 @@ export class SiteFormComponent implements OnInit {
                 this.nEmplazamiento = this.utilService.configurationIp.map((index) => {
                   return `${this.translate.instant('', {value: index.nombre})}`;
                 })
-                await this.alertService.errorMessage(`err.DUPLICATED_IP_BODY_GTW`, `${this.translate.instant('err.DUPLICATED_IPCPU1', {value1: this.importJson.general.cpus[1].ipb, value2: this.nEmplazamiento })}`);
+                await this.alertService.errorMessage(`err.DUPLICATED_IP_BODY_GTW`, `${this.translate.instant('err.DUPLICATED_IPCPU1', {value1: this.importJson.general.cpus[1].ipb, value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
                 return;
               }
             }
@@ -297,10 +297,10 @@ export class SiteFormComponent implements OnInit {
 
 
         } else {
-          await this.alertService.errorMessage(`Error`, `${this.translate.instant('err.DUPLICATED_IP')}`);
+          await this.alertService.errorMessage(`Error`, `${this.translate.instant('err.DUPLICATED_IP')}`,this.translate.instant('button.accept'));
         }
       } else {
-        this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+        this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`,this.translate.instant('button.accept'));
       }
     } catch (error: any) {
       this.app.catchError(error);

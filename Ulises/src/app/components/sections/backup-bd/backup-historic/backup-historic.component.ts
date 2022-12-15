@@ -58,7 +58,7 @@ export class BackupHistoricComponent implements OnInit {
     this.backupLogResponse = await this.backupService.getBackupLog(this.ServiceDomainLocation).toPromise();
 
     if (this.backupLogResponse.error != null) {
-      await this.alertService.errorMessage(`Error`, this.backupLogResponse.error);
+      await this.alertService.errorMessage(`Error`, this.backupLogResponse.error,this.translate.instant('button.accept'));
       return;
     }
 
@@ -80,14 +80,14 @@ export class BackupHistoricComponent implements OnInit {
 
   async deleteLog() {
 
-    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('backup.alert.delete_log')}`);
+    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('backup.alert.delete_log')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
 
     if (confirm.value) {
       // this.localConfig = await this.configService.getLocalConfig().toPromise();
       const deleteLogResponse = await this.backupService.deleteBackupLog(this.ServiceDomainLocation).toPromise();
   
       if (deleteLogResponse && deleteLogResponse.resultado === 'OK') {
-        await this.alertService.successMessage(``, `${this.translate.instant('backup.alert.delete_success')}`);    
+        await this.alertService.successMessage(``, `${this.translate.instant('backup.alert.delete_success')}`, this.translate.instant('button.cancel'));    
         this.dataSource.data=[];
         this.retrieveBackupLog();
         return;

@@ -42,12 +42,23 @@
 
         
         <mat-form-field appearance="fill">
-            <mat-label>{{'gateway.ip_cpu1'}}</mat-label>
+            <mat-label>{{'gateway.ip_cpu1' | translate }}</mat-label>
             <input matInput required formControlName="ipCpu1">
             <mat-error *ngIf="copyForm.controls['ipCpu1'].hasError('required')">
                 {{ appset.FIELD_REQUIRED | translate }}
             </mat-error>
             <mat-error *ngIf="copyForm.controls['ipCpu1'].hasError('pattern')">
+                {{ appset.INVALID_IP | translate }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>{{'gateway.ip_gateway' | translate }}</mat-label>
+            <input matInput required formControlName="ipGTW">
+            <mat-error *ngIf="copyForm.controls['ipGTW'].hasError('required')">
+                {{ appset.FIELD_REQUIRED | translate }}
+            </mat-error>
+            <mat-error *ngIf="copyForm.controls['ipGTW'].hasError('pattern')">
                 {{ appset.INVALID_IP | translate }}
             </mat-error>
         </mat-form-field>

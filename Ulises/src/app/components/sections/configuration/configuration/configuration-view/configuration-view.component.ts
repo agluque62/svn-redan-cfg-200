@@ -256,7 +256,7 @@ export class ConfigurationViewComponent implements OnInit {
   async back() {
     let confirm;
     if (this.changes) {
-      confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('config.alert.conf_save_changes')}`);
+      confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('config.alert.conf_save_changes')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
     }
     if (confirm?.isConfirmed == true || confirm === undefined) {
       await this.router.navigate(['/home/config/']);
@@ -306,10 +306,10 @@ export class ConfigurationViewComponent implements OnInit {
     let message: string[] = [];
     let error: boolean = false;
 
-    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('config.alert.conf_activate_cfg')}`);
+    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('config.alert.conf_activate_cfg')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
     if (confirm.value) {
       if (this.trapMsg.length !== 0) {
-        let confirm = await this.alertService.confirmationMessage(`${this.translate.instant('config.alert.conf_no_traps', { value: (this.trapMsg.join(', ')) })}`, `${this.translate.instant('config.alert.conf_continue')}`);
+        let confirm = await this.alertService.confirmationMessage(`${this.translate.instant('config.alert.conf_no_traps', { value: (this.trapMsg.join(', ')) })}`, `${this.translate.instant('config.alert.conf_continue')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
         if (confirm.value) {
           this.activate(message, error)
         }
@@ -361,19 +361,20 @@ export class ConfigurationViewComponent implements OnInit {
         }
 
         if (!success && gtwFieldCpu0.code === 'ECONNREFUSED' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'ECONNREFUSED')) {
-          await this.historicService.updateCfg(122, `${gateway.result[0].name}}: Error conexión a la pasarela`).toPromise();
-          message.push(`${this.translate.instant('ECONNREFUSED', { value: gateway.result[0].name })}`);
+          await this.historicService.updateCfg(122, `${gateway.result[0].name} {ECONNREFUSED}`).toPromise();
+          message.push(`${this.translate.instant('err.ECONNREFUSED', { value: gateway.result[0].name })}`,this.translate.instant('button.accept'));
           error = true;
         } else if (!success && gtwFieldCpu0.code === 'ETIMEDOUT' && (gtwFieldCpu1 && gtwFieldCpu1.code === 'ETIMEDOUT')) {
-          await this.historicService.updateCfg(122, `${gateway.result[0].name} Error timeout`).toPromise();
-          message.push(`${this.translate.instant('ETIMEDOUT', { value: gateway.result[0].name })}`);
+          await this.historicService.updateCfg(122, `${gateway.result[0].name} {ETIMEDOUT}`).toPromise();
+          message.push(`${this.translate.instant('err.ETIMEDOUT', { value: gateway.result[0].name })}`,this.translate.instant('button.accept'));
           error = true;
         } else if (!success && gtwFieldCpu0.code === 'EHOSTUNREACH' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'EHOSTUNREACH')) {
-          message.push(`${this.translate.instant('EHOSTUNREACH', { value: gateway.result[0].name })}`);
+          await this.historicService.updateCfg(122, `${gateway.result[0].name} {EHOSTUNREACH}`).toPromise();
+          message.push(`${this.translate.instant('err.EHOSTUNREACH', { value: gateway.result[0].name })}`,this.translate.instant('button.accept'));
           error = true;
         } else if (!success && gtwFieldCpu0 && !this.validateGtwFieldJson(gtwFieldCpu0) && gtwFieldCpu1 && !this.validateGtwFieldJson(gtwFieldCpu1)) {
-          await this.historicService.updateCfg(122, `${gateway.result[0].name}} Error de formato`).toPromise();
-          message.push(`${this.translate.instant('EFORMAT', { value: gateway.result[0].name })}`);
+          await this.historicService.updateCfg(122, `${gateway.result[0].name} {EFORMAT}`).toPromise();
+          message.push(`${this.translate.instant('err.EFORMAT', { value: gateway.result[0].name })}`,this.translate.instant('button.accept'));
           error = true;
         }
       }
@@ -385,7 +386,7 @@ export class ConfigurationViewComponent implements OnInit {
 
     this.showSpinner = false;
     const alertMsg = message.toString().replace(/,/g, '<br/>');
-    await this.alertService.fieldMessage(``, alertMsg);
+    await this.alertService.fieldMessage(``, alertMsg, this.translate.instant('button.accept'));
   }
 
   async saveSupervisedConfig() {
@@ -402,24 +403,24 @@ export class ConfigurationViewComponent implements OnInit {
         const checkName = await this.configService.checkConfigurationName(form.value.idCFG, form.value.name).toPromise();
 
         if (checkName.data == 'DUP_NAME') {
-          await this.alertService.errorMessage(``, `${this.translate.instant('config.alert.err_name_exists', { value: this.configForm.value.name })}`);
+          await this.alertService.errorMessage(``, `${this.translate.instant('config.alert.err_name_exists', { value: this.configForm.value.name })}`,this.translate.instant('button.accept'));
           return;
         }
 
         const result = await this.configService.updateConfiguration(form.value).toPromise();
 
         if (result.error) {
-          await this.alertService.errorMessage(``, result.error);
+          await this.alertService.errorMessage(``, result.error, this.translate.instant('button.accept'));
           return;
         }
         if (this.supervised != this.configActived) {
-          let title = " - Configuración Supervisada:";
-          title += this.supervised ? " Activada" : " Desactivada";
+          let title = " - {SUPERVISED_CONF} : ";
+          title += this.supervised ? " {ACTIVE} " : " {DISABLED} ";
           await this.historicService.updateCfg(103, form.value.name + title).toPromise();
         }
-        await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_update_cfg', { value: form.value.name })}`);
+        await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_update_cfg', { value: form.value.name })}`,this.translate.instant('button.accept'));
       } else {
-        this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+        this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`,this.translate.instant('button.accept'));
       }
     } catch (error: any) {
       this.app.catchError(error);
@@ -440,7 +441,7 @@ export class ConfigurationViewComponent implements OnInit {
             this.nEmplazamiento = this.configurationIp.map((index) => {
               return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
             })
-            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPV', { value1: this.arrayipv[i], value2: this.nEmplazamiento })}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPV', { value1: this.arrayipv[i], value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
             return;
           }
           this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipcp0[i], this.configuration.idCFG).toPromise();
@@ -449,7 +450,7 @@ export class ConfigurationViewComponent implements OnInit {
             this.nEmplazamiento = this.configurationIp.map((index) => {
               return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
             })
-            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU0', { value1: this.arrayipcp0[i], value2: this.nEmplazamiento })}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU0', { value1: this.arrayipcp0[i], value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
             return;
           }
           this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipcp1[i], this.configuration.idCFG).toPromise();
@@ -458,7 +459,7 @@ export class ConfigurationViewComponent implements OnInit {
             this.nEmplazamiento = this.configurationIp.map((index) => {
               return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
             })
-            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU1', { value1: this.arrayipcp1[i], value2: this.nEmplazamiento })}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU1', { value1: this.arrayipcp1[i], value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
             return;
           }
           i++;
@@ -466,7 +467,7 @@ export class ConfigurationViewComponent implements OnInit {
       }
 
       if (this.trapMsg.length !== 0) {
-        confirm = await this.alertService.confirmationMessage(`${this.translate.instant('config.alert.conf_no_traps', { value: (this.trapMsg.join(', ')) })}`, `${this.translate.instant('config.alert.continue')}`);
+        confirm = await this.alertService.confirmationMessage(`${this.translate.instant('config.alert.conf_no_traps', { value: (this.trapMsg.join(', ')) })}`, `${this.translate.instant('config.alert.conf_continue')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
         if (confirm.value) {
           this.save()
         }
@@ -485,29 +486,29 @@ export class ConfigurationViewComponent implements OnInit {
       const checkName = await this.configService.checkConfigurationName(this.configForm.value.idCFG, this.configForm.value.name).toPromise();
       if (checkName.data == 'DUP_NAME') {
         this.showSpinner = false;
-        await this.alertService.errorMessage(``, `${this.translate.instant('config.alert.err_name_exists', { value: this.configForm.value.name })}`);
+        await this.alertService.errorMessage(``, `${this.translate.instant('config.alert.err_name_exists', { value: this.configForm.value.name })}`,this.translate.instant('button.accept'));
         return;
       }
       const result = await this.configService.updateConfiguration(this.configForm.value).toPromise();
 
       if (result.error) {
         this.showSpinner = false;
-        await this.alertService.errorMessage(``, result.error);
+        await this.alertService.errorMessage(``, result.error,this.translate.instant('button.accept'));
         return;
       }
 
       if (this.configForm.value.activa != this.configActived) {
-        let title = " - Configuración Supervisada:";
-        title += this.configForm.value.activa ? " Activada" : " Desactivada";
+        let title = " - {SUPERVISED_CONF} : ";
+        title += this.configForm.value.activa ? " {ACTIVE} " : " {DISABLED} ";
         await this.historicService.updateCfg(103, this.configForm.value.name + title).toPromise();
       }
 
       this.showSpinner = false;
-      await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_update_cfg', { value: this.configForm.value.name })}`);
+      await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_update_cfg', { value: this.configForm.value.name })}`,this.translate.instant('button.accept'));
       await this.init();
       this.changes = false;
     } else {
-      this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+      this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`,this.translate.instant('button.accept'));
     }
   }
   copyConfig() {
@@ -526,7 +527,7 @@ export class ConfigurationViewComponent implements OnInit {
   async deleteConfig() {
     try {
       const confirmed = await this.alertService.confirmationMessage(`${this.translate.instant('config.alert.conf_delete_cfg', { value: this.configuration.name })}`,
-        `${this.translate.instant('config.alert.conf_delete_info')}`);
+        `${this.translate.instant('config.alert.conf_delete_info')}`,this.translate.instant('button.accept'), this.translate.instant('button.cancel'));
 
       if (confirmed.value) {
         this.showSpinner = true;
@@ -534,12 +535,12 @@ export class ConfigurationViewComponent implements OnInit {
         this.showSpinner = false;
 
         if (result.data !== 'OK') {
-          this.alertService.errorMessage(``, `${this.translate.instant('config.alert.err_delete_cfg', { value1: this.configuration.name, value2: result.data })}`);
+          this.alertService.errorMessage(``, `${this.translate.instant('config.alert.err_delete_cfg', { value1: this.configuration.name, value2: result.data })}`,this.translate.instant('button.accept'));
           return;
         }
 
         await this.historicService.updateCfg(102, this.configuration.name).toPromise();
-        await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_delete_cfg', { value: this.configuration.name })}`);
+        await this.alertService.successMessage(``, `${this.translate.instant('config.alert.succ_delete_cfg', { value: this.configuration.name })}`,this.translate.instant('button.accept'));
         this.router.navigate(['/home/config/']);
       }
     } catch (error: any) {

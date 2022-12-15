@@ -75,14 +75,14 @@ export class AudioBssTableFormComponent implements OnInit {
 
       if (createResult && createResult.error) {
         (createResult.error.includes('ER_DUP_ENTRY')) ?
-          await this.alertService.errorMessage(`Error`, `${this.translate.instant('audiobss.alert.err_duplicated_id')}`)
-          : await this.alertService.errorMessage(`Error`, createResult.error);
+          await this.alertService.errorMessage(`Error`, `${this.translate.instant('audiobss.alert.err_duplicated_id')}`, this.translate.instant('button.accept'))
+          : await this.alertService.errorMessage(`Error`, createResult.error, this.translate.instant('button.accept'));
       } else {
-        await this.alertService.successMessage(`Éxito`, `${this.translate.instant('audiobss.alert.succ_create_table')}`);
+        await this.alertService.successMessage(`Éxito`, `${this.translate.instant('audiobss.alert.succ_create_table')}`, this.translate.instant('button.accept'));
         this.dialogRef.close();
       }
     } else {
-      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`, this.translate.instant('button.accept'));
     }
   }
 
@@ -94,39 +94,39 @@ export class AudioBssTableFormComponent implements OnInit {
       this.showSpinner = false;
 
       if (editResult && editResult.error) {
-        await this.alertService.errorMessage(`Error`, editResult.error);
+        await this.alertService.errorMessage(`Error`, editResult.error, this.translate.instant('button.accept'));
       } else {
-        await this.alertService.successMessage(`Éxito`, `${this.translate.instant('audiobss.alert.succ_save_table')}`);
+        await this.alertService.successMessage(`Éxito`, `${this.translate.instant('audiobss.alert.succ_save_table')}`, this.translate.instant('button.accept'));
 
         const gatewaysResult = await this.gatewayService.updateTableBss(this.tableBssForm.value.idtabla_bss).toPromise();
         if (gatewaysResult && gatewaysResult.error) {
-          await this.alertService.errorMessage(`Error`, gatewaysResult.error);
+          await this.alertService.errorMessage(`Error`, gatewaysResult.error, this.translate.instant('button.accept'));
         } else {
-          await this.alertService.successMessage(`Éxito`, `${this.translate.instant('audiobss.alert.succ_update_gtw')}`);
+          await this.alertService.successMessage(`Éxito`, `${this.translate.instant('audiobss.alert.succ_update_gtw')}`, this.translate.instant('button.accept'));
         }
         this.dialogRef.close();
       }
     } else {
-      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`, this.translate.instant('button.accept'));
     }
   }
 
   async deleteTableBss() {
 
-    const confirmed = await this.alertService.confirmationMessage(``, `${this.translate.instant('audiobss.alert.conf_delete_table', {value: this.data.name})}`);
+    const confirmed = await this.alertService.confirmationMessage(``, `${this.translate.instant('audiobss.alert.conf_delete_table', { value: this.data.name })}`, this.translate.instant('button.accept'), this.translate.instant('button.cancel'));
 
     if (confirmed.value) {
       const deleteResult = await this.tableBssService.deleteTableAudioBss(this.data).toPromise();
 
       if (deleteResult && deleteResult.error) {
         let msg = deleteResult.error;
-        
+
         if (deleteResult.error === 'CANT_DELETE') {
-          msg = `${this.translate.instant('audiobss.alert.err_delete_table'), {value:deleteResult.ResourceName}}`;
+          msg = `${this.translate.instant('audiobss.alert.err_delete_table'), { value: deleteResult.ResourceName }}`;
         }
-        await this.alertService.errorMessage(`Error`, msg);
+        await this.alertService.errorMessage(`Error`, msg, this.translate.instant('button.accept'));
       } else {
-        await this.alertService.successMessage(`Éxito`, `${this.translate.instant('audiobss.alert.succ_delete_table',{value: this.data.name})}`);
+        await this.alertService.successMessage(`Éxito`, `${this.translate.instant('audiobss.alert.succ_delete_table', { value: this.data.name })}`, this.translate.instant('button.accept'));
         this.dialogRef.close();
       }
 

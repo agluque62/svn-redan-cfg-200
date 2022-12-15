@@ -88,46 +88,46 @@ export class GatewayHomeComponent implements OnInit {
   ]
 
   dirtyCaseOnlyValue: any[] = [
-    { id: 0, value: 'nombre', msg: ' Nombre: ' },
-    { id: 1, value: 'ipv', msg: ' Dir. IP Virtual: ' },
-    { id: 2, value: 'EMPLAZAMIENTO_idEMPLAZAMIENTO', msg: ' Emplazamiento: ' },
-    { id: 3, value: 'dvrrp', msg: ' Retardo activacion modo dual(ms.): ' },
-    { id: 4, value: 'pendiente_actualizar', msg: ' Pendiente actualizar: ' },
-    { id: 5, value: 'ultima_actualizacion', msg: ' Última actualización: ' },
-    { id: 6, value: 'ipb1', msg: ' Ip cpu0: ' },
-    { id: 7, value: 'ipb2', msg: ' Ip cpu1: ' },
-    { id: 8, value: 'ipg1', msg: ' Ip gateway0: ' },
-    { id: 9, value: 'ipg2', msg: ' Ip gateway1: ' },
-    { id: 10, value: 'msb1', msg: ' Máscara cpu0: ' },
-    { id: 11, value: 'msb2', msg: ' Máscara cpu1: ' },
-    { id: 12, value: 'PuertoLocalSIP ', msg: ' Puerto local SIP: ', servicetab: 'SIP' },
-    { id: 13, value: 'periodo_supervision', msg: ' Periodo de supervisión: ', servicetab: 'SIP' },
-    { id: 14, value: 'puerto_servicio_snmp', msg: ' Puerto Servicio SNMP: ', servicetab: 'SNMP' },
-    { id: 15, value: 'comunidad_snmp', msg: ' Comunidad SNMP: ', servicetab: 'SNMP' },
-    { id: 16, value: 'puerto_snmp', msg: ' Puerto SNMP: ', servicetab: 'SNMP' },
-    { id: 17, value: 'nombre_snmp', msg: ' Nombre SNMP: ', servicetab: 'SNMP' },
-    { id: 18, value: 'localizacion_snmp', msg: ' Ubicación SNMP: ', servicetab: 'SNMP' },
-    { id: 19, value: 'contacto_snmp', msg: ' Contacto SNMP: ', servicetab: 'SNMP' },
-    { id: 20, value: 'puerto_servicio_web', msg: ' Puerto Servicio Web: ', servicetab: 'Web' },
-    { id: 21, value: 'tiempo_sesion', msg: ' Tiempo Sesion: ', servicetab: 'Web' },
-    { id: 22, value: 'puerto_rtsp', msg: ' Puerto RTSP: ', servicetab: 'REC' },
-    { id: 23, value: 'servidor_rtsp', msg: ' IP Servidor RTSP (A): ', servicetab: 'REC' },
-    { id: 24, value: 'servidor_rtspb', msg: ' IP Servidor RTSP (B): ', servicetab: 'REC' },
+    { id: 0, value: 'nombre', msg: ' {NAME} : ' },
+    { id: 1, value: 'ipv', msg: ' {IPV} : ' },
+    { id: 2, value: 'EMPLAZAMIENTO_idEMPLAZAMIENTO', msg: ' {LOCATION} : ' },
+    { id: 3, value: 'dvrrp', msg: ' {DUAL_MODE_DELAY} : ' },
+    { id: 4, value: 'pendiente_actualizar', msg: '  {PEND_UPDT} : ' },
+    { id: 5, value: 'ultima_actualizacion', msg: '  {LAST_UPDT} : ' },
+    { id: 6, value: 'ipb1', msg: '{IPCPU0} : ' },
+    { id: 7, value: 'ipb2', msg: '{IPCPU1} : ' },
+    { id: 8, value: 'ipg1', msg: '{IPGTW0} : ' },
+    { id: 9, value: 'ipg2', msg: '{IPGTW1} : ' },
+    { id: 10, value: 'msb1', msg: '{MASKCPU0} : ' },
+    { id: 11, value: 'msb2', msg: '{MASKCPU1} : ' },
+    { id: 12, value: 'PuertoLocalSIP ', msg: '{PORT_SIP} : ', servicetab: 'SIP' },
+    { id: 13, value: 'periodo_supervision', msg: '{MON_PERIOD} : ', servicetab: 'SIP' },
+    { id: 14, value: 'puerto_servicio_snmp', msg: '{PORT_SNMP_SERVICE} : ', servicetab: 'SNMP' },
+    { id: 15, value: 'comunidad_snmp', msg: '{COMMUNITY_SNMP} : ', servicetab: 'SNMP' },
+    { id: 16, value: 'puerto_snmp', msg: '{PORT_SNMP} : ', servicetab: 'SNMP' },
+    { id: 17, value: 'nombre_snmp', msg: '{NAME_SNMP} : ', servicetab: 'SNMP' },
+    { id: 18, value: 'localizacion_snmp', msg: '{LOCATION_SNMP} : ', servicetab: 'SNMP' },
+    { id: 19, value: 'contacto_snmp', msg: '{CONTACT_SNMP} : ', servicetab: 'SNMP' },
+    { id: 20, value: 'puerto_servicio_web', msg: '{PORT_WEB} : ', servicetab: 'Web' },
+    { id: 21, value: 'tiempo_sesion', msg: '{SESION_TIME} : ', servicetab: 'Web' },
+    { id: 22, value: 'puerto_rtsp', msg: '{PORT_RSTP} : ', servicetab: 'REC' },
+    { id: 23, value: 'servidor_rtsp', msg: '{RSTP_A} : ', servicetab: 'REC' },
+    { id: 24, value: 'servidor_rtspb', msg: '{RSTP_B} : ', servicetab: 'REC' },
   ]
 
   dirtyCaseTernary: any[] = [
-    { id: 26, value: 'dual', msg: ' CPU Dual: ', op1: 'No', op2: 'Si' },
-    { id: 27, value: 'sppe', msg: ' Supervisión Puerta de Enlace: ', op1: 'No', op2: ' Segundos' },
-    { id: 28, value: 'snmpv2', msg: ' SNMP V2: ', op1: 'No', op2: 'Si', servicetab: 'SNMP' },
-    { id: 33, value: 'supervisionTlf', msg: ' SupervisionTlf: ', op1: 'No', op2: 'Si', servicetab: 'SIP' }
+    { id: 26, value: 'dual', msg: '{CPU_DUAL} : ', op1: ' {NO} ', op2: ' {YES} ' },
+    { id: 27, value: 'sppe', msg: '{GTW_SUPER} : ', op1: ' {NO} ', op2: ' {SECONDS} ' },
+    { id: 28, value: 'snmpv2', msg: '{SNMPV2} : ', op1: ' {NO} ', op2: ' {YES} ', servicetab: 'SNMP' },
+    { id: 33, value: 'supervisionTlf', msg: '{SUPER_TLF} : ', op1: ' {NO} ', op2: ' {YES} ', servicetab: 'SIP' }
   ]
 
   dirtyCaseArrays: any[] = [
-    { id: 29, value: 'proxys', msg: ' Proxys: ', servicetab: 'SIP' },
-    { id: 30, value: 'registrars', msg: ' SIP Servers: ', servicetab: 'SIP' },
-    { id: 31, value: 'listServers', msg: ' List Servers: ', servicetab: 'Sync' },
-    { id: 32, value: 'traps', msg: ' Traps : ', servicetab: 'SNMP' },
-    { id: 34, value: 'refresher', msg: ' Refresher: ', servicetab: 'SIP' }
+    { id: 29, value: 'proxys', msg: '{PROXYS} : ', servicetab: 'SIP' },
+    { id: 30, value: 'registrars', msg: '{SIP_SERVERS} : ', servicetab: 'SIP' },
+    { id: 31, value: 'listServers', msg: '{LIST_SERVERS} : ', servicetab: 'Sync' },
+    { id: 32, value: 'traps', msg: '{TRAPS} : ', servicetab: 'SNMP' },
+    { id: 34, value: 'refresher', msg: '{REFRESER} : ', servicetab: 'SIP' }
   ]
 
 
@@ -227,14 +227,14 @@ export class GatewayHomeComponent implements OnInit {
     let siteName = this.siteOptions.filter((site: any) => { return site.idEMPLAZAMIENTO === this.siteId })[0]?.name;
 
     if (this.changes || this.gatewayForm.dirty || JSON.stringify(this.gatewayForm.value) !== JSON.stringify(this.initStatusGateway)) {
-      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.info_no_save')}`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('gateway.info_no_save')}`,this.translate.instant('button.accept'));
       return;
     }
 
-    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_active_conf')}`);
+    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_active_conf')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
     if (confirm.value) {
       if (this.gatewayForm.value.traps.length === 0) {
-        const confirmTraps = await this.alertService.confirmationMessage(`${this.translate.instant('gateway.alert.no_traps')}`, `${this.translate.instant('gateway.alert.continue')}`);
+        const confirmTraps = await this.alertService.confirmationMessage(`${this.translate.instant('gateway.alert.no_traps')}`, `${this.translate.instant('gateway.alert.continue')}`,this.translate.instant('button.accept'),this.translate.instant('button.accept'));
         if (confirmTraps.value) {
           this.activateGTW(confName, siteName)
         }
@@ -261,8 +261,8 @@ export class GatewayHomeComponent implements OnInit {
         this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
         this.gatewayForm = this.initForm();
         this.checkFormChanges();
-        await this.historicService.updateCfg(121, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} CPU 0`).toPromise();
-        await this.alertService.successMessage(``, result.res);
+        await this.historicService.updateCfg(121, `{CONFIGURATION} : ${confName} - {LOCATION} : ${siteName} - {GATEWAY} : ${this.gateway.name} CPU 0`).toPromise();
+        await this.alertService.successMessage(``, result.res,this.translate.instant('button.accept'));
         this.showSpinner = false;
         return;
       }
@@ -279,37 +279,37 @@ export class GatewayHomeComponent implements OnInit {
         this.gatewayPost = new GatewayPost(this.gateway, this.gatewayIps);
         this.gatewayForm = this.initForm();
         this.checkFormChanges();
-        await this.historicService.updateCfg(121, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} CPU 1`).toPromise();
-        await this.alertService.successMessage(``, result.res);
+        await this.historicService.updateCfg(121, `{CONFIGURATION} : ${confName} - {LOCATION} : ${siteName} - {GATEWAY} : ${this.gateway.name} CPU 1`).toPromise();
+        await this.alertService.successMessage(``, result.res,this.translate.instant('button.accept'));
         this.showSpinner = false;
         return;
       }
     }
 
     if (gtwFieldCpu0.code === 'ECONNREFUSED' || gtwFieldCpu1.code === 'ECONNREFUSED') {
-      await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error conexión a la pasarela`).toPromise();
-      await this.alertService.errorMessage(``, `${this.translate.instant('err.ECONNREFUSED')}`);
+      await this.historicService.updateCfg(122, `{CONFIGURATION} : ${confName} - {LOCATION} : ${siteName} - {GATEWAY} : ${this.gateway.name} {ECONNREFUSED} `).toPromise();
+      await this.alertService.errorMessage(``, `${this.translate.instant('err.ECONNREFUSED', { value: this.gateway.name })}`,this.translate.instant('button.accept'));
       this.showSpinner = false;
       return;
     }
 
     if (gtwFieldCpu0.code === 'ETIMEDOUT' && gtwFieldCpu1.code === 'ETIMEDOUT') {
-      await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error timeout`).toPromise();
-      await this.alertService.errorMessage(``, `${this.translate.instant('err.ETIMEDOUT')}`);
+      await this.historicService.updateCfg(122, `{CONFIGURATION} : ${confName} - {LOCATION} : ${siteName} - {GATEWAY} : ${this.gateway.name} {ETIMEDOUT} `).toPromise();
+      await this.alertService.errorMessage(``, `${this.translate.instant('err.ETIMEDOUT', { value: this.gateway.name })}`,this.translate.instant('button.accept'));
       this.showSpinner = false;
       return;
     }
 
     if (gtwFieldCpu0.code === 'EHOSTUNREACH' || gtwFieldCpu1.code === 'EHOSTUNREACH') {
-      await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error de conexión al host`).toPromise();
-      await this.alertService.errorMessage(``, `${this.translate.instant('err.EHOSTUNREACH')}`);
+      await this.historicService.updateCfg(122, `{CONFIGURATION} : ${confName} - {LOCATION} : ${siteName} - {GATEWAY} : ${this.gateway.name} {EHOSTUNREACH} `).toPromise();
+      await this.alertService.errorMessage(``, `${this.translate.instant('err.EHOSTUNREACH', { value: this.gateway.name })}`,this.translate.instant('button.accept'));
       this.showSpinner = false;
       return;
     }
 
     if (!this.validateGtwFieldJson(gtwFieldCpu0) && !this.validateGtwFieldJson(gtwFieldCpu1)) {
-      await this.historicService.updateCfg(122, `Configuración: ${confName} - Emplazamiento: ${siteName} - Pasarela: ${this.gateway.name} Error de formato`).toPromise();
-      await this.alertService.errorMessage(``, `${this.translate.instant('err.EFORMAT')}`);
+      await this.historicService.updateCfg(122, `{CONFIGURATION} : ${confName} - {LOCATION} : ${siteName} - {GATEWAY} : ${this.gateway.name} {EFORMAT} `).toPromise();
+      await this.alertService.errorMessage(``, `${this.translate.instant('err.EFORMAT', { value: this.gateway.name })}`,this.translate.instant('button.accept'));
       this.showSpinner = false;
       return;
     }
@@ -335,7 +335,7 @@ export class GatewayHomeComponent implements OnInit {
   async back() {
     let confirm;
     if (this.type === 'EDIT' && (this.changes || this.gatewayForm.dirty)) {
-      confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('gateway.alert.conf_back')}`);
+      confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('gateway.alert.conf_back')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
     }
     if (confirm?.isConfirmed == true || confirm === undefined) {
       await this.router.navigate(['/home/config/' + this.configId]);
@@ -396,7 +396,7 @@ export class GatewayHomeComponent implements OnInit {
             this.msg = this.configurationIp.map((index) => {
               return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
             })
-            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPV', { value1: gateway.ipv, value2: this.msg })}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPV', { value1: gateway.ipv, value2: this.msg })}`,this.translate.instant('button.accept'));
             return;
           }
           this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipb1, 0).toPromise();
@@ -405,7 +405,7 @@ export class GatewayHomeComponent implements OnInit {
             this.msg = this.configurationIp.map((index) => {
               return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
             })
-            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU0', { value1: gateway.ipb1, value2: this.msg })}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU0', { value1: gateway.ipb1, value2: this.msg })}`,this.translate.instant('button.accept'));
             return;
           }
           this.configurationIpResponse = await this.configService.checkConfigIp(gateway.ipb2, 0).toPromise();
@@ -414,7 +414,7 @@ export class GatewayHomeComponent implements OnInit {
             this.msg = this.configurationIp.map((index) => {
               return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
             })
-            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU1', { value1: gateway.ipb2, value2: this.msg })}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU1', { value1: gateway.ipb2, value2: this.msg })}`,this.translate.instant('button.accept'));
             return;
           }
         }
@@ -426,14 +426,14 @@ export class GatewayHomeComponent implements OnInit {
         const newGtw = await this.gatewayService.createGtw(siteId, gateway).toPromise();
         if (newGtw.error) {
           this.showSpinner = false;
-          await this.alertService.errorMessage(`Error`, newGtw.error);
+          await this.alertService.errorMessage(`Error`, newGtw.error,this.translate.instant('button.accept'));
           return;
         }
         let title = this.dataService.getDataGatewayTitle();
-        title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length);
+        title = title.substring(0, title.indexOf(" - {GATEWAY} ") >= 0 ? title.indexOf(" - {GATEWAY} ") : title.length);
         await this.historicService.updateCfg(107, this.gatewayForm.value.nombre, title).toPromise();
         this.showSpinner = false;
-        await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_new_gtw', { value: newGtw.name })}`);
+        await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_new_gtw', { value: newGtw.name })}`,this.translate.instant('button.accept'));
         this.dataService.updateDataConfigId(this.configId);
         this.dataService.updateDataGatewayPreviousUrl('NEW');
         this.router.navigate(['/home/gateway/' + newGtw.insertId]);
@@ -448,7 +448,7 @@ export class GatewayHomeComponent implements OnInit {
     const result = await this.gatewayService.checkName(name, this.configId, this.gateway.idCGW).toPromise();
     if (result !== 'NO_ERROR') {
       const message = (result === 'NAME_DUP') ? `${this.translate.instant('err.DUPLICATED_ID_GTW', { value: name })}` : result;
-      await this.alertService.errorMessage(`Error`, message);
+      await this.alertService.errorMessage(`Error`, message,this.translate.instant('button.accept'));
       return true;
     }
     return false;
@@ -458,7 +458,7 @@ export class GatewayHomeComponent implements OnInit {
     const result = await this.gatewayService.checkIpAddress(ip, this.configId, this.gateway.idCGW).toPromise();
     if (result !== 'NO_ERROR') {
       const message = (result === 'IP_DUP') ? `${this.translate.instant('err.DUPLICATED_NAME_CFG', { value: ip })}` : result;
-      await this.alertService.errorMessage(`Error`, message);
+      await this.alertService.errorMessage(`Error`, message,this.translate.instant('button.accept'));
       return true;
     }
     return false;
@@ -469,11 +469,11 @@ export class GatewayHomeComponent implements OnInit {
       this.gatewayForm.value.servidor_rtsp !== '' &&
       this.gatewayForm.value.servidor_rtspb !== '') {
       const message = `${this.translate.instant('err_same_ip_rtsp')}`;
-      await this.alertService.errorMessage(`Error`, message);
+      await this.alertService.errorMessage(`Error`, message,this.translate.instant('button.accept'));
       return true;
     } else if (this.gatewayForm.value.servidor_rtsp === '' && this.gatewayForm.value.servidor_rtspb !== '') {
       const message = `${this.translate.instant('gateway.alert.err_empty_ip_RSTP_A')}`;
-      await this.alertService.errorMessage(`Error`, message);
+      await this.alertService.errorMessage(`Error`, message,this.translate.instant('button.accept'));
       return true;
     }
 
@@ -581,7 +581,7 @@ export class GatewayHomeComponent implements OnInit {
         message = `${this.translate.instant('gateway.alert.err_snmp_port')}`
       }
 
-      await this.alertService.errorMessage(`${this.translate.instant('err.INVALID_FORM')}`, message);
+      await this.alertService.errorMessage(`${this.translate.instant('err.INVALID_FORM')}`, message,this.translate.instant('button.accept'));
       return true;
     }
 
@@ -595,7 +595,7 @@ export class GatewayHomeComponent implements OnInit {
       if (this.configId) {
         const result = await this.siteService.getSites(this.configId).toPromise();
         if (result.error) {
-          await this.alertService.errorMessage(``, result.error);
+          await this.alertService.errorMessage(``, result.error,this.translate.instant('button.accept'));
         }
 
         this.siteOptions = (result.data != 'NO_DATA') ? [...result.data] : [];
@@ -622,7 +622,7 @@ export class GatewayHomeComponent implements OnInit {
     let result = await this.validateGateway();
     if (result) {
       if (this.gatewayForm.value.traps.length === 0) {
-        const confirmTraps = await this.alertService.confirmationMessage(`${this.translate.instant('gateway.alert.no_traps')}`, `${this.translate.instant('gateway.alert.continue')}`);
+        const confirmTraps = await this.alertService.confirmationMessage(`${this.translate.instant('gateway.alert.no_traps')}`, `${this.translate.instant('gateway.alert.continue')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
         if (confirmTraps.value) {
           this.saveGTW();
         }
@@ -645,11 +645,11 @@ export class GatewayHomeComponent implements OnInit {
     const updatedGtw = await this.gatewayService.updateGtw(this.gateway.idCGW, gateway).toPromise();
     if (updatedGtw.error) {
       this.showSpinner = false;
-      await this.alertService.errorMessage(`Error`, updatedGtw.error);
+      await this.alertService.errorMessage(`Error`, updatedGtw.error,this.translate.instant('button.accept'));
       return;
     }
 
-    let title = this.dataService.getDataGatewayTitle();
+    let title = ` {CONFIGURATION} : ${this.GTW_NAME} - {LOCATION} : ${this.LOCAT_NAME} - {GATEWAY} : ${this.GTW_NAME} `
     this.validateFormDirty(title);
     if (this.gatewayPost.nombre != this.gatewayForm.value.nombre)
       this.gatewayPost.nombre = this.gatewayForm.value.nombre;
@@ -659,7 +659,7 @@ export class GatewayHomeComponent implements OnInit {
     this.initStatusGateway = { ...this.gatewayForm.value };
     await this.siteChanges();
     this.showSpinner = false;
-    await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_upt_gtw', { value: updatedGtw.name })}`);
+    await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_upt_gtw', { value: updatedGtw.name })}`,this.translate.instant('button.accept'));
     this.gatewayForm.markAsPristine();
     this.changes = false;
     this.showSpinner = false;
@@ -680,17 +680,18 @@ export class GatewayHomeComponent implements OnInit {
 
   async deleteGateway() {
 
-    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_del_gtw', { value: this.gateway.name })}`);
+    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_del_gtw', { value: this.gateway.name })}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
     if (confirm.value) {
 
       this.showSpinner = true;
       await this.gatewayService.deleteGtw(this.gateway.idCGW).toPromise();
 
       let title = this.dataService.getDataGatewayTitle();
-      title = title.substring(0, title.indexOf(" - Pasarela") >= 0 ? title.indexOf(" - Pasarela") : title.length); await this.historicService.updateCfg(108, this.gateway.name, title).toPromise();
+      title = title.substring(0, title.indexOf(" - {GATEWAY} ") >= 0 ? title.indexOf(" - {GATEWAY} ") : title.length);
+      await this.historicService.updateCfg(108, this.gateway.name, title).toPromise();
       this.showSpinner = false;
 
-      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_del_gtw', { value: this.gateway.name })}`);
+      await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_del_gtw', { value: this.gateway.name })}`,this.translate.instant('button.accept'));
       this.router.navigate(['/home/config/' + this.configId]);
     }
   }
@@ -853,7 +854,7 @@ export class GatewayHomeComponent implements OnInit {
         })
       } if (value === 'refresher') {
         const refresher = this.refresher.find((option: any) => option.value === this.gatewayForm.get(value)?.value)
-        historic += `${refresher.viewValue}`
+        historic += `${refresher.viewValue} `
       } else {
         this.gatewayForm.get(value)?.value.forEach((element: any) => {
           if (this.gatewayForm.get(value)?.value[this.gatewayForm.get(value)?.value.length - 1] === element) {
@@ -879,19 +880,19 @@ export class GatewayHomeComponent implements OnInit {
     let serviceType = ``;
     if ((typeof (element.servicetab) != 'undefined')) {
       if (element.servicetab === 'SIP') {
-        serviceType += ` (SIP) `
+        serviceType += ` (SIP)`
       }
       if (element.servicetab === 'Sync') {
-        serviceType += ' (Sincronización) '
+        serviceType += ' {SYNC}'
       }
       if (element.servicetab === 'SNMP') {
-        serviceType += ` (SNMP) `
+        serviceType += ` (SNMP)`
       }
       if (element.servicetab === 'Web') {
-        serviceType += ` (Web) `
+        serviceType += ` (Web)`
       }
       if (element.servicetab === 'REC') {
-        serviceType += ` (Grabación) `
+        serviceType += ` {REC}`
       }
     }
     return serviceType;
@@ -901,7 +902,7 @@ export class GatewayHomeComponent implements OnInit {
     let emptyString = true;
     let changeHistorics = ``;
     this.dirtyCaseOnlyValue.forEach((element: any) => {
-      changeHistorics = ` Parametro(s): `;
+      changeHistorics = ` {PARAMS} `;
       emptyString = this.isEmpty(this.showDataDirtyCaseOnlyValue(element.value, element.msg));
       if (!emptyString) {
         changeHistorics = `${title} ${changeHistorics} ${this.typeService(element)} ${this.showDataDirtyCaseOnlyValue(element.value, element.msg)}`;
@@ -909,7 +910,7 @@ export class GatewayHomeComponent implements OnInit {
       }
     });
     this.dirtyCaseTernary.forEach((element: any) => {
-      changeHistorics = ` Parametro(s): `;
+      changeHistorics = ` {PARAMS} `;
       emptyString = this.isEmpty(this.showDataDirtyCaseTernary(element.value, element.msg, element.op1, element.op2));
       if (!emptyString) {
         changeHistorics = `${title} ${changeHistorics} ${this.typeService(element)} ${this.showDataDirtyCaseTernary(element.value, element.msg, element.op1, element.op2)}`;
@@ -917,7 +918,7 @@ export class GatewayHomeComponent implements OnInit {
       }
     });
     this.dirtyCaseArrays.forEach((element: any) => {
-      changeHistorics = ` Parametro(s): `;
+      changeHistorics = ` {PARAMS} `;
       emptyString = this.isEmpty(this.showDataDirtyCaseArrays(element.value, element.msg));
       if (!emptyString) {
         changeHistorics = `${title} ${changeHistorics} ${this.typeService(element)} ${this.showDataDirtyCaseArrays(element.value, element.msg)}`;

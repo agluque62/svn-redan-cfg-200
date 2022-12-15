@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import Swal from 'sweetalert2';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
     providedIn: 'root'
@@ -8,11 +9,11 @@ import Swal from 'sweetalert2';
 
 export class AlertService extends BaseService {
 
-    constructor() {
+    constructor(private readonly translate: TranslateService) {
         super();
     }
 
-    confirmationMessage(title: string, message: string) {
+    confirmationMessage(title: string, message: string, accept: string, cancel: string) {
 
         return Swal.fire({
             title: title,
@@ -21,42 +22,42 @@ export class AlertService extends BaseService {
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Aceptar',
-            cancelButtonText: 'Cancelar',
+            confirmButtonText: accept,
+            cancelButtonText: cancel,
             heightAuto: false
         })
     }
 
-    errorMessage(title: string, message: string) {
+    errorMessage(title: string, message: string, accept: string) {
 
         return Swal.fire({
             title: title,
             text: message,
             icon: 'error',
-            confirmButtonText: 'Aceptar',
+            confirmButtonText: accept,
             heightAuto: false
         });
     }
 
-    successMessage(title: string, message: string) {
+    successMessage(title: string, message: string, accept: string) {
 
         return Swal.fire({
             title: title,
             text: message,
             icon: 'success',
-            confirmButtonText: 'Aceptar',
+            confirmButtonText: accept,
             heightAuto: false
         });
     }
 
-    fieldMessage(title: string, message: string) {
+    fieldMessage(title: string, message: string, accept: string) {
 
         return Swal.fire({
             title: title,
             html: message,
             icon: 'info',
             heightAuto: true,
-            confirmButtonText: 'Aceptar'
+            confirmButtonText: accept
         });
     }
 

@@ -91,7 +91,7 @@ passport.use(new Strategy(
         logging.Trace(config.Ulises.LoginSystemTrace, 'Passport Strategy function: ' + username + '/' + password);
         logging.Info('LocalSession =>', ctrlSesiones.localSession);
         if (ctrlSesiones.localSession) {
-            insertHistoric(ACCESS_SYSTEM_FAIL, username, 'Existe una sesion activa.');
+            insertHistoric(ACCESS_SYSTEM_FAIL, username, ' {ACTIVE_SESSION_EXISTS} ');
             return cb(null, false, { message: 'err.ACTIVE_SESSION_EXISTS' });
         }
         // var pwdB64 = new Buffer(password).toString('base64');
@@ -102,15 +102,15 @@ passport.use(new Strategy(
                 return cb(err);
             }
             if (!user) {
-                insertHistoric(ACCESS_SYSTEM_FAIL, username, 'No existe el usuario');
+                insertHistoric(ACCESS_SYSTEM_FAIL, username, ' {USER_NOT_EXISTS} ');
                 return cb(null, false, { message: 'err.USER_NOT_EXISTS' });
             }
             if (checkPerfil(user.perfil) == false) {
-                insertHistoric(ACCESS_SYSTEM_FAIL, username, 'Perfil de usuario no adecuado');
+                insertHistoric(ACCESS_SYSTEM_FAIL, username, ' {UNSUITABLE_USER} ');
                 return cb(null, false, { message: 'err.UNSUITABLE_USER' });
             }
             if (user.clave != pwdB64) {
-                insertHistoric(ACCESS_SYSTEM_FAIL, username, 'Password incorrecta.');
+                insertHistoric(ACCESS_SYSTEM_FAIL, username, ' {INCORRECT_PASSWORD} ');
                 return cb(null, false, { message: 'err.INCORRECT_PASSWORD' });
             }
             insertHistoric(ACCESS_SYSTEM_OK, user.name, '');
@@ -184,7 +184,7 @@ app.post('/', [
                             retorno.err = req.file.message;
                             logging.Error(req.file.message);
                         }
-                        res.json(retorno);
+                        res.status(200).json(retorno);
                     });
                 }
                 else {
@@ -437,7 +437,7 @@ app.post('/login', function (req, res, next) {
 
         if (!user) {
             logging.Error('Login No user => ', user, info);
-            return res.status(401).json({ "message": info.message })
+            return res.status(401).json({ "message": 'err.MISSING_CREDENTIALS' })
         }
 
         logging.Info('Login User => ', user);
@@ -634,12 +634,12 @@ var intervalObject = setInterval(function () {
     if (ctrlSesiones.localSession) {
         if (moment().diff(ctrlSesiones.localSession.lastTick, "seconds") > 60) {
             logging.Trace("La Session ha expirado...El cliente no genera los ticks");
-            insertHistoric(USER_LOGOUT_SYSTEM, ctrlSesiones.user.name, 'La Session ha expirado...El cliente no genera los ticks.');
+            insertHistoric(USER_LOGOUT_SYSTEM, ctrlSesiones.user.name, ' {EXPIRED_SESSION_TICKS} ');
             ctrlSesiones.localSession = null;
         }
         else if (moment().isAfter(moment(ctrlSesiones.localSession.cookie._expires))) {
             logging.Trace("La Session ha expirado....");
-            insertHistoric(USER_LOGOUT_SYSTEM, ctrlSesiones.user.name, 'La Session ha expirado....');
+            insertHistoric(USER_LOGOUT_SYSTEM, ctrlSesiones.user.name, ' {EXPIRED_SESSION} ');
             ctrlSesiones.localSession = null;
         }
     }

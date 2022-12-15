@@ -42,16 +42,16 @@ export class BackupManualComponent implements OnInit {
 
   async backup() {
 
-    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('backup.alert.backup_now')}`);
+    const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('backup.alert.backup_now')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
 
     if (confirm.value) {
       // this.localConfig = await this.configService.getLocalConfig().toPromise();
       const result = await this.backupService.makeManualBackup(this.ServiceDomainLocation).toPromise();
       if (result.resultado.includes('Error')) {
-        await this.alertService.errorMessage(``, `${result.resultado}`);
+        await this.alertService.errorMessage(``, `${result.resultado}`,this.translate.instant('button.accept'));
         return;
       }
-      await this.alertService.successMessage(``, `${result.resultado}`);        
+      await this.alertService.successMessage(``, `${result.resultado}`,this.translate.instant('button.accept'));        
     }
   }
 

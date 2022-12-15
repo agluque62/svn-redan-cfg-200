@@ -34,7 +34,7 @@ export class LCENFormComponent implements OnInit {
 
   async checkAGVNName(event: any) {
     if (event.target.value.match(AppSettings.AGVN_PATTERN) == undefined && event.target.value != '') {
-      await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err.AVGN_no_valid')}`);
+      await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err.AVGN_no_valid')}`,this.translate.instant('button.cancel'));
       event.target.value = '';
       this.resourceForm.patchValue({ ats_user: '' });
     }

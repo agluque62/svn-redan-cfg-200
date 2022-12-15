@@ -90,7 +90,7 @@ export class ResourceListsComponent implements OnInit {
             this.uriListToDisplay[tipo][pos]['modified'] = true;
             this.resourceForm.get('listaUris')?.markAsDirty();
         } else if (event.target.value.match(AppSettings.URI_PATTERN) == undefined && event.target.value != '') {
-            await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.INVALID_URI')}`);
+            await this.alertService.errorMessage(``, `${this.translate.instant('appsettings.INVALID_URI')}`,this.translate.instant('button.accept'));
             event.target.value = '';
         }
     }

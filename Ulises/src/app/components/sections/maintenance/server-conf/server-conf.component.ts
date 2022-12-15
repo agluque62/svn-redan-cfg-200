@@ -88,7 +88,7 @@ export class ServerConfComponent implements OnInit {
   async saveServerConfig() {
     if (this.serverConfigForm.valid) {
 
-      const confirmed = await this.alertService.confirmationMessage(``, `${this.translate.instant('maintenance.alert.save_changes')}` );
+      const confirmed = await this.alertService.confirmationMessage(``, `${this.translate.instant('maintenance.alert.save_changes')}` ,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
 
       if (confirmed.value) {
         this.showSpinner = true;
@@ -103,14 +103,14 @@ export class ServerConfComponent implements OnInit {
         const res = await this.configService.updateLocalConfig(this.serverConfigForm.value).toPromise();
         this.showSpinner = false;
         if (res.res) {
-          await this.alertService.successMessage(`${this.translate.instant('maintenance.alert.updated_conf')}`, `${this.translate.instant('maintenance.alert.save_changes')}`);
+          await this.alertService.successMessage(`${this.translate.instant('maintenance.alert.updated_conf')}`, `${this.translate.instant('maintenance.alert.save_changes')}`,this.translate.instant('button.accept'));
         } else {
-          await this.alertService.errorMessage(``, res.txt);
+          await this.alertService.errorMessage(``, res.txt,this.translate.instant('button.accept'));
         }
       }
 
     } else {
-      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+      await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`,this.translate.instant('button.accept'));
     }
   }
 }

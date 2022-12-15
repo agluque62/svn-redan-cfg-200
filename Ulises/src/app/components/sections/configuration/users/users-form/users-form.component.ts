@@ -190,12 +190,12 @@ export class UsersFormComponent implements OnInit {
 
   async deleteUser() {
     if (this.user.name == this.currentUser.name){
-      await this.alertService.errorMessage("", `${this.translate.instant('users.alert.error_delete_user')}`);
+      await this.alertService.errorMessage("", `${this.translate.instant('users.alert.error_delete_user')}`, this.translate.instant('button.accept'));
       return;
     }
 
     try {
-      const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('users.alert.conf_delete_user', {user: this.user.name})}`)
+      const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('users.alert.conf_delete_user', {user: this.user.name})}`, this.translate.instant('button.accept'), this.translate.instant('button.cancel'))
       if (confirm.value) {
 
         this.showSpinner = true;
@@ -203,9 +203,9 @@ export class UsersFormComponent implements OnInit {
         this.showSpinner = false;
 
         if (result.error != 1) {
-          await this.alertService.errorMessage(`Error`, result.error);
+          await this.alertService.errorMessage(`Error`, result.error, this.translate.instant('button.accept'));
         } else {
-          await this.alertService.successMessage(`Éxito`, `${this.translate.instant('users.alert.succ_delete_user')}`);
+          await this.alertService.successMessage(`Éxito`, `${this.translate.instant('users.alert.succ_delete_user')}`,this.translate.instant('button.accept'));
           await this.historicService.updateCfg(53, this.user.name).toPromise();
           this.dialogRef.close();
         }
@@ -239,13 +239,13 @@ export class UsersFormComponent implements OnInit {
         this.showSpinner = false;
 
         if (error) {
-          await this.alertService.errorMessage(`Error`, error);
+          await this.alertService.errorMessage(`Error`, error, this.translate.instant('button.accept'));
         } else {
-          await this.alertService.successMessage(`Éxito`, message);
+          await this.alertService.successMessage(`Éxito`, message, this.translate.instant('button.accept'));
           this.dialogRef.close();
         }
       } else {
-        await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`);
+        await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`, this.translate.instant('button.accept'));
       }
     } catch (error: any) {
       this.dialogRef.close();
