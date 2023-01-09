@@ -40,8 +40,8 @@ export class Gateway {
         this.puerto_servicio_snmp = 65000;
         this.puerto_snmp = 161;
         this.nombre_snmp = 'ULISESG5000i';
-        this.localizacion_snmp = 'NUCLEO-DF LABS';
-        this.contacto_snmp = 'NUCLEO-DF DT. MADRID. SPAIN';
+        this.localizacion_snmp = 'AMPER SISTEMAS';
+        this.contacto_snmp = 'AMPER SISTEMAS. MADRID. SPAIN';
         this.comunidad_snmp = 'public';
         this.puerto_servicio_web = 8080;
         this.tiempo_sesion = 0;
