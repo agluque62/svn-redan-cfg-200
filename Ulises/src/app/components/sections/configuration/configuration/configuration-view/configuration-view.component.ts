@@ -362,19 +362,19 @@ export class ConfigurationViewComponent implements OnInit {
 
         if (!success && gtwFieldCpu0.code === 'ECONNREFUSED' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'ECONNREFUSED')) {
           await this.historicService.updateCfg(122, `${gateway.result[0].name} {ECONNREFUSED}`).toPromise();
-          message.push(`${this.translate.instant('err.ECONNREFUSED', { value: gateway.result[0].name })}`,this.translate.instant('button.accept'));
+          message.push(`${this.translate.instant('err.ECONNREFUSED', { value: gateway.result[0].name })}`/*,this.translate.instant('button.accept')*/);
           error = true;
         } else if (!success && gtwFieldCpu0.code === 'ETIMEDOUT' && (gtwFieldCpu1 && gtwFieldCpu1.code === 'ETIMEDOUT')) {
           await this.historicService.updateCfg(122, `${gateway.result[0].name} {ETIMEDOUT}`).toPromise();
-          message.push(`${this.translate.instant('err.ETIMEDOUT', { value: gateway.result[0].name })}`,this.translate.instant('button.accept'));
+          message.push(`${this.translate.instant('err.ETIMEDOUT', { value: gateway.result[0].name })}`/*,this.translate.instant('button.accept')*/);
           error = true;
         } else if (!success && gtwFieldCpu0.code === 'EHOSTUNREACH' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'EHOSTUNREACH')) {
           await this.historicService.updateCfg(122, `${gateway.result[0].name} {EHOSTUNREACH}`).toPromise();
-          message.push(`${this.translate.instant('err.EHOSTUNREACH', { value: gateway.result[0].name })}`,this.translate.instant('button.accept'));
+          message.push(`${this.translate.instant('err.EHOSTUNREACH', { value: gateway.result[0].name })}`/*,this.translate.instant('button.accept')*/);
           error = true;
         } else if (!success && gtwFieldCpu0 && !this.validateGtwFieldJson(gtwFieldCpu0) && gtwFieldCpu1 && !this.validateGtwFieldJson(gtwFieldCpu1)) {
           await this.historicService.updateCfg(122, `${gateway.result[0].name} {EFORMAT}`).toPromise();
-          message.push(`${this.translate.instant('err.EFORMAT', { value: gateway.result[0].name })}`,this.translate.instant('button.accept'));
+          message.push(`${this.translate.instant('err.EFORMAT', { value: gateway.result[0].name })}`/*,this.translate.instant('button.accept')*/);
           error = true;
         }
       }
