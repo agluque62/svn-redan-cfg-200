@@ -456,8 +456,8 @@ app.get('/logout',
         logging.Info(req.method, req.originalUrl);
         insertHistoric(USER_LOGOUT_SYSTEM, ctrlSesiones.user.name, '');
         ctrlSesiones.localSession = null;
-        req.logout(null, (err)=>{});
-        res.json(null);
+        req.logout();
+        res.json();
     });
 
 /** 20170808 AGL. TICK de Sesion Activa */
