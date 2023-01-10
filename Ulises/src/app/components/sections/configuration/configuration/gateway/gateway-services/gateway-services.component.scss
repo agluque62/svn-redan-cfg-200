@@ -159,6 +159,14 @@
                     }
                 }
             }
-        }
+            .stlabel {
+                .label{
+                    margin-right: 2em;
+                }
+                .content{
+                    color:darkred;
+                }                
+            }
+    }
     }
 }

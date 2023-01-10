@@ -375,6 +375,7 @@
     "maintenance.login_timeout":"Duración de sesión en minutos",
     "maintenance.log_to_file":"Tracear a fichero",
     "maintenance.r16_mode":"Modo 16 Recursos Radio",
+    "maintenance.ntpDefault":"Servidor NTP predeterminado",
     "maintenance.version":"Versión",
     "maintenance.nodeJS":"nodeJS",
     "maintenance.MySQL":"MySQL",

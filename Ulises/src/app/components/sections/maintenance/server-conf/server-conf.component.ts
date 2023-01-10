@@ -34,6 +34,7 @@ export class ServerConfComponent implements OnInit {
     try {
       this.checkPermissions();
       this.localConfig = await this.configService.getLocalConfig().toPromise();
+      this.localConfig.ntpDefault = this.localConfig.ntpDefault === undefined ? "127.0.0.1" : this.localConfig.ntpDefault;
       this.initForm();
       this.ready = true;
     } catch (error: any) {
@@ -81,7 +82,8 @@ export class ServerConfComponent implements OnInit {
       logfile_path: new FormControl(this.localConfig.logfile_path),
       logfile_sizefile: new FormControl(this.localConfig.logfile_sizefile),
       morgan: new FormControl(this.localConfig.morgan),
-      timeout: new FormControl(this.localConfig.timeout)
+      timeout: new FormControl(this.localConfig.timeout),
+      ntpDefault: new FormControl(this.localConfig.ntpDefault)
     });
   }
 
@@ -103,7 +105,7 @@ export class ServerConfComponent implements OnInit {
         const res = await this.configService.updateLocalConfig(this.serverConfigForm.value).toPromise();
         this.showSpinner = false;
         if (res.res) {
-          await this.alertService.successMessage(`${this.translate.instant('maintenance.alert.updated_conf')}`, `${this.translate.instant('maintenance.alert.save_changes')}`,this.translate.instant('button.accept'));
+          await this.alertService.successMessage(`${this.translate.instant('maintenance.alert.updated_conf')}`, `${this.translate.instant('maintenance.alert.changes')}`,this.translate.instant('button.accept'));
         } else {
           await this.alertService.errorMessage(``, res.txt,this.translate.instant('button.accept'));
         }

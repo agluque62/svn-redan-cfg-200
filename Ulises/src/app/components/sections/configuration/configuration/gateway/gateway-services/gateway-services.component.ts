@@ -11,6 +11,8 @@ import { GatewayAvailableServicesResponse } from 'src/app/_models/configs/gatewa
 import { AlertService } from 'src/app/_services/alert.service';
 import { GatewayService } from 'src/app/_services/gateway.service';
 import { UserService } from 'src/app/_services/user.service';
+import { LocalConfig } from 'src/app/_models/local-config/LocalConfig';
+import { ConfigService } from 'src/app/_services/config.service';
 
 @Component({
   selector: 'gateway-services',
@@ -62,8 +64,11 @@ export class GatewayServicesComponent implements OnInit {
   supervisionSelected: boolean = false;
   appset: any;
 
+  localConfig!: LocalConfig;
+
+
   constructor(private readonly gatewayService: GatewayService, private readonly app: AppComponent, private readonly alertService: AlertService,
-    private readonly userService: UserService, private readonly translate: TranslateService) { }
+    private readonly userService: UserService, private readonly translate: TranslateService, private readonly configService: ConfigService ) { }
 
   async ngOnInit() {
     this.appset = AppSettings;
@@ -81,6 +86,10 @@ export class GatewayServicesComponent implements OnInit {
       this.supervisionSelected = this.form.value.supervisionTlf === 1 ? true : false;
 
       this.initSNMPV2();
+
+      this.localConfig = await this.configService.getLocalConfig().toPromise();
+      this.localConfig.ntpDefault = this.localConfig.ntpDefault === undefined ? "127.0.0.1" : this.localConfig.ntpDefault;
+
     } catch (error: any) {
       this.app.catchError(error);
     }

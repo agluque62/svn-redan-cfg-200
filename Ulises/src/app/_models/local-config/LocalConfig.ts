@@ -29,4 +29,5 @@ export class LocalConfig {
     morgan!: boolean;
     refreshTime!: number;
     timeout!: number;
+    ntpDefault !: string;
 }
