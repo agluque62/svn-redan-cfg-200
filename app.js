@@ -432,12 +432,14 @@ app.post('/login', function (req, res, next) {
 
         if (err) {
             logging.Error('Login user error => ', err, info);
-            return next(err);
+            return next(err);    
         }
 
         if (!user) {
-            logging.Error('Login No user => ', user, info);
-            return res.status(401).json({ "message": 'err.MISSING_CREDENTIALS' })
+            logging.Error('Login No user => ', user, info, info.message);
+            // return res.status(401).json({ "message": 'err.MISSING_CREDENTIALS' })
+            var usermsg = info.message === 'err.ACTIVE_SESSION_EXISTS' ? info : { "message": 'err.MISSING_CREDENTIALS' };
+            return res.status(401).json(usermsg);
         }
 
         logging.Info('Login User => ', user);
