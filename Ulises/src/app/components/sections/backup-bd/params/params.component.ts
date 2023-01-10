@@ -81,14 +81,14 @@ export class ParamsComponent implements OnInit {
 
   async loadParameters(){
     const result = await this.backupService.getConfig(this.ServiceDomainLocation).toPromise();
-    if (!result.path || !result.profundidad || !result.hora || !result.minuto){
+    if (result.path === undefined || result.profundidad === undefined || result.hora === undefined || result.minuto === undefined){
       await this.alertService.errorMessage(``, `${result.resultado}`,this.translate.instant('button.accept'));
     }
     else{
       this.path = (result.path) ? result.path : `C:\\ProgramData\\MySQLBackup\\Backup\\`;
-      this.hours = (result.hora) ? result.hora : 0;
-      this.minutes = (result.minuto) ? result.minuto : 1;
-      this.days = (result.profundidad) ? result.profundidad : 7;  
+      this.hours = (result.hora !== undefined) ? result.hora : 0;
+      this.minutes = (result.minuto  !== undefined) ? result.minuto : 1;
+      this.days = (result.profundidad  !== undefined) ? result.profundidad : 7;  
     }
   }
 

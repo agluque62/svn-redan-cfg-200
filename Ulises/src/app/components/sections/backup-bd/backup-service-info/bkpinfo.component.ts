@@ -55,7 +55,7 @@ export class BkpinfoComponent implements OnInit {
 
   async loadParameters(){
     const result = await this.backupService.getConfig(this.localConfig.BackupServiceDomain).toPromise();
-    if (!result.path || !result.profundidad || !result.hora || !result.minuto){
+    if (result.path === undefined || result.profundidad === undefined || result.hora === undefined || result.minuto === undefined){
       this.bkpHost.estado = "Error";
       this.bkpHost.error = `${result.resultado}`;
       this.ServiceInactive.emit();

@@ -2,8 +2,8 @@
   "config": {
     "path": "C:\\backup",
     "profundidad": 15,
-    "hora": 1,
-    "minuto": 15
+    "hora": 0,
+    "minuto": 4
   },
   "log": {
     "logs": []
