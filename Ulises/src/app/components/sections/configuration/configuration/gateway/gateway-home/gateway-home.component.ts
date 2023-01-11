@@ -799,6 +799,8 @@ export class GatewayHomeComponent implements OnInit {
         loadIndex += 2;
       } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
         loadIndex += 1;
+      } else if (resource.tipo_interfaz_tel == 7) { // Tipo TUNNEL-2H
+        loadIndex +=1;
       }
 
     });
