@@ -997,6 +997,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
           loadIndex += 2;
         } else if (this.resourceForm.value.tipo_interfaz_tel == 0 || this.resourceForm.value.tipo_interfaz_tel == 1 || this.resourceForm.value.tipo_interfaz_tel == 2) {
           loadIndex++;
+        } else if (this.resourceForm.value.tipo_interfaz_tel == 7){ // Recursos tipo TUNNEL.
+          loadIndex++;
         }
       }
     }
