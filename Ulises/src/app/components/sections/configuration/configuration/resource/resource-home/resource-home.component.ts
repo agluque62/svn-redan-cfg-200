@@ -1042,6 +1042,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
             loadIndex += 2;
           } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
             loadIndex++;
+          } else if (resource.tipo_interfaz_tel == 7){ // Recursos tipo TUNNEL.
+            loadIndex++;
           }
         }
       }
@@ -1084,6 +1086,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         if (resource.tipo_interfaz_tel == 3 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 5) {
           loadIndex += 2;
         } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
+          loadIndex++;
+        } else if (resource.tipo_interfaz_tel == 7){ // Recursos tipo TUNNEL.
           loadIndex++;
         }
       }

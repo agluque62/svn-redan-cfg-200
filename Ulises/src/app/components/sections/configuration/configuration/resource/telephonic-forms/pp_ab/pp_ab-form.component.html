@@ -7,6 +7,6 @@
         </mat-error>
     </mat-form-field>
     <mat-checkbox formControlName="iEnableNoED137">{{ 'resource.tlf.iEnableED137' | translate }}</mat-checkbox>
-    <mat-checkbox formControlName="DetInversionPol">{{ 'resource.tlf.det_inv_pol' | translate }}</mat-checkbox>
+    <mat-checkbox formControlName="DetInversionPol" *ngIf="false">{{ 'resource.tlf.det_inv_pol' | translate }}</mat-checkbox>
     <mat-checkbox formControlName="iDetLineaAB">{{ 'resource.tlf.det_linea_AB' | translate }}</mat-checkbox>
 </form>

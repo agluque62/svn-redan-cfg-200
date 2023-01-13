@@ -46,10 +46,18 @@
                     </mat-select>
                 </mat-form-field>
 
-                <mat-checkbox [disabled]="visualizationMode" [checked]="registerKeyExists"
+                <!-- <mat-checkbox [disabled]="visualizationMode" [checked]="registerKeyExists"
                     (change)="enableRegistryKey($event.checked)">{{ 'resource.hab_register' | translate }}</mat-checkbox>
 
                 <mat-form-field appearance="legacy" *ngIf="displayRegKey">
+                    <mat-label>{{ 'resource.key' | translate }}</mat-label>
+                    <input matInput formControlName="clave_registro">
+                </mat-form-field> -->
+
+                <mat-checkbox [disabled]="visualizationMode" [checked]="registerKeyExists" *ngIf="false"
+                    (change)="enableRegistryKey($event.checked)">{{ 'resource.hab_register' | translate }}</mat-checkbox>
+
+                <mat-form-field appearance="legacy" *ngIf="false">
                     <mat-label>{{ 'resource.key' | translate }}</mat-label>
                     <input matInput formControlName="clave_registro">
                 </mat-form-field>
