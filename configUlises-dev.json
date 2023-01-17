@@ -1,7 +1,7 @@
 {
   "Ulises": {
     "Region": "Región Centro",
-    "BackupServiceDomain": "localhost:3000",
+    "BackupServiceDomain": "127.0.0.1:3000",
     "HistoricsDeep": 90,
     "LoginTimeOut": 10,
     "refreshTime": 1000,
@@ -146,7 +146,7 @@
     "logfile_path": "./logs/ug5kserv.csv",
     "logfile_sizefile": 1000000,
     "morgan": false,
-    "timeout": 60000,
+    "timeout": 50000,
     "ntpDefault": "192.168.0.223"
   },
   "MemorySupervisor": {

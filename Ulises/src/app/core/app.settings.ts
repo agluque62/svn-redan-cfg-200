@@ -18,11 +18,13 @@ export class AppSettings {
     public static COLA_VOX = /^[0-9]{1,2}$/;
     public static PORT = /^()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5])$/;
     public static ONLY_NUMBERS = /^[0-9]+$/;
+    public static IP_PORT_PATTERN = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(:([\d]{1,5}))?$/;
 
     // Informative Messages
     public static NUMBERS_FORMAT_INVALID = 'appsettings.NUMBERS_FORMAT_INVALID'
     public static FIELD_REQUIRED = 'appsettings.FIELD_REQUIRED'
     public static INVALID_IP = 'appsettings.INVALID_IP'
+    public static INVALID_EP = 'appsettings.INVALID_EP'
     public static INVALID_RANGE_PORT = 'appsettings.INVALID_RANGE_PORT'
     public static INVALID_RANGE_VOX_QUEUE = 'appsettings.INVALID_RANGE_VOX_QUEUE'
     public static INVALID_RANGE_VAD = 'appsettings.INVALID_RANGE_VAD'
@@ -44,11 +46,13 @@ export class AppSettings {
     public static RES_NAME_DUP = 'appsettings.RES_NAME_DUP'
     public static WRONG_RANKS = 'appsettings.WRONG_RANKS'
     public static WRONG_RANGE = 'appsettings.WRONG_RANGE'
+    public static WRONG_LENGTH = 'appsettings.WRONG_LENGTH'
     public static RANGE_0_250 = 'appsettings.RANGE_0_250'
     public static AVGN_PATTERN_ERROR = 'appsettings.AVGN_PATTERN_ERROR'
 
     public static controlRanges = {
         "ventana_bss": {min: 300, max: 2000, msg: "appsettings.controlRanges"},
+        "serv_web_timeout": {min: 10000, max: 100000, msg: "appsettings.serv_web_timeout"},
         "retardo_fijo_climax": {min: 0, max: 200, msg: "appsettings.retardo_fijo_climax"}
     };
 }

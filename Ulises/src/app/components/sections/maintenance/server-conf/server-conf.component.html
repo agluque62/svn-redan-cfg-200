@@ -17,6 +17,12 @@
                 <mat-form-field appearance="fill">
                     <mat-label>{{'maintenance.region' | translate }}</mat-label>
                     <input matInput formControlName="Region">
+                    <mat-error *ngIf="serverConfigForm.get('Region')?.hasError('required')">
+                        {{ appset.FIELD_REQUIRED | translate }}
+                    </mat-error>
+                    <mat-error *ngIf="serverConfigForm.get('Region')?.hasError('maxlength')">
+                        {{ appset.WRONG_LENGTH | translate }}
+                    </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="select" appearance="fill">
@@ -48,9 +54,23 @@
                     <mat-checkbox class="checkbox" formControlName="LoadIndexControlEnabled"></mat-checkbox>
                 </div>
 
-                <mat-form-field appearance="fill">
+                <!-- <mat-form-field appearance="fill">
                     <mat-label>{{ 'maintenance.timeout' | translate }}</mat-label>
                     <input matInput type="number" formControlName="timeout">
+                </mat-form-field> -->
+                <mat-form-field appearance="fill">
+                    <mat-label>{{ 'maintenance.timeout' | translate }}</mat-label>
+                    <input matInput formControlName="timeout">
+                    <mat-error
+                        *ngIf="serverConfigForm.get('timeout')?.hasError('min') || serverConfigForm.get('timeout')?.hasError('max')">
+                        {{ appset.controlRanges.serv_web_timeout.msg | translate }}
+                    </mat-error>
+                    <mat-error *ngIf="serverConfigForm.get('timeout')?.hasError('pattern')">
+                        {{ appset.NUMBERS_FORMAT_INVALID | translate }}
+                    </mat-error>
+                    <mat-error *ngIf="serverConfigForm.get('timeout')?.hasError('required')">
+                        {{ appset.FIELD_REQUIRED | translate }}
+                    </mat-error>
                 </mat-form-field>
             </div>
 
@@ -59,6 +79,12 @@
                 <mat-form-field appearance="fill">
                     <mat-label>{{ 'maintenance.location' | translate }}</mat-label>
                     <input matInput formControlName="BackupServiceDomain">
+                    <mat-error *ngIf="serverConfigForm.get('BackupServiceDomain')?.hasError('pattern')">
+                        {{ appset.INVALID_EP | translate }}
+                    </mat-error>
+                    <mat-error *ngIf="serverConfigForm.get('BackupServiceDomain')?.hasError('required')">
+                        {{ appset.FIELD_REQUIRED | translate }}
+                    </mat-error>
                 </mat-form-field>
 
                 <mat-form-field class="select" appearance="fill">
@@ -98,6 +124,12 @@
                 <mat-form-field appearance="fill">
                     <mat-label>{{ 'maintenance.ntpDefault' | translate }}</mat-label>
                     <input matInput formControlName="ntpDefault">
+                    <mat-error *ngIf="serverConfigForm.get('ntpDefault')?.hasError('pattern')">
+                        {{ appset.INVALID_IP | translate }}
+                    </mat-error>
+                    <mat-error *ngIf="serverConfigForm.get('ntpDefault')?.hasError('required')">
+                        {{ appset.FIELD_REQUIRED | translate }}
+                    </mat-error>
                 </mat-form-field>
 
             </div>

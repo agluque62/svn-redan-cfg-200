@@ -7,6 +7,7 @@
     "appsettings.NUMBERS_FORMAT_INVALID" : "Este campo solo admite números.",
     "appsettings.FIELD_REQUIRED" : "Este campo es obligatorio.",
     "appsettings.INVALID_IP" : "Debe introducir una IP válida.",
+    "appsettings.INVALID_EP" : "Debe introducir un Endpoint (ip:port) válido.",
     "appsettings.INVALID_RANGE_PORT" : "Este campo solo admite números en el rango de 1-65535.",
     "appsettings.INVALID_RANGE_VOX_QUEUE" : "Valor fuera de rango (0, 30)",
     "appsettings.INVALID_RANGE_VAD" : "Valor fuera de rango (-35, -15)",
@@ -30,8 +31,10 @@
     "appsettings.WRONG_RANGE" : "Este campo solo admite números en el rango de 0-10",
     "appsettings.controlRanges" : "Valor fuera de rango (300, 2000 ms)",
     "appsettings.retardo_fijo_climax" : "Valor fuera de rango (0, 200 ms)",
+    "appsettings.serv_web_timeout" : "Valor fuera de rango (10000, 120000 ms)",
     "appsettings.RANGE_0_250": "El campo debe estar en el rango 0 - 250",
     "appsettings.AVGN_PATTERN_ERROR": "Número no válido. El valor debe estar entre 200000 y 399999. Y debe ser de longitud 6",
+    "appsettings.WRONG_LENGTH": "Longitud no válida",
 
     "audiobss.create_table":"Crear nueva tabla",
     "audiobss.modify_table":"Modificar tabla",

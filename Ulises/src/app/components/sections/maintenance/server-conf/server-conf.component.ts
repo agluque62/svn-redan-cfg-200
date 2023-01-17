@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AppComponent } from 'src/app/app.component';
@@ -26,11 +26,14 @@ export class ServerConfComponent implements OnInit {
   
   showSpinner: boolean = false;
 
+  appset: any;
+
   constructor(private readonly configService: ConfigService, private readonly app: AppComponent, private readonly alertService: AlertService,
     private readonly userService: UserService, private readonly loginService: LoginService, private readonly router: Router,
     private readonly translate: TranslateService) { }
 
   async ngOnInit() {
+    this.appset = AppSettings;
     try {
       this.checkPermissions();
       this.localConfig = await this.configService.getLocalConfig().toPromise();
@@ -56,8 +59,8 @@ export class ServerConfComponent implements OnInit {
 
   initForm(): void {
     this.serverConfigForm = new FormGroup({
-      Region: new FormControl(this.localConfig.Region),
-      BackupServiceDomain: new FormControl(this.localConfig.BackupServiceDomain),
+      Region: new FormControl(this.localConfig.Region, [Validators.required, Validators.maxLength(32)]),
+      BackupServiceDomain: new FormControl(this.localConfig.BackupServiceDomain, [Validators.required, Validators.pattern(AppSettings.IP_PORT_PATTERN)]),
       HistoricsDeep: new FormControl(this.localConfig.HistoricsDeep),
       LoginTimeOut: new FormControl(this.localConfig.LoginTimeOut),
       refreshTime: new FormControl(this.localConfig.refreshTime),
@@ -82,8 +85,8 @@ export class ServerConfComponent implements OnInit {
       logfile_path: new FormControl(this.localConfig.logfile_path),
       logfile_sizefile: new FormControl(this.localConfig.logfile_sizefile),
       morgan: new FormControl(this.localConfig.morgan),
-      timeout: new FormControl(this.localConfig.timeout),
-      ntpDefault: new FormControl(this.localConfig.ntpDefault)
+      timeout: new FormControl(this.localConfig.timeout, [Validators.required, Validators.min(AppSettings.controlRanges.serv_web_timeout.min), Validators.max(AppSettings.controlRanges.serv_web_timeout.max), Validators.pattern(AppSettings.ONLY_NUMBERS)]),
+      ntpDefault: new FormControl(this.localConfig.ntpDefault, [Validators.required, Validators.pattern(AppSettings.IP_PATTERN)])
     });
   }
 
@@ -95,7 +98,7 @@ export class ServerConfComponent implements OnInit {
       if (confirmed.value) {
         this.showSpinner = true;
         
-        // this.serverConfigForm.value.timeout = Number(this.serverConfigForm.value.timeout);
+        this.serverConfigForm.value.timeout = Number(this.serverConfigForm.value.timeout);
         // this.serverConfigForm.value.maxCycleTime = Number(this.serverConfigForm.value.maxCycleTime);
         // this.serverConfigForm.value.logfile_sizefile = Number(this.serverConfigForm.value.logfile_sizefile);
         // this.serverConfigForm.value.LoginTimeOut = Number(this.serverConfigForm.value.LoginTimeOut);
