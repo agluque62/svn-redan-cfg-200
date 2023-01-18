@@ -61,12 +61,18 @@
         <mat-error *ngIf="resourceForm.get('origen_test')?.hasError('pattern')">
             {{ appset.INVALID_AGV_NUMBER | translate }}
         </mat-error>
+        <mat-error *ngIf="resourceForm.get('origen_test')?.hasError('required')">
+            {{ appset.FIELD_REQUIRED | translate }}
+        </mat-error>
     </mat-form-field>
     <mat-form-field appearance="legacy">
         <mat-label>{{ 'resource.tlf.destino_test' | translate }}</mat-label>
         <input matInput formControlName="destino_test" [maxLength]="6">
         <mat-error *ngIf="resourceForm.get('destino_test')?.hasError('pattern')">
             {{ appset.INVALID_AGV_NUMBER | translate }}
+        </mat-error>
+        <mat-error *ngIf="resourceForm.get('destino_test')?.hasError('required')">
+            {{ appset.FIELD_REQUIRED | translate }}
         </mat-error>
     </mat-form-field>
     <mat-form-field appearance="fill">

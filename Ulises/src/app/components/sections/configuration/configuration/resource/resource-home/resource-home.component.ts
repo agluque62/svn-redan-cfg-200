@@ -451,6 +451,10 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   }
 
   initTelephoneForm() {
+
+    this.resource.destino_test = this.resource.destino_test=="" ? "399999" : this.resource.destino_test;
+    this.resource.origen_test = this.resource.origen_test=="" ? "309999" : this.resource.origen_test;
+    
     this.resourceForm = new FormGroup({
       // Common
       nombre: new FormControl({ value: this.resource.nombre, disabled: this.visualizationMode }, [Validators.required, Validators.pattern(AppSettings.NAME_PATTERN)]),
@@ -469,14 +473,14 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       additional_uri_remota: new FormControl({ value: this.resource.additional_uri_remota, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.URI_PATTERN)]),
       ats_user: new FormControl({ value: this.resource.ats_user, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.AGVN_PATTERN)]),
       cola_vox: new FormControl({ value: this.resource.cola_vox, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.COLA_VOX), Validators.min(0), Validators.max(30)]),
-      destino_test: new FormControl({ value: this.resource.destino_test, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.AGVN_PATTERN)]),
+      destino_test: new FormControl({ value: this.resource.destino_test, disabled: this.visualizationMode }, [Validators.required, Validators.pattern(AppSettings.AGVN_PATTERN)]),
       deteccion_vox: new FormControl({ value: this.resource.deteccion_vox, disabled: this.visualizationMode }),
       duracion_tono_interrup: new FormControl({ value: this.resource.duracion_tono_interrup, disabled: this.visualizationMode }),
       iDetLineaAB: new FormControl({ value: this.resource.iDetLineaAB, disabled: this.visualizationMode }),
       iEnableNoED137: new FormControl({ value: this.resource.iEnableNoED137, disabled: this.visualizationMode }),
       itiporespuesta: new FormControl({ value: this.resource.itiporespuesta, disabled: this.visualizationMode }),
       lado: new FormControl({ value: this.resource.lado, disabled: this.visualizationMode }),
-      origen_test: new FormControl({ value: this.resource.origen_test, disabled: this.visualizationMode }, [Validators.pattern(AppSettings.AGVN_PATTERN)]),
+      origen_test: new FormControl({ value: this.resource.origen_test, disabled: this.visualizationMode }, [Validators.required, Validators.pattern(AppSettings.AGVN_PATTERN)]),
       periodo_tonos: new FormControl({ value: this.resource.periodo_tonos, disabled: this.visualizationMode }, [Validators.required, Validators.pattern(AppSettings.ONLY_NUMBERS), Validators.min(0), Validators.max(10)]),
       ranks: new FormControl({ value: this.resource.ranks, disabled: this.visualizationMode }),
       respuesta_automatica: new FormControl({ value: this.resource.respuesta_automatica, disabled: this.visualizationMode }),
@@ -871,6 +875,10 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
       }
     } else {
       this.resourceForm.patchValue({ 'precision_audio': 0 }); // issue 2867
+      if (this.resourceForm.value.tipo_interfaz_tel !==3 && this.resourceForm.value.tipo_interfaz_tel !==4){
+        this.resourceForm.patchValue({ 'destino_test': "399999" }); 
+        this.resourceForm.patchValue({ 'origen_test': "309999" });
+      }
       if (changes) {
         this.initResource();
         this.initTelephoneForm();
