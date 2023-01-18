@@ -399,6 +399,12 @@ export class ConfigurationViewComponent implements OnInit {
     });
 
     try {
+
+      var result = await this.check4Supervised();
+      if (result===false){
+          return;
+      }
+
       if (form.valid) {
         const checkName = await this.configService.checkConfigurationName(form.value.idCFG, form.value.name).toPromise();
 
@@ -428,55 +434,59 @@ export class ConfigurationViewComponent implements OnInit {
   }
 
   async saveConfig() {
-    let confirm: SweetAlertResult;
-    try {
-      if (this.configuration.activa == 1) {
-        var i = 0;
+    // let confirm: SweetAlertResult;
+    // try {
+    //   if (this.configuration.activa == 1) {
+    //     var i = 0;
 
-        while (i < this.arrayipv.length) {
-          this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipv[i], this.configuration.idCFG).toPromise();
-          this.configurationIp = [...this.configurationIpResponse.result];
+    //     while (i < this.arrayipv.length) {
+    //       this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipv[i], this.configuration.idCFG).toPromise();
+    //       this.configurationIp = [...this.configurationIpResponse.result];
 
-          if (this.configurationIp.length != 0) {
-            this.nEmplazamiento = this.configurationIp.map((index) => {
-              return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
-            })
-            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPV', { value1: this.arrayipv[i], value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
-            return;
-          }
-          this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipcp0[i], this.configuration.idCFG).toPromise();
-          this.configurationIp = [...this.configurationIpResponse.result];
-          if (this.configurationIp.length != 0) {
-            this.nEmplazamiento = this.configurationIp.map((index) => {
-              return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
-            })
-            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU0', { value1: this.arrayipcp0[i], value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
-            return;
-          }
-          this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipcp1[i], this.configuration.idCFG).toPromise();
-          this.configurationIp = [...this.configurationIpResponse.result];
-          if (this.configurationIp.length != 0) {
-            this.nEmplazamiento = this.configurationIp.map((index) => {
-              return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
-            })
-            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU1', { value1: this.arrayipcp1[i], value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
-            return;
-          }
-          i++;
-        }
-      }
+    //       if (this.configurationIp.length != 0) {
+    //         this.nEmplazamiento = this.configurationIp.map((index) => {
+    //           return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
+    //         })
+    //         await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPV', { value1: this.arrayipv[i], value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
+    //         return;
+    //       }
+    //       this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipcp0[i], this.configuration.idCFG).toPromise();
+    //       this.configurationIp = [...this.configurationIpResponse.result];
+    //       if (this.configurationIp.length != 0) {
+    //         this.nEmplazamiento = this.configurationIp.map((index) => {
+    //           return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
+    //         })
+    //         await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU0', { value1: this.arrayipcp0[i], value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
+    //         return;
+    //       }
+    //       this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipcp1[i], this.configuration.idCFG).toPromise();
+    //       this.configurationIp = [...this.configurationIpResponse.result];
+    //       if (this.configurationIp.length != 0) {
+    //         this.nEmplazamiento = this.configurationIp.map((index) => {
+    //           return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
+    //         })
+    //         await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU1', { value1: this.arrayipcp1[i], value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
+    //         return;
+    //       }
+    //       i++;
+    //     }
+    //   }
 
-      if (this.trapMsg.length !== 0) {
-        confirm = await this.alertService.confirmationMessage(`${this.translate.instant('config.alert.conf_no_traps', { value: (this.trapMsg.join(', ')) })}`, `${this.translate.instant('config.alert.conf_continue')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
-        if (confirm.value) {
-          this.save()
-        }
-      } else {
+    //   if (this.trapMsg.length !== 0) {
+    //     confirm = await this.alertService.confirmationMessage(`${this.translate.instant('config.alert.conf_no_traps', { value: (this.trapMsg.join(', ')) })}`, `${this.translate.instant('config.alert.conf_continue')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
+    //     if (confirm.value) {
+    //       this.save()
+    //     }
+    //   } else {
+    //     this.save();
+    //   }
+    // }
+    // catch (error: any) {
+    //   this.app.catchError(error);
+    // }
+    var result = await this.check4Supervised();
+    if (result===true){
         this.save();
-      }
-    }
-    catch (error: any) {
-      this.app.catchError(error);
     }
   }
 
@@ -856,5 +866,62 @@ export class ConfigurationViewComponent implements OnInit {
 
     return reportData
 
+  }
+
+  // AGL. Checking for Supervised.
+  async check4Supervised(){
+    let confirm: SweetAlertResult;
+    try {
+      if (this.configuration.activa == 1) {
+        var i = 0;
+
+        while (i < this.arrayipv.length) {
+          this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipv[i], this.configuration.idCFG).toPromise();
+          this.configurationIp = [...this.configurationIpResponse.result];
+
+          if (this.configurationIp.length != 0) {
+            this.nEmplazamiento = this.configurationIp.map((index) => {
+              return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
+            })
+            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPV', { value1: this.arrayipv[i], value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
+            return false;
+          }
+          this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipcp0[i], this.configuration.idCFG).toPromise();
+          this.configurationIp = [...this.configurationIpResponse.result];
+          if (this.configurationIp.length != 0) {
+            this.nEmplazamiento = this.configurationIp.map((index) => {
+              return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
+            })
+            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU0', { value1: this.arrayipcp0[i], value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
+            return false;
+          }
+          this.configurationIpResponse = await this.configService.checkConfigIp(this.arrayipcp1[i], this.configuration.idCFG).toPromise();
+          this.configurationIp = [...this.configurationIpResponse.result];
+          if (this.configurationIp.length != 0) {
+            this.nEmplazamiento = this.configurationIp.map((index) => {
+              return `${this.translate.instant('err.DUPLICATED_BODY', { value1: index.nombre_conf, value2: index.nombre })}`;
+            })
+            await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IPCPU1', { value1: this.arrayipcp1[i], value2: this.nEmplazamiento })}`,this.translate.instant('button.accept'));
+            return false;
+          }
+          i++;
+        }
+      }
+
+      if (this.trapMsg.length !== 0) {
+        confirm = await this.alertService.confirmationMessage(`${this.translate.instant('config.alert.conf_no_traps', { value: (this.trapMsg.join(', ')) })}`, `${this.translate.instant('config.alert.conf_continue')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
+        if (confirm.value) {
+          // this.save()
+          return true;
+        }
+      } else {
+        // this.save();
+        return true;
+      }
+    }
+    catch (error: any) {
+      this.app.catchError(error);
+    }
+    return false;
   }
 }
