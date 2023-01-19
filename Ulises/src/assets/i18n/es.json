@@ -151,6 +151,7 @@
     "config.alert.err_import_cfg":"Configuracion no importada. La pasarela {{value}} ya existe. Cambie los datos antes de importar.",
     "config.alert.succ_import_cfg":"Pasarela importada correctamente.",
     "config.alert.empty_cfg":"Esta configuración no contiene pasarelas",
+    "config.alert.delete.error1": "No se pueden borrar las configuraciones supervisadas",
 
     "ext_res.radio_tx":"Radio Tx",
     "ext_res.radio_tx_rx":"Radio TxRx",

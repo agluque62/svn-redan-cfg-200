@@ -550,7 +550,9 @@ export class ConfigurationViewComponent implements OnInit {
         this.showSpinner = false;
 
         if (result.data !== 'OK') {
-          this.alertService.errorMessage(``, `${this.translate.instant('config.alert.err_delete_cfg', { value1: this.configuration.name, value2: result.data })}`,this.translate.instant('button.accept'));
+          const header2 = "ER_NISAMCHK: ";
+          var value2 = result.data.includes(header2)===true ? this.translate.instant('config.alert.delete.error1') : result.data;
+          this.alertService.errorMessage(``, `${this.translate.instant('config.alert.err_delete_cfg', { value1: this.configuration.name, value2: value2 })}`,this.translate.instant('button.accept'));
           return;
         }
 
