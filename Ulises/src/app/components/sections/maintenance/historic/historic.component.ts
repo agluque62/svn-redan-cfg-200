@@ -131,7 +131,6 @@ export class HistoricComponent implements OnInit {
         this.getCodes();
         this.getComponents();
         this.initDefaultDates();
-
     }
 
     async checkPermissions() {
@@ -422,7 +421,9 @@ export class HistoricComponent implements OnInit {
     }
 
     translateDescription(text: any) {
-        let translateArr = text.split(' ')
+        /** AGL 20230119. Quita algunos elementos que hacía que no se tradujeran algunos items. */
+        let formatedtext = text.replace(",", " ,").replace(")", " )");
+        let translateArr = formatedtext.split(' ');
         let stringTranslate: string = "";
         translateArr.forEach((word: any) => {
 
@@ -432,6 +433,10 @@ export class HistoricComponent implements OnInit {
             }
         })
         return stringTranslate
+    }
+    /** AGL 20230119. Traduce los elementos a presentar en los desplegables de los filtros */
+    normalizeElement (element: any) {
+        return this.translate.instant(element);
     }
 
 }

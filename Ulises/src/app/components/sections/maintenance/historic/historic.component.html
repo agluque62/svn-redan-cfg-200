@@ -61,7 +61,7 @@
                 <mat-label>{{ 'historics.group' | translate }}</mat-label>
                 <mat-select [(ngModel)]="selectedGroup" multiple (selectionChange)="updateData(false)">
                     <mat-option [value]="group.TipoHw" *ngFor="let group of groupOptions">
-                        {{ group.TipoHw }}
+                        {{ normalizeElement(group.TipoHw) }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -79,7 +79,7 @@
                 <mat-label>{{ 'historics.type_register' | translate }}</mat-label>
                 <mat-select [(ngModel)]="selectedRegister" multiple (selectionChange)="updateData(false)">
                     <mat-option [value]="register.IdIncidencia" *ngFor="let register of codeOptions">
-                        {{ register.Incidencia }}
+                        {{ normalizeElement(register.Incidencia) }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
