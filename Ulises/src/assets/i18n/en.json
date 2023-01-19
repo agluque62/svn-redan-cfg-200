@@ -150,6 +150,7 @@
     "config.alert.succ_delete_cfg": "Configuration {{value}} deleted",
     "config.alert.err_import_cfg": "Configuration not imported. The {{value}} gateway already exists. Change the data before importing.",
     "config.alert.succ_import_cfg": "Gateway imported successfully.",
+    "config.alert.empty_cfg": "This configuration does not contain gateways",
 
     "ext_res.radio_tx": "Radio Tx",
     "ext_res.radio_tx_rx": "Radio TxRx",

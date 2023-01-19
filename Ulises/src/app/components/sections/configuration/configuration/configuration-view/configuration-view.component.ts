@@ -311,16 +311,21 @@ export class ConfigurationViewComponent implements OnInit {
       if (this.trapMsg.length !== 0) {
         let confirm = await this.alertService.confirmationMessage(`${this.translate.instant('config.alert.conf_no_traps', { value: (this.trapMsg.join(', ')) })}`, `${this.translate.instant('config.alert.conf_continue')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
         if (confirm.value) {
-          this.activate(message, error)
+          await this.activate(message, error)
         }
       } else {
-        this.activate(message, error);
+        await this.activate(message, error);
       }
 
     }
   }
 
   async activate(message: any, error: any) {
+    if (this.configurationGateways.length===0){
+      const alertMsg = this.translate.instant('config.alert.empty_cfg');
+      await this.alertService.fieldMessage(``, alertMsg, this.translate.instant('button.accept'));
+      return;
+    }
     this.showSpinner = true;
     await Promise.all(this.configurationGateways.map(async gtw => {
 
