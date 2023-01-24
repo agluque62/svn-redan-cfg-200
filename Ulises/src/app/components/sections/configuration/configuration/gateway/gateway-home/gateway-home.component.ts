@@ -321,7 +321,7 @@ export class GatewayHomeComponent implements OnInit {
       if (this.gatewayResponse && this.gatewayResponse.result) {
         this.gateway = [...this.gatewayResponse.result][0];
         this.siteId = this.gateway.EMPLAZAMIENTO_idEMPLAZAMIENTO;
-        this.GTW_NAME = this.gateway.conf_name;
+        this.CFG_NAME = this.gateway.conf_name;
         this.LOCAT_NAME = this.gateway.emplazamiento;
         this.GTW_NAME = this.gateway.name;
       }
@@ -649,7 +649,7 @@ export class GatewayHomeComponent implements OnInit {
       return;
     }
 
-    let title = ` {CONFIGURATION} : ${this.GTW_NAME} - {LOCATION} : ${this.LOCAT_NAME} - {GATEWAY} : ${this.GTW_NAME} `
+    let title = ` {CONFIGURATION} : ${this.CFG_NAME} - {LOCATION} : ${this.LOCAT_NAME} - {GATEWAY} : ${this.GTW_NAME} `
     this.validateFormDirty(title);
     if (this.gatewayPost.nombre != this.gatewayForm.value.nombre)
       this.gatewayPost.nombre = this.gatewayForm.value.nombre;

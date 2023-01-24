@@ -310,7 +310,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     this.gatewayResponse = await this.gatewayService.getGatewayById(+this.GATEWAY_ID).toPromise();
     if (this.gatewayResponse && this.gatewayResponse.result) {
       this.gateway = [...this.gatewayResponse.result][0];
-      this.GTW_NAME = this.gateway.conf_name;
+      this.CFG_NAME = this.gateway.conf_name;
       this.LOCAT_NAME = this.gateway.emplazamiento;
       this.GTW_NAME = this.gateway.name;
     }
@@ -628,7 +628,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
         }
         this.showSpinner = false;
 
-        let title = ` {CONFIGURATION} : ${this.GTW_NAME} - {LOCATION} : ${this.LOCAT_NAME} - {GATEWAY} : ${this.GTW_NAME} `
+        let title = ` {CONFIGURATION} : ${this.CFG_NAME} - {LOCATION} : ${this.LOCAT_NAME} - {GATEWAY} : ${this.GTW_NAME} `
         title = title + " - {TYPE} : " + (this.selectedResource == 1 ? " {RADIO} " : " {TLF} ")
 
         if (res && res.result == 'OK') {
