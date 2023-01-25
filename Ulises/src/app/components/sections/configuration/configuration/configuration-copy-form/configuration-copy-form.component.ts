@@ -73,7 +73,9 @@ export class ConfigurationCopyFormComponent implements OnInit {
         this.showSpinner = false;
 
         if (result.data !== 'OK') {
-          await this.alertService.errorMessage(``, result.data,this.translate.instant('button.accept'));
+          console.error(result);
+          var error = result.data ? result.data : 'Error request';
+          await this.alertService.errorMessage(``, `Error: ${error}`, this.translate.instant('button.accept'));
           return;
         }
 

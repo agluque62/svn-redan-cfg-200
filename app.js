@@ -232,7 +232,7 @@ app.use(cors());
 app.use(function (req, res, next) {
     res.setTimeout(config.Ulises.timeout * 2, function () {       
         logging.Info('Request has timed out.');
-        res.json({code: 'ETIMEDOUT'});
+        res.json({code: 'ETIMEDOUT', data: 'Request timeout.'});
     });
     next();
 });
