@@ -78,16 +78,24 @@ function postGatewayField(url, data, callback) {
     });
 }
 
+function validateGtwJson(data) {
+    return (data.hasOwnProperty('fechaHora') && data.hasOwnProperty('general') && data.hasOwnProperty('idConf') && data.hasOwnProperty('hardware')
+      && data.hasOwnProperty('recursos') && data.hasOwnProperty('servicios') && data.hasOwnProperty('tipo') && data.hasOwnProperty('users')
+      && data.tipo === 0);
+}
+
 router.route('/:id/field/:ip')
     .get(async function (req, res) {
+        logging.Info(req.method, req.originalUrl);
         getGatewayField(`http://${req.params.ip}:8080/config`, function (result) {
             return res.json(result);
         });
     })
     .post(function (req, res) {
+        logging.Info(req.method, req.originalUrl);
             var bdtDate = getNewCurrentUtcDateIso();
             var jsonDate = toJsonDate(bdtDate);        
-            logging.Info("bdtDate = " + bdtDate + ", jsonDate = " + req.body.data.fechaHora + ", new jsonDate = ", jsonDate);
+            logging.Trace("bdtDate = " + bdtDate + ", jsonDate = " + req.body.data.fechaHora + ", new jsonDate = ", jsonDate);
 
             // Se pone en el fichero JSON el timestamp de la carga (UTC)
             req.body.data.fechaHora = jsonDate;
@@ -95,8 +103,11 @@ router.route('/:id/field/:ip')
 
             if (result.res && result.res === 'Configuracion Activada...') {
                 // Se pasa a la rutina la misma fecha que en el fichero JSON.
-                myLibGateways.setGatewayPendingToUpdateToZero(req.params.id, bdtDate, function (result_update) {
-                });
+                myLibGateways.setGatewayPendingToUpdateToZero(req.params.id, bdtDate, function (result_update) {});
+            }
+            else if (validateGtwJson(result)) {
+                result.res = 'Configuracion Activada...';
+                myLibGateways.setGatewayPendingToUpdateToZero(req.params.id, bdtDate, function (result_update) {});
             }
             return res.json(result);
         });
