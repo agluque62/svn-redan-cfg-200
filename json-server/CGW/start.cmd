@@ -1,0 +1,1 @@
+json-server --watch cgw.json --d 500 --p 8080 --host 11.12.60.35
