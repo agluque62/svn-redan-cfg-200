@@ -194,6 +194,7 @@
     "err.ERROR_HAS_OCURRED": "An error has occurred.",
     "err.EXPIRED_SESSION": "Session has expired. Please log in again.",
     "err.MISSING_CREDENTIALS":"No credentials have been entered.",
+    "err.DBGW_CORRUPTED": "{{value}} => Database access error",
     
     "footer.copyright": "Amper Group Copyright ©2018-2023 All rights reserved. Powered by Exceltic",
     "footer.version": "Version ",

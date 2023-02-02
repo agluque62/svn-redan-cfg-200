@@ -52,7 +52,7 @@ function getGatewayField(url, callback) {
             callback(ret);
         }
         else {
-                callback(err);
+            callback(err);
         }
     });
 }

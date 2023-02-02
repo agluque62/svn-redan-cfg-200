@@ -248,12 +248,17 @@ export class GatewayHomeComponent implements OnInit {
     this.showSpinner = true;
 
     let title = this.dataService.getDataGatewayTitle();
-
+    const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
+    if (this.validateGtwFieldJson(gtwActual)==false){
+      await this.alertService.errorMessage(``, `${this.translate.instant('err.DBGW_CORRUPTED', { value: this.gateway.name })}`,this.translate.instant('button.accept'));
+      this.showSpinner = false;
+      return;      
+    }
     // Check CPU 0
     const gtwFieldCpu0 = await this.gatewayFieldService.getGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb1).toPromise();
 
     if (this.validateGtwFieldJson(gtwFieldCpu0)) {
-      const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
+      // const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
       const result = await this.gatewayFieldService.updateGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb1, gtwActual).toPromise();
 
       if (result.res && result.res === 'Configuracion Activada...') {
@@ -271,7 +276,7 @@ export class GatewayHomeComponent implements OnInit {
     // Check CPU 1
     const gtwFieldCpu1 = await this.gatewayFieldService.getGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb2).toPromise();
     if (this.validateGtwFieldJson(gtwFieldCpu1)) {
-      const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
+      // const gtwActual = await this.gatewayService.getGatewayAll(this.gateway.idCGW).toPromise();
       const result = await this.gatewayFieldService.updateGatewayField(this.gateway.idCGW, this.gatewayForm.value.ipb2, gtwActual).toPromise();
 
       if (result.res && result.res === 'Configuracion Activada...') {
@@ -701,8 +706,15 @@ export class GatewayHomeComponent implements OnInit {
       this.showSpinner = true;
       const result = await this.gatewayService.exportGtw(this.gateway.idCGW).toPromise();
       this.showSpinner = false;
-      const fileName = `${result.general.emplazamiento}_${result.general.name}_${result.fechaHora}.json`;
-      this.saveText(JSON.stringify(result, undefined, 2), fileName);
+
+      if (this.validateGtwFieldJson(result)){
+        const fileName = `${result.general.emplazamiento}_${result.general.name}_${result.fechaHora}.json`;
+        this.saveText(JSON.stringify(result, undefined, 2), fileName);  
+      }
+      else {
+        console.log("Error al obtener datos de pasarela ", this.gateway.idCGW, result);
+        await this.alertService.errorMessage(``, `${this.translate.instant('err.DBGW_CORRUPTED', { value: this.gateway.name })}`,this.translate.instant('button.accept'));
+      }
     } catch (error: any) {
       this.app.catchError(error);
     }

@@ -194,6 +194,7 @@
     "err.ERROR_HAS_OCURRED":"Ha ocurrido un error",
     "err.EXPIRED_SESSION":"La sesión ha expirado. Identifiquese de nuevo.",
     "err.MISSING_CREDENTIALS":"No se han introducido credenciales",
+    "err.DBGW_CORRUPTED": "{{value}} => Error accediendo a los datos.",
     
     "footer.copyright": "Grupo Amper Copyright ©2018..2023 Todos los Derechos Reservados. Powered by Exceltic.",
     "footer.version": "Versión ",

@@ -176,8 +176,13 @@ export class ConfigurationViewComponent implements OnInit {
         })
       )
       let gtw = await this.gatewayService.getGatewayAll(element).toPromise()
-      if (gtw.servicios.snmp.traps.length === 0) {
-        this.trapMsg.push(gtw.general.name)
+      if (this.validateGtwFieldJson(gtw)) {
+        if (gtw.servicios.snmp.traps.length === 0) {
+          this.trapMsg.push(gtw.general.name)
+        }  
+      }
+      else {
+        console.error("En getIpandTrapsArrays => Error accediendo a datos de Pasarela Id ", element, gtw);
       }
     });
   }
@@ -334,52 +339,59 @@ export class ConfigurationViewComponent implements OnInit {
 
       if (gateway && gateway.result && gateway.result.length > 0) {
 
-        // Check CPU 0
-        const gtwFieldCpu0 = await this.gatewayFieldService.getGatewayField(gateway.result[0].idCGW, gateway.result[0].ip_cpu0).toPromise();
-        let gtwFieldCpu1 = null;
-        let checkCpu1: boolean = true;
+        const gtwActual = await this.gatewayService.getGatewayAll(gateway.result[0].idCGW).toPromise();
+        if (this.validateGtwFieldJson(gtwActual)){
+          // Check CPU 0
+          const gtwFieldCpu0 = await this.gatewayFieldService.getGatewayField(gateway.result[0].idCGW, gateway.result[0].ip_cpu0).toPromise();
+          let gtwFieldCpu1 = null;
+          let checkCpu1: boolean = true;
 
-        if (this.validateGtwFieldJson(gtwFieldCpu0)) {
-          const gtwActual = await this.gatewayService.getGatewayAll(gateway.result[0].idCGW).toPromise();
-          const result = await this.gatewayFieldService.updateGatewayField(gateway.result[0].idCGW, gateway.result[0].ip_cpu0, gtwActual).toPromise();
+          if (this.validateGtwFieldJson(gtwFieldCpu0)) {
+            // const gtwActual = await this.gatewayService.getGatewayAll(gateway.result[0].idCGW).toPromise();
+            const result = await this.gatewayFieldService.updateGatewayField(gateway.result[0].idCGW, gateway.result[0].ip_cpu0, gtwActual).toPromise();
 
-          if (result.res && result.res === 'Configuracion Activada...') {
-            await this.historicService.updateCfg(121, `${gateway.result[0].name} CPU 0`).toPromise();
-            message.push(`${gateway.result[0].name}: ${result.res}`);
-            checkCpu1 = false;
-            success = true;
-          }
-        }
-
-        if (checkCpu1) {
-          // Check CPU 1
-          gtwFieldCpu1 = await this.gatewayFieldService.getGatewayField(gateway.result[0].idCGW, gateway.result[0].ip_cpu1).toPromise();
-          if (this.validateGtwFieldJson(gtwFieldCpu1)) {
-            const gtwActual = await this.gatewayService.getGatewayAll(gateway.result[0].idCGW).toPromise();
-            const result = await this.gatewayFieldService.updateGatewayField(gateway.result[0].idCGW, gateway.result[0].ip_cpu1, gtwActual).toPromise();
             if (result.res && result.res === 'Configuracion Activada...') {
-              await this.historicService.updateCfg(121, `${gateway.result[0].name} CPU 1`).toPromise();
+              await this.historicService.updateCfg(121, `${gateway.result[0].name} CPU 0`).toPromise();
               message.push(`${gateway.result[0].name}: ${result.res}`);
+              checkCpu1 = false;
               success = true;
             }
           }
-        }
 
-        if (!success && gtwFieldCpu0.code === 'ECONNREFUSED' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'ECONNREFUSED')) {
-          await this.historicService.updateCfg(122, `${gateway.result[0].name} {ECONNREFUSED}`).toPromise();
-          message.push(`${this.translate.instant('err.ECONNREFUSED', { value: gateway.result[0].name })}`/*,this.translate.instant('button.accept')*/);
-          error = true;
-        } else if (!success && gtwFieldCpu0.code === 'ETIMEDOUT' && (gtwFieldCpu1 && gtwFieldCpu1.code === 'ETIMEDOUT')) {
-          await this.historicService.updateCfg(122, `${gateway.result[0].name} {ETIMEDOUT}`).toPromise();
-          message.push(`${this.translate.instant('err.ETIMEDOUT', { value: gateway.result[0].name })}`/*,this.translate.instant('button.accept')*/);
-          error = true;
-        } else if (!success && gtwFieldCpu0.code === 'EHOSTUNREACH' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'EHOSTUNREACH')) {
-          await this.historicService.updateCfg(122, `${gateway.result[0].name} {EHOSTUNREACH}`).toPromise();
-          message.push(`${this.translate.instant('err.EHOSTUNREACH', { value: gateway.result[0].name })}`/*,this.translate.instant('button.accept')*/);
-          error = true;
-        } else if (!success && gtwFieldCpu0 && !this.validateGtwFieldJson(gtwFieldCpu0) && gtwFieldCpu1 && !this.validateGtwFieldJson(gtwFieldCpu1)) {
-          await this.historicService.updateCfg(122, `${gateway.result[0].name} {EFORMAT}`).toPromise();
-          message.push(`${this.translate.instant('err.EFORMAT', { value: gateway.result[0].name })}`/*,this.translate.instant('button.accept')*/);
+          if (checkCpu1) {
+            // Check CPU 1
+            gtwFieldCpu1 = await this.gatewayFieldService.getGatewayField(gateway.result[0].idCGW, gateway.result[0].ip_cpu1).toPromise();
+            if (this.validateGtwFieldJson(gtwFieldCpu1)) {
+              // const gtwActual = await this.gatewayService.getGatewayAll(gateway.result[0].idCGW).toPromise();
+              const result = await this.gatewayFieldService.updateGatewayField(gateway.result[0].idCGW, gateway.result[0].ip_cpu1, gtwActual).toPromise();
+              if (result.res && result.res === 'Configuracion Activada...') {
+                await this.historicService.updateCfg(121, `${gateway.result[0].name} CPU 1`).toPromise();
+                message.push(`${gateway.result[0].name}: ${result.res}`);
+                success = true;
+              }
+            }
+          }
+          if (!success && gtwFieldCpu0.code === 'ECONNREFUSED' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'ECONNREFUSED')) {
+            await this.historicService.updateCfg(122, `${gateway.result[0].name} {ECONNREFUSED}`).toPromise();
+            message.push(`${this.translate.instant('err.ECONNREFUSED', { value: gateway.result[0].name })}`/*,this.translate.instant('button.accept')*/);
+            error = true;
+          } else if (!success && gtwFieldCpu0.code === 'ETIMEDOUT' && (gtwFieldCpu1 && gtwFieldCpu1.code === 'ETIMEDOUT')) {
+            await this.historicService.updateCfg(122, `${gateway.result[0].name} {ETIMEDOUT}`).toPromise();
+            message.push(`${this.translate.instant('err.ETIMEDOUT', { value: gateway.result[0].name })}`/*,this.translate.instant('button.accept')*/);
+            error = true;
+          } else if (!success && gtwFieldCpu0.code === 'EHOSTUNREACH' || (gtwFieldCpu1 && gtwFieldCpu1.code === 'EHOSTUNREACH')) {
+            await this.historicService.updateCfg(122, `${gateway.result[0].name} {EHOSTUNREACH}`).toPromise();
+            message.push(`${this.translate.instant('err.EHOSTUNREACH', { value: gateway.result[0].name })}`/*,this.translate.instant('button.accept')*/);
+            error = true;
+          } else if (!success && gtwFieldCpu0 && !this.validateGtwFieldJson(gtwFieldCpu0) && gtwFieldCpu1 && !this.validateGtwFieldJson(gtwFieldCpu1)) {
+            await this.historicService.updateCfg(122, `${gateway.result[0].name} {EFORMAT}`).toPromise();
+            message.push(`${this.translate.instant('err.EFORMAT', { value: gateway.result[0].name })}`/*,this.translate.instant('button.accept')*/);
+            error = true;
+          }
+        }
+        else {
+          console.error(`Pasarela ${gateway.result[0].name} está corrupta en Base de Datos`);
+          message.push(`${this.translate.instant('err.DBGW_CORRUPTED', { value: gateway.result[0].name })}`);
           error = true;
         }
       }
