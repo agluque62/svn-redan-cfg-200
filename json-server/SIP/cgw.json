@@ -1,11 +1,8 @@
 {
-  "test": {
-    "datos": "Datos de Prueba"
-  },
   "config": {
     "tipo": 0,
     "idConf": "TESTING-UPLOADS",
-    "fechaHora": "08/02/2023 09:13:02 UTC",
+    "fechaHora": "25/01/2023 12:15:48 UTC",
     "general": {
       "name": "CGW-11-DEF-111",
       "emplazamiento": "SITE01",
@@ -814,7 +811,7 @@
           "no_test_remoto": "399999",
           "it_release": 5,
           "uri_remota": "",
-          "detect_vox": 0,
+          "detect_vox": 1,
           "umbral_vox": -35,
           "tm_inactividad": 0,
           "superv_options": 0,
@@ -881,8 +878,8 @@
           "ats_rangos_directos_pri": [],
           "TmTonoBloqueo": 0,
           "TmBloqueoLib": 100,
-          "iControlTmLlam": 0,
-          "iTmMaxConversacion": 0,
+          "iControlTmLlam": 1,
+          "iTmMaxConversacion": 12,
           "RespuestaSIP_ATSR2": null,
           "ats_user": ""
         },

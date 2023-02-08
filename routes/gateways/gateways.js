@@ -31,6 +31,9 @@ function toJsonDate(isoDate){
     return moment(isoDate).format("DD/MM/YYYY HH:mm:ss UTC");
 }
 
+function httpRequestSuccess(statusCode){   
+    return statusCode >=200 && statusCode < 300;
+}
 function getGatewayField(url, callback) {
 
     const options = {
@@ -41,7 +44,12 @@ function getGatewayField(url, callback) {
 
     request(options, async (error, response, body) => {
         if (response){
-            callback(JSON.parse(response.body));
+            if (httpRequestSuccess(response.statusCode)==true){
+                callback(JSON.parse(response.body));
+            }
+            else {
+                callback({request: options, error: "Rejected request", status: response.statusCode, statusMessage: response.statusMessage});
+            }    
         }
     }).on('error', (err) => {
         logging.Error("On getGatewayField Error => ", err);
@@ -66,8 +74,18 @@ function postGatewayField(url, data, callback) {
     }
 
     request.post(options, async (error, response, body) => {
-        if (body){
-            callback(JSON.parse(body));
+        if (response){
+            if (httpRequestSuccess(response.statusCode)==true){
+                if (body){
+                    callback(JSON.parse(body));
+                }
+                else {
+                    throw {errno:-9999,code:"NOBODYONRESPONSE",request: options};
+                }
+            }
+            else {
+                callback({request: options, error: "Rejected request", status: response.statusCode, statusMessage: response.statusMessage});
+            }    
         }
     }).on('error', (err) => {
         logging.Error("On postGatewayField Error => ", err);
