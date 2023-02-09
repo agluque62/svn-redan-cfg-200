@@ -8,5 +8,7 @@
   "log": {
     "logs": []
   },
-  "backup": {}
+  "backup": {
+    "saludo": "hola"
+  }
 }

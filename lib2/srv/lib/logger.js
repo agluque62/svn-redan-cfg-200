@@ -72,7 +72,7 @@ exports.createLogger = (config) => {
 exports.defaults = {
     console: {
         enabled: true,
-        level: "silly"
+        level: "info"
     },
     file: {
         enabled: true,
