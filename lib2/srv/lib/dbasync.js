@@ -1,15 +1,9 @@
 var mysql = require('mySql');
 const util = require( 'util' );
+const { Configure } = require('./logger');
 
-function makeDbAsync( config ) {
-    const connection = mysql.createConnection( {
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: process.env.DB_BASE,
-        port: process.env.DB_PORT,
-        multipleStatements: true
-    } );
+exports.makeDbAsync = function makeDbAsync( config ) {
+    const connection = mysql.createConnection( config===undefined ? exports.dbconfig : config );
     var fatal = false;
     return {
       query( sql, args ) {
@@ -36,7 +30,7 @@ function makeDbAsync( config ) {
       }
     };
   }
-  async function dbTransaction( db, callback ) {
+  exports.dbTransaction = async function dbTransaction( db, callback ) {
     var fatal = false;
     try {
       await db.beginTransaction();
@@ -52,6 +46,11 @@ function makeDbAsync( config ) {
       if (!fatal) await db.close();
     }
   }
-
-exports.makeDbAsync = makeDbAsync
-exports.dbTransaction = dbTransaction
+  exports.dbconfig = {
+    host: "127.0.0.1",
+    user: "root",
+    password: "cd40",
+    database: "ug5kv22",
+    port: 3306,
+    multipleStatements: true
+  }

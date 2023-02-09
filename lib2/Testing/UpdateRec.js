@@ -1,4 +1,4 @@
-var dbutils = require("../dbasync.js");
+var dbutils = require("../srv/lib/dbasync.js");
 
 exports.updateTfnoRes4Gateway = async function updateTfnoRes4Gateway(tr, resId, callback) { 
 

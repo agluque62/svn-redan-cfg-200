@@ -1,4 +1,8 @@
 var test = require("./UpdateRec.js");
+var logutils = require("../srv/lib/logger.js")
+var dbutils = require("../srv/lib/dbasync.js");
+
+const logger = logutils.createLogger();
 
 var dataIn = {
 	"nombre": "BL_TEST_7497",
@@ -84,27 +88,19 @@ var dataIn = {
 };
 var resId = 359;
 
-process.env.DB_HOST = "127.0.0.1";
-process.env.DB_BASE = "ug5kv2";
-process.env.DB_USER = "root";
-process.env.DB_PASS = "cd40";
-process.env.DB_PORT = 3306;
+dbutils.dbconfig = {
+    host: "127.0.0.1",
+    user: "root",
+    password: "cd40",
+    database: "ug5kv2",
+    port: 3306,
+    multipleStatements: true
+  }
 
-console.log("Hello World");
+logger.Info("Hello World");
+
 test.updateTfnoRes4Gateway(dataIn, resId, (res)=>{
-    console.log("Operacion ejecutada: ", res);
+    logger.Trace("Operacion ejecutada: ", res);
 });
 
-// sipr2.Get((response)=>{
-//     console.log("sipr2 response => ", response.error, response.data);
-//     if (!response.error){
-//         var modoSDC91 = {
-//             respuestasSIPtoATSR2: response.data
-//         };
-//         fileConfig.modoSDC91 = modoSDC91;    
-//         console.log(fileConfig);
-//     }
-// });
-
-
-console.log("Goodbye World");
+logger.Error("Goodbye World");
