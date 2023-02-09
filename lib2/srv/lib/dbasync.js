@@ -1,6 +1,5 @@
 var mysql = require('mySql');
 const util = require( 'util' );
-const { Configure } = require('./logger');
 
 exports.makeDbAsync = function makeDbAsync( config ) {
     const connection = mysql.createConnection( config===undefined ? exports.dbconfig : config );
