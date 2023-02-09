@@ -49,7 +49,7 @@ exports.makeDbAsync = function makeDbAsync( config ) {
     host: "127.0.0.1",
     user: "root",
     password: "cd40",
-    database: "ug5kv22",
+    database: "ug5kv2",
     port: 3306,
     multipleStatements: true
   }
