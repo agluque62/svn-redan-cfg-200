@@ -94,7 +94,7 @@ export class ResourceNRangeComponent implements OnInit {
           if (this.destinationRanks[pos]['final'] !== '' && event.target.value > this.destinationRanks[pos]['final']) {
             await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_start_bigger')}`, this.translate.instant('button.accept'));
             event.target.value = "";
-            this.originRanks[pos][key] = event.target.value;
+            this.destinationRanks[pos][key] = event.target.value;
           } else {
             this.resourceForm.get('ranks')?.markAsDirty();
             this.destinationRanks[pos][key] = event.target.value;
@@ -104,7 +104,7 @@ export class ResourceNRangeComponent implements OnInit {
           if (this.destinationRanks[pos]['inicial'] !== '' && event.target.value < this.destinationRanks[pos]['inicial']) {
             await this.alertService.errorMessage(``, `${this.translate.instant('resource.tlf.err_final_smaller')}`, this.translate.instant('button.accept'));
             event.target.value = "";
-            this.originRanks[pos][key] = event.target.value;
+            this.destinationRanks[pos][key] = event.target.value;
           } else {
             this.resourceForm.get('ranks')?.markAsDirty();
             this.destinationRanks[pos][key] = event.target.value;
