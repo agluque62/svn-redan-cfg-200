@@ -3,7 +3,7 @@ var dbutils = require('../../srv/lib/dbasync');
 exports.CfgReport = async (cfgid) => {
     var res = {};
     var db = dbutils.makeDbAsync();
-    await dbutils.dbTransaction(db, async () =>{
+    await dbutils.executeQueries(db, async () =>{
         let confQuery = 'SELECT c.idconfiguracion, c.nombre, c.descripcion, c.activa, c.fecha_activacion ' +
             'FROM configuraciones c ' +
             'WHERE idconfiguracion =  \'' + cfgid + '\' ;';

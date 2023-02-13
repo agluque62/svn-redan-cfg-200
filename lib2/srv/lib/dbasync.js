@@ -44,7 +44,21 @@ exports.makeDbAsync = function makeDbAsync( config ) {
     finally {
       if (!fatal) await db.close();
     }
-  }
+  };
+  exports.executeQueries = async (db, callback) => {
+    var fatal = false;
+    try {
+      await callback();
+    } 
+    catch ( err ) {
+      fatal = err.fatal;
+      if (!fatal) await db.rollback();
+      throw err;
+    } 
+    finally {
+      if (!fatal) await db.close();
+    }
+  };
   exports.dbconfig = {
     host: "127.0.0.1",
     user: "root",
