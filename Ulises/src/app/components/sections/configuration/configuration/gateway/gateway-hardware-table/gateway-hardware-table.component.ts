@@ -26,7 +26,8 @@ export class GatewayHardwareTableComponent implements OnInit, OnChanges {
     dashboardHeader!: Array<GridsterItem>;
 
     private itemsSwapped: GridsterItem[] = [];
-    private itemsSwapped$ = new Subject<GridsterItem[]>();
+    // private itemsSwapped$ = new Subject<GridsterItem[]>();
+    private itemsSwapped$ = new Subject<GridsterItem>();
 
     ready: boolean = false;
     @Input('gateway') gateway!: Gateway;
@@ -57,6 +58,7 @@ export class GatewayHardwareTableComponent implements OnInit, OnChanges {
 
     ngOnInit(): void {
 
+        this.initObservable();
         this.init();
     }
 
@@ -79,7 +81,7 @@ export class GatewayHardwareTableComponent implements OnInit, OnChanges {
         this.initHeaderOptions();
         this.initHeaderDashboard();
 
-        this.initObservable();
+        // this.initObservable();
         this.enabledSwap = true;
         this.ready = true;
 
@@ -96,11 +98,13 @@ export class GatewayHardwareTableComponent implements OnInit, OnChanges {
 
     initObservable() {
 
-        this.itemsSwapped$.subscribe(itemsSwapped => {
+        this.itemsSwapped$.subscribe(item => {
 
-            if (itemsSwapped.length === 2) {
-                const sourceCol = itemsSwapped[0].x;
-                const targetCol = itemsSwapped[1].x;
+            this.itemsSwapped.push(item);
+
+            if (this.itemsSwapped.length === 2) {
+                const sourceCol = this.itemsSwapped[0].x;
+                const targetCol = this.itemsSwapped[1].x;
 
                 this.items.forEach(async (item: any) => {
                     let changed: boolean = false;
@@ -286,8 +290,10 @@ export class GatewayHardwareTableComponent implements OnInit, OnChanges {
     }
 
     itemHeaderChange(item: GridsterItem, itemComponent: GridsterItemComponentInterface): void {
-        this.itemsSwapped.push(item);
-        this.itemsSwapped$.next(this.itemsSwapped);
+        // console.error('Item Swapped', item);
+        // this.itemsSwapped.push(item);
+        // this.itemsSwapped$.next(this.itemsSwapped);
+        this.itemsSwapped$.next(item);
     }
 
     initOptions(): void {
