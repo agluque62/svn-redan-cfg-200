@@ -90,7 +90,7 @@
                             {{ site.nameSite }}
                         </div>
                         <button mat-raised-button class="modify-btn local-btn" *ngIf="!visualizationMode" (click)="modifySite(site)">{{ 'button.modify' | translate}}</button>
-                        <button mat-raised-button class="modify-btn local-btn" *ngIf="visualizationMode" (click)="modifySite(site)">{{ 'button.see' }}</button>                        
+                        <button mat-raised-button class="modify-btn local-btn" *ngIf="visualizationMode" (click)="modifySite(site)">{{ 'button.see' | translate}}</button>                        
                     </div>
                 </mat-expansion-panel-header>
                 <mat-panel-description class="site-panel-content">
