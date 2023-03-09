@@ -55,9 +55,26 @@ export class VersionComponent implements OnInit {
       `${this.translate.instant('maintenance.MD5')}`]];
 
     let body: any = [];
+    body.push(['BACKEND']);
     this.version.file.forEach(archivos => {
-      body.push([`${this.version.version}.${this.version.subversion}`, this.version.nodejsversion, this.version.mysqlversion, archivos.Name, archivos.date, archivos.fileSizeInBytes, archivos.md5])
+      body.push([`${this.version.version}.${this.version.subversion}`, 
+        this.version.nodejsversion, 
+        this.version.mysqlversion, 
+        archivos.Name, archivos.date, 
+        archivos.fileSizeInBytes, 
+        archivos.md5])
     });
+
+    body.push(['FRONTEND']);
+    this.version.filef.forEach(archivos => {
+      body.push([`${this.version.version}.${this.version.subversion}`, 
+        this.version.nodejsversion, 
+        this.version.mysqlversion, 
+        archivos.Name, archivos.date, 
+        archivos.fileSizeInBytes, 
+        archivos.md5])
+    });
+
     const doc = new jsPDF('l');
     doc.setFontSize(11);
 
@@ -93,22 +110,43 @@ export class VersionComponent implements OnInit {
 
   downloadExcel() {
     let data = "";
-    const header = [[
+    const header = [
       `${this.translate.instant('maintenance.version')}`,
       `${this.translate.instant('maintenance.nodeJS')}`,
       `${this.translate.instant('maintenance.MySQL')}`,
       `${this.translate.instant('maintenance.files')}`,
       `${this.translate.instant('maintenance.date')}`,
       `${this.translate.instant('maintenance.size')}`,
-      `${this.translate.instant('maintenance.MD5')}`]];
+      `${this.translate.instant('maintenance.MD5')}`];
 
     data += header.join(';');
     data += "\n";
-    this.version.file.forEach(archivos => {
-      data += [`${this.version.version}.${this.version.subversion}`, this.version.nodejsversion, this.version.mysqlversion, archivos.Name, archivos.date, archivos.fileSizeInBytes, archivos.md5].join(';');
-      data += "\n";
 
+    data += "BACKEND\n";
+    this.version.file.forEach(archivos => {
+      data += [`${this.version.version}.${this.version.subversion}`, 
+                this.version.nodejsversion, 
+                this.version.mysqlversion, 
+                archivos.Name, 
+                archivos.date, 
+                archivos.fileSizeInBytes, 
+                archivos.md5].join(';');
+      data += "\n";
     });
+
+    data += "FRONTEND\n";
+    this.version.filef.forEach(archivos => {
+      data += [`${this.version.version}.${this.version.subversion}`, 
+                this.version.nodejsversion, 
+                this.version.mysqlversion, 
+                archivos.Name, 
+                archivos.date, 
+                archivos.fileSizeInBytes, 
+                archivos.md5].join(';');
+      data += "\n";
+    });
+
+
     var myLink = document.createElement('a');
     myLink.download = 'Version.csv';
     myLink.href = "data:application/csv," + escape(data);
