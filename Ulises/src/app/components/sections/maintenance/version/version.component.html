@@ -14,7 +14,7 @@
 
         <div class="table-row">
             <div class="table-column">
-                <div class="label">
+                <div class="name">
                     {{ 'maintenance.version' | translate }}
                 </div>
             </div>
@@ -27,7 +27,7 @@
 
         <div class="table-row">
             <div class="table-column">
-                <div class="label">
+                <div class="name">
                     {{ 'maintenance.nodeJS' | translate }}
                 </div>
             </div>
@@ -40,7 +40,7 @@
 
         <div class="table-row">
             <div class="table-column">
-                <div class="label">
+                <div class="name">
                     {{ 'maintenance.MySQL' | translate }}
                 </div>
             </div>
@@ -53,12 +53,40 @@
     </div>
 
     <div class="title files" *ngIf="ready">
-        {{ 'maintenance.files' | translate }}
+        {{ 'maintenance.backend' | translate }}
     </div>
     <div class="mat-elevation-z8" *ngIf="ready">
         <div class="table-row" *ngFor="let file of version.file">
+            <div class="table-column ">
+                <div class="name">
+                    {{ file.Name }}
+                </div>
+            </div>
             <div class="table-column">
                 <div class="label">
+                    {{ file.date }}
+                </div>
+            </div>
+            <div class="table-column">
+                <div class="label">
+                    {{ file.fileSizeInBytes }}
+                </div>
+            </div>
+            <div class="table-column">
+                <div class="label">
+                    {{ file.md5 }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="title files" *ngIf="ready">
+        {{ 'maintenance.frontend' | translate }}
+    </div>
+    <div class="mat-elevation-z8" *ngIf="ready">
+        <div class="table-row" *ngFor="let file of version.filef">
+            <div class="table-column ">
+                <div class="name">
                     {{ file.Name }}
                 </div>
             </div>

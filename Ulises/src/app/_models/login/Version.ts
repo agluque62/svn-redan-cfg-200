@@ -8,4 +8,5 @@ export class Version {
     nodejsversion!: string;
     mysqlversion!: string;
     R16Mode!: boolean;
+    filef!: FileItem[];
 }

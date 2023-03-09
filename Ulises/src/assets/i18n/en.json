@@ -386,6 +386,8 @@
     "maintenance.nodeJS":"nodeJS",
     "maintenance.MySQL":"MySQL",
     "maintenance.files":"Files",
+    "maintenance.backend":"Backend",
+    "maintenance.frontend":"Frontend",
     "maintenance.date":"Date",
     "maintenance.size":"Size",
     "maintenance.MD5":"MD5",

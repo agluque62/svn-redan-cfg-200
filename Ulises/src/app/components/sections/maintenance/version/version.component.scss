@@ -16,14 +16,20 @@
         border-style: solid;
         align-items: center;
         box-sizing: border-box;
-        min-height: 48px;
+        min-height: 24px;
 
         .table-column {
 
             flex: 1;
-            display: flex;
-            padding-right: 24px;
-            padding-left: 24px;
+            // display: flex;
+            // padding-right: 24px;
+            // padding-left: 24px;
+            padding-left: 16px;
+            font-size: smaller;
+            text-align: left;
+            .name {
+                font-weight: bold;
+            }
         }
     }
 
@@ -64,4 +70,5 @@
             margin: 0 10px;
         }
     }
+
 }
