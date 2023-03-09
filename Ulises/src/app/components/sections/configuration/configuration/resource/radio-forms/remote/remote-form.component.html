@@ -33,7 +33,7 @@
     <div class="custom-row" *ngIf="displayPreferredBSSMethod">
         <mat-form-field appearance="fill">
             <mat-label>{{ 'resource.radio.metodo_BSS' | translate }}</mat-label>
-            <mat-select formControlName="metodo_bss" name="bssMethods">
+            <mat-select formControlName="metodo_bss" name="bssMethods" (selectionChange)="checkSelectedMethod()">
                 <mat-option *ngFor="let type of bssMethods" [value]="type.value">
                     {{type.viewValue | translate }}
                 </mat-option>
@@ -42,7 +42,7 @@
 
         <mat-form-field appearance="fill" *ngIf="displayTableBss">
             <mat-label>{{ 'resource.radio.tableBSS' | translate }}</mat-label>
-            <mat-select formControlName="tabla_bss_id" name="tablesBss">
+            <mat-select formControlName="tabla_bss_id" name="tablesBss" [disabled]="disableTableSelector" >
                 <mat-option *ngFor="let type of tablesBss" [value]="type.idtabla_bss">
                     {{type.name}}
                 </mat-option>

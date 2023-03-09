@@ -559,12 +559,15 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
 
     let confirm;
 
-    if (this.selectedResource == 1 && this.resourceForm.value.tipo_agente == 4 && this.resourceForm.value.tabla_bss_id == 0) {
+    if (this.selectedResource == 1 && 
+      (this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) && 
+      (this.resourceForm.value.metodo_bss != 2 && this.resourceForm.value.tabla_bss_id == 0)) {
       this.displayTbMessage = true;
     } else {
       this.displayTbMessage = false;
     }
-    if (this.displayTbMessage) confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('resource.alert.conf_no_table_continue')}`, this.translate.instant('button.accept'), this.translate.instant('button.cancel'));
+    if (this.displayTbMessage) 
+      confirm = await this.alertService.confirmationMessage("", `${this.translate.instant('resource.alert.conf_no_table_continue')}`, this.translate.instant('button.accept'), this.translate.instant('button.cancel'));
 
     if (this.resourceForm.value.indicacion_entrada_audio !== 1) {
       this.resourceForm.get('umbral_vad')?.clearValidators();

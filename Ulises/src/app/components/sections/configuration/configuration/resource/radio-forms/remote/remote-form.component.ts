@@ -114,14 +114,14 @@ export class RemoteFormComponent implements OnInit {
 
   /**
    * Deprecated 7-6-2021
+   * Se reactiva 22/02/2023. Peticion 7843.
    */
   checkSelectedMethod() {
-    if (this.resourceForm.value.metodo_bss === 0) {
+    if (this.resourceForm.value.metodo_bss === 0 || this.resourceForm.value.metodo_bss === 1) {
       this.disableTableSelector = false;
-    } else if (this.resourceForm.value.metodo_bss === 1 || this.resourceForm.value.metodo_bss === 2) {
+    } else {
       this.resourceForm.patchValue({ tabla_bss_id: 0 });
       this.disableTableSelector = true;
     }
   }
-
 }
