@@ -5,6 +5,8 @@ export class LocalConfig {
     BackupServiceDomain!: string;
     Date!: string;
     Files!: FileItem[];
+    BackendFiles!: FileItem[];
+    FrontendFiles!: FileItem[];
     HistoricsDeep!: number;
     LoadIndexControlEnabled!: boolean;
     LoginSystemTrace!: boolean;

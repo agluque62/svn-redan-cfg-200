@@ -60,7 +60,7 @@ export class ServerConfComponent implements OnInit {
   initForm(): void {
     this.serverConfigForm = new FormGroup({
       Region: new FormControl(this.localConfig.Region, [Validators.required, Validators.maxLength(32)]),
-      BackupServiceDomain: new FormControl(this.localConfig.BackupServiceDomain, [Validators.required, Validators.pattern(AppSettings.IP_PORT_PATTERN)]),
+      BackupServiceDomain: new FormControl(this.localConfig.BackupServiceDomain, [Validators.required, Validators.pattern(AppSettings.IP_ENDP_PATTERN)]),
       HistoricsDeep: new FormControl(this.localConfig.HistoricsDeep),
       LoginTimeOut: new FormControl(this.localConfig.LoginTimeOut),
       refreshTime: new FormControl(this.localConfig.refreshTime),
@@ -70,6 +70,8 @@ export class ServerConfComponent implements OnInit {
       LoginSystemTrace: new FormControl(this.localConfig.LoginSystemTrace),
       Date: new FormControl(this.localConfig.Date),
       Files: new FormControl(this.localConfig.Files),
+      BackendFiles: new FormControl(this.localConfig.BackendFiles),
+      FrontendFiles: new FormControl(this.localConfig.FrontendFiles),
       LoadIndexControlEnabled: new FormControl(this.localConfig.LoadIndexControlEnabled),
       MySQL: new FormControl(this.localConfig.MySQL),
       NodeJS: new FormControl(this.localConfig.NodeJS),

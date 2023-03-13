@@ -1,7 +1,7 @@
 {
   "Ulises": {
     "Region": "Región Centro",
-    "BackupServiceDomain": "127.0.0.1:3000",
+    "BackupServiceDomain": "127.0.0.1:3031",
     "HistoricsDeep": 90,
     "LoginTimeOut": 10,
     "refreshTime": 1000,
@@ -10,25 +10,74 @@
     "log2file": "silly",
     "LoginSystemTrace": false,
     "Date": "02/01/2023",
+    "Files": null,
     "BackendFiles": [
-      { "Path": "/", "Name": "app.js"},
-      { "Path": "/lib/", "Name": "ug5kdb.js"},
-      { "Path": "/lib/", "Name": "configurations.js"},
-      { "Path": "/lib/", "Name": "externalResources.js"},
-      { "Path": "/lib/", "Name": "gateways.js"},
-      { "Path": "/lib/", "Name": "get_cfg_report.js"},
-      { "Path": "/lib/", "Name": "hardware.js"},
-      { "Path": "/lib/", "Name": "historics.js"},
-      { "Path": "/lib/", "Name": "resources.js"},
-      { "Path": "/lib/", "Name": "sites.js"},
-      { "Path": "/lib/", "Name": "tableBss.js"},
-      { "Path": "/lib/", "Name": "users.js"}
+      {
+        "Path": "/",
+        "Name": "app.js"
+      },
+      {
+        "Path": "/lib/",
+        "Name": "ug5kdb.js"
+      },
+      {
+        "Path": "/lib/",
+        "Name": "configurations.js"
+      },
+      {
+        "Path": "/lib/",
+        "Name": "externalResources.js"
+      },
+      {
+        "Path": "/lib/",
+        "Name": "gateways.js"
+      },
+      {
+        "Path": "/lib/",
+        "Name": "get_cfg_report.js"
+      },
+      {
+        "Path": "/lib/",
+        "Name": "hardware.js"
+      },
+      {
+        "Path": "/lib/",
+        "Name": "historics.js"
+      },
+      {
+        "Path": "/lib/",
+        "Name": "resources.js"
+      },
+      {
+        "Path": "/lib/",
+        "Name": "sites.js"
+      },
+      {
+        "Path": "/lib/",
+        "Name": "tableBss.js"
+      },
+      {
+        "Path": "/lib/",
+        "Name": "users.js"
+      }
     ],
     "FrontendFiles": [
-      { "Path": "/frontend/", "Name": "main.js"},
-      { "Path": "/frontend/", "Name": "runtime.js"},
-      { "Path": "/frontend/", "Name": "components-home-home-module.js"},
-      { "Path": "/frontend/", "Name": "vendor.js"}
+      {
+        "Path": "/frontend/",
+        "Name": "main.js"
+      },
+      {
+        "Path": "/frontend/",
+        "Name": "runtime.js"
+      },
+      {
+        "Path": "/frontend/",
+        "Name": "components-home-home-module.js"
+      },
+      {
+        "Path": "/frontend/",
+        "Name": "vendor.js"
+      }
     ],
     "LoadIndexControlEnabled": true,
     "MySQL": "5.7.17",

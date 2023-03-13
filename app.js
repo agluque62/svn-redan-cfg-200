@@ -510,7 +510,8 @@ var validateLocalConfig = ajv.compile(
         "properties": {
             "BackupServiceDomain": { "type": "string" },
             "Date": { "type": "string" },
-            "Files": { "items": {}, "type": "array" },
+            "BackendFiles": { "items": {}, "type": "array" },
+            "FrontendFiles": { "items": {}, "type": "array" },
             "HistoricsDeep": { "type": "integer" },
             "LoginSystemTrace": { "type": "boolean" },
             "LoginTimeOut": { "type": "integer" },
