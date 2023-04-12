@@ -69,6 +69,7 @@ export class RemoteFormComponent implements OnInit {
       valor5: 0
     })
     this.displayUmbralVAD(this.resourceForm.value.indicacion_entrada_audio);
+    this.checkSelectedMethod();
   }
 
   /**
