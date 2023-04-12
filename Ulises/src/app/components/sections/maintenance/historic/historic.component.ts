@@ -119,6 +119,9 @@ export class HistoricComponent implements OnInit {
                 this.selectedComponent = data.selectedComponent !== undefined ? data.selectedComponent : [];
                 this.selectedRegister = data.selectedRegister !== undefined ? data.selectedRegister : [];
                 this.filterValue = data.filterValue !== undefined ? data.filterValue : '';
+
+                if (this.dataSource)
+                    this.dataSource.filter = this.filterValue !== '' ? this.filterValue.trim().toLowerCase() : '';
             }
 
             this.ready = true;
@@ -158,6 +161,11 @@ export class HistoricComponent implements OnInit {
         let result: any = [];
 
         if (this.selectedFilter.length > 0) {
+
+            if (this.selectedFilter.includes('historics.description') == false) {
+                this.filterValue = '';
+            }
+
             result = await this.dataRaw.historics.filter((row: any) => {
                 let includesTypeFilter: boolean = true;
                 let includesGroupFilter: boolean = true;
@@ -194,7 +202,6 @@ export class HistoricComponent implements OnInit {
         } else {
             this.dataUsed = this.dataRaw.historics;
         }
-
         this.historicService.setFilters({
             'dateStart': this.dateStart,
             'dateEnd': this.dateEnd,
@@ -229,7 +236,8 @@ export class HistoricComponent implements OnInit {
             this.translate.instant('historics.user')
         ]];
         let body: any = [];
-        this.dataSource.data.forEach(hist => {
+        // this.dataSource.data.forEach(hist => {
+        this.dataSource.filteredData.forEach(hist => {
             body.push([hist.FechaHora, this.translate.instant(hist.TipoHw), hist.IdHw, this.translateDescription(hist.Descripcion), hist.Alarma && hist.Alarma === 1 ? this.translate.instant('historics.alarm') : this.translate.instant('historics.event'), hist.Reconocida, hist.TipoAlarma, hist.Usuario])
         });
 
@@ -278,7 +286,8 @@ export class HistoricComponent implements OnInit {
         ];
         data += header.join(';');
         data += "\n";
-        this.dataSource.data.forEach(hist => {
+        // this.dataSource.data.forEach(hist => {
+        this.dataSource.filteredData.forEach(hist => {
             data += [hist.FechaHora, this.translate.instant(hist.TipoHw), hist.IdHw, this.translateDescription(hist.Descripcion), hist.Alarma && hist.Alarma === 1 ? this.translate.instant('historics.alarm') : this.translate.instant('historics.event'), hist.Reconocida, hist.TipoAlarma, hist.Usuario].join(';');
             data += "\n";
         });
@@ -395,7 +404,7 @@ export class HistoricComponent implements OnInit {
             const description = filters;
 
             // Fetch data from row
-            const columnDescription = row.Descripcion;
+            const columnDescription = this.translateDescription(row.Descripcion);
 
             // verify fetching data by our searching values
             const customFilterDescription = columnDescription.toLowerCase().includes(description);
