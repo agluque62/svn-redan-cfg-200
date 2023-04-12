@@ -638,6 +638,11 @@
     "users.alert.error_delete_user":"Unable to delete logged in user!",
     "users.alert.conf_delete_user": "Are you sure you want to delete the user {{user}}?",
     "users.alert.succ_delete_user": "User successfully deleted",
+    "users.alert.succ_create_user":"User {{user}} succesfully created",
+    "users.alert.succ_modify_user":"User {{user}} succesfully modified",
+    "users.alert.error_create_user":"Unable to create user {{user}}!: {{cause}}",
+    "users.alert.error_modify_user":"Unable to modify user {{user}}!: {{cause}}",
+    "users.error.cause_duplicated": "User already exist!",
 
     "util.ntp_1_server": "NTP Server 1",
     "util.ntp_2_server": "NTP Server 2",

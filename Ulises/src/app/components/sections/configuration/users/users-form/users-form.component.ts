@@ -195,7 +195,9 @@ export class UsersFormComponent implements OnInit {
     }
 
     try {
-      const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('users.alert.conf_delete_user', {user: this.user.name})}`, this.translate.instant('button.accept'), this.translate.instant('button.cancel'))
+      const confirm = await this.alertService.confirmationMessage(``, 
+          this.translate.instant('users.alert.conf_delete_user', {user: this.user.name}), 
+          this.translate.instant('button.accept'), this.translate.instant('button.cancel'))
       if (confirm.value) {
 
         this.showSpinner = true;
@@ -203,9 +205,9 @@ export class UsersFormComponent implements OnInit {
         this.showSpinner = false;
 
         if (result.error != 1) {
-          await this.alertService.errorMessage(`Error`, result.error, this.translate.instant('button.accept'));
+          await this.alertService.errorMessage(``, result.error, this.translate.instant('button.accept'));
         } else {
-          await this.alertService.successMessage(`Éxito`, `${this.translate.instant('users.alert.succ_delete_user')}`,this.translate.instant('button.accept'));
+          await this.alertService.successMessage(``, `${this.translate.instant('users.alert.succ_delete_user')}`,this.translate.instant('button.accept'));
           await this.historicService.updateCfg(53, this.user.name).toPromise();
           this.dialogRef.close();
         }
@@ -221,28 +223,37 @@ export class UsersFormComponent implements OnInit {
       if (this.userForm.valid) {
         const profile = this.arrayToProfile();
         const password = window.btoa(this.userForm.value.clave);
-        let error;
-        let message: string;
 
-        this.showSpinner = true;
         if (this.type == 'CREATE') {
+          this.showSpinner = true;
           const result = await this.userService.createUser(this.userForm.value.name, password, profile).toPromise();
-          error = (result.error) ? result.error : null;
-          message = `Usuario ${this.userForm.value.name} creado correctamente`;
-          await this.historicService.updateCfg(52, this.userForm.value.name).toPromise();
+          this.showSpinner = false;
+          if (result.error) {
+            await this.alertService.errorMessage(``, 
+              this.translate.instant('users.alert.error_create_user', {cause: this.translateCause(result.error), user: this.userForm.value.name}), 
+              this.translate.instant('button.accept'));
+          } else {
+            await this.historicService.updateCfg(52, this.userForm.value.name).toPromise();
+            await this.alertService.successMessage(``, 
+              this.translate.instant('users.alert.succ_create_user', {user: this.userForm.value.name}), 
+              this.translate.instant('button.accept'));
+            this.dialogRef.close();
+          }
         } else {
+          this.showSpinner = true;
           const result = await this.userService.editUser(this.user.name, password, profile, this.user.idOPERADORES).toPromise();
-          error = (result.err) ? result.err : null;
-          message = `Usuario ${this.user.name} modificado correctamente`;
-          await this.historicService.updateCfg(54, this.user.name).toPromise();
-        }
-        this.showSpinner = false;
-
-        if (error) {
-          await this.alertService.errorMessage(`Error`, error, this.translate.instant('button.accept'));
-        } else {
-          await this.alertService.successMessage(`Éxito`, message, this.translate.instant('button.accept'));
-          this.dialogRef.close();
+          this.showSpinner = false;
+          if (result.err) {
+            await this.alertService.errorMessage(``, 
+              this.translate.instant('users.alert.error_modify_user', {cause: this.translateCause(result.err), user: this.user.name}), 
+              this.translate.instant('button.accept'));
+          } else {
+            await this.historicService.updateCfg(54, this.user.name).toPromise();
+            await this.alertService.successMessage(``, 
+              this.translate.instant('users.alert.succ_modify_user', {user: this.user.name}), 
+              this.translate.instant('button.accept'));
+            this.dialogRef.close();
+          }
         }
       } else {
         await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`, this.translate.instant('button.accept'));
@@ -250,6 +261,14 @@ export class UsersFormComponent implements OnInit {
     } catch (error: any) {
       this.dialogRef.close();
       this.app.catchError(error);
+    }
+  }
+
+  translateCause(error: any) {
+    if (error === 'ER_DUP_ENTRY')
+      return this.translate.instant('users.error.cause_duplicated');
+    else {
+      return error;
     }
   }
 }

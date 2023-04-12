@@ -638,6 +638,11 @@
     "users.alert.error_delete_user":"!No se puede eliminar el usuario loggeado!",
     "users.alert.conf_delete_user":"¿Seguro que quiere eliminar el usuario {{user}}?",
     "users.alert.succ_delete_user":"Usuario borrado correctamente",
+    "users.alert.succ_create_user":"Usuario {{user}} creado correctamente",
+    "users.alert.succ_modify_user":"Usuario {{user}} modificado correctamente",
+    "users.alert.error_create_user":"!No se puede crear el usuario {{user}}!: {{cause}}",
+    "users.alert.error_modify_user":"!No se puede modificar el usuario {{user}}!: {{cause}}",
+    "users.error.cause_duplicated": "!El usuario ya existe!",
 
     "util.ntp_1_server":"Servidor NTP 1",
     "util.ntp_2_server":"Servidor NTP 2",
