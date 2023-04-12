@@ -37,10 +37,11 @@ export class ExtResourcesFormComponent implements OnInit {
 
     this.extResourceFrom = new FormGroup({
       idrecursos_externos: new FormControl(this.data.idrecursos_externos),
-      uri: new FormControl(this.data.uri, [Validators.pattern(AppSettings.URI_PATTERN)]),
-      alias: new FormControl(this.data.alias, [Validators.pattern(AppSettings.NAME_PATTERN)]),
+      uri: new FormControl(this.data.uri, [Validators.required, Validators.pattern(AppSettings.URI_PATTERN)]),
+      alias: new FormControl(this.data.alias, [Validators.required, Validators.pattern(AppSettings.NAME_PATTERN)]),
       tipo: new FormControl(this.data.tipo)
     });
+
   }
 
   initTypesMap() {
@@ -68,7 +69,6 @@ export class ExtResourcesFormComponent implements OnInit {
           await this.alertService.successMessage(``, `${this.translate.instant('ext_res.alert.succ_delete_res', {value: this.data.alias})}`,this.translate.instant('button.accept'));
           this.dialogRef.close();
         }
-
       }
     } else {
       await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`,this.translate.instant('button.accept'));
@@ -83,15 +83,25 @@ export class ExtResourcesFormComponent implements OnInit {
       this.showSpinner = false;
 
       if (createResult && createResult.error) {
-        await this.alertService.errorMessage(``, createResult.error,this.translate.instant('button.accept'));
+        await this.alertService.errorMessage(``, this.translateError(createResult.error), this.translate.instant('button.accept'));
       } else {
 
         const msg = this.type == 'CREATE' ? `${this.translate.instant('ext_res.alert.succ_create_res')}` : `${this.translate.instant('ext_res.alert.succ_save_res')}`;
-        await this.alertService.successMessage(``, msg,this.translate.instant('button.accept'));
+        await this.alertService.successMessage(``, msg, this.translate.instant('button.accept'));
         this.dialogRef.close();
       }
     } else {
       await this.alertService.errorMessage(`${this.translate.instant('appsettings.ERROR_FORM')}`, `${this.translate.instant('appsettings.INVALID_FORM')}`,this.translate.instant('button.accept'));
+    }
+  }
+
+  translateError (error: any) {
+    if (error == 'ER_DUP_URI') {
+      return this.translate.instant('ext_res.alert.err_duplicate_uri');
+    } else if (error == 'ER_DUP_ALIAS') {
+      return this.translate.instant('ext_res.alert.err_duplicate_alias');
+    } else {
+      return error;
     }
   }
 }

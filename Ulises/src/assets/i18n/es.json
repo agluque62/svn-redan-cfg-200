@@ -171,6 +171,8 @@
     "ext_res.alert.succ_delete_res":"Recurso {{value}} externo eliminado correctamente",
     "ext_res.alert.succ_create_res":"Recurso externo creado correctamente",
     "ext_res.alert.succ_save_res":"Recurso externo guardado correctamente",
+    "ext_res.alert.err_duplicate_uri":"Error: URI duplicada",
+    "ext_res.alert.err_duplicate_alias":"Error: ALIAS duplicado",
 
     "err.ECONNREFUSED": "{{value}} : Error de conexión a la pasarela",
     "err.ETIMEDOUT": "{{value}} : Error de timeout en la conexión a la pasarela",

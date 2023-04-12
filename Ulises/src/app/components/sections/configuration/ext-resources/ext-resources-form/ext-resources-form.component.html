@@ -11,6 +11,9 @@
         <mat-form-field appearance="fill">
             <mat-label>{{ 'ext_res.uri' | translate }}</mat-label>
             <input matInput formControlName="uri">
+            <mat-error *ngIf="extResourceFrom.controls['uri'].hasError('required')">
+                {{ appset.FIELD_REQUIRED | translate }}
+            </mat-error>
             <mat-error *ngIf="extResourceFrom.controls['uri'].hasError('pattern')">
                 {{ appset.INVALID_URI | translate }}
             </mat-error>
@@ -19,6 +22,9 @@
         <mat-form-field appearance="fill" [ngClass]="{'error': extResourceFrom.controls['alias'].hasError('pattern')}">
             <mat-label>{{ 'ext_res.alias' | translate }}</mat-label>
             <input matInput formControlName="alias">
+            <mat-error *ngIf="extResourceFrom.controls['alias'].hasError('required')">
+                {{ appset.FIELD_REQUIRED | translate }}
+            </mat-error>
             <mat-error *ngIf="extResourceFrom.controls['alias'].hasError('pattern')">
                 {{ appset.INVALID_NAME | translate }}
             </mat-error>

@@ -171,6 +171,8 @@
     "ext_res.alert.succ_delete_res": "External {{value}} resource successfully deleted.", 
     "ext_res.alert.succ_create_res": "External resource created successfully",
     "ext_res.alert.succ_save_res": "External resource saved successfully",
+    "ext_res.alert.err_duplicate_uri":"Error: Duplicate URI",
+    "ext_res.alert.err_duplicate_alias":"Error: Duplicate ALIAS",
 
     "err.ECONNREFUSED":"{{value}} : Gateway connection error",
     "err.ETIMEDOUT":"{{value}} : Gateway connection timeout error",
