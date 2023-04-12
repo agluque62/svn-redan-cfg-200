@@ -52,7 +52,7 @@
     "audiobss.alert.succ_update_gtw":"Pasarelas actualizadas",
     "audiobss.alert.conf_delete_table":"¿Desea eliminar la tabla {{value}}?",
     "audiobss.alert.err_delete_table":"No se puede eliminar una tabla asignada a un recurso. La tabla esta asignada al recurso: {{value}}.",
-    "audiobss.alert.succ_delete_table":"Tabla {{value}} externo eliminada correctamente correctamente",
+    "audiobss.alert.succ_delete_table":"Tabla {{value}} eliminada correctamente",
 
     "button.accept": "Aceptar",
     "button.logout": "Cerrar Sesión",
@@ -168,7 +168,7 @@
     "ext_res.filter":"Filtro",
     "ext_res.type":"Tipo",
     "ext_res.alert.conf_delete_res":"¿Desea eliminar el recurso {{value}}?",
-    "ext_res.alert.succ_delete_res":"Recurso {{value}} externo eliminado correctamente correctamente",
+    "ext_res.alert.succ_delete_res":"Recurso {{value}} externo eliminado correctamente",
     "ext_res.alert.succ_create_res":"Recurso externo creado correctamente",
     "ext_res.alert.succ_save_res":"Recurso externo guardado correctamente",
 
@@ -455,7 +455,7 @@
     "resource.alert.err_same_start_end_call":"Origen llamadas salientes de test no puede ser igual que Destino llamadas salientes de test",
     "resource.alert.conf_no_table_continue":"No se ha escogido Tabla conversión QIDX. ¿Desea continuar?",
     "resource.alert.succ_edit_res":"El recurso {{value}} ha sido editado correctamente",
-    "resource.alert.succ_create_res":"El recurso {{value}} ha sido creado correctamente`",
+    "resource.alert.succ_create_res":"El recurso {{value}} ha sido creado correctamente",
     "resource.alert.conf_index_res":"El índice de carga al añadir este tipo de recurso es de: {{value}}. ¿Desea continuar?",
     "resource.radio.iAudio_value_0":"Hardware",
     "resource.radio.iAudio_value_1":"VAD",

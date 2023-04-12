@@ -52,7 +52,7 @@
     "audiobss.alert.succ_update_gtw": "Updated Gateways",
     "audiobss.alert.conf_delete_table": "Do you want to delete the {{value}} table?",
     "audiobss.alert.err_delete_table": "Unable to delete a table assigned to a resource. The table is assigned to the resource: {{value}}.",
-    "audiobss.alert.succ_delete_table": "Table {{value}} external successfully deleted successfully.", 
+    "audiobss.alert.succ_delete_table": "Table {{value}} successfully deleted.", 
 
     "button.accept": "Accept",
     "button.logout": "Log Out",
@@ -168,7 +168,7 @@
     "ext_res.filter": "Filter",
     "ext_res.type": "Type",
     "ext_res.alert.conf_delete_res": "Do you want to delete resource {{value}}?",
-    "ext_res.alert.succ_delete_res": "External {{value}} resource successfully deleted successfully successfully.", 
+    "ext_res.alert.succ_delete_res": "External {{value}} resource successfully deleted.", 
     "ext_res.alert.succ_create_res": "External resource created successfully",
     "ext_res.alert.succ_save_res": "External resource saved successfully",
 
@@ -455,7 +455,7 @@
     "resource.alert.err_same_start_start_end_call": "Source outgoing test calls cannot be the same as Destination outgoing test calls",
     "resource.alert.conf_no_table_continue": "No QIDX conversion table has been chosen. do you wish to continue?",
     "resource.alert.succ_edit_res": "The resource {{value}} has been successfully edited.", 
-    "resource.alert.succ_create_res": "The resource {{value}} has been successfully created`",
+    "resource.alert.succ_create_res": "The resource {{value}} has been successfully created",
     "resource.alert.conf_index_res": "The loading rate when adding this resource type is: {{value}}. Do you wish to continue?",    
     "resource.radio.iAudio_value_0":"Hardware",
     "resource.radio.iAudio_value_1":"VAD",

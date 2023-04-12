@@ -63,9 +63,9 @@ export class ExtResourcesFormComponent implements OnInit {
         this.showSpinner = false;
 
         if (deleteResult && deleteResult.error) {
-          await this.alertService.errorMessage(`Error`, deleteResult.error,this.translate.instant('button.accept'));
+          await this.alertService.errorMessage(``, deleteResult.error,this.translate.instant('button.accept'));
         } else {
-          await this.alertService.successMessage(`Éxito`, `${this.translate.instant('ext_res.alert.succ_delete_res', {value: this.data.alias})}`,this.translate.instant('button.accept'));
+          await this.alertService.successMessage(``, `${this.translate.instant('ext_res.alert.succ_delete_res', {value: this.data.alias})}`,this.translate.instant('button.accept'));
           this.dialogRef.close();
         }
 
@@ -83,11 +83,11 @@ export class ExtResourcesFormComponent implements OnInit {
       this.showSpinner = false;
 
       if (createResult && createResult.error) {
-        await this.alertService.errorMessage(`Error`, createResult.error,this.translate.instant('button.accept'));
+        await this.alertService.errorMessage(``, createResult.error,this.translate.instant('button.accept'));
       } else {
 
         const msg = this.type == 'CREATE' ? `${this.translate.instant('ext_res.alert.succ_create_res')}` : `${this.translate.instant('ext_res.alert.succ_save_res')}`;
-        await this.alertService.successMessage(`Éxito`, msg,this.translate.instant('button.accept'));
+        await this.alertService.successMessage(``, msg,this.translate.instant('button.accept'));
         this.dialogRef.close();
       }
     } else {
