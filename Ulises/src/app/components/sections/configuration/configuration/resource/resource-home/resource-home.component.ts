@@ -939,6 +939,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     this.collateralsTabRef.instance.showOnlyFirst = display;
     this.collateralsTabRef.instance.resourceName = this.resource.nombre;
     this.collateralsTabRef.instance.idGateway = this.GATEWAY_ID;
+    this.collateralsTabRef.instance.tipoInterfaz = this.resource.tipo_interfaz_tel;
   }
 
   /**

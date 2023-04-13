@@ -61,6 +61,8 @@ export class ResourceCollateralsComponent implements OnInit {
   stringToFilter!: string;
   gatewayId!: number;
 
+  tipoInterfaz !: number;
+
   displaySearchBar: boolean = false;
   displaySites: boolean = false;
   displaySelectFilter: boolean = false;
@@ -169,12 +171,20 @@ export class ResourceCollateralsComponent implements OnInit {
     if (this.selectedSite != undefined && this.selectedGateway != undefined) {
       let resources = (await this.resourceService.getTelResources(confName, this.selectedSite, this.selectedGateway, 2).toPromise()).data;
 
-      if (this.resourceForm.value.tipo_interfaz_tel && this.resourceForm.value.tipo_interfaz_tel === 7) {
-        this.resources = resources.filter((resource: any) =>
-          (resource.rName !== this.resourceName && resource.tipo_interfaz_tel === 7))
-      } else {
-        this.resources = resources
-      }
+      // if (this.resourceForm.value.tipo_interfaz_tel && this.resourceForm.value.tipo_interfaz_tel === 7) {
+      //   this.resources = resources.filter((resource: any) =>
+      //     (resource.rName !== this.resourceName && resource.tipo_interfaz_tel === 7))
+      // } else {
+      //   this.resources = resources
+      // }
+      this.resources = resources.filter((res: any) => {
+        var res1 = this.gatewayId == this.selectedGateway && res.rName == this.resourceName;  // No debe conectarse a si mismo
+        var res2 = res.tipo_interfaz_tel==7 && this.tipoInterfaz != 7;              // Los TUNNEL no se presentan a los NO TUNNEL.
+        var res3 = res.tipo_interfaz_tel != 7 && this.tipoInterfaz == 7;            // Los NO-TUNNEL no se presentan a los TUNNEL.
+
+        return !(res1 || res2 || res3);
+      });
+
       this.displayConfResource = true;
     }
   }
