@@ -234,7 +234,11 @@ export class GatewayHomeComponent implements OnInit {
     const confirm = await this.alertService.confirmationMessage(``, `${this.translate.instant('gateway.alert.conf_active_conf')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
     if (confirm.value) {
       if (this.gatewayForm.value.traps.length === 0) {
-        const confirmTraps = await this.alertService.confirmationMessage(`${this.translate.instant('gateway.alert.no_traps')}`, `${this.translate.instant('gateway.alert.continue')}`,this.translate.instant('button.accept'),this.translate.instant('button.accept'));
+        const confirmTraps = await this.alertService.confirmationMessage(
+          this.translate.instant('gateway.alert.no_traps'), 
+          this.translate.instant('gateway.alert.continue'),
+          this.translate.instant('button.accept'),
+          this.translate.instant('button.cancel'));
         if (confirmTraps.value) {
           this.activateGTW(confName, siteName)
         }
@@ -627,7 +631,11 @@ export class GatewayHomeComponent implements OnInit {
     let result = await this.validateGateway();
     if (result) {
       if (this.gatewayForm.value.traps.length === 0) {
-        const confirmTraps = await this.alertService.confirmationMessage(`${this.translate.instant('gateway.alert.no_traps')}`, `${this.translate.instant('gateway.alert.continue')}`,this.translate.instant('button.accept'),this.translate.instant('button.cancel'));
+        const confirmTraps = await this.alertService.confirmationMessage(
+          this.translate.instant('gateway.alert.no_traps'), 
+          this.translate.instant('gateway.alert.continue'),
+          this.translate.instant('button.accept'),
+          this.translate.instant('button.cancel'));
         if (confirmTraps.value) {
           this.saveGTW();
         }
