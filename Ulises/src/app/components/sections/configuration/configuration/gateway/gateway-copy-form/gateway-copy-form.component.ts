@@ -96,7 +96,7 @@ export class GatewayCopyFormComponent implements OnInit {
     const result = await this.gatewayService.checkName(name, this.configId, this.gateway.idCGW).toPromise();
     if (result !== 'NO_ERROR') {
       const message = (result === 'NAME_DUP') ? `${this.translate.instant('gateway.alert.dup_name_gtw', {value: name})}` : result;
-      await this.alertService.errorMessage(`Error`, message, this.translate.instant('button.accept'));
+      await this.alertService.errorMessage(``, message, this.translate.instant('button.accept'));
       return true;
     }
     return false;
@@ -105,7 +105,9 @@ export class GatewayCopyFormComponent implements OnInit {
   async checkIpError(ip: string): Promise<boolean> {
 
     if (this.configurationIps.includes(ip)) {
-      await this.alertService.errorMessage(`Error`, `${this.translate.instant('gateway.alert.dup_ip_gtw', {value: ip})}`, this.translate.instant('button.accept'));
+      await this.alertService.errorMessage(``, 
+        this.translate.instant('gateway.alert.dup_ip_gtw', {ip: ip}), 
+        this.translate.instant('button.accept'));
       return true;
     }
 
@@ -124,7 +126,10 @@ export class GatewayCopyFormComponent implements OnInit {
           if (this.copyForm.value.ipv === this.copyForm.value.ipCpu0 || this.copyForm.value.ipv === this.copyForm.value.ipCpu1 
               || this.copyForm.value.ipCpu0 === this.copyForm.value.ipCpu1) {
               this.showSpinner = false;
-              await this.alertService.errorMessage(`Error`, `La Ip ${this.copyForm.value.ipv}, la Ip ${this.copyForm.value.ipCpu0} y la ip ${this.copyForm.value.ipCpu1} no pueden ser iguales.`, this.translate.instant('button.accept'));
+              await this.alertService.errorMessage(``, 
+                this.translate.instant('gateway.alert.err_copy_gtw_same_ip', {ip1: this.copyForm.value.ipv, ip2: this.copyForm.value.ipCpu0, ip3: this.copyForm.value.ipCpu1}),
+                // `La Ip ${this.copyForm.value.ipv}, la Ip ${this.copyForm.value.ipCpu0} y la ip ${this.copyForm.value.ipCpu1} no pueden ser iguales.`, 
+                this.translate.instant('button.accept'));
               return;
           }
           this.showSpinner = false;
@@ -138,15 +143,23 @@ export class GatewayCopyFormComponent implements OnInit {
                   let title = this.dataService.getDataGatewayTitle();
                   title = title.substring(0, title.indexOf(" - {GATEWAY} ") >= 0 ? title.indexOf(" - {GATEWAY} ") : title.length);
                   await this.historicService.updateCfg(107, this.copyForm.value.name, title).toPromise();
-                  await this.alertService.successMessage(``, `${this.translate.instant('gateway.alert.succ_copy_gtw', {value: this.gateway.name})}`, this.translate.instant('button.accept'));
+                  await this.alertService.successMessage(``, 
+                    this.translate.instant('gateway.alert.succ_copy_gtw', {value: this.gateway.name}), 
+                    this.translate.instant('button.accept'));
                   this.dialogRef.close(true);
                 } else {
                   if (result.error && result.error === 'ER_DUP_ENTRY') {
-                    await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_NAME_CFG',{value:this.copyForm.value.name})}`, this.translate.instant('button.accept'));
+                    await this.alertService.errorMessage(``, 
+                      this.translate.instant('err.DUPLICATED_NAME_CFG',{value:this.copyForm.value.name}), 
+                      this.translate.instant('button.accept'));
                   } else if (result.error && result.error === 'ER_DUP_IP0_ENTRY') {
-                    await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IP_CPU0_CFG',{value: this.copyForm.value.ipCpu0})}`, this.translate.instant('button.accept'));
+                    await this.alertService.errorMessage(``, 
+                      this.translate.instant('err.DUPLICATED_IP_CPU0_CFG',{value: this.copyForm.value.ipCpu0}), 
+                      this.translate.instant('button.accept'));
                   } else if (result.error && result.error === "ER_DUP_IP1_ENTRY") {
-                    await this.alertService.errorMessage(``, `${this.translate.instant('err.DUPLICATED_IP_CPU1_CFG',{value: this.copyForm.value.ipCpu1})}`, this.translate.instant('button.accept'));
+                    await this.alertService.errorMessage(``, 
+                      this.translate.instant('err.DUPLICATED_IP_CPU1_CFG',{value: this.copyForm.value.ipCpu1}), 
+                      this.translate.instant('button.accept'));
                   }
                 }
           } else {
@@ -156,7 +169,9 @@ export class GatewayCopyFormComponent implements OnInit {
                 this.nEmplazamiento = this.configurationIp.map((index) => {
                   return `${this.translate.instant('err.DUPLICATED_BODY', {value1: index.nombre_conf, value2: index.nombre})}`;
                 })      
-                await this.alertService.errorMessage(``,`${this.translate.instant('err.DUPLICATED_IPV',{value1: this.copyForm.value.ipv, value2: this.nEmplazamiento})}`, this.translate.instant('button.accept'));
+                await this.alertService.errorMessage(``,
+                  this.translate.instant('err.DUPLICATED_IPV',{value1: this.copyForm.value.ipv, value2: this.nEmplazamiento}), 
+                  this.translate.instant('button.accept'));
                 return;        
               }
 
@@ -166,7 +181,9 @@ export class GatewayCopyFormComponent implements OnInit {
                 this.nEmplazamiento = this.configurationIp.map((index) => {
                   return `${this.translate.instant('err.DUPLICATED_BODY', {value1: index.nombre_conf, value2: index.nombre})}`;
                 })      
-                await this.alertService.errorMessage(``,`${this.translate.instant('err.DUPLICATED_IPCPU0',{value1: this.copyForm.value.ipCpu0, value2: this.nEmplazamiento})}`, this.translate.instant('button.accept'));
+                await this.alertService.errorMessage(``,
+                  this.translate.instant('err.DUPLICATED_IPCPU0',{value1: this.copyForm.value.ipCpu0, value2: this.nEmplazamiento}), 
+                  this.translate.instant('button.accept'));
                 return;        
               }
 
@@ -176,7 +193,9 @@ export class GatewayCopyFormComponent implements OnInit {
                 this.nEmplazamiento = this.configurationIp.map((index) => {
                   return `${this.translate.instant('err.DUPLICATED_BODY', {value1: index.nombre_conf, value2: index.nombre})}`;
                 })      
-                await this.alertService.errorMessage(``,`${this.translate.instant('err.DUPLICATED_IPCPU1',{value1: this.copyForm.value.ipCpu1, value2: this.nEmplazamiento})}`, this.translate.instant('button.accept'));
+                await this.alertService.errorMessage(``,
+                  this.translate.instant('err.DUPLICATED_IPCPU1',{value1: this.copyForm.value.ipCpu1, value2: this.nEmplazamiento}), 
+                  this.translate.instant('button.accept'));
                 return;        
               }
           }
