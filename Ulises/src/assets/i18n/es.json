@@ -52,6 +52,7 @@
     "audiobss.alert.succ_update_gtw":"Pasarelas actualizadas",
     "audiobss.alert.conf_delete_table":"¿Desea eliminar la tabla {{value}}?",
     "audiobss.alert.err_delete_table":"No se puede eliminar una tabla asignada a un recurso. La tabla esta asignada al recurso: {{value}}.",
+    "audiobss.alert.err_bad_values": "Error: Los valores de la tabla no constituyen una sucesión monotona creciente",
     "audiobss.alert.succ_delete_table":"Tabla {{value}} eliminada correctamente",
 
     "button.accept": "Aceptar",

@@ -52,6 +52,7 @@
     "audiobss.alert.succ_update_gtw": "Updated Gateways",
     "audiobss.alert.conf_delete_table": "Do you want to delete the {{value}} table?",
     "audiobss.alert.err_delete_table": "Unable to delete a table assigned to a resource. The table is assigned to the resource: {{value}}.",
+    "audiobss.alert.err_bad_values": "Error: The values in the table do not constitute an increasing monotone sequence",
     "audiobss.alert.succ_delete_table": "Table {{value}} successfully deleted.", 
 
     "button.accept": "Accept",

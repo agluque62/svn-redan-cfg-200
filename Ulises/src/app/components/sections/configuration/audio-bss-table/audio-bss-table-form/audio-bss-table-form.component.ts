@@ -69,6 +69,13 @@ export class AudioBssTableFormComponent implements OnInit {
 
     if (this.tableBssForm.valid) {
 
+      if (!this.validateTableValues()) {
+        this.alertService.errorMessage(``, 
+          this.translate.instant('audiobss.alert.err_bad_values'), 
+          this.translate.instant('button.accept'))
+        return;
+      }
+
       this.showSpinner = true;
       const createResult = await this.tableBssService.createTableAudioBss(this.tableBssForm.value).toPromise();
       this.showSpinner = false;
@@ -88,6 +95,13 @@ export class AudioBssTableFormComponent implements OnInit {
 
   async editTableBss() {
     if (this.tableBssForm.valid) {
+
+      if (!this.validateTableValues()) {
+        this.alertService.errorMessage(``, 
+          this.translate.instant('audiobss.alert.err_bad_values'), 
+          this.translate.instant('button.accept'))
+        return;
+      }
 
       this.showSpinner = true;
       const editResult = await this.tableBssService.editTableAudioBss(this.tableBssForm.value).toPromise();
@@ -131,5 +145,13 @@ export class AudioBssTableFormComponent implements OnInit {
       }
 
     }
+  }
+
+  validateTableValues() {
+    return this.tableBssForm.value.valor0 <= this.tableBssForm.value.valor1 &&
+           this.tableBssForm.value.valor1 <= this.tableBssForm.value.valor2 &&
+           this.tableBssForm.value.valor2 <= this.tableBssForm.value.valor3 &&
+           this.tableBssForm.value.valor3 <= this.tableBssForm.value.valor4 &&
+           this.tableBssForm.value.valor4 <= this.tableBssForm.value.valor5;
   }
 }
