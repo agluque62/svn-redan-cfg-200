@@ -161,52 +161,6 @@ app.set('aliveGtws', aliveGtws);
 // AGL.. Clear Update folder
 require('del').sync(['./uploads/**', '!./uploads']);
 
-// to updload files
-var multer = require('multer');
-app.post('/', [
-    multer({
-        dest: './uploads/'
-    }).single('upl'),
-    function (req, res) {
-        logging.Info(req.method, req.originalUrl, req.file); //form files
-        var retorno = {};
-        //Inicializar el campo
-        fs.readFile(req.file.path, 'utf8', function (err, contents) {
-            myLibConfig.checkExportGtwNamesOrIpDup(req.body.config, req.body.site, JSON.parse(contents), function (result) {
-                if (result.data == 'OK') {
-                    logging.Info('Comprobación de importación correcta');
-                    myLibConfig.postConfigurationFromJsonFile(req.body.config, req.body.site, JSON.parse(contents), function (result) {
-                        if (!result.error) {
-                            retorno.msg = 'Configuracion importada correctamente';
-                            logging.Info('Configuracion importada correctamente');
-                        }
-                        else {
-                            retorno.err = req.file.message;
-                            logging.Error(req.file.message);
-                        }
-                        res.status(200).json(retorno);
-                    });
-                }
-                else {
-                    if (result.data == 'DUPLICATED') {
-                        //alertify.error('Configuracion no importada. La pasarela (nombre o ips) ya existe en la configuración. ' +
-                        //	'Elimine la pasarela o cambie los datos antes de importar.');
-                        logging.Error('Configuracion no importada. La pasarela (nombre o ips) ya existe en la configuración. ' +
-                            'Cambie los datos antes de importar');
-                        retorno.err = 'Configuracion no importada. La pasarela (nombre o ips) ya existe en la configuración. ' +
-                            'Cambie los datos antes de importar';
-                    }
-                    else {
-                        //alertify.error('Configuracion no importada. Error en la operación.');
-                        logging.Error('Configuracion no importada. Error en la operación.');
-                        retorno.err = 'Configuracion no importada. Error en la operación.';
-                    }
-                    res.json(retorno);
-                }
-            });
-        });
-    }
-]);
 
 // create a write stream (in append mode)
 //var accessLogStream = fs.createWriteStream(__dirname + '/access.log', {flags: 'a'})
@@ -570,6 +524,54 @@ app.post('/localconfig',
             res.json({ res: false, txt: 'JSON no valido...' });
         }
     });
+
+    // to updload files
+var multer = require('multer');
+app.post('/gwimport', [
+    multer({
+        dest: './uploads/'
+    }).single('upl'),
+    function (req, res) {
+        logging.Info(req.method, req.originalUrl, req.file); //form files
+        var retorno = {};
+        //Inicializar el campo
+        fs.readFile(req.file.path, 'utf8', function (err, contents) {
+            myLibConfig.checkExportGtwNamesOrIpDup(req.body.config, req.body.site, JSON.parse(contents), function (result) {
+                if (result.data == 'OK') {
+                    logging.Info('Comprobación de importación correcta');
+                    myLibConfig.postConfigurationFromJsonFile(req.body.config, req.body.site, JSON.parse(contents), function (result) {
+                        if (!result.error) {
+                            retorno.msg = 'Configuracion importada correctamente';
+                            logging.Info('Configuracion importada correctamente');
+                        }
+                        else {
+                            retorno.err = req.file.message;
+                            logging.Error(req.file.message);
+                        }
+                        res.status(200).json(retorno);
+                    });
+                }
+                else {
+                    if (result.data == 'DUPLICATED') {
+                        //alertify.error('Configuracion no importada. La pasarela (nombre o ips) ya existe en la configuración. ' +
+                        //	'Elimine la pasarela o cambie los datos antes de importar.');
+                        // logging.Error('Configuracion no importada. La pasarela (nombre o ips) ya existe en la configuración. ' +
+                        //     'Cambie los datos antes de importar');
+                        retorno.err = 'Configuracion no importada. La pasarela (nombre o ips) ya existe en la configuración. ' +
+                            'Cambie los datos antes de importar';
+                    }
+                    else {
+                        //alertify.error('Configuracion no importada. Error en la operación.');
+                        // logging.Error('Configuracion no importada. Error en la operación.');
+                        retorno.err = 'Configuracion no importada. Error en la operación.';
+                    }
+                    logging.Error(retorno.err);
+                    res.status(200).json(retorno);
+                }
+            });
+        });
+    }
+]);
 
 app.use('/users', isAuthenticated, users);
 app.use('/gateways', isAuthenticated, gateways);					// 20210604. En la version 2 ya no hay polling de pasarelas.

@@ -129,7 +129,7 @@ export class GatewayService extends BaseService {
 
     importGtw(file: File, configId: number, siteId: number): Observable<any> {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const url = `/`;
+        const url = `/gwimport`;
 
         const formData = new FormData();
         formData.append('user', user.name);
