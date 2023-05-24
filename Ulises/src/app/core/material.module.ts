@@ -16,6 +16,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
+import { MatTooltipModule} from '@angular/material/tooltip';
+
 @NgModule({
     imports: [
         CommonModule,
@@ -33,7 +35,8 @@ import { MatNativeDateModule } from '@angular/material/core';
         DragDropModule,
         MatProgressSpinnerModule,
         MatDatepickerModule,
-        MatNativeDateModule
+        MatNativeDateModule,
+        MatTooltipModule
     ],
     exports: [
         CommonModule,
@@ -51,7 +54,8 @@ import { MatNativeDateModule } from '@angular/material/core';
         DragDropModule,
         MatProgressSpinnerModule,
         MatDatepickerModule,
-        MatNativeDateModule
+        MatNativeDateModule,
+        MatTooltipModule
     ],
     providers: [
         { provide: MatPaginatorIntl, useValue: getPaginatorIntl() }

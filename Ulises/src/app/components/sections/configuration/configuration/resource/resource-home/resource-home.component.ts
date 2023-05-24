@@ -17,6 +17,8 @@ import { ConfigService } from 'src/app/_services/config.service';
 import { HistoricService } from 'src/app/_services/historic.service';
 import { TableBSSService } from 'src/app/_services/tableBss.service';
 
+import {UtilsService} from 'src/app/_services/utils.service';
+
 
 import * as formsFields from '../../../../../../../assets/validateInfoFields.json';
 import { TranslateService } from '@ngx-translate/core';
@@ -217,7 +219,8 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     private historicService: HistoricService,
     private readonly tableBssService: TableBSSService,
     private readonly translate: TranslateService,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef,
+    private readonly utilsService: UtilsService) { }
 
   async ngOnInit() {
     this.displayAudioPrecision = (await this.loginService.version().toPromise()).R16Mode; // It is no longer used in the html (ngIf)
@@ -687,6 +690,7 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
     let showMessage = false;
 
     if (LoadIndexControlEnabled) {
+
       loadIndex = this.calculateLoadIndex(hardwareResume);
       recIndex = this.calculateCurrentLoadIndex();
       prevIndex = this.calculatePreviewLoadIndex(hardwareResume);
@@ -976,136 +980,168 @@ export class ResourceHomeComponent implements OnInit, AfterViewInit {
   }
 
   calculateCurrentLoadIndex() {
-    let loadIndex = 0;
-    if (this.selectedResource === 1) {
 
-      if (this.resourceForm.value.precision_audio == 0) {
-        if (this.resourceForm.value.tipo_agente == 0 || this.resourceForm.value.tipo_agente == 1 || this.resourceForm.value.tipo_agente == 5) {
-          loadIndex += 1;
-        } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) && this.resourceForm.value.metodo_bss == 2) {
-          loadIndex += 1;
-        } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) &&
-          (this.resourceForm.value.metodo_bss == 0 || this.resourceForm.value.metodo_bss == 1)) {
-          loadIndex += 4;
-        }
+    return this.utilsService.loadIndexOfResource(
+      this.resourceForm.value.tipo_agente,
+      this.resourceForm.value.tipo_interfaz_tel,
+      this.resourceForm.value.precision_audio,
+      this.resourceForm.value.metodo_bss
+      );
+   
+    // let loadIndex = 0;
+    // if (this.selectedResource === 1) {
 
-      } else if (this.resourceForm.value.precision_audio == 1) {
+    //   if (this.resourceForm.value.precision_audio == 0) {
+    //     if (this.resourceForm.value.tipo_agente == 0 || this.resourceForm.value.tipo_agente == 1 || this.resourceForm.value.tipo_agente == 5) {
+    //       loadIndex += 1;
+    //     } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) && this.resourceForm.value.metodo_bss == 2) {
+    //       loadIndex += 1;
+    //     } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) &&
+    //       (this.resourceForm.value.metodo_bss == 0 || this.resourceForm.value.metodo_bss == 1)) {
+    //       loadIndex += 4;
+    //     }
 
-        if (this.resourceForm.value.tipo_agente == 0 || this.resourceForm.value.tipo_agente == 1 || this.resourceForm.value.tipo_agente == 5) {
-          loadIndex += 2;
-        } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) && this.resourceForm.value.metodo_bss == 2) {
-          loadIndex += 2;
-        } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) &&
-          (this.resourceForm.value.metodo_bss == 0 || this.resourceForm.value.metodo_bss == 1)) {
-          loadIndex += 4;
-        } else if (this.resourceForm.value.tipo_agente == 2 || this.resourceForm.value.tipo_agente == 3) {
-          loadIndex += 8;
-        }
-      }
+    //   } else if (this.resourceForm.value.precision_audio == 1) {
 
-    } else if (this.selectedResource === 2) {
-      if (this.resourceForm.value.precision_audio == 0) {
-        if (this.resourceForm.value.tipo_interfaz_tel == 3 || this.resourceForm.value.tipo_interfaz_tel == 4 || this.resourceForm.value.tipo_interfaz_tel == 5) {
-          loadIndex += 2;
-        } else if (this.resourceForm.value.tipo_interfaz_tel == 0 || this.resourceForm.value.tipo_interfaz_tel == 1 || this.resourceForm.value.tipo_interfaz_tel == 2) {
-          loadIndex++;
-        } else if (this.resourceForm.value.tipo_interfaz_tel == 7){ // Recursos tipo TUNNEL.
-          loadIndex++;
-        }
-      }
-    }
-    return loadIndex;
+    //     if (this.resourceForm.value.tipo_agente == 0 || this.resourceForm.value.tipo_agente == 1 || this.resourceForm.value.tipo_agente == 5) {
+    //       loadIndex += 2;
+    //     } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) && this.resourceForm.value.metodo_bss == 2) {
+    //       loadIndex += 2;
+    //     } else if ((this.resourceForm.value.tipo_agente == 4 || this.resourceForm.value.tipo_agente == 6) &&
+    //       (this.resourceForm.value.metodo_bss == 0 || this.resourceForm.value.metodo_bss == 1)) {
+    //       loadIndex += 4;
+    //     } else if (this.resourceForm.value.tipo_agente == 2 || this.resourceForm.value.tipo_agente == 3) {
+    //       loadIndex += 8;
+    //     }
+    //   }
+
+    // } else if (this.selectedResource === 2) {
+    //   if (this.resourceForm.value.precision_audio == 0) {
+    //     if (this.resourceForm.value.tipo_interfaz_tel == 3 || this.resourceForm.value.tipo_interfaz_tel == 4 || this.resourceForm.value.tipo_interfaz_tel == 5) {
+    //       loadIndex += 2;
+    //     } else if (this.resourceForm.value.tipo_interfaz_tel == 0 || this.resourceForm.value.tipo_interfaz_tel == 1 || this.resourceForm.value.tipo_interfaz_tel == 2) {
+    //       loadIndex++;
+    //     } else if (this.resourceForm.value.tipo_interfaz_tel == 7){ // Recursos tipo TUNNEL.
+    //       loadIndex++;
+    //     }
+    //   }
+    // }
+    // return loadIndex;
   }
 
   calculatePreviewLoadIndex(hardwareResume: any) {
-    let radio = hardwareResume.radio;
-    let telResources = hardwareResume.tfno;
-    let loadIndex = 0;
-    radio.forEach((resource: any) => {
-      if (this.resourceForm.value.idrecurso_radio == resource.idrecurso_radio) {
-        if (resource.precision_audio == 0) {
-          if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
-            loadIndex += 1;
-          } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
-            loadIndex += 1;
-          } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && (resource.metodo_bss == 0 || resource.metodo_bss == 1)) {
-            loadIndex += 4;
-          }
 
-        } else if (resource.precision_audio == 1) {
-          if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
-            loadIndex += 2;
-          } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
-            loadIndex += 2;
-          } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 0 || resource.metodo_bss == 1) {
-            loadIndex += 4;
-          } else if (resource.tipo_agente == 2 || resource.tipo_agente == 3) {
-            loadIndex += 8;
-          }
+    let resource = hardwareResume.radio.find((r: any) => r.idrecurso_radio == this.resourceForm.value.idrecurso_radio);
+    if (resource != undefined) {
+      return this.utilsService.loadIndexOfResource(
+        resource.tipo_agente,
+        undefined,
+        resource.precision_audio,
+        resource.metodo_bss
+        );
+    }
+    resource = hardwareResume.tfno.find((r: any) => r.idrecurso_telefono == this.resourceForm.value.idrecurso_telefono);
+    if (resource != undefined) {
+      return this.utilsService.loadIndexOfResource(
+        undefined,
+        resource.tipo_interfaz_tel,
+        resource.precision_audio,
+        undefined
+        );
+    }
+    return 0;
 
-        }
-      }
+  //   let radio = hardwareResume.radio;
+  //   let telResources = hardwareResume.tfno;
+  //   let loadIndex = 0;
+  //   radio.forEach((resource: any) => {
+  //     if (this.resourceForm.value.idrecurso_radio == resource.idrecurso_radio) {
+  //       if (resource.precision_audio == 0) {
+  //         if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
+  //           loadIndex += 1;
+  //         } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
+  //           loadIndex += 1;
+  //         } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && (resource.metodo_bss == 0 || resource.metodo_bss == 1)) {
+  //           loadIndex += 4;
+  //         }
 
-    });
-    telResources.forEach((resource: any) => {
-      if (this.resourceForm.value.idrecurso_telefono == resource.idrecurso_telefono) {
-        if (resource.precision_audio == 0) {
-          if (resource.tipo_interfaz_tel == 3 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 5) {
-            loadIndex += 2;
-          } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
-            loadIndex++;
-          } else if (resource.tipo_interfaz_tel == 7){ // Recursos tipo TUNNEL.
-            loadIndex++;
-          }
-        }
-      }
-    });
-    return loadIndex;
-  }
+  //       } else if (resource.precision_audio == 1) {
+  //         if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
+  //           loadIndex += 2;
+  //         } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
+  //           loadIndex += 2;
+  //         } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 0 || resource.metodo_bss == 1) {
+  //           loadIndex += 4;
+  //         } else if (resource.tipo_agente == 2 || resource.tipo_agente == 3) {
+  //           loadIndex += 8;
+  //         }
+
+  //       }
+  //     }
+
+  //   });
+  //   telResources.forEach((resource: any) => {
+  //     if (this.resourceForm.value.idrecurso_telefono == resource.idrecurso_telefono) {
+  //       if (resource.precision_audio == 0) {
+  //         if (resource.tipo_interfaz_tel == 3 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 5) {
+  //           loadIndex += 2;
+  //         } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
+  //           loadIndex++;
+  //         } else if (resource.tipo_interfaz_tel == 7){ // Recursos tipo TUNNEL.
+  //           loadIndex++;
+  //         }
+  //       }
+  //     }
+  //   });
+  //   return loadIndex;
+   }
 
   calculateLoadIndex(hardwareResume: any) {
-    let radioResources = hardwareResume.radio;
-    let telResources = hardwareResume.tfno;
-    let loadIndex = 0;
 
-    radioResources.forEach((resource: any) => {
-      if (resource.precision_audio == 0) {
-        if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
-          loadIndex += 1;
+    return this.utilsService.loadIndexOfGatewayt(hardwareResume.radio, hardwareResume.tfno);
 
-        } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
-          loadIndex += 1;
-        } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && (resource.metodo_bss == 0 || resource.metodo_bss == 1)) {
-          loadIndex += 4;
-        }
+    // let radioResources = hardwareResume.radio;
+    // let telResources = hardwareResume.tfno;
+    // let loadIndex = 0;
 
-      } else if (resource.precision_audio == 1) {
-        if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
-          loadIndex += 2;
-        } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
-          loadIndex += 2;
-        } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 0 || resource.metodo_bss == 1) {
-          loadIndex += 4;
-        } else if (resource.tipo_agente == 2 || resource.tipo_agente == 3) {
-          loadIndex += 8;
-        }
+    // radioResources.forEach((resource: any) => {
+    //   if (resource.precision_audio == 0) {
+    //     if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
+    //       loadIndex += 1;
 
-      }
-    });
+    //     } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
+    //       loadIndex += 1;
+    //     } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && (resource.metodo_bss == 0 || resource.metodo_bss == 1)) {
+    //       loadIndex += 4;
+    //     }
 
-    telResources.forEach((resource: any) => {
-      if (resource.precision_audio == 0) {
-        if (resource.tipo_interfaz_tel == 3 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 5) {
-          loadIndex += 2;
-        } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
-          loadIndex++;
-        } else if (resource.tipo_interfaz_tel == 7){ // Recursos tipo TUNNEL.
-          loadIndex++;
-        }
-      }
-    });
+    //   } else if (resource.precision_audio == 1) {
+    //     if (resource.tipo_agente == 0 || resource.tipo_agente == 1 || resource.tipo_agente == 5) {
+    //       loadIndex += 2;
+    //     } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 2) {
+    //       loadIndex += 2;
+    //     } else if ((resource.tipo_agente == 4 || resource.tipo_agente == 6) && resource.metodo_bss == 0 || resource.metodo_bss == 1) {
+    //       loadIndex += 4;
+    //     } else if (resource.tipo_agente == 2 || resource.tipo_agente == 3) {
+    //       loadIndex += 8;
+    //     }
 
-    return loadIndex;
+    //   }
+    // });
+
+    // telResources.forEach((resource: any) => {
+    //   if (resource.precision_audio == 0) {
+    //     if (resource.tipo_interfaz_tel == 3 || resource.tipo_interfaz_tel == 4 || resource.tipo_interfaz_tel == 5) {
+    //       loadIndex += 2;
+    //     } else if (resource.tipo_interfaz_tel == 0 || resource.tipo_interfaz_tel == 1 || resource.tipo_interfaz_tel == 2) {
+    //       loadIndex++;
+    //     } else if (resource.tipo_interfaz_tel == 7){ // Recursos tipo TUNNEL.
+    //       loadIndex++;
+    //     }
+    //   }
+    // });
+
+    // return loadIndex;
   }
 
   async validateFormDirty(initTitle: string, code: number) {

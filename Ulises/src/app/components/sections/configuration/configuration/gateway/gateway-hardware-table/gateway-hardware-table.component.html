@@ -8,8 +8,8 @@
 <gridster class="my-gridster" [options]="options" *ngIf="ready">
     <gridster-item class="my-gridster-item" [item]="item" *ngFor="let item of dashboard">
 
-        <div class="button-holder" (click)="itemSelected(item)">
-            <div class="text">
+        <div class="button-holder" (click)="itemSelected(item)"  >
+            <div class="text" >
                 <div classs="label">
                     {{ item.label }}
                 </div>
@@ -17,7 +17,7 @@
                     {{ item.item.frecuencia }} {{ 'MHz' }}
                 </div>
             </div>
-            <div class="icon">
+            <div class="icon" [matTooltip]="whoAmi(item.item)">
                 <img class="radio-in-out" alt="Radio I/O" *ngIf="item.type === AGENT_TYPE_RADIO_IN_OUT"
                     src="../../../../../../../assets/images/radio-in-out.gif">
                 <img class="radio-in" alt ="Radio In" *ngIf="item.type === AGENT_TYPE_RADIO_IN"

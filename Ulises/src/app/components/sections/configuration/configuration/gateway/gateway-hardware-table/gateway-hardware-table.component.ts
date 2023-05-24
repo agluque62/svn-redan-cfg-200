@@ -12,6 +12,8 @@ import { UserService } from 'src/app/_services/user.service';
 import { ResourceImportComponent } from '../../resource/resource-import/resource-import.component';
 import { SiteFormComponent } from '../../site-form/site-form.component';
 
+import { UtilsService} from 'src/app/_services/utils.service';
+
 @Component({
     selector: 'gateway-hardware-table',
     templateUrl: './gateway-hardware-table.component.html',
@@ -54,7 +56,8 @@ export class GatewayHardwareTableComponent implements OnInit, OnChanges {
     visualizationMode: boolean = false;
 
     constructor(private readonly router: Router, private readonly hardwareService: HardwareService, private readonly dataService: DataService,
-        private readonly userService: UserService, private historicService: HistoricService, public dialog: MatDialog) { }
+        private readonly userService: UserService, private historicService: HistoricService, public dialog: MatDialog,
+        private readonly utilService: UtilsService) { }
 
     ngOnInit(): void {
 
@@ -339,5 +342,9 @@ export class GatewayHardwareTableComponent implements OnInit, OnChanges {
             swap: !this.visualizationMode,
             itemChangeCallback: this.itemHeaderChange.bind(this),
         };
+    }
+
+    whoAmi (item: any) {
+        return this.utilService.toolTipID(item.tipo_agente, item.tipo_interfaz_tel, item.precision_audio, item.metodo_bss);
     }
 }
