@@ -37,7 +37,7 @@
     "SubVersion": "0",
     "Version": "2.2",
     "dbdatabase": "ug5kv2",
-    "dbhost": "localhost",
+    "dbhost": "mariadb",
     "dbpassword": "U5K-G",
     "dbport": "3306",
     "dbuser": "root",

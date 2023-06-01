@@ -617,15 +617,15 @@ app.use(function (err, req, res, next) {
 });
 
 // Prepare historics deep
-setImmediate(function () {
+setTimeout(function () {
     logging.Trace('Running once a day. Historics deep: ' + config.Ulises.HistoricsDeep + ' days.');
     myLibHistorics.deepHistorics(config.Ulises.HistoricsDeep, function (result) {
-        logging.Trace('Historics record removed: ' + result.affectedRows + ', ' + result.error);
+        logging.Info('Historics record removed: ' + result.affectedRows + ', ' + result.error);
+        myLibConfig.resetGatewaysSynchroState(function (result) {
+            logging.Info('Reset Gateways Synchro State: ' + result.result);
+        });
     });
-    myLibConfig.resetGatewaysSynchroState(function (result) {
-        logging.Trace('Reset Gateways Synchro State: ' + result.result);
-    });
-});
+}, 1000);
 
 setInterval(function () {
     logging.Trace('Running once a day. Historics deep: ' + config.Ulises.HistoricsDeep + ' days.');

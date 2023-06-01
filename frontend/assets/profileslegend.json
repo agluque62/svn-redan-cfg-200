@@ -1,109 +1,109 @@
 {
     "roles": [
         {
-            "rol": "Visualización (C.Central+RCS)",
-            "CFG": "Si",
-            "RCS": "Si",
-            "GW": "No",
-            "Funciones_asociadas": "Permite visualizar los parámetros configurados en todas las aplicaciones sin ninguna otra funcionalidad adicional. Quedan excluidas las pantallas de back-up e Históricos."
+            "rol": "users.profile_1", 
+            "CFG": "users.yes",
+            "RCS": "users.yes",
+            "GW": "users.no",
+            "associated_functions": "users.functions.profile_1"
         },
         {
-            "rol": "RCS.Mando",
-            "CFG": "No",
-            "RCS": "Si",
-            "GW": "No",
-            "Funciones_asociadas": "Permite realizar, desde la aplicación de supervisión, telemandos sobre los equipos desde la aplicación de supervisión: RESET, BITE, Conmutación Principal/Reserva de equipos radio, Test RF (modo bucle), Acceso a MIB-2 de cada CPU."
+            "rol": "users.profile_2", 
+            "CFG": "users.no",
+            "RCS": "users.yes",
+            "GW": "users.no",
+            "associated_functions": "users.functions.profile_2"
         },
         {
-            "rol": "Inhibición de histórico alarmas en GW",
-            "CFG": "No",
-            "RCS": "Si",
-            "GW": "No",
-            "Funciones_asociadas": "Permite configurar que los eventos generados por determinadas pasarelas, generen estados de alarma en el sistema."
+            "rol": "users.profile_3", 
+            "CFG": "users.no",
+            "RCS": "users.yes",
+            "GW": "users.no",
+            "associated_functions": "users.functions.profile_3"
         },
         {
-            "rol": "RCS. Reconocimiento de alarmas",
-            "CFG": "No",
-            "RCS": "Si",
-            "GW": "No",
-            "Funciones_asociadas": "Permite reconocer las alarmas desde la aplicación de supervisión."
+            "rol": "users.profile_4", 
+            "CFG": "users.no",
+            "RCS": "users.yes",
+            "GW": "users.no",
+            "associated_functions": "users.functions.profile_4"
         },
         {
-            "rol": "C.Central Gestión de Usuarios",
-            "CFG": "Si",
-            "RCS": "No",
-            "GW": "No",
-            "Funciones_asociadas": "Permite realizar todas las funciones relacionadas con la asignación de perfiles/roles a los usuarios"
+            "rol": "users.profile_5", 
+            "CFG": "users.yes",
+            "RCS": "users.no",
+            "GW": "users.no",
+            "associated_functions": "users.functions.profile_5"
         },
         {
-            "rol": "Selección de configuraciones a supervisar",
-            "CFG": "Si",
-            "RCS": "No",
-            "GW": "No",
-            "Funciones_asociadas": "Permite establecer que configuraciones de la base de datos deben ser supervisadas o no."
+            "rol": "users.profile_6", 
+            "CFG": "users.yes",
+            "RCS": "users.no",
+            "GW": "users.no",
+            "associated_functions": "users.functions.profile_6"
         },
         {
-            "rol": "C.Central Administrador",
-            "CFG": "Si",
-            "RCS": "Si",
-            "GW": "Si",
-            "Funciones_asociadas": "Control completo de todas las aplicaciones y dispositivos."
+            "rol": "users.profile_7", 
+            "CFG": "users.yes",
+            "RCS": "users.yes",
+            "GW": "users.yes",
+            "associated_functions": "users.functions.profile_7"
         },
         {
-            "rol": "GW Local. Visualización",
-            "CFG": "No",
-            "RCS": "No",
-            "GW": "Si",
-            "Funciones_asociadas": "Permite visualizar los parámetros configurados en la aplicación de configuración local de las pasarelas"
+            "rol": "users.profile_8", 
+            "CFG": "users.no",
+            "RCS": "users.no",
+            "GW": "users.yes",
+            "associated_functions": "users.functions.profile_8"
         },
         {
-            "rol": "GW Local. Administrador",
-            "CFG": "No",
-            "RCS": "No",
-            "GW": "Si",
-            "Funciones_asociadas": "Control completo de la aplicación de configuración local de las pasarelas"
+            "rol": "users.profile_9", 
+            "CFG": "users.no",
+            "RCS": "users.no",
+            "GW": "users.yes",
+            "associated_functions": "users.functions.profile_9"
         },
         {
-            "rol": "C.Central Históricos/Estadísticas",
-            "CFG": "Si",
-            "RCS": "No",
-            "GW": "No",
-            "Funciones_asociadas": "Permite el acceso y la gestión del servicio de históricos."
+            "rol": "users.profile_10", 
+            "CFG": "users.yes",
+            "RCS": "users.no",
+            "GW": "users.no",
+            "associated_functions": "users.functions.profile_10"
         },
         {
-            "rol": "C.Central Backup BD",
-            "CFG": "Si",
-            "RCS": "No",
-            "GW": "No",
-            "Funciones_asociadas": "Permite configurar el sistema de BACKUP automático del sistema."
+            "rol": "users.profile_11", 
+            "CFG": "users.yes",
+            "RCS": "users.no",
+            "GW": "users.no",
+            "associated_functions": "users.functions.profile_11"
         },
         {
-            "rol": "RCS. Control aviso acústico",
-            "CFG": "No",
-            "RCS": "Si",
-            "GW": "No",
-            "Funciones_asociadas": "Permite activar / desactivar el nivel acústico de señalización de alarmas."
+            "rol": "users.profile_12", 
+            "CFG": "users.no",
+            "RCS": "users.yes",
+            "GW": "users.no",
+            "associated_functions": "users.functions.profile_12"
         },
         {
-            "rol": "GW Local. Gestión de configuraciones",
-            "CFG": "No",
-            "RCS": "No",
-            "GW": "Si",
-            "Funciones_asociadas": "Permite realizar las siguientes funciones desde las pasarelas: Gestión de preconfiguraciones locales (importar, exportar, guardar, activar y borrar), Modificación de parámetros y aplicar los cambios."
+            "rol": "users.profile_13", 
+            "CFG": "users.no",
+            "RCS": "users.no",
+            "GW": "users.yes",
+            "associated_functions": "users.functions.profile_13"
         },
         {
-            "rol": "RCS. Actualización SQ de GWs",
-            "CFG": "No",
-            "RCS": "Si",
-            "GW": "No",
-            "Funciones_asociadas": "Permite cargar nuevas versiones de software en las pasarelas."
+            "rol": "users.profile_14", 
+            "CFG": "users.no",
+            "RCS": "users.yes",
+            "GW": "users.no",
+            "associated_functions": "users.functions.profile_14"
         },
         {
-            "rol": "C.Central. Gestión Configuraciones",
-            "CFG": "Si",
-            "RCS": "No",
-            "GW": "No",
-            "Funciones_asociadas": "Permite el diseño de configuraciones en la aplicación central de configuración y cargar configuraciones desde la aplicación centralizada"
+            "rol": "users.profile_15", 
+            "CFG": "users.yes",
+            "RCS": "users.no",
+            "GW": "users.no",
+            "associated_functions": "users.functions.profile_15"
         }
     ]
 }

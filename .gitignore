@@ -125,3 +125,5 @@ uploads/
 redan-gw-config*.exe
 frontend/
 /data_model/redan-220-bdt-scripts.zip
+/Database/data/aria_log.*
+/Database/data/ib_logfile*

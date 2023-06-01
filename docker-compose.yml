@@ -1,0 +1,41 @@
+services:
+  redan-server:
+    image: redan200:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: sh -c "sleep 10 && node --expose-gc app.js"
+    ports:
+      - 5050:5050
+      - 9229:9229
+    environment:
+      - port=5050
+      - node_env=production      
+    depends_on:
+      - mariadb
+    # networks:
+    #   mynetwork:
+    #     ipv4_address: 192.168.0.113
+
+  mariadb: 
+    image: mariadb
+    ports:
+      - 3306:3306
+    volumes:
+      - ./Database/data/:/var/lib/mysql
+    environment:
+        - MARIADB_PORT_NUMBER=3306 
+        - MARIADB_ROOT_PASSWORD=U5K-G
+    container_name: redan-db
+    # networks:
+    #   mynetwork:
+    #     ipv4_address: 192.168.0.213
+
+networks:
+  mynetwork:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24
+          gateway: 192.168.0.1
