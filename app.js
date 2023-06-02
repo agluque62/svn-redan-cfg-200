@@ -648,7 +648,7 @@ var intervalObject = setInterval(function () {
             ctrlSesiones.localSession = null;
         }
     }
-    logging.Trace(config.Ulises.LoginSystemTrace, moment().toString() + ": " +
+     logging.Trace(config.Ulises.LoginSystemTrace, moment().toString() + ": " +
         (ctrlSesiones.localSession ? ("Sesion Activa hasta : " + moment(ctrlSesiones.localSession.cookie._expires).toString()) : "No Session"));
 }, 5000);
 

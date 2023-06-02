@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    command: sh -c "sleep 10 && node --expose-gc app.js"
+    command: sh -c "sleep 10 && node --expose-gc --inspect=0.0.0.0:9229 app.js"
     ports:
       - 5050:5050
       - 9229:9229

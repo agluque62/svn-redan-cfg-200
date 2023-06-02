@@ -9,6 +9,7 @@ COPY ./lib/. ./lib/.
 COPY ./routes/. ./routes/.
 COPY ./app.js .
 COPY ./configUlises.json .
+COPY ./configUlises-dev.json .
 COPY ./*.txt ./
 
 # CMD ["node", "--expose-gc", "/app/app.js"]
