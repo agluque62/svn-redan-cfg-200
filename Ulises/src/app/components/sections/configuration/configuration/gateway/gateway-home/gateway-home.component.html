@@ -40,11 +40,11 @@
                     <div class="indexControlContainer">
                         <span *ngIf="LoadIndexControlEnabled" [ngClass]="selectedClass">{{ 'gateway.load_index' | translate }} {{loadIndex}}</span>
                     </div>
-                </ng-template>
-                
+                </ng-template>                
             </mat-tab>
         </mat-tab-group>
-    </form>
+        </form>
+
     
     <div class="btns" *ngIf="!visualizationMode">
         <button mat-raised-button (click)="activateInField()" *ngIf="type == 'EDIT'">{{ 'button.activate' | translate }}</button>

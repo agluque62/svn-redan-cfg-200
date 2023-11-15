@@ -330,6 +330,8 @@
     "gateway.alert.err_max_trap":"Número máximo de traps alcanzado",
     "gateway.alert.err_duply_trap":"Trap duplicado",
     "gateway.alert.info_trap_value":"Compruebe los valores introducidos",
+    "gateway.cpu.legend":"Nota Importante",
+    "gateway.cpu.Important.Remark":"Tanto para CPU0 como para CPU1<br><br><b>IP</b>: Dirección IPV4 asociada “BONDING” dual Principal/Reserva. Es un campo informativo, su modificación no afecta a la IP de la CPU0, sin embargo, sí que debe coincidir con la IP física real para poder consolidar datos entre CPUs.<br><br><b>IP Gateway</b>: Dirección IPV4 de la puerta de enlace de la pasarela. Sus funciones son análogas a la descrita para el campo IP.<br><br><b>Máscara</b> Máscara IPV4 asociada “BONDING” dual Principal/Reserva. Sus funciones son análogas a la descrita para el campo IP.",
 
     "historics.historic":"Históricos",
     "historics.date_start":"Fecha de Inicio",

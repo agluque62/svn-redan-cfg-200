@@ -67,4 +67,12 @@ export class GatewayGeneralComponent implements OnInit {
   async siteChanges(value: number) {
     this.form.value.EMPLAZAMIENTO_idEMPLAZAMIENTO = value;
   }
+
+  async importanRemark(){
+    await this.alertService.Notification(
+      this.translate.instant('gateway.cpu.legend'), 
+      this.translate.instant('gateway.cpu.Important.Remark'), 
+      this.translate.instant('button.accept'));
+    
+  }
 }

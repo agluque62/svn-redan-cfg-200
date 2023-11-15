@@ -79,79 +79,91 @@
     </div>
 
     <div class="row">
-        <mat-tab-group class="cpu">
-            <mat-tab label="CPU 0">
-                <div class="cpu-form">
-                    <mat-form-field appearance="fill">
-                        <mat-label>{{ 'gateway.IP' | translate }}</mat-label>
-                        <input matInput required formControlName="ipb1">
-                        <mat-error *ngIf="form.controls['ipb1'].hasError('required')">
-                            {{ appset.FIELD_REQUIRED | translate }}
-                        </mat-error>
-                        <mat-error *ngIf="form.controls['ipb1'].hasError('pattern')">
-                            {{ appset.INVALID_IP | translate }}
-                        </mat-error>
-                    </mat-form-field>
+        <div class="col" >
+            <mat-tab-group class="cpu">
+                <mat-tab label="CPU 0">
+                    <div class="cpu-form">
+                        <mat-form-field appearance="fill">
+                            <mat-label>{{ 'gateway.IP' | translate }}</mat-label>
+                            <input matInput required formControlName="ipb1">
+                            <mat-error *ngIf="form.controls['ipb1'].hasError('required')">
+                                {{ appset.FIELD_REQUIRED | translate }}
+                            </mat-error>
+                            <mat-error *ngIf="form.controls['ipb1'].hasError('pattern')">
+                                {{ appset.INVALID_IP | translate }}
+                            </mat-error>
+                        </mat-form-field>
 
-                    <mat-form-field appearance="fill">
-                        <mat-label>{{ 'gateway.IP_gtw' | translate }}</mat-label>
-                        <input matInput required formControlName="ipg1">
-                        <mat-error *ngIf="form.controls['ipg1'].hasError('required')">
-                            {{ appset.FIELD_REQUIRED | translate }}
-                        </mat-error>
-                        <mat-error *ngIf="form.controls['ipg1'].hasError('pattern')">
-                            {{ appset.INVALID_IP | translate }}
-                        </mat-error>
-                    </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>{{ 'gateway.IP_gtw' | translate }}</mat-label>
+                            <input matInput required formControlName="ipg1">
+                            <mat-error *ngIf="form.controls['ipg1'].hasError('required')">
+                                {{ appset.FIELD_REQUIRED | translate }}
+                            </mat-error>
+                            <mat-error *ngIf="form.controls['ipg1'].hasError('pattern')">
+                                {{ appset.INVALID_IP | translate }}
+                            </mat-error>
+                        </mat-form-field>
 
-                    <mat-form-field appearance="fill">
-                        <mat-label>{{ 'gateway.Mask' | translate }}</mat-label>
-                        <input matInput required formControlName="msb1">
-                        <mat-error *ngIf="form.controls['msb1'].hasError('required')">
-                            {{ appset.FIELD_REQUIRED | translate }}
-                        </mat-error>
-                        <mat-error *ngIf="form.controls['msb1'].hasError('pattern')">
-                            {{ appset.INVALID_MASK | translate }}
-                        </mat-error>
-                    </mat-form-field>
+                        <mat-form-field appearance="fill">
+                            <mat-label>{{ 'gateway.Mask' | translate }}</mat-label>
+                            <input matInput required formControlName="msb1">
+                            <mat-error *ngIf="form.controls['msb1'].hasError('required')">
+                                {{ appset.FIELD_REQUIRED | translate }}
+                            </mat-error>
+                            <mat-error *ngIf="form.controls['msb1'].hasError('pattern')">
+                                {{ appset.INVALID_MASK | translate }}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </mat-tab>
+                <mat-tab label="CPU 1">
+                    <div class="cpu-form">
+                        <mat-form-field appearance="fill">
+                            <mat-label>{{ 'gateway.IP' | translate }}</mat-label>
+                            <input matInput required formControlName="ipb2">
+                            <mat-error *ngIf="form.controls['ipb2'].hasError('required')">
+                                {{ appset.FIELD_REQUIRED | translate }}
+                            </mat-error>
+                            <mat-error *ngIf="form.controls['ipb2'].hasError('pattern')">
+                                {{ appset.INVALID_IP | translate }}
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="fill">
+                            <mat-label>{{ 'gateway.IP_gtw' | translate }}</mat-label>
+                            <input matInput required formControlName="ipg2">
+                            <mat-error *ngIf="form.controls['ipg2'].hasError('required')">
+                                {{ appset.FIELD_REQUIRED | translate }}
+                            </mat-error>
+                            <mat-error *ngIf="form.controls['ipg2'].hasError('pattern')">
+                                {{ appset.INVALID_IP | translate }}
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="fill">
+                            <mat-label>{{ 'gateway.Mask' | translate }}</mat-label>
+                            <input matInput required formControlName="msb2">
+                            <mat-error *ngIf="form.controls['msb2'].hasError('required')">
+                                {{ appset.FIELD_REQUIRED | translate }}
+                            </mat-error>
+                            <mat-error *ngIf="form.controls['msb2'].hasError('pattern')">
+                                {{ appset.INVALID_MASK | translate }}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+        <div class="col">
+            <div class="btn important-remark">
+                <div class="local-btn">
+                    <button mat-raised-button class="create-btn" (click)="importanRemark()">
+                        {{ 'gateway.cpu.legend' | translate }}
+                    </button>
                 </div>
-            </mat-tab>
-            <mat-tab label="CPU 1">
-                <div class="cpu-form">
-                    <mat-form-field appearance="fill">
-                        <mat-label>{{ 'gateway.IP' | translate }}</mat-label>
-                        <input matInput required formControlName="ipb2">
-                        <mat-error *ngIf="form.controls['ipb2'].hasError('required')">
-                            {{ appset.FIELD_REQUIRED | translate }}
-                        </mat-error>
-                        <mat-error *ngIf="form.controls['ipb2'].hasError('pattern')">
-                            {{ appset.INVALID_IP | translate }}
-                        </mat-error>
-                    </mat-form-field>
+            </div>
+        </div>
 
-                    <mat-form-field appearance="fill">
-                        <mat-label>{{ 'gateway.IP_gtw' | translate }}</mat-label>
-                        <input matInput required formControlName="ipg2">
-                        <mat-error *ngIf="form.controls['ipg2'].hasError('required')">
-                            {{ appset.FIELD_REQUIRED | translate }}
-                        </mat-error>
-                        <mat-error *ngIf="form.controls['ipg2'].hasError('pattern')">
-                            {{ appset.INVALID_IP | translate }}
-                        </mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field appearance="fill">
-                        <mat-label>{{ 'gateway.Mask' | translate }}</mat-label>
-                        <input matInput required formControlName="msb2">
-                        <mat-error *ngIf="form.controls['msb2'].hasError('required')">
-                            {{ appset.FIELD_REQUIRED | translate }}
-                        </mat-error>
-                        <mat-error *ngIf="form.controls['msb2'].hasError('pattern')">
-                            {{ appset.INVALID_MASK | translate }}
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-            </mat-tab>
-        </mat-tab-group>
     </div>
 </form>

@@ -61,4 +61,14 @@ export class AlertService extends BaseService {
         });
     }
 
+    Notification(title: string, message: string, accept: string) {
+
+        return Swal.fire({
+            title: title,
+            html: "<div class='notification-text'>" + message +"</div>",
+            // icon: 'info',
+            heightAuto: true,
+            confirmButtonText: accept
+        });
+    }
 }

@@ -330,6 +330,8 @@
     "gateway.alert.err_max_trap": "Maximum number of traps reached",
     "gateway.alert.err_duply_trap": "Duplicate trap",
     "gateway.alert.info_trap_value": "Check values entered",
+    "gateway.cpu.legend":"Important remark",
+    "gateway.cpu.Important.Remark":"For both CPU0 and CPU1<br><br><b>IP</b>: IPV4 address associated with the dual 'BONDING' Main/Standby. It is an informational field, its modification does not affect the IP of the CPU0, however, it must match the real physical IP in order to consolidate data between CPUs.<br><br><b>IP Gateway</b>: IPV4 address of the gateway IP-gateway. Its functions are analogous to the one described for the IP field.<br><br><b>Mask</b> IPV4 mask associated with dual Main/Standby 'BONDING'. Its functions are analogous to the one described for the IP field.",
 
     "historics.historic": "Historics",
     "historics.date_start": "Start Date",
